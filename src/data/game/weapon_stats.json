@@ -143,6 +143,14 @@
       "90": {"baseAtk": 608, "secondaryStatValue": "33.1%"}
     }
   },
+  "beyond_the_chrysalis": {
+    "rarity": 5,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {"baseAtk": 674, "secondaryStatValue": "44.1%"}
+    }
+  },
   "black_tassel": {
     "rarity": 3,
     "type": "Polearm",
@@ -221,6 +229,14 @@
     "secondaryStat": "em",
     "levels": {
       "90": {"baseAtk": 354, "secondaryStatValue": "187"}
+    }
+  },
+  "breezeborne_refrain": {
+    "rarity": 4,
+    "type": "Bow",
+    "secondaryStat": "cr",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "27.6%"}
     }
   },
   "calamity_of_eshu": {
@@ -759,6 +775,14 @@
       "90": {"baseAtk": 542, "secondaryStatValue": "44.1%"}
     }
   },
+  "hymn_of_the_maelstrom": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "hp%",
+    "levels": {
+      "90": {"baseAtk": 542, "secondaryStatValue": "66.2%"}
+    }
+  },
   "ibis_piercer": {
     "rarity": 4,
     "type": "Bow",
@@ -1013,6 +1037,14 @@
     "secondaryStat": "atk%",
     "levels": {
       "90": {"baseAtk": 565, "secondaryStatValue": "27.6%"}
+    }
+  },
+  "new_bough": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "nightweavers_looking_glass": {
@@ -1365,6 +1397,14 @@
     "secondaryStat": "cd",
     "levels": {
       "90": {"baseAtk": 401, "secondaryStatValue": "46.9%"}
+    }
+  },
+  "silver_light": {
+    "rarity": 4,
+    "type": "Sword",
+    "secondaryStat": "atk%",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "41.3%"}
     }
   },
   "silvershower_heartstrings": {
@@ -1861,6 +1901,14 @@
     "secondaryStat": "er",
     "levels": {
       "90": {"baseAtk": 565, "secondaryStatValue": "30.6%"}
+    }
+  },
+  "winters_heavy_heart": {
+    "rarity": 4,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {"baseAtk": 510, "secondaryStatValue": "55.1%"}
     }
   },
   "wolffang": {

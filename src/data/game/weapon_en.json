@@ -227,6 +227,18 @@
       ["40%", "40%", "64%"]
     ]
   },
+  "beyond_the_chrysalis": {
+    "id": "11522",
+    "name": "Beyond the Chrysalis",
+    "descHtmlTpl": "Each time the equipping character uses their Elemental Skill or Elemental Burst, they gain one of the following three effects in sequence:<br>Winds of Devotion: Increases the equipping character's CRIT DMG by <span style=\"color: #99FFFFFF;\">{0}</span> for 10s;<br>Winds of Defiance: Increases Stellar Swirl reaction DMG dealt by the equipping character by <span style=\"color: #99FFFFFF;\">{1}</span> for 10s; and<br>Winds of Plenty: Regenerates <span style=\"color: #99FFFFFF;\">{2}</span> Elemental Energy for the equipping character. Up to <span style=\"color: #99FFFFFF;\">{3}</span> Elemental Energy can be regenerated in this way every 4s.<br>The aforementioned effects are removed and the sequence is reset when the equipping character leaves the field.",
+    "refinements": [
+      ["56%", "36%", "5", "5"],
+      ["72%", "45%", "5.5", "5.5"],
+      ["88%", "54%", "6", "6"],
+      ["104%", "63%", "6.5", "6.5"],
+      ["120%", "72%", "7", "7"]
+    ]
+  },
   "black_tassel": {
     "id": "13303",
     "name": "Black Tassel",
@@ -345,6 +357,18 @@
       ["18%"],
       ["21%"],
       ["24%"]
+    ]
+  },
+  "breezeborne_refrain": {
+    "id": "15437",
+    "name": "Breezeborne Refrain",
+    "descHtmlTpl": "Increases Energy Recharge by <span style=\"color: #99FFFFFF;\">{0}</span>. When the equipping character hits the opponent with their Elemental Skill or Elemental Burst, they gain a stack of \"Hymn of the Pure.\" This effect can trigger once every 0.03s, max 3 stacks, and at 3 stacks, all instances of \"Hymn of the Pure\" are cleared to give the equipping character \"Thus Lied the Viper\" instead. This grants nearby party members a <span style=\"color: #99FFFFFF;\">{1}</span> Stellar Glimmer reaction DMG boost for 12s, during which no stacks of \"Hymn of the Pure\" can be obtained. The aforementioned effects can still trigger even when the equipping character is not on the field.",
+    "refinements": [
+      ["20%", "24%"],
+      ["25%", "30%"],
+      ["30%", "36%"],
+      ["35%", "42%"],
+      ["40%", "48%"]
     ]
   },
   "calamity_of_eshu": {
@@ -1163,6 +1187,18 @@
       ["24%", "320%"]
     ]
   },
+  "hymn_of_the_maelstrom": {
+    "id": "14524",
+    "name": "Hymn of the Maelstrom",
+    "descHtmlTpl": "Increases Healing Bonus by <span style=\"color: #99FFFFFF;\">{0}</span>.<br>When performing healing, the equipping character gains the \"Vatsamonga's Vatic Vintage\" effect, which increases Max HP by <span style=\"color: #99FFFFFF;\">{1}</span> as well as increases the currently active party member's ATK by <span style=\"color: #99FFFFFF;\">{2}</span> for every 1,000 Max HP the equipping character has over 40,000. A maximum of <span style=\"color: #99FFFFFF;\">{3}</span> ATK can be gained in this way. This effect lasts 10s, max 3 stacks.<br>When a nearby party member triggers a Frozen or Stellar Swirl reaction, the aforementioned Max HP and ATK boosts will be further increased by 75% for the next 5s.<br>The aforementioned effects can still trigger even when the equipping character is not on the field.",
+    "refinements": [
+      ["4%", "4%", "0.4%", "8%"],
+      ["5%", "5%", "0.5%", "10%"],
+      ["6%", "6%", "0.6%", "12%"],
+      ["7%", "7%", "0.7%", "14%"],
+      ["8%", "8%", "0.8%", "16%"]
+    ]
+  },
   "ibis_piercer": {
     "id": "15419",
     "name": "Ibis Piercer",
@@ -1541,6 +1577,18 @@
       ["0.18%", "60%"],
       ["0.21%", "70%"],
       ["0.24%", "80%"]
+    ]
+  },
+  "new_bough": {
+    "id": "11437",
+    "name": "New Bough",
+    "descHtmlTpl": "When the equipping character hits the opponent with an attack within 12s after using the Elemental Skill, they gain the \"Verdant\" effect, which increases their ATK by <span style=\"color: #99FFFFFF;\">{0}</span> and their Elemental Mastery by <span style=\"color: #99FFFFFF;\">{1}</span>. This effect lasts 6s and can trigger once every second. Max 3 stacks. The aforementioned effects can still trigger even when the equipping character is not on the field.<br>Radiance: Stellar Glimmer: The effect of \"Verdant\" is changed to: Increases ATK by <span style=\"color: #99FFFFFF;\">{2}</span> as well as Stellar Glimmer reaction DMG dealt by the equipping character by <span style=\"color: #99FFFFFF;\">{3}</span>.",
+    "refinements": [
+      ["4%", "20", "6%", "8%"],
+      ["5%", "25", "7.5%", "10%"],
+      ["6%", "30", "9%", "12%"],
+      ["7%", "35", "10.5%", "14%"],
+      ["8%", "40", "12%", "16%"]
     ]
   },
   "nightweavers_looking_glass": {
@@ -2101,6 +2149,18 @@
       ["36%"],
       ["42%"],
       ["48%"]
+    ]
+  },
+  "silver_light": {
+    "id": "11438",
+    "name": "Silver Light",
+    "descHtmlTpl": "Increases Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span> for 12s after Elemental Skill use. Max 2 stacks, and each stack's duration is independent of the others.",
+    "refinements": [
+      ["52"],
+      ["65"],
+      ["78"],
+      ["91"],
+      ["104"]
     ]
   },
   "silvershower_heartstrings": {
@@ -2861,6 +2921,18 @@
       ["18%", "30%"],
       ["20%", "35%"],
       ["22%", "40%"]
+    ]
+  },
+  "winters_heavy_heart": {
+    "id": "14437",
+    "name": "Winter's Heavy Heart",
+    "descHtmlTpl": "The equipping character gains \"Silver-Tinged Blood Pact\": The equipping character's Elemental Mastery is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for every Cryo character present in the party. For every Electro character present in the party, the equipping character's ATK is increased by <span style=\"color: #99FFFFFF;\">{1}</span>. Up to 4 Cryo or Electro characters can provide the above buffs.<br>Radiance: Stellar Glimmer: The effect of Silver-Tinged Blood Pact is changed to: For every Cryo or Electro character present in the party, the equipping character gains a <span style=\"color: #99FFFFFF;\">{2}</span>-point Elemental Mastery boost and deals <span style=\"color: #99FFFFFF;\">{3}</span> increased Stellar Glimmer reaction DMG.",
+    "refinements": [
+      ["24", "4.8%", "20", "6%"],
+      ["30", "6%", "25", "7.5%"],
+      ["36", "7.2%", "30", "9%"],
+      ["42", "8.4%", "35", "10.5%"],
+      ["48", "9.6%", "40", "12%"]
     ]
   },
   "wolffang": {

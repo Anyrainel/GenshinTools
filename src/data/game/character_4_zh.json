@@ -116,7 +116,7 @@
       },
       {
         "name": "Q. 守猎进踞",
-        "descHtml": "召唤信赖的好伙伴<span style=\"color: #FFD780FF;\">图加林</span>一同战斗，并将前方区域短暂变换为<span style=\"color: #FFD780FF;\">轰霆猎场</span>。<br><br><span style=\"color: #FFD780FF;\">轰霆猎场</span><br>·持续嘲讽周围的敌人，吸引敌人攻击；<br>·每隔2秒，对踏入其中的敌人造成一次<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">图加林</span><br>·若周围存在敌人，每隔2秒，图加林将快速移动至一名敌人附近，对其进行撕咬攻击，造成<span style=\"color: #FFD780FF;\">雷元素伤害</span>。<br>·若命中的敌人处于<span style=\"color: #FFD780FF;\">弋猎印记</span>效果影响下，还会激活<span style=\"color: #FFD780FF;\">弋猎印记</span>。<br>·图加林会优先攻击处于<span style=\"color: #FFD780FF;\">弋猎印记</span>效果影响下的敌人。<br><br><i>等待，等待到不再心焦，便有赤腹兰鸻飞越白桦林，迎接他的射击。</i>",
+        "descHtml": "召唤信赖的好伙伴<span style=\"color: #FFD780FF;\">图加林</span>一同战斗，并将前方区域短暂变换为<span style=\"color: #FFD780FF;\">轰霆猎场</span>。<br><br><span style=\"color: #FFD780FF;\">轰霆猎场</span><br>·持续嘲讽周围的敌人，吸引敌人攻击；<br>·每隔2秒，对踏入其中的敌人造成一次<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。<br><br><span style=\"color: #FFD780FF;\">图加林</span><br>·若周围存在敌人，每隔2秒，图加林将快速移动至一名敌人附近，对其进行撕咬攻击，造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。<br>·若命中的敌人处于<span style=\"color: #FFD780FF;\">弋猎印记</span>效果影响下，还会激活<span style=\"color: #FFD780FF;\">弋猎印记</span>。<br>·图加林会优先攻击处于<span style=\"color: #FFD780FF;\">弋猎印记</span>效果影响下的敌人。<br><br><i>等待，等待到不再心焦，便有赤腹兰鸻飞越白桦林，迎接他的射击。</i>",
         "details": [
           {"label": "轰霆猎场伤害", "template": "{param1:F1P}"},
           {"label": "图加林伤害", "template": "{param2:F1P}"},
@@ -141,7 +141,7 @@
       },
       {
         "name": "树梢察伺",
-        "descHtml": "在小地图上显示周围的<span style=\"color: #FFD780FF;\">至冬区域特产</span>的位置。"
+        "descHtml": "在小地图上显示周围的<span style=\"color: #FFD780FF;\">至冬区域特产</span>的位置，在影域中亦能提供相同的佑助。"
       }
     ],
     "constellations": [

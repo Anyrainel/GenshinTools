@@ -116,7 +116,7 @@
       },
       {
         "name": "Q. Hunter's Advance",
-        "descHtml": "Summons his trusted companion <span style=\"color: #FFD780FF;\">Tugarin</span> to fight alongside him on the field. This also turns an area in front of him into a <span style=\"color: #FFD780FF;\">Fulgurite Hunting Field</span> for a short time.<br><br><span style=\"color: #FFD780FF;\">Fulgurite Hunting Field</span><br>· Continuously taunts nearby opponents to incite them to attack.<br>· Every 2s, deals an instance of <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> to any opponent that enters the field.<br><br><span style=\"color: #FFD780FF;\">Tugarin</span><br>· If there are any opponents nearby, Tugarin will quickly move close to an opponent and maul them every 2s, dealing <span style=\"color: #FFD780FF;\">Electro DMG</span>.<br>· If an opponent affected by the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect is hit, the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> will also be activated.<br>· Where there are multiple opponents, Tugarin will attack those affected by the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect first.<br><br><i>Wait. Keep waiting until the impatience fades. That's when the red-bellied plover shall sweep across the birch grove and present itself before one's arrow.</i>",
+        "descHtml": "Summons his trusted companion <span style=\"color: #FFD780FF;\">Tugarin</span> to fight alongside him on the field. This also turns an area in front of him into a <span style=\"color: #FFD780FF;\">Fulgurite Hunting Field</span> for a short time.<br><br><span style=\"color: #FFD780FF;\">Fulgurite Hunting Field</span><br>· Continuously taunts nearby opponents to incite them to attack.<br>· Every 2s, deals an instance of <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> to any opponent that enters the field.<br><br><span style=\"color: #FFD780FF;\">Tugarin</span><br>· If there are any opponents nearby, Tugarin will quickly move close to an opponent and maul them every 2s, dealing <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br>· If an opponent affected by the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect is hit, the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> will also be activated.<br>· Where there are multiple opponents, Tugarin will attack those affected by the <span style=\"color: #FFD780FF;\">Hunter's Mark</span> effect first.<br><br><i>Wait. Keep waiting until the impatience fades. That's when the red-bellied plover shall sweep across the birch grove and present itself before one's arrow.</i>",
         "details": [
           {"label": "Fulgurite Hunting Field DMG", "template": "{param1:F1P}"},
           {"label": "Tugarin DMG", "template": "{param2:F1P}"},
@@ -141,7 +141,7 @@
       },
       {
         "name": "Treetop Watch",
-        "descHtml": "Displays the location of nearby <span style=\"color: #FFD780FF;\">resources unique to Snezhnaya</span> on the mini-map."
+        "descHtml": "Displays the location of nearby <span style=\"color: #FFD780FF;\">resources unique to Snezhnaya</span> on the mini-map, and this effect also applies in the Shadow Realm."
       }
     ],
     "constellations": [

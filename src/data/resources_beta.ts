@@ -7,14 +7,12 @@ import type {
 } from "./types";
 
 export const betaCharacters: CharacterResource[] = [
-  {"id":"vodyanitsa","rarity":5,"imagePath":"/character/vodyanitsa.webp"},
-  {"id":"vesna","rarity":5,"imagePath":"/character/vesna.webp"},
+  {"id":"mitya","rarity":5,"imagePath":"/character/mitya.webp"},
+  {"id":"valeriy","rarity":4,"imagePath":"/character/valeriy.webp"},
 ];
 export const betaWeapons: WeaponResource[] = [
   {"id":"prized_isshin_blade","rarity":4,"imagePath":"/weapon/prized_isshin_blade.webp"},
-  {"id":"weapon_sword","rarity":4,"imagePath":"/weapon/weapon_sword.webp"},
-  {"id":"weapon_catalyst","rarity":4,"imagePath":"/weapon/weapon_catalyst.webp"},
-  {"id":"weapon_bow","rarity":4,"imagePath":"/weapon/weapon_bow.webp"},
+  {"id":"weapon_catalyst","rarity":5,"imagePath":"/weapon/weapon_catalyst.webp"},
 ];
 export const betaArtifacts: ArtifactSetResource[] = [
   {"id":"glacier_and_snowfield","rarity":5,"imagePaths":{"flower":"/artifact/glacier_and_snowfield.webp","plume":"/artifact/glacier_and_snowfield2.webp","sands":"/artifact/glacier_and_snowfield3.webp","goblet":"/artifact/glacier_and_snowfield4.webp","circlet":"/artifact/glacier_and_snowfield5.webp"}},

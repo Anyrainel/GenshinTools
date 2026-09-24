@@ -1601,11 +1601,11 @@ class Vodyanitsa extends CharacterBase {
   readonly buffs = (() => {
     const isC6 = this.constellation >= 6;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // E: microphone attacks shred Hydro and Cryo RES.
+      // E: the initial hit and Horn attacks shred Hydro and Cryo RES.
       new StatBuff(
         cbs(this, "E", ["E"]),
         { receiver: "team", filter: { elements: ["Hydro", "Cryo"] } },
-        [{ key: "resReduction%", value: this.param("E", 5) }]
+        [{ key: "resReduction%", value: this.param("E", 8) }]
       ),
       // Q: Microphone Resonance Bonus while the microphone is playing. The
       // talent text ("使本次伤害获得额外提升") names no multiplicative zone, so
@@ -1617,7 +1617,7 @@ class Vodyanitsa extends CharacterBase {
       ),
     ];
 
-    // P2 + 独奏/协奏: flat DMG per 1000 Max HP above 40,000. 独奏 (17 stacks)
+    // P2 + 领唱/重唱: flat DMG per 1000 Max HP above 40,000. 领唱 (25 stacks)
     // feeds the active character, 协奏 (10 stacks) the off-field ones. With
     // 「流荡风旋」 up both are 异化 into 星·独奏/星·协奏, which only boost
     // Stellar Swirl reactions but for a much larger amount.
@@ -1636,7 +1636,7 @@ class Vodyanitsa extends CharacterBase {
     const hpCap = this.stellarMode ? 6500 : 3500;
     buffs.push(
       new ScalingBuff(
-        { ...cbs(this, "P2", ["E"]), maxStacks: 17 },
+        { ...cbs(this, "P2", ["E"]), maxStacks: 25 },
         soloTarget,
         [],
         "hp",
@@ -1663,7 +1663,7 @@ class Vodyanitsa extends CharacterBase {
         new StatBuff(
           cbs(this, "P1", ["E"]),
           { receiver: "team", filter: { elements: ["Anemo"] } },
-          [{ key: "resReduction%", value: 0.3 }]
+          [{ key: "resReduction%", value: 0.35 }]
         )
       );
     }
@@ -1687,7 +1687,7 @@ class Vodyanitsa extends CharacterBase {
       );
     }
 
-    // C1: every heal grants flat ATK worth 0.7% of Vodyanitsa's Max HP.
+    // C1: every heal grants flat ATK worth 0.8% of Vodyanitsa's Max HP.
     if (this.constellation >= 1) {
       buffs.push(
         new ScalingBuff(
@@ -1696,7 +1696,7 @@ class Vodyanitsa extends CharacterBase {
           [],
           "hp",
           "atk",
-          0.007
+          0.008
         )
       );
     }
@@ -1723,7 +1723,7 @@ class Vodyanitsa extends CharacterBase {
         new StatBuff(
           cbs(this, "C6", ["E"]),
           { receiver: "team", filter: { elements: ["Hydro", "Cryo"] } },
-          [{ key: "dmg%", value: 0.5 }]
+          [{ key: "dmg%", value: 0.6 }]
         )
       );
     }
@@ -1789,33 +1789,30 @@ class Vodyanitsa extends CharacterBase {
           { formula: new DirectFormula(this.param("A", 5), hydroCharge) },
         ],
       },
-      // The Charged Attack Stamina Cost row carries no param, so param6 is the
-      // during-fall DMG and param7/param8 are the low/high impact rows. Only
-      // the high-impact row is modeled — the during-fall and low-impact rows
-      // are intentionally left out.
+      // Param6 is charged-attack stamina; param9 is high-plunge impact DMG.
       "vodyanitsa-plunge-high": {
         label: { zh: "下落·高", en: "Plunge High" },
         parts: [
-          { formula: new DirectFormula(this.param("A", 8), hydroPlunge) },
+          { formula: new DirectFormula(this.param("A", 9), hydroPlunge) },
         ],
       },
       "vodyanitsa-skill": {
-        label: { zh: "E水妖序曲", en: "E Overture" },
+        label: { zh: "E宣叙·晨声纷流", en: "E Sonorous Dawn" },
         parts: [
           { formula: new DirectFormula(this.param("E", 1), hydroSkill, "hp") },
         ],
       },
       "vodyanitsa-mic": {
-        label: { zh: "麦克风伤害", en: "Microphone DMG" },
+        label: { zh: "唤春角笛伤害", en: "Spring's Call DMG" },
         parts: [
           {
-            formula: new DirectFormula(this.param("E", 2), hydroSkill, "hp"),
+            formula: new DirectFormula(this.param("E", 4), hydroSkill, "hp"),
             offField: true,
           },
         ],
       },
       "vodyanitsa-burst": {
-        label: { zh: "Q水妖咏叹调", en: "Q Aria" },
+        label: { zh: "Q终奏·伴尔沉沦", en: "Q Sink With Thee" },
         parts: [
           { formula: new DirectFormula(this.param("Q", 1), hydroBurst, "hp") },
         ],

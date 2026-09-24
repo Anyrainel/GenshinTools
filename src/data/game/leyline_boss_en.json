@@ -1624,7 +1624,7 @@
         {
           "tiers": [5, 6],
           "title": "Thundercall: Sturdy Shield",
-          "short": "Due to the effects of the Ley Line disturbance, at the start of battle, the Nemesis will generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. When the Nemesis channels Anemo power into its Electro greatsword, placing it under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> will interrupt its attack and damage its Ward. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will become paralyzed, its <color=#FFD780FF>Cryo and Anemo RES will be greatly reduced</color>, and it will take a single instance of massive backlash DMG based on the DMG blocked by the Ward. <color=#FFD780FF>Stellar Glimmer reaction DMG</color> will increase the backlash DMGthe Nemesis takes when the Ward is broken.",
+          "short": "Due to the effects of the Ley Line disturbance, at the start of battle, the Nemesis will generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. When the Nemesis channels Anemo power into its Electro greatsword, placing it under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> will interrupt its attack and damage its Ward. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will become paralyzed, its <color=#FFD780FF>Cryo and Anemo RES will be greatly reduced</color>, and it will take a single instance of massive backlash DMG based on the DMG blocked by the Ward. <color=#FFD780FF>Stellar Glimmer reaction DMG</color> will increase the backlash DMG the Nemesis takes when the Ward is broken.",
           "detail": "Due to the effects of the Ley Line disturbance, at the start of battle, the Nemesis will draw on the power of its Electro head to generate a <color=#FFD780FF>resilient Electro Ward</color> to protect itself. At regular intervals, the Nemesis's two heads will act in tandem, channeling Anemo power into its Electro greatsword to unleash a large Electro shockwave. If the Nemesis is under the effect of <color=#FFD780FF>Radiance: Stellar Glimmer</color> at this time, its power will be thrown into disarray and backfire, <color=#FFD780FF>damaging its Ward</color>. Once the <color=#FFD780FF>Ward is broken</color> through Elemental Reactions, the Nemesis will stop attacking from exhaustion and become paralyzed. Its <color=#FFD780FF>Cryo and Anemo RES will also be greatly reduced</color>, and it will take a single instance of high backlash DMG based on the DMG blocked by the Ward. <color=#FFD780FF>Stellar Glimmer reaction DMG</color> will increase the backlash DMG the Nemesis takes when the Ward is broken."
         },
         {
@@ -1694,6 +1694,118 @@
           "name": "Veteran Wind Operative"
         }
       ]
+    },
+    {
+      "id": 10121,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1012041,
+          "name": "Battle-Hardened Domovoy Sculptor: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1012051,
+          "name": "Battle-Hardened Domovoy Sculptor: Hammer-and-Chisel"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1012061,
+          "name": "Battle-Hardened Domovoy Sculptor: Gale Hewing"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Stellar Glimmer Characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Stellar Glimmer characters | Anemo characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Big-Mouthed Jack Frost",
+          "short": "During battle, the Nemesis will periodically attempt to create a Prime Ice sculptures. Once completed, they will transform into Big-Mouthed Jack Frosts that continuously launch snowballs.\\nInflict <color=#FFD780FF>Radiance: Stellar Glimmer</color> on the Nemesis while it is creating the sculptures to turn the ice sculptures into a harmless animal statues instead.",
+          "detail": "During battle, the Nemesis will periodically harness Anemo energy to create Prime Ice sculptures. After a short delay, the sculptures will transform into Big-Mouthed Jack Frosts that continuously launch snowballs.\\nInflict <color=#FFD780FF>Radiance: Stellar Glimmer</color> on the Nemesis while it is creating the sculptures to interrupt the process and turn the ice sculptures into a harmless animal statues instead."
+        },
+        {
+          "tiers": [4, 5, 6],
+          "title": "Big-Mouthed Jack Frost",
+          "short": "When battle begins, the Nemesis will attempt to create a Prime Ice sculpture. Once completed, it will transform into a Big-Mouthed Jack Frost that continuously launches snowballs.\\nInflict <color=#FFD780FF>Radiance: Stellar Glimmer</color> on the Nemesis while it is creating the sculpture to turn the ice sculpture into a harmless animal statue instead.",
+          "detail": "When battle begins, the Nemesis will harness Anemo energy to create a Prime Ice sculpture. After a short delay, the sculpture will transform into a Big-Mouthed Jack Frost that continuously launches snowballs.\\nInflict <color=#FFD780FF>Radiance: Stellar Glimmer</color> on the Nemesis while it is creating the sculpture to interrupt the process and turn the ice sculpture into a harmless animal statue instead."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Creative Frenzy",
+          "short": "Due to the effects of the Ley Line disturbance, the Nemesis will <color=#FFD780FF>start the battle with greatly increased All Elemental RES and Physical RES</color> and will create Prime Ice sculptures more frequently.\\nAfter an ice sculpture is transformed into a small animal statue, it will explode following a brief delay, dealing damage to the Nemesis and <color=#FFD780FF>reducing its All Elemental RES and Physical RES, while further reducing its Anemo RES</color>. This effect can <color=#FFD780FF>stack up to 3 times</color>.",
+          "detail": "Due to the effects of the Ley Line disturbance, the Nemesis will <color=#FFD780FF>start the battle with greatly increased All Elemental RES and Physical RES</color> and will create Prime Ice sculptures more frequently.\\nAfter an ice sculpture is transformed into a small animal statue, it will explode following a brief delay, dealing damage to the Nemesis and <color=#FFD780FF>reducing its All Elemental RES and Physical RES, while further reducing its Anemo RES</color>. This effect can <color=#FFD780FF>stack up to 3 times</color>."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 51390,
+          "name": "Battle-Hardened Domovoy Sculptor"
+        }
+      ]
+    },
+    {
+      "id": 10123,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1012043,
+          "name": "Guardian Blade of Drifting Snow: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1012053,
+          "name": "Guardian Blade of Drifting Snow: Reprise"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1012063,
+          "name": "Guardian Blade of Drifting Snow: Endless Reverberation"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "text": "Stellar Glimmer characters | Electro Anemo Pyro characters"
+        },
+        {
+          "tiers": [5, 6],
+          "text": "Stellar Glimmer characters | Pyro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Ice Coffin",
+          "short": "When its HP falls below a certain threshold, the Nemesis will create a <color=#FFD780FF>Cryo Ward</color> to protect itself. This can only occur once per challenge.\\nWhile the ward is active, the Nemesis will attack with icy storms. If the ward is not destroyed, the Nemesis restores a portion of its HP. If the ward is destroyed, the Nemesis takes backlash DMG. If the Nemesis is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color>, <color=#FFD780FF>Electro and Anemo</color> attacks will deplete the ward more effectively.",
+          "detail": "During battle, when the Nemesis's HP falls below a certain threshold, it will encase itself in an Ice Coffin and gain a <color=#FFD780FF>Cryo Ward</color> to protect itself. This can only occur once per challenge. While the Ice Coffin is active, the Nemesis will continuously unleash icy storms around itself. If the Ice Coffin is not destroyed, the Nemesis restores a portion of its HP and creates ice swords to launch a counterattack. However, if the Ice Coffin sustaining its life is destroyed, it enters a weakened state for a period of time and takes backlash DMG. If the Nemesis is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color>, <color=#FFD780FF>Electro and Anemo</color> attacks will destroy the Ice Coffin more effectively."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Ice Coffin: Twinned Crystal Lattice",
+          "short": "When its HP falls below a certain threshold, the Nemesis will create a <color=#FFD780FF>Cryo Ward</color> to protect itself.\\nWhile the ward is active, the Nemesis will attack with icy storms. If the ward is not destroyed, the Nemesis restores a portion of its HP. If the ward is destroyed, the Nemesis takes backlash DMG. Due to the Ley Line disturbance, its <color=#FFD780FF>Cryo Ward will be more durable</color>. A short time after the ward is broken for the first time, the Nemesis will <color=#FFD780FF>create another Cryo Ward</color>.",
+          "detail": "During battle, when the Nemesis's HP falls below a certain threshold, it will encase itself in an Ice Coffin and gain a <color=#FFD780FF>Cryo Ward</color> to protect itself.\\nWhile the Ice Coffin is active, the Nemesis will continuously unleash icy storms around itself. If the Ice Coffin is not destroyed, the Nemesis restores a portion of its HP and creates ice swords to launch a counterattack. However, if the Ice Coffin sustaining its life is destroyed, it enters a weakened state for a period of time and takes backlash DMG. Due to the Ley Line disturbance, <color=#FFD780FF>the Ice Coffin will be more durable</color>. A short time after it is destroyed for the first time, the Nemesis will <color=#FFD780FF>encase itself in another Ice Coffin</color>."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Ice Coffin: Warped Crystal Lattice",
+          "short": "While the <color=#FFD780FF>Cryo Ward is active</color>, if the Nemesis is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color>, <color=#FFD780FF>the Cryo Ward will transform into a shield that absorbs DMG.</color> Once the shield is destroyed, the Nemesis will take a large amount of backlash DMG.",
+          "detail": "While the <color=#FFD780FF>Ice Coffin is active</color>, if the Nemesis is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color>, <color=#FFD780FF>the Ice Coffin's Cryo Ward will transform into a shield that absorbs DMG</color>. Once the shield is destroyed, the Nemesis will take a large amount of backlash DMG."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 51352,
+          "name": "Guardian Blade of Drifting Snow"
+        }
+      ]
     }
   ],
   "schedules": [
@@ -1740,6 +1852,10 @@
     {
       "id": 5269011,
       "name": "Battle of the Starburst"
+    },
+    {
+      "id": 5269012,
+      "name": "Luminous Battlefront"
     }
   ]
 }

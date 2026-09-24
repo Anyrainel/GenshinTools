@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "anime_game_data",
-    "total_enemies": 2103,
+    "total_enemies": 2171,
     "lang_note": "Names/titles from TextMap. Affix/comment from MonsterAffixExcelConfigData (CHS in AGD).",
     "sources_included": [
       "world_monster",
@@ -526,6 +526,29 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20010593": {
+      "id": 20010593,
+      "name": "雷史莱姆",
+      "title": "雷史莱姆",
+      "affixes": [
+        {
+          "id": 2002,
+          "affix": "感电免疫",
+          "comment": "免疫感电伤害和效果",
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -1424,6 +1447,29 @@
         }
       ]
     },
+    "20010994": {
+      "id": 20010994,
+      "name": "大型冰史莱姆",
+      "title": "大型冰史莱姆",
+      "affixes": [
+        {
+          "id": 2003,
+          "affix": "寒气免疫",
+          "comment": "免疫冰冻和寒元素的减速效果",
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "20011001": {
       "id": 20011001,
       "name": "水史莱姆",
@@ -1522,6 +1568,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20011092": {
+      "id": 20011092,
+      "name": "水史莱姆",
+      "title": "水史莱姆",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -1654,6 +1715,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20011195": {
+      "id": 20011195,
+      "name": "大型水史莱姆",
+      "title": "大型水史莱姆",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -1827,6 +1903,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20011293": {
+      "id": 20011293,
+      "name": "火史莱姆",
+      "title": "火史莱姆",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -2164,6 +2255,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20011505": {
+      "id": 20011505,
+      "name": "大型岩史莱姆",
+      "title": "大型岩史莱姆",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -3079,6 +3185,29 @@
         }
       ]
     },
+    "20050594": {
+      "id": 20050594,
+      "name": "幻形雀·水",
+      "title": "幻形雀·水",
+      "affixes": [
+        {
+          "id": 3003,
+          "affix": "水抗-100%",
+          "comment": "同系伤害抵抗-水-100%",
+          "ability_names": [
+            "MonsterAffix_ElementResist_Water_03"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "20050601": {
       "id": 20050601,
       "name": "幻形游禽·水",
@@ -3673,6 +3802,29 @@
         }
       ]
     },
+    "20060493": {
+      "id": 20060493,
+      "name": "冰飘浮灵",
+      "title": "冰飘浮灵",
+      "affixes": [
+        {
+          "id": 2003,
+          "affix": "寒气免疫",
+          "comment": "免疫冰冻和寒元素的减速效果",
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "20060501": {
       "id": 20060501,
       "name": "雷飘浮灵",
@@ -3722,6 +3874,29 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20060593": {
+      "id": 20060593,
+      "name": "雷飘浮灵",
+      "title": "雷飘浮灵",
+      "affixes": [
+        {
+          "id": 2002,
+          "affix": "感电免疫",
+          "comment": "免疫感电伤害和效果",
+          "ability_names": [
+            "MonsterAffix_ShockResist"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -3785,6 +3960,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "20060693": {
+      "id": 20060693,
+      "name": "火飘浮灵",
+      "title": "火飘浮灵",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -4014,6 +4204,11 @@
           ]
         }
       ]
+    },
+    "20081011": {
+      "id": 20081011,
+      "name": "霜夜巡天灵主",
+      "title": "圣辉的庇卫"
     },
     "20081101": {
       "id": 20081101,
@@ -4363,6 +4558,21 @@
       "name": "打手丘丘人",
       "title": "丘丘人"
     },
+    "21010296": {
+      "id": 21010296,
+      "name": "打手丘丘人",
+      "title": "丘丘人",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "21010299": {
       "id": 21010299,
       "name": "打手丘丘人",
@@ -4699,6 +4909,29 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "21010593": {
+      "id": 21010593,
+      "name": "火箭丘丘人",
+      "title": "射手丘丘人",
+      "affixes": [
+        {
+          "id": 2001,
+          "affix": "点燃免疫",
+          "comment": "免疫点燃伤害",
+          "ability_names": [
+            "MonsterAffix_BurningResist"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -5069,6 +5302,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "21011093": {
+      "id": 21011093,
+      "name": "雷箭丘丘人",
+      "title": "射手丘丘人",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -5963,6 +6211,21 @@
       "name": "丘丘霜铠王",
       "title": "丘丘霜铠王"
     },
+    "21020496": {
+      "id": 21020496,
+      "name": "丘丘霜铠王",
+      "title": "丘丘霜铠王",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "21020501": {
       "id": 21020501,
       "name": "丘丘岩盔王",
@@ -6532,6 +6795,21 @@
       "name": "水丘丘萨满",
       "title": "水丘丘萨满"
     },
+    "21030195": {
+      "id": 21030195,
+      "name": "水丘丘萨满",
+      "title": "水丘丘萨满",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "21030201": {
       "id": 21030201,
       "name": "草丘丘萨满",
@@ -6780,6 +7058,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "21030393": {
+      "id": 21030393,
+      "name": "风丘丘萨满",
+      "title": "风丘丘萨满",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -7048,6 +7341,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "21030703": {
+      "id": 21030703,
+      "name": "神神秘秘大大丘丘",
+      "title": "误入秘境迷糊悟道的萨满？",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -10102,6 +10410,21 @@
         }
       ]
     },
+    "23010103": {
+      "id": 23010103,
+      "name": "愚人众先遣队·冰铳重卫士",
+      "title": "先遣队·冰铳重卫士",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "23010201": {
       "id": 23010201,
       "name": "愚人众先遣队·水铳重卫士",
@@ -10151,6 +10474,21 @@
       "id": 23010603,
       "name": "愚人众先遣队·火铳游击兵",
       "title": "先遣队·火铳游击兵"
+    },
+    "23010604": {
+      "id": 23010604,
+      "name": "愚人众先遣队·火铳游击兵",
+      "title": "先遣队·火铳游击兵",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
     },
     "23011101": {
       "id": 23011101,
@@ -13556,6 +13894,45 @@
         }
       ]
     },
+    "23079205": {
+      "id": 23079205,
+      "name": "愚人众特辖队·冰雹重炮手",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30804,
+          "affix": "铁皮机器-S-蓝",
+          "comment": "铁皮机器-S-蓝",
+          "ability_names": [
+            "Monster_Fatuimecha_KuuvahkiType_South"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "23079290": {
       "id": 23079290,
       "name": "愚人众特辖队·冰雹重炮手",
@@ -13707,6 +14084,29 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "23079305": {
+      "id": 23079305,
+      "name": "愚人众特辖队·雷霰近卫军",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30815,
+          "affix": "铁皮集群-远程",
+          "comment": "铁皮集群-远程",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Range"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -15241,6 +15641,21 @@
         }
       ]
     },
+    "24010195": {
+      "id": 24010195,
+      "name": "遗迹守卫",
+      "title": "遗迹守卫",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "24010201": {
       "id": 24010201,
       "name": "遗迹猎者",
@@ -16682,6 +17097,37 @@
         }
       ]
     },
+    "24060994": {
+      "id": 24060994,
+      "name": "压制特化型机关",
+      "title": "压制特化型",
+      "affixes": [
+        {
+          "id": 40601,
+          "affix": "正义机器-荒",
+          "comment": "正义机器-荒性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Pneuma"
+          ]
+        },
+        {
+          "id": 40604,
+          "affix": "正义机器-电池",
+          "comment": "正义机器-电池词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_02"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "24061001": {
       "id": 24061001,
       "name": "歼灭特化型机关",
@@ -17202,6 +17648,37 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "24065204": {
+      "id": 24065204,
+      "name": "机关·算力增幅器",
+      "title": "机关·算力增幅器",
+      "affixes": [
+        {
+          "id": 40602,
+          "affix": "正义机器-光",
+          "comment": "正义机器-光性词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Ousia"
+          ]
+        },
+        {
+          "id": 40604,
+          "affix": "正义机器-电池",
+          "comment": "正义机器-电池词缀",
+          "ability_names": [
+            "Monster_MachinaIustitia_Coil_02"
+          ]
+        },
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -19695,6 +20172,21 @@
         }
       ]
     },
+    "25010294": {
+      "id": 25010294,
+      "name": "盗宝团·斥候",
+      "title": "盗宝团·斥候",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "25010301": {
       "id": 25010301,
       "name": "盗宝团·火之药剂师",
@@ -19757,6 +20249,21 @@
       "id": 25010393,
       "name": "盗宝团·火之药剂师",
       "title": "盗宝团·火之药剂师"
+    },
+    "25010394": {
+      "id": 25010394,
+      "name": "盗宝团·火之药剂师",
+      "title": "盗宝团·火之药剂师",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
     },
     "25010401": {
       "id": 25010401,
@@ -19866,6 +20373,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "25010794": {
+      "id": 25010794,
+      "name": "盗宝团·杂工",
+      "title": "盗宝团·杂工",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -20415,6 +20937,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "25080393": {
+      "id": 25080393,
+      "name": "野伏·机巧番",
+      "title": "野伏·机巧番",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -21011,6 +21548,21 @@
         }
       ]
     },
+    "25110292": {
+      "id": 25110292,
+      "name": "厄灵·风之魔鸢",
+      "title": "厄灵·风之魔鸢",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "25110301": {
       "id": 25110301,
       "name": "厄灵·炎之魔蝎",
@@ -21073,6 +21625,21 @@
           "comment": "5.2怪物自走棋-疲惫伤害-Child",
           "ability_names": [
             "MonsterAffix_Activity_MonsterChess_Tired_Child"
+          ]
+        }
+      ]
+    },
+    "25110393": {
+      "id": 25110393,
+      "name": "厄灵·炎之魔蝎",
+      "title": "厄灵·炎之魔蝎",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -24140,6 +24707,151 @@
         }
       ]
     },
+    "25135202": {
+      "id": 25135202,
+      "name": "游雪的护刃",
+      "title": "游雪的护刃",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135203": {
+      "id": 25135203,
+      "name": "游雪的护刃",
+      "title": "游雪的护刃",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135204": {
+      "id": 25135204,
+      "name": "游雪的护刃",
+      "title": "游雪的护刃",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135205": {
+      "id": 25135205,
+      "name": "游雪的护刃",
+      "title": "游雪的护刃",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25135206": {
+      "id": 25135206,
+      "name": "游雪的护刃",
+      "title": "游雪的护刃",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25135207": {
+      "id": 25135207,
+      "name": "游雪的护刃",
+      "title": "游雪的护刃",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25135401": {
+      "id": 25135401,
+      "name": "「永恒冰雪的幻景」",
+      "title": "「永恒冰雪的幻景」",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "25137001": {
       "id": 25137001,
       "name": "苍遒的木灵长",
@@ -24523,6 +25235,91 @@
         }
       ]
     },
+    "25139003": {
+      "id": 25139003,
+      "name": "历经百战的矮灵雕刻师",
+      "title": "历经百战的矮灵雕刻师",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25139004": {
+      "id": 25139004,
+      "name": "历经百战的矮灵雕刻师",
+      "title": "历经百战的矮灵雕刻师",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 51391,
+          "affix": "矮灵-地方传奇-深渊词缀",
+          "comment": "矮灵-地方传奇-深渊词缀",
+          "ability_names": [
+            "Monster_Karzelek_Tsereteli_Abyss"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25139005": {
+      "id": 25139005,
+      "name": "历经百战的矮灵雕刻师",
+      "title": "历经百战的矮灵雕刻师",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 51391,
+          "affix": "矮灵-地方传奇-深渊词缀",
+          "comment": "矮灵-地方传奇-深渊词缀",
+          "ability_names": [
+            "Monster_Karzelek_Tsereteli_Abyss"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
     "25140101": {
       "id": 25140101,
       "name": "不灭衍生造物",
@@ -24540,7 +25337,7 @@
     },
     "25140201": {
       "id": 25140201,
-      "name": "永恒燃烧的幻景",
+      "name": "「永恒燃烧的幻景」",
       "title": "影中强光骤逝后的残余",
       "affixes": [
         {
@@ -24563,7 +25360,38 @@
     },
     "25140202": {
       "id": 25140202,
-      "name": "永恒燃烧的幻景",
+      "name": "「永恒燃烧的幻景」",
+      "title": "影中强光骤逝后的残余",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5673,
+          "affix": "7.0 火鸟精英词缀",
+          "comment": "7.0 火鸟精英词缀",
+          "ability_names": [
+            "MonsterAffix_Zharptitsa_Elite"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25140203": {
+      "id": 25140203,
+      "name": "「永恒燃烧的幻景」",
       "title": "影中强光骤逝后的残余",
       "affixes": [
         {
@@ -24907,6 +25735,21 @@
       "name": "镀金旅团·沙中净水",
       "title": "镀金旅团·沙中净水"
     },
+    "25310193": {
+      "id": 25310193,
+      "name": "镀金旅团·沙中净水",
+      "title": "镀金旅团·沙中净水",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "25310201": {
       "id": 25310201,
       "name": "镀金旅团·炽阳凝冰",
@@ -24964,6 +25807,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "25310292": {
+      "id": 25310292,
+      "name": "镀金旅团·炽阳凝冰",
+      "title": "镀金旅团·炽阳凝冰",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -25084,6 +25942,21 @@
         }
       ]
     },
+    "25410292": {
+      "id": 25410292,
+      "name": "镀金旅团·灵风猎手",
+      "title": "镀金旅团·魔岩役使",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "25410301": {
       "id": 25410301,
       "name": "镀金旅团·炽沙叙事人",
@@ -25180,6 +26053,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "25410394": {
+      "id": 25410394,
+      "name": "镀金旅团·炽沙叙事人",
+      "title": "镀金旅团·炽沙叙事人",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -27222,6 +28110,21 @@
         }
       ]
     },
+    "25515203": {
+      "id": 25515203,
+      "name": "历经百战的穿浪之梭",
+      "title": "？？？",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "25515301": {
       "id": 25515301,
       "affixes": [
@@ -27987,6 +28890,45 @@
         }
       ]
     },
+    "26010221": {
+      "id": 26010221,
+      "name": "炽热骗骗花",
+      "title": "炽热骗骗花",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
+          ]
+        }
+      ]
+    },
     "26010301": {
       "id": 26010301,
       "name": "电气骗骗花",
@@ -28011,6 +28953,45 @@
           "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
           "ability_names": [
             "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26010321": {
+      "id": 26010321,
+      "name": "电气骗骗花",
+      "title": "电气骗骗花",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30107,
+          "affix": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.4幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_4"
           ]
         }
       ]
@@ -28958,6 +29939,21 @@
         }
       ]
     },
+    "26060193": {
+      "id": 26060193,
+      "name": "雷萤",
+      "title": "雷萤",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "26060201": {
       "id": 26060201,
       "name": "水萤",
@@ -29004,6 +30000,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "26060293": {
+      "id": 26060293,
+      "name": "水萤",
+      "title": "水萤",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -29077,6 +30088,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "26090195": {
+      "id": 26090195,
+      "name": "浮游水蕈兽",
+      "title": "浮游水蕈兽",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -29203,6 +30229,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "26090397": {
+      "id": 26090397,
+      "name": "浮游风蕈兽",
+      "title": "浮游风蕈兽",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -29478,6 +30519,21 @@
         }
       ]
     },
+    "26100393": {
+      "id": 26100393,
+      "name": "圣骸赤鹫",
+      "title": "赤炎·圣骸赤鹫",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "26100401": {
       "id": 26100401,
       "name": "圣骸毒蝎",
@@ -29509,6 +30565,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "26100493": {
+      "id": 26100493,
+      "name": "圣骸毒蝎",
+      "title": "苍雷·圣骸毒蝎",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -29598,6 +30669,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "26120293": {
+      "id": 26120293,
+      "name": "有翼冰本真蕈",
+      "title": "有翼冰本真蕈",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -30444,6 +31530,21 @@
         }
       ]
     },
+    "26160193": {
+      "id": 26160193,
+      "name": "坚盾重甲蟹",
+      "title": "坚盾重甲蟹",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
     "26160201": {
       "id": 26160201,
       "name": "大天使海兔",
@@ -30545,6 +31646,21 @@
           "comment": "脚底光环、出生特效",
           "ability_names": [
             "MonsterChess_Monster_Common_EnemyBottom"
+          ]
+        }
+      ]
+    },
+    "26160393": {
+      "id": 26160393,
+      "name": "泡泡雄海马",
+      "title": "泡泡雄海马",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -32667,6 +33783,21 @@
           "comment": "6.6剑道活动简单难度标记",
           "ability_names": [
             "MonsterAffix_Ninken_Difficulty"
+          ]
+        }
+      ]
+    },
+    "28020909": {
+      "id": 28020909,
+      "name": "影狼丸",
+      "title": "???",
+      "affixes": [
+        {
+          "id": 5685,
+          "affix": "7.1斗蛐蛐怪物通用逻辑词缀",
+          "comment": "GV标记、霸体、等其他定制逻辑",
+          "ability_names": [
+            "Activity_V7_1_MvM3_MonsterTag"
           ]
         }
       ]
@@ -35157,6 +36288,11 @@
         }
       ]
     },
+    "29160101": {
+      "id": 29160101,
+      "name": "死执",
+      "title": "若娜瓦"
+    },
     "84001011": {
       "id": 84001011,
       "name": "草史莱姆",
@@ -35225,17 +36361,7 @@
     "84001052": {
       "id": 84001052,
       "name": "雷史莱姆",
-      "title": "雷史莱姆",
-      "affixes": [
-        {
-          "id": 2002,
-          "affix": "感电免疫",
-          "comment": "免疫感电伤害和效果",
-          "ability_names": [
-            "MonsterAffix_ShockResist"
-          ]
-        }
-      ]
+      "title": "雷史莱姆"
     },
     "84001061": {
       "id": 84001061,
@@ -35275,17 +36401,7 @@
     "84001082": {
       "id": 84001082,
       "name": "冰史莱姆",
-      "title": "冰史莱姆",
-      "affixes": [
-        {
-          "id": 2003,
-          "affix": "寒气免疫",
-          "comment": "免疫冰冻和寒元素的减速效果",
-          "ability_names": [
-            "MonsterAffix_IceAllResist"
-          ]
-        }
-      ]
+      "title": "冰史莱姆"
     },
     "84001091": {
       "id": 84001091,
@@ -35547,6 +36663,16 @@
       "name": "深渊咏者·渊火",
       "title": "漆黑渊薮的噬身之火"
     },
+    "84205012": {
+      "id": 84205012,
+      "name": "嗜岩·兽境猎犬",
+      "title": "兽境猎犬"
+    },
+    "84205022": {
+      "id": 84205022,
+      "name": "嗜雷·兽境猎犬",
+      "title": "兽境猎犬"
+    },
     "84301011": {
       "id": 84301011,
       "name": "愚人众先遣队·冰铳重卫士",
@@ -35581,6 +36707,21 @@
       "id": 84301062,
       "name": "愚人众先遣队·火铳游击兵",
       "title": "先遣队·火铳游击兵"
+    },
+    "84307911": {
+      "id": 84307911,
+      "name": "愚人众特辖队·火刃突击队",
+      "title": "愚人众特辖队·火刃突击队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        }
+      ]
     },
     "84401011": {
       "id": 84401011,
@@ -35657,6 +36798,11 @@
       "name": "海乱鬼·炎威",
       "title": "海乱鬼·炎威"
     },
+    "84511022": {
+      "id": 84511022,
+      "name": "厄灵·风之魔鸢",
+      "title": "厄灵·风之魔鸢"
+    },
     "84521012": {
       "id": 84521012,
       "name": "镀金旅团·阵前斧手",
@@ -35666,6 +36812,11 @@
       "id": 84531012,
       "name": "镀金旅团·沙中净水",
       "title": "镀金旅团·沙中净水"
+    },
+    "84541022": {
+      "id": 84541022,
+      "name": "镀金旅团·灵风猎手",
+      "title": "镀金旅团·魔岩役使"
     },
     "84550122": {
       "id": 84550122,
@@ -35721,6 +36872,11 @@
       "name": "浮游水蕈兽",
       "title": "浮游水蕈兽"
     },
+    "84609012": {
+      "id": 84609012,
+      "name": "浮游水蕈兽",
+      "title": "浮游水蕈兽"
+    },
     "84612021": {
       "id": 84612021,
       "name": "有翼冰本真蕈",
@@ -35750,6 +36906,16 @@
       "id": 84626022,
       "name": "溯流·大灵显化身",
       "title": "窟岩·大灵显化身"
+    },
+    "84626082": {
+      "id": 84626082,
+      "name": "凛冽·大灵显化身",
+      "title": "凛冽·大灵显化身"
+    },
+    "84626112": {
+      "id": 84626112,
+      "name": "雳震·大灵显化身",
+      "title": "雳震·大灵显化身"
     }
   }
 }

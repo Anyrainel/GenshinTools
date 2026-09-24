@@ -11,10 +11,12 @@ import type {
 } from './types';
 
 export const characters: CharacterResource[] = [
+  {"id": "vodyanitsa", "rarity": 5, "imagePath": "/character/vodyanitsa.webp"},
+  {"id": "vesna", "rarity": 5, "imagePath": "/character/vesna.webp"},
+  {"id": "traveler_cryo", "rarity": 5, "imagePath": "/character/traveler.webp"},
   {"id": "alyosha", "rarity": 4, "imagePath": "/character/alyosha.webp"},
   {"id": "odette", "rarity": 5, "imagePath": "/character/odette.webp"},
   {"id": "sandrone", "rarity": 5, "imagePath": "/character/sandrone.webp"},
-  {"id": "traveler_cryo", "rarity": 5, "imagePath": "/character/traveler.webp"},
   {"id": "prune", "rarity": 4, "imagePath": "/character/prune.webp"},
   {"id": "lohen", "rarity": 5, "imagePath": "/character/lohen.webp"},
   {"id": "nicole", "rarity": 5, "imagePath": "/character/nicole.webp"},
@@ -229,7 +231,7 @@ export const artifacts: ArtifactSetResource[] = [
 ];
 
 export const artifactHalfSets: ArtifactHalfSet[] = [
-  {"id": "atk%-18", "setIds": ["brave_heart", "echoes_of_an_offering", "resolution_of_sojourner", "gladiators_finale", "vermillion_hereafter", "shimenawas_reminiscence", "nighttime_whispers_in_the_echoing_woods", "fragment_of_harmonic_whimsy", "unfinished_reverie", "a_day_carved_from_rising_winds", "disenchantment_in_deep_shadow", "heart_of_the_furnace", "scarlet_proof"]},
+  {"id": "atk%-18", "setIds": ["brave_heart", "echoes_of_an_offering", "resolution_of_sojourner", "gladiators_finale", "vermillion_hereafter", "shimenawas_reminiscence", "nighttime_whispers_in_the_echoing_woods", "fragment_of_harmonic_whimsy", "unfinished_reverie", "a_day_carved_from_rising_winds", "disenchantment_in_deep_shadow", "scarlet_proof", "heart_of_the_furnace"]},
   {"id": "em-80", "setIds": ["instructor", "wanderers_troupe", "gilded_dreams", "flower_of_paradise_lost", "night_of_the_skys_unveiling", "aubade_of_morningstar_and_moon"]},
   {"id": "er-20", "setIds": ["scholar", "the_exile", "emblem_of_severed_fate", "silken_moons_serenade", "celestial_gift"]},
   {"id": "heal%-15", "setIds": ["oceanhued_clam", "maiden_beloved", "song_of_days_past"]},
@@ -256,18 +258,24 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
 ];
 
 export const weapons: WeaponResource[] = [
+  {"id": "breezeborne_refrain", "rarity": 4, "imagePath": "/weapon/breezeborne_refrain.webp"},
+  {"id": "winters_heavy_heart", "rarity": 4, "imagePath": "/weapon/winters_heavy_heart.webp"},
+  {"id": "silver_light", "rarity": 4, "imagePath": "/weapon/silver_light.webp"},
+  {"id": "new_bough", "rarity": 4, "imagePath": "/weapon/new_bough.webp"},
+  {"id": "hymn_of_the_maelstrom", "rarity": 5, "imagePath": "/weapon/hymn_of_the_maelstrom.webp"},
+  {"id": "beyond_the_chrysalis", "rarity": 5, "imagePath": "/weapon/beyond_the_chrysalis.webp"},
+  {"id": "jade_vista", "rarity": 4, "imagePath": "/weapon/jade_vista.webp"},
+  {"id": "covenant_of_frost_and_snow", "rarity": 4, "imagePath": "/weapon/covenant_of_frost_and_snow.webp"},
+  {"id": "clash_of_kings", "rarity": 4, "imagePath": "/weapon/clash_of_kings.webp"},
+  {"id": "echoes_of_the_heart", "rarity": 4, "imagePath": "/weapon/echoes_of_the_heart.webp"},
+  {"id": "frostbreath", "rarity": 4, "imagePath": "/weapon/frostbreath.webp"},
+  {"id": "song_of_the_vigil", "rarity": 4, "imagePath": "/weapon/song_of_the_vigil.webp"},
+  {"id": "forged_by_the_golden_melody", "rarity": 4, "imagePath": "/weapon/forged_by_the_golden_melody.webp"},
+  {"id": "blade_of_atonement", "rarity": 4, "imagePath": "/weapon/blade_of_atonement.webp"},
+  {"id": "heretics_molten_blade", "rarity": 4, "imagePath": "/weapon/heretics_molten_blade.webp"},
+  {"id": "emberwell", "rarity": 4, "imagePath": "/weapon/emberwell.webp"},
   {"id": "exaiphanes_blade", "rarity": 5, "imagePath": "/weapon/exaiphanes_blade.webp"},
   {"id": "whitelake_frostfeather", "rarity": 5, "imagePath": "/weapon/whitelake_frostfeather.webp"},
-  {"id": "blade_of_atonement", "rarity": 4, "imagePath": "/weapon/blade_of_atonement.webp"},
-  {"id": "clash_of_kings", "rarity": 4, "imagePath": "/weapon/clash_of_kings.webp"},
-  {"id": "covenant_of_frost_and_snow", "rarity": 4, "imagePath": "/weapon/covenant_of_frost_and_snow.webp"},
-  {"id": "echoes_of_the_heart", "rarity": 4, "imagePath": "/weapon/echoes_of_the_heart.webp"},
-  {"id": "emberwell", "rarity": 4, "imagePath": "/weapon/emberwell.webp"},
-  {"id": "forged_by_the_golden_melody", "rarity": 4, "imagePath": "/weapon/forged_by_the_golden_melody.webp"},
-  {"id": "frostbreath", "rarity": 4, "imagePath": "/weapon/frostbreath.webp"},
-  {"id": "heretics_molten_blade", "rarity": 4, "imagePath": "/weapon/heretics_molten_blade.webp"},
-  {"id": "jade_vista", "rarity": 4, "imagePath": "/weapon/jade_vista.webp"},
-  {"id": "song_of_the_vigil", "rarity": 4, "imagePath": "/weapon/song_of_the_vigil.webp"},
   {"id": "a_teaspoon_of_transcendence", "rarity": 5, "imagePath": "/weapon/a_teaspoon_of_transcendence.webp"},
   {"id": "disaster_and_remorse", "rarity": 5, "imagePath": "/weapon/disaster_and_remorse.webp"},
   {"id": "angelos_heptades", "rarity": 5, "imagePath": "/weapon/angelos_heptades.webp"},

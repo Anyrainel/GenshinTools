@@ -3,14 +3,12 @@
 
 export const i18nBetaData = {
   characters: {
-    "vesna": { en: "Vesna", zh: "薇斯纳" },
-    "vodyanitsa": { en: "Vodyanitsa", zh: "沃雅妮莎" },
+    "mitya": { en: "Mitya", zh: "米提亚" },
+    "valeriy": { en: "Valeriy", zh: "瓦列里" },
   },
   weapons: {
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
-    "weapon_bow": { en: "Weapon: Bow", zh: "武器-弓" },
     "weapon_catalyst": { en: "Weapon: Catalyst", zh: "武器-法器" },
-    "weapon_sword": { en: "Weapon: Sword", zh: "武器-单手剑" },
   },
   artifacts: {
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },

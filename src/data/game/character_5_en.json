@@ -4756,7 +4756,7 @@
       },
       {
         "name": "Echo of Winter Daydreams",
-        "descHtml": "Shows the locations of <span style=\"color: #FFD780FF;\">Snezhnaya's Local Specialties</span> on the mini-map.<br>Practicing dance in one's spare time might even trigger other effects..."
+        "descHtml": "Shows the locations of <span style=\"color: #FFD780FF;\">Snezhnaya's Local Specialties</span> on the mini-map, and this effect also applies in the Shadow Realm.<br>Practicing dance in one's spare time might even trigger other effects..."
       }
     ],
     "constellations": [
@@ -6592,6 +6592,235 @@
     ],
     "glossary": null
   },
+  "vesna": {
+    "id": "10000143",
+    "name": "Vesna",
+    "skills": [
+      {
+        "name": "A. Vila Blade Dance",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs up to 6 consecutive strikes.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to trample opponents in front of her.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along her path and dealing AoE DMG upon impact.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}×2"},
+          {"label": "4-Hit DMG", "template": "{param4:F1P}"},
+          {"label": "5-Hit DMG", "template": "{param5:F1P}"},
+          {"label": "6-Hit DMG", "template": "{param6:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param7:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param8:F1}"},
+          {"label": "Plunge DMG", "template": "{param9:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param10:P}/{param11:P}"}
+        ]
+      },
+      {
+        "name": "E. The Art of Victory",
+        "descHtml": "Calls forth Spirit Blades passed down through generations of the Vila to deal <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span>, then switches to the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode and gains 2 stacks of <span style=\"color: #FFD780FF;\">Sword Essence</span>.<br><br><span style=\"color: #FFD780FF;\">Armed for Action</span><br>DMG dealt by Vesna with her Normal Attacks, Charged Attacks, and Plunging Attacks become <span style=\"color: #80FFD7FF;\">Anemo DMG</span> that cannot be overridden by another elemental infusion instead. She will also summon a wind pinion that attacks the opponent at the same time, dealing additional <span style=\"color: #80FFD7FF;\">Anemo DMG</span>. Each time the wind pinion is summoned, Vesna will regenerate a certain amount of <span style=\"color: #FFD780FF;\">Sword Essence</span>.<br>Vesna can consume <span style=\"color: #FFD780FF;\">Sword Essence</span> to unleash the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span>, which deals to the opponent <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br>Each use of the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span> in the same instance of <span style=\"color: #FFD780FF;\">Armed for Action</span> will increase the level of <span style=\"color: #FFD780FF;\">Windborne Sword</span>, beginning from Lv. 1 to Lv. 3 max, for more <span style=\"color: #80FFD7FF;\">Anemo DMG</span>. Using <span style=\"color: #FFD780FF;\">Windborne Sword</span> at Lv. 2 and Lv. 3 will also summon <span style=\"color: #FFD780FF;\">Spirit Blades</span> which deal <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br>Vesna will exit the mode when its duration ends or when she has used <span style=\"color: #FFD780FF;\">Windborne Sword</span> at the highest level 3 times. Exiting will clear all remaining <span style=\"color: #FFD780FF;\">Sword Essence</span> she has accrued.<br>Additionally, when in this mode, Vesna's resistance to interruption is increased.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: DMG dealt with the <span style=\"color: #FFD780FF;\">Spirit Blades</span> becomes <span style=\"color: #80FFD7FF;\">Anemo DMG</span> that is also considered Stellar Swirl reaction DMG.",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P}"},
+          {"label": "Windborne Sword Lv. 1 DMG", "template": "{param2:F1P}"},
+          {"label": "Windborne Sword Lv. 2 DMG", "template": "{param3:F1P}"},
+          {"label": "Windborne Sword Lv. 2 Spirit Blade DMG", "template": "{param4:F1P}"},
+          {"label": "Windborne Sword Lv. 3 Spirit Blade DMG", "template": "{param6:F1P} ×4"},
+          {"label": "Windborne Sword Lv. 3 Spirit Blade Final Hit DMG", "template": "{param8:F1P}"},
+          {"label": "Windborne Sword Lv. 2 Spirit Blade Stellar Swirl DMG", "template": "{param5:F1P}"},
+          {"label": "Windborne Sword Lv. 3 Spirit Blade Stellar Swirl DMG", "template": "{param7:F1P} ×4"},
+          {"label": "Windborne Sword Lv. 3 Spirit Blade Final Hit Stellar Swirl DMG", "template": "{param9:F1P}"},
+          {"label": "Wind Pinion DMG", "template": "{param10:F1P}"},
+          {"label": "Armed for Action Duration", "template": "{param12:F1}s"},
+          {"label": "CD", "template": "{param14:F1}s"}
+        ]
+      },
+      {
+        "name": "",
+        "descHtml": "",
+        "details": []
+      },
+      {
+        "name": "",
+        "descHtml": "",
+        "details": []
+      },
+      {
+        "name": "Q. For the Tsaritsa!",
+        "descHtml": "Summons multiple <span style=\"color: #FFD780FF;\">Spirit Blades</span>, dealing <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span>. Also gains a stack of <span style=\"color: #FFD780FF;\">Sword Essence</span>.",
+        "details": [
+          {"label": "Spirit Blade DMG", "template": "{param1:F1P}"},
+          {"label": "Spirit Blade Stellar Swirl DMG", "template": "{param2:F1P}"},
+          {"label": "CD", "template": "{param3:F1}s"},
+          {"label": "Energy Cost", "template": "{param4:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Rite of Spring's Procession",
+        "descHtml": "After Vesna uses the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span> or the Elemental Burst <span style=\"color: #FFD780FF;\">For the Tsaritsa!</span>, she also gains 1 stack of <span style=\"color: #FFD780FF;\">Disciplinary Action</span> which lasts 20s. Max 6 stacks, and the duration of each stack is independent of the others'.<br>When she has <span style=\"color: #FFD780FF;\">Disciplinary Action</span> stacks active, the <span style=\"color: #FFD780FF;\">Spirit Blades</span> summoned by Vesna will deal DMG equal to (100% + 10% × Disciplinary Action stack count) of the original DMG instead. All active stacks of <span style=\"color: #FFD780FF;\">Disciplinary Action</span> are cleared when Vesna uses the Elemental Skill <span style=\"color: #FFD780FF;\">The Art of Victory</span> or when she leaves the field."
+      },
+      {
+        "name": "Truth Prevails",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: Vesna will gain the corresponding effect based on the Elemental Type of her party members: <br>· For every <span style=\"color: #99FFFFFF;\">Cryo</span> or <span style=\"color: #80FFD7FF;\">Anemo</span> character in her current party, Vesna's ATK increases by 6%; and<br>· For every character of all other Elemental Types in her current party, Vesna's Elemental Mastery increases by 25 instead."
+      },
+      {
+        "name": "Stellar Jubilee: Splendid Prelude",
+        "descHtml": "When party members trigger Cryo Swirl, it will be changed to a Stellar Swirl reaction, and party members' Base DMG for the Stellar Swirl will be increased based on Vesna's ATK. Every 100 ATK she has increases the Base Stellar Swirl DMG by 0.7%. The maximum DMG increase that can be gained this way is 14%.<br>After a party member triggers a Stellar Swirl reaction nearby, Vesna enters the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s."
+      },
+      {
+        "name": "The Grand Circuit",
+        "descHtml": "Holding on Sprint or Jump when Vesna is not in combat will cause her to enter the <span style=\"color: #FFD780FF;\">Coursing</span> state.<br><br><span style=\"color: #FFD780FF;\">Coursing</span><br>Continuously consumes Stamina to hover in mid-air. Sprinting or tapping Jump to go higher expends additional Stamina. Including the hold on Jump that triggers <span style=\"color: #FFD780FF;\">Coursing</span>, Vesna can go higher up to 3 times in each instance of the <span style=\"color: #FFD780FF;\">Coursing</span> state.<br><br>Additionally, in Snezhnaya (excluding Nod-Krai), when Vesna is switched onto the field while the currently active party member is in mid-air and not in combat, she will immediately enter the <span style=\"color: #FFD780FF;\">Coursing</span> state and regenerate 50 Stamina. This effect can trigger once every 10s, and does not take effect in Domains, Trounce Domains, or the Spiral Abyss."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. Winter's Farewell Feast",
+        "descHtml": "When in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, Vesna can unleash <span style=\"color: #FFD780FF;\">Windborne Sword</span> at the highest level 4 times instead of 3. Also, each time she enters the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, she will not consume <span style=\"color: #FFD780FF;\">Sword Essence</span> the first time she uses <span style=\"color: #FFD780FF;\">Windborne Sword</span> at the highest level.<br>Additionally, Vesna deals 20% increased Stellar Swirl reaction DMG when in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode."
+      },
+      {
+        "name": "2. Kolo of Spring's Arrival",
+        "descHtml": "The Ascension Talent <span style=\"color: #FFD780FF;\">Rite of Spring's Procession</span> is enhanced: Vesna gains the maximum number of <span style=\"color: #FFD780FF;\">Disciplinary Action</span> stacks when she enters <span style=\"color: #FFD780FF;\">Armed for Action</span> mode. Vesna's ATK is increased by 40% when she has maximum <span style=\"color: #FFD780FF;\">Disciplinary Action</span> stacks.<br>You must unlock the Ascension Talent \"Rite of Spring's Procession\" to gain access to the above effects."
+      },
+      {
+        "name": "3. Winter's Last Offering",
+        "descHtml": "Increases the Level of the Elemental Skill <span style=\"color: #FFD780FF;\">The Art of Victory</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. Glory to Our Forebears",
+        "descHtml": "The Ascension Talent <span style=\"color: #FFD780FF;\">Truth Prevails</span> is enhanced: Its ATK and Elemental Mastery bonuses increase to 3 times their original values."
+      },
+      {
+        "name": "5. The Nobleborn's Charge",
+        "descHtml": "Increases the Level of the Elemental Burst <span style=\"color: #FFD780FF;\">For the Tsaritsa!</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. Unwavering Ardor",
+        "descHtml": "Tapping on Normal Attack or Elemental Skill in the 5s after Vesna uses <span style=\"color: #FFD780FF;\">Windborne Sword</span> at its highest level will unleash the secret Vila ability <span style=\"color: #FFD780FF;\">Windborne Sword: Transpose</span>, dealing <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 150% of Vesna's ATK as well as summoning <span style=\"color: #FFD780FF;\">Spirit Blades</span> which deal an additional instance of <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 200% of Vesna's ATK. If Vesna is in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, she will also summon a wind pinion to perform Coordinated Attacks against opponents.<br>Additionally, Vesna's Stellar Swirl reaction DMG dealt is <span style=\"color: #FFD780FF;\">elevated</span> by 20%."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "elevated",
+        "descHtml": "Special DMG Boost effect. It is calculated independently of other DMG Boost effects."
+      },
+      {
+        "name": "Armed for Action",
+        "descHtml": "Vesna switches to this mode after using the Elemental Skill <span style=\"color: #FFD780FF;\">The Art of Victory</span>. In this mode, which lasts up to 15s:<br>· Vesna's resistance to interruption is increased.<br>· DMG dealt by Vesna with her Normal Attacks, Charged Attacks, and Plunging Attacks becomes <span style=\"color: #80FFD7FF;\">Anemo DMG</span> that cannot be overridden by another elemental infusion instead. She will also summon a wind pinion that attacks the opponent at the same time, dealing additional <span style=\"color: #80FFD7FF;\">Anemo DMG</span>. Each time the wind pinion is summoned, Vesna will regenerate a certain amount of <span style=\"color: #FFD780FF;\">Sword Essence</span>.<br>· Vesna can consume <span style=\"color: #FFD780FF;\">Sword Essence</span> to unleash the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span>, which deals <span style=\"color: #80FFD7FF;\">Anemo DMG</span> to her opponents.<br>· Vesna will exit the mode when its duration ends or after she has used <span style=\"color: #FFD780FF;\">Windborne Sword</span> at the highest level 3 times. Exiting will clear all remaining <span style=\"color: #FFD780FF;\">Sword Essence</span> she has accrued."
+      },
+      {
+        "name": "Sword Essence",
+        "descHtml": "The energy required to use the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span>while in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode.<br>Vesna can accumulate Sword Essence in the following ways:<br>· By performing a Normal Attack, Charged Attack, or Plunging attack while in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, or by unleashing <span style=\"color: #FFD780FF;\">Windborne Sword: Transpose</span> from the Constellation <span style=\"color: #FFD780FF;\">Unwavering Ardor</span>; <br>· By using the Elemental Skill <span style=\"color: #FFD780FF;\">The Art of Victory</span>; or<br>· By using the Elemental Burst <span style=\"color: #FFD780FF;\">For the Tsaritsa!</span>"
+      },
+      {
+        "name": "Windborne Sword",
+        "descHtml": "When in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, Vesna can consume <span style=\"color: #FFD780FF;\">Sword Essence</span> to use her special Elemental Skill to deal <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br>Each use of the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span> in the same instance of <span style=\"color: #FFD780FF;\">Armed for Action</span> will increase the level of <span style=\"color: #FFD780FF;\">Windborne Sword</span>, beginning from Lv. 1, up to Lv. 3 max.<br>Using <span style=\"color: #FFD780FF;\">Windborne Sword</span> at Lv. 2 and Lv. 3 will also summon a <span style=\"color: #FFD780FF;\">Spirit Blade</span> which deals <span style=\"color: #80FFD7FF;\">Anemo DMG</span>."
+      },
+      {
+        "name": "Spirit Blades",
+        "descHtml": "A weapon with special power that Vesna can summon. Attacks the opponent alongside Vesna to deal <span style=\"color: #80FFD7FF;\">Anemo DMG</span>.<br>Vesna can summon Spirit Blades through the following ways:<br>· By unleashing the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span> at Lv. 2 and Lv. 3;<br>· By using the Elemental Burst <span style=\"color: #FFD780FF;\">For the Tsaritsa!</span>; or<br>· By using <span style=\"color: #FFD780FF;\">Windborne Sword·: Transpose</span> in the Constellation <span style=\"color: #FFD780FF;\">Unwavering Ardor</span>.<br><br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: DMG dealt by the <span style=\"color: #FFD780FF;\">Spirit Blades</span> become <span style=\"color: #80FFD7FF;\">Anemo DMG</span> that is considered Stellar Swirl reaction DMG instead."
+      }
+    ]
+  },
+  "vodyanitsa": {
+    "id": "10000140",
+    "name": "Vodyanitsa",
+    "skills": [
+      {
+        "name": "A. Psyshkhwe Arietta",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Sings an ancient song of the Water Imps, unleashing up to 4 strikes. This deals <span style=\"color: #80C0FFFF;\">Hydro DMG</span> to the opponent.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to hurl a water ball forward, dealing <span style=\"color: #80C0FFFF;\">Hydro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges towards the ground from mid-air, damaging all opponents along the path. Deals <span style=\"color: #80C0FFFF;\">AoE Hydro DMG</span> upon impact with the ground.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}"},
+          {"label": "4-Hit DMG", "template": "{param4:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param5:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param6:F1}"},
+          {"label": "Plunge DMG", "template": "{param7:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param8:P}/{param9:P}"}
+        ]
+      },
+      {
+        "name": "E. Rechitativ: Sonorous Dawn",
+        "descHtml": "Reveals her true Water Imp form, dealing <span style=\"color: #80C0FFFF;\">AoE Hydro DMG</span> and gaining the <span style=\"color: #FFD780FF;\">Song of Ages Past</span> effect: While this effect is active, Vodyanitsa summons the ancient <span style=\"color: #FFD780FF;\">Horn of Spring's Call</span>, periodically moving closer to an opponent in a swift movement to attack them, dealing <span style=\"color: #80C0FFFF;\">Hydro DMG</span>.<br>The above two types of attacks will also decrease the <span style=\"color: #80C0FFFF;\">Hydro RES</span> and <span style=\"color: #99FFFFFF;\">Cryo RES</span> of opponents hit. Additionally, while the <span style=\"color: #FFD780FF;\">Song of Ages Past</span> effect is active, the party's active character gains increased resistance to interruption and periodically regenerates HP based on Vodyanitsa's Max HP.",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F2P} Max HP"},
+          {"label": "Duration", "template": "{param2:F1}s"},
+          {"label": "Horn of Spring's Call Attack Interval", "template": "{param3:F1}s"},
+          {"label": "Horn of Spring's Call DMG", "template": "{param4:F2P} Max HP"},
+          {"label": "Song of Ages Past Healing", "template": "{param5:I} + {param6:F2P} Max HP"},
+          {"label": "Song of Ages Past Healing Interval", "template": "{param7:F1}s"},
+          {"label": "Hydro/Cryo RES Reduction", "template": "{param8:F1P}"},
+          {"label": "RES Reduction Duration", "template": "{param9:F1}s"},
+          {"label": "Skill CD", "template": "{param10:F1}s"}
+        ]
+      },
+      {
+        "name": "Q. Koda: Sink With Thee",
+        "descHtml": "Leads a song of the Water Imps which lures its listeners to their doom. This deals <span style=\"color: #80C0FFFF;\">AoE Hydro DMG</span> to the opponent.<br>When in the <span style=\"color: #FFD780FF;\">Song of Ages Past</span> state, DMG dealt is further increased.",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P} Max HP"},
+          {"label": "Song of Ages Past DMG Bonus", "template": "{param2:F1P}"},
+          {"label": "CD", "template": "{param3:F1}s"},
+          {"label": "Energy Cost", "template": "{param4:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "The Last Djeguako Songstress",
+        "descHtml": "When the Elemental Skill <span style=\"color: #FFD780FF;\">Rechitativ: Sonorous Dawn</span> is used, any Stellar Vortex on the field will turn into a Wandering Vortex instead. While the <span style=\"color: #FFD780FF;\">Song of Ages Past</span> effect is active, nearby party members' Stellar Swirl reactions will generate Wandering Vortex instead.<br>Generating or detonating a Wandering Vortex will also reduce nearby opponents' <span style=\"color: #80FFD7FF;\">Anemo RES</span> by 35% for 6s. <br>Additionally, nearby party members who enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state while <span style=\"color: #FFD780FF;\">Song of Ages Past</span> is in effect will have the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state extended by 4s."
+      },
+      {
+        "name": "Dirge of the Fandyr",
+        "descHtml": "When the Elemental Skill <span style=\"color: #FFD780FF;\">Rechitativ: Sonorous Dawn</span> is used, Vodyanitsa will also gain 25 stacks of <span style=\"color: #FFD780FF;\">Lead Vocal</span> as well as 10 stacks of <span style=\"color: #FFD780FF;\">Chorus</span>.<br>The two effects above last 30s each, and the stack count is refreshed when the Elemental Skill is used."
+      },
+      {
+        "name": "Echoes Over the Frozen Lake",
+        "descHtml": "Holding the Elemental Skill outside of combat will cause Vodyanitsa to embody her true Water Imp form and swim for up to 10s at the cost of Stamina. Naturally, as a Water Imp, she can also move across the water's surface. Vodyanitsa will exit her Water Imp form when the Elemental Skill is used again, when the duration ends, or when all Stamina is depleted.<br>Additionally, while Vodyanitsa can swim faster, her Stamina consumption rate is also increased."
+      },
+      {
+        "name": "Heartless Siren Song",
+        "descHtml": "As the Prima Donna of the Korolevskiy Troupe, Vodyanitsa sings in person in place of playing an instrument."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. Waters in Full Splendor",
+        "descHtml": "Each time Vodyanitsa triggers the healing effect of <span style=\"color: #FFD780FF;\">Song of Ages Past</span>, it also increases the ATK of all nearby party members by 0.8% of her Max HP for 5s."
+      },
+      {
+        "name": "2. Echoes That Pierce the Snow",
+        "descHtml": "When the <span style=\"color: #FFD780FF;\">Horn of Spring's Call</span> from the Elemental Skill <span style=\"color: #FFD780FF;\">Rechitativ: Sonorous Dawn</span> attacks the opponent, Vodyanitsa gains the \"Two Voices in Black and White\" effect which increases the CRIT DMG from <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> dealt by the currently active party member by 50% for 5s.<br>If there is a Wandering Vortex present on the field or in the 5s after a Wandering Vortex explodes, the effect changes to: increases the CRIT DMG from Stellar Swirl reaction DMG caused by the currently active party member by 60% for 5s.<br>Additionally, the Elemental Skill <span style=\"color: #FFD780FF;\">Rechitativ: Sonorous Dawn</span> is enhanced as follows: the duration of the <span style=\"color: #FFD780FF;\">Song of Ages Past</span> effect is extended by 9s."
+      },
+      {
+        "name": "3. Song Lingering on a Spring Morning",
+        "descHtml": "Increases the Level of the Elemental Skill <span style=\"color: #FFD780FF;\">Rechitativ: Sonorous Dawn</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. Melancholic Voice Upon the Gentle Waters",
+        "descHtml": "When Vodyanitsa triggers the healing effect of <span style=\"color: #FFD780FF;\">Song of Ages Past</span>, an additional effect will be triggered based on the healed character's HP.<br>· If the character's HP is below 40%: The healing is increased by 50%; and<br>· If the character's HP is 40% or above: Vodyanitsa's Max HP is increased by 20% for 6s. Max 3 stacks, and each stack's duration is counted independently."
+      },
+      {
+        "name": "5. Together, Down Into the Deep",
+        "descHtml": "Increases the Level of the Elemental Burst <span style=\"color: #FFD780FF;\">Koda: Sink With Thee</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. Neverending Song of Revelry",
+        "descHtml": "The Constellation <span style=\"color: #FFD780FF;\">Echoes That Pierce the Snow</span> is enhanced: \"Two Voices in Black and White\" now applies to all nearby party members.<br>Additionally, while the <span style=\"color: #FFD780FF;\">Song of Ages Past</span> effect is active, Stellar Swirl reaction DMG dealt by nearby party members is <span style=\"color: #FFD780FF;\">elevated</span> by 25% while <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> dealt are increased by 60%."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "elevated",
+        "descHtml": "Special DMG Boost effect. It is calculated independently of other DMG Boost effects."
+      },
+      {
+        "name": "Lead Vocal",
+        "descHtml": "When the party's currently active character deals <span style=\"color: #80C0FFFF;\">Hydro DMG</span> or <span style=\"color: #99FFFFFF;\">Cryo DMG</span> with a Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, or Elemental Burst, 1 stack of \"Lead Vocal\" is consumed. This in turn increases the DMG dealt. However, if a Wandering Vortex is present on the field or during the 5s following a Wandering Vortex explosion, this effect will only trigger when the character deals Stellar Swirl reaction DMG.<br>Every 1000 Max HP Vodyanitsa has in excess of 40000 will increase the Stellar Swirl reaction DMG from the above effect by 260, as well as <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> dealt by 140. Stellar Swirl reaction DMG dealt can be increased by a maximum of 6500 while <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> can be increased by a maximum of 3500 in this way."
+      },
+      {
+        "name": "Chorus",
+        "descHtml": "Triggered by off-field party members or other nearby party members (and not your currently active party member). Effects are the same as those of \"Lead Vocal.\""
+      }
+    ]
+  },
   "wanderer": {
     "id": "10000075",
     "name": "Wanderer",
@@ -7334,7 +7563,7 @@
       },
       {
         "name": "Vast Be the Dream",
-        "descHtml": "When Yumemizuki Mizuki triggers a Swirl or Stellar Swirl reaction while in the Dreamdrifter state, the next instance of periodic <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> she deals to nearby enemies during that same state will be increased by 1,000% of her Elemental Mastery. The aforementioned effect can trigger once every 2.5s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: When Yumemizuki Mizuki deals to an opponent the above enhanced <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span>, she will also deal an additional instance of <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 1,000% of her Elemental Mastery. This DMG is considered Stellar Swirl reaction DMG.<br><br>Additionally, while Yumemizuki Mizuki is in the Dreamdrifter state, the Elemental Mastery of nearby party characters is also increased by 10% of her Elemental Mastery.<br>Yumemizuki Mizuki will also enter the <<span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s when a nearby party member triggers a Stellar Swirl reaction."
+        "descHtml": "When Yumemizuki Mizuki triggers a Swirl or Stellar Swirl reaction while in the Dreamdrifter state, the next instance of periodic <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span> she deals to nearby enemies during that same state will be increased by 1,000% of her Elemental Mastery. The aforementioned effect can trigger once every 2.5s.<br><span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span>: When Yumemizuki Mizuki deals to an opponent the above enhanced <span style=\"color: #80FFD7FF;\">AoE Anemo DMG</span>, she will also deal an additional instance of <span style=\"color: #80FFD7FF;\">Anemo DMG</span> at 1,000% of her Elemental Mastery. This DMG is considered Stellar Swirl reaction DMG.<br><br>Additionally, while Yumemizuki Mizuki is in the Dreamdrifter state, the Elemental Mastery of nearby party characters is also increased by 10% of her Elemental Mastery.<br>Yumemizuki Mizuki will also enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar Swirl</span> state for 8s when a nearby party member triggers a Stellar Swirl reaction."
       }
     ],
     "constellations": [

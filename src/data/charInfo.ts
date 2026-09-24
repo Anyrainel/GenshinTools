@@ -131,6 +131,8 @@ export const charInfo: Record<string, CharacterInfo> = {
   varesa: { energy: 70, specialBurstCost: 30, c3Talent: "Q", c5Talent: "A", faction: "Nightsoul" },
   varka: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Hexerei" },
   venti: { energy: 60, c3Talent: "Q", c5Talent: "E", faction: "Hexerei" },
+  vesna: { energy: 60, c3Talent: "E", c5Talent: "Q" },
+  vodyanitsa: { energy: 60, healerC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
   wanderer: { energy: 60, c3Talent: "Q", c5Talent: "E" },
   wriothesley: { energy: 60, c3Talent: "A", c5Talent: "Q" },
   xianyun: { energy: 70, healerC: 0, supStat: ["atk%"], c3Talent: "Q", c5Talent: "E" },
@@ -142,6 +144,6 @@ export const charInfo: Record<string, CharacterInfo> = {
   yumemizuki_mizuki: { energy: 60, healerC: 0, supStat: ["em"], c3Talent: "E", c5Talent: "Q" },
   zhongli: { energy: 40, healerC: 6, shielderC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
   zibai: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Moonsign" },
-  vodyanitsa: { energy: 60, healerC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
-  vesna: { energy: 60, c3Talent: "E", c5Talent: "Q" },
+  mitya: { energy: 60, c3Talent: "E", c5Talent: "A" },
+  valeriy: { energy: 60, shielderC: 0, supStat: ["atk%"], c3Talent: "A", c5Talent: "E" },
 };
