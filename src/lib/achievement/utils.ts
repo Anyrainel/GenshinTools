@@ -21,27 +21,16 @@ export function buildAchievementVideoSearchUrl(
 export function groupAchievementSeries(
   achievements: readonly Achievement[]
 ): Achievement[][] {
-  const byId = new Map(
-    achievements.map((achievement) => [achievement.id, achievement])
-  );
   const sorted = [...achievements].sort(
     (left, right) => left.order - right.order || left.id - right.id
   );
   const groups = new Map<number, Achievement[]>();
 
   for (const achievement of sorted) {
-    let root = achievement;
-    const visited = new Set<number>([achievement.id]);
-    while (root.previousId !== undefined) {
-      const previous = byId.get(root.previousId);
-      if (!previous || visited.has(previous.id)) break;
-      visited.add(previous.id);
-      root = previous;
-    }
-
-    const group = groups.get(root.id);
+    const groupId = achievement.groupId ?? achievement.id;
+    const group = groups.get(groupId);
     if (group) group.push(achievement);
-    else groups.set(root.id, [achievement]);
+    else groups.set(groupId, [achievement]);
   }
 
   return [...groups.values()].map((series) =>

@@ -70,7 +70,7 @@ const ACHIEVEMENT_DATA: AchievementData = {
       order: 2,
       version: "5.0",
       reward: 10,
-      previousId: 101,
+      groupId: 101,
     },
     {
       id: 201,
@@ -89,7 +89,7 @@ const ACHIEVEMENT_DATA: AchievementData = {
       order: 2,
       version: "6.1",
       reward: 10,
-      previousId: 201,
+      groupId: 201,
     },
   ],
 };

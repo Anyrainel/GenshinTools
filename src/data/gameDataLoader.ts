@@ -36,6 +36,7 @@ import { LEYLINE_BOSS_IMAGE_ENEMY_ID } from "./resources_manual";
 import type {
   AchievementData,
   AchievementReferenceData,
+  AchievementReferenceText,
   ArtifactGameData,
   BossDescription,
   BossInfo,
@@ -119,20 +120,26 @@ export const characterKitsResource: LangResource<CharacterKitBundle> =
   );
 
 // ═══════════════════════════════════════════════════════════════════════════
-// Achievements — achievement_{en,zh}.json
+// Achievements — shared logic plus achievements_{en,zh}.json
 // ═══════════════════════════════════════════════════════════════════════════
 
 const achievementModules = import.meta.glob<{
-  default: AchievementReferenceData;
-}>("./game/achievement_{en,zh}.json", { eager: false });
+  default: AchievementReferenceText;
+}>("./game/achievements_{en,zh}.json", { eager: false });
+
+const achievementLogicResource = makeResource<AchievementReferenceData>(
+  async () => (await import("./game/achievements.json")).default
+);
 
 /** Route-lazy, per-language achievement metadata cached for the app lifetime. */
 export const achievementTextResource: LangResource<AchievementData> =
-  makeLangResource(async (lang) =>
-    expandAchievementReferenceData(
-      await loadFromGlob(achievementModules, `./game/achievement_${lang}.json`)
-    )
-  );
+  makeLangResource(async (lang) => {
+    const [logic, text] = await Promise.all([
+      achievementLogicResource.preload(),
+      loadFromGlob(achievementModules, `./game/achievements_${lang}.json`),
+    ]);
+    return expandAchievementReferenceData(logic, text);
+  });
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Weapon text — weapon_{en,zh}.json (+ beta gzip per lang)

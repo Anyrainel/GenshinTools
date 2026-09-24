@@ -1,52 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { expandAchievementReferenceData } from "@/data/achievementData";
+import type { AchievementReferenceData, AchievementReferenceText } from "@/data/types";
 
-describe("expandAchievementReferenceData", () => {
-  it("expands compact localized descriptions with positional values", () => {
-    const result = expandAchievementReferenceData({
-      categories: [{ id: 1, name: "Category", order: 1 }],
-      descriptionTemplates: ["Follow {0} Seelie and open {1} chests."],
-      achievements: [
-        {
-          id: 1,
-          name: "Explorer",
-          description: [0, 8, 10],
-          categoryId: 1,
-          order: 1,
-          reward: 5,
-        },
-      ],
-    });
-
-    expect(result.achievements[0]?.description).toBe(
-      "Follow 8 Seelie and open 10 chests."
-    );
-    expect(result.achievements[0]?.reward).toBe(5);
+const logic: AchievementReferenceData = { categories: [{ id: 0, order: 1, achievements: [[
+  { id: 1, order: 1, reward: 5 }, { id: 2, order: 2, reward: 10 },
+]] }] };
+const text: AchievementReferenceText = {
+  categories: { "0": "Category" }, descriptionTemplates: ["Follow {0} Seelie."],
+  achievements: { "1": { name: "Explorer", desc: [0, 8] }, "2": { name: "Explorer", desc: "More exploration." } },
+};
+describe("split achievement ingestion", () => {
+  it("joins category names and descriptions while retaining nested groups", () => {
+    const result = expandAchievementReferenceData(logic, text);
+    expect(result.categories[0]).toEqual({ id: 0, order: 1, name: "Category" });
+    expect(result.achievements[0]).toMatchObject({ description: "Follow 8 Seelie.", categoryId: 0, groupId: 1 });
+    expect(result.achievements[1]).toMatchObject({ groupId: 1, reward: 10 });
   });
-
-  it("fails loudly for corrupt template references or missing values", () => {
-    const base = {
-      categories: [],
-      achievements: [
-        {
-          id: 1,
-          name: "Broken",
-          description: [0] as [number],
-          categoryId: 1,
-          order: 1,
-          reward: 5,
-        },
-      ],
-    };
-
-    expect(() =>
-      expandAchievementReferenceData({ ...base, descriptionTemplates: [] })
-    ).toThrow("Missing achievement description template 0");
-    expect(() =>
-      expandAchievementReferenceData({
-        ...base,
-        descriptionTemplates: ["Complete {0} trials."],
-      })
-    ).toThrow("Missing value for {0} in achievement 1");
+  it("rejects missing translations and corrupt template parameters", () => {
+    expect(() => expandAchievementReferenceData(logic, { ...text, categories: {} })).toThrow("category text");
+    expect(() => expandAchievementReferenceData(logic, { ...text, achievements: {} })).toThrow("achievement text");
+    expect(() => expandAchievementReferenceData(logic, { ...text, descriptionTemplates: [] })).toThrow("template 0");
+    expect(() => expandAchievementReferenceData(logic, { ...text, descriptionTemplates: ["Need {1}"] })).toThrow("Missing value");
   });
 });

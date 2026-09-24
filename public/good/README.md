@@ -1,27 +1,21 @@
-# Scanner mappings
+# Scanner achievement mappings
 
-- `/good/mappings.json`: character, weapon, and artifact GOOD keys with Chinese names.
-- `/good/mapping_achievements.json`: numeric achievement and category IDs with Chinese names,
-  using the same localized-name shape:
+`/good/mapping_achievements.json` uses schemaVersion 2, with native category
+IDs, Chinese `name.zh` values and nested achievement groups. Each category's
+`achievements` is an array of arrays, including singleton groups.
 
-```json
-{"categories":[{"id":0,"n":{"zh":"天地万象"},"achievements":[{"id":80127,"n":{"zh":"动物园大亨"}},{"id":80128,"n":{"zh":"动物园大亨"}}]}]}
-```
+Entries contain `id`, `name`, optional `hidden: true` (whole row hidden until
+completed), and optional `requires` (all-of completed achievement IDs).
+False hidden and empty requirements are omitted. Description-only concealment
+does not set hidden. Grouping alone does not imply completion or exclusive
+visibility. Titles can repeat; preserve every matching ID.
 
-Each category contains its own `achievements` list. Categories and their nested
-achievements are sorted by numeric ID. Category ID `0` is valid (天地万象).
+The full shared display/scanner contract is in HoyoData's
+`docs/achievement-reference.md`. Display logic is separate from the en/zh
+files; scanner data is self-contained and contains released achievements only.
 
-Titles are not unique: multiple tiers or other
-achievements can share a title. Consumers must preserve all matching IDs rather
-than overwrite duplicate titles in a title-to-single-ID dictionary.
-
-Regenerate the achievement mapping from the sibling HoyoData repository:
+Regenerate and synchronize from HoyoData:
 
 ```sh
 uv run python -m anime_game_data reference --only achievement
 ```
-
-The full `reference` command also generates it. Both commands write the released
-achievement reference data and mapping to HoyoData's `data/reference/`, and mirror
-the mapping here for static serving by the site. The existing `mappings.json`
-generator remains `scripts/codedump.py --good-keys` in GenshinTools.

@@ -9,7 +9,7 @@ import {
 function achievement(
   id: number,
   order: number,
-  previousId?: number,
+  groupId?: number,
   version = "5.0"
 ): Achievement {
   return {
@@ -20,7 +20,7 @@ function achievement(
     order,
     reward: 5,
     version,
-    ...(previousId === undefined ? {} : { previousId }),
+    ...(groupId === undefined ? {} : { groupId }),
   };
 }
 
@@ -39,7 +39,7 @@ describe("groupAchievementSeries", () => {
   it("groups predecessor chains and preserves achievement order", () => {
     expect(
       groupAchievementSeries([
-        achievement(30, 3, 20),
+        achievement(30, 3, 10),
         achievement(10, 1),
         achievement(40, 4),
         achievement(20, 2, 10),
@@ -47,7 +47,7 @@ describe("groupAchievementSeries", () => {
     ).toEqual([[10, 20, 30], [40]]);
   });
 
-  it("does not loop forever on corrupt predecessor cycles", () => {
+  it("does not infer relationships from different group IDs", () => {
     expect(
       groupAchievementSeries([achievement(1, 1, 2), achievement(2, 2, 1)])
     ).toHaveLength(2);

@@ -456,20 +456,28 @@ export interface Achievement {
   version?: string;
   /** Primogems awarded for completing the achievement. */
   reward: number;
-  /** Immediately preceding achievement in a multi-step series. */
-  previousId?: number;
+  /** First achievement ID in the exported display group; omitted for singletons. */
+  groupId?: number;
 }
 
 /** Compact on-disk achievement shape before localized templates are expanded. */
-export interface AchievementReference extends Omit<Achievement, "description"> {
-  /** Plain text, or [template index, ...positional values]. */
-  description: string | [number, ...number[]];
+export interface AchievementReferenceData {
+  categories: {
+    id: number;
+    order: number;
+    achievements: {
+      id: number;
+      order: number;
+      reward: number;
+      version?: string;
+    }[][];
+  }[];
 }
 
-export interface AchievementReferenceData {
-  categories: AchievementCategory[];
-  achievements: AchievementReference[];
-  descriptionTemplates: string[];
+export interface AchievementReferenceText {
+  categories: Record<string, string>;
+  achievements: Record<string, { name: string; desc: string | number[] }>;
+  descriptionTemplates?: string[];
 }
 
 export interface AchievementData {
