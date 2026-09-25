@@ -1,27 +1,53 @@
 {
   "teams": [
     {
-      "id": "YU06qLrWu1q46mwZ0O",
+      "id": "ZEq6yRt04YU471-fWD",
       "name": "",
-      "characters": ["sandrone", "odette", "yae_miko", "sucrose"],
+      "characters": ["vesna", "vodyanitsa", "odette", "faruzan"],
+      "weapons": [
+        "beyond_the_chrysalis",
+        "hymn_of_the_maelstrom",
+        "whitelake_frostfeather",
+        "favonius_warbow"
+      ],
+      "artifacts": [
+        {
+          "setId": "scarlet_proof"
+        },
+        {
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "setId": "heart_of_the_furnace"
+        },
+        {
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": ["stellarSwirl"]
+    },
+    {
+      "id": "YE06qRt04YU470EWWs",
+      "name": "",
+      "characters": ["sandrone", "vodyanitsa", "odette", "yae_miko"],
       "weapons": [
         "a_teaspoon_of_transcendence",
+        "hymn_of_the_maelstrom",
         "whitelake_frostfeather",
-        "kaguras_verity",
-        "sacrificial_fragments"
+        "kaguras_verity"
       ],
       "artifacts": [
         {
           "setId": "disenchantment_in_deep_shadow"
         },
         {
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
           "setId": "heart_of_the_furnace"
         },
         {
           "setId": "disenchantment_in_deep_shadow"
-        },
-        {
-          "setId": "viridescent_venerer"
         }
       ],
       "reactions": ["stellarConduct"]
@@ -390,7 +416,7 @@
       "reactions": ["overloaded"]
     },
     {
-      "id": "PCC6yLrWuFte0XMYWD",
+      "id": "PCC6yJmWuFte0XMYWD",
       "name": "",
       "characters": ["yumemizuki_mizuki", "odette", "faruzan", "diona"],
       "weapons": [
@@ -1818,7 +1844,7 @@
       "reactions": ["swirl"]
     },
     {
-      "id": "YEm6qLrWuYrK1gxT0C",
+      "id": "Y-86qJmWuYbK1gxT0C",
       "name": "",
       "characters": ["traveler_cryo", "odette", "alyosha", "xilonen"],
       "weapons": [

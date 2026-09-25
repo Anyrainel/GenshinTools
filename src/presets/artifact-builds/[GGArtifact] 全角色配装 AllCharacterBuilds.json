@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "id": "export-1786829729878",
+  "id": "export-1790325403423",
   "author": "GGArtifact",
   "description": "全角色配装 AllCharacterBuilds",
   "builds": {
@@ -3348,7 +3348,7 @@
         }
       ],
       "normalizer": 0.701977294544408,
-      "source": "custom"
+      "source": "preset"
     },
     "BGsEcbO": {
       "id": "BGsEcbO",
@@ -4801,7 +4801,7 @@
         }
       ],
       "normalizer": 0.7544436732353562,
-      "source": "custom"
+      "source": "preset"
     },
     "FCJP9NW": {
       "id": "FCJP9NW",
@@ -5360,7 +5360,7 @@
       "artifactSet": "heart_of_the_furnace",
       "styles": ["off-field"],
       "roles": ["dps", "support"],
-      "source": "custom"
+      "source": "preset"
     },
     "2NFAU-m": {
       "id": "2NFAU-m",
@@ -8789,8 +8789,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "J_f6hou": {
-      "id": "J_f6hou",
+    "JsL3jYu": {
+      "id": "JsL3jYu",
       "characterId": "sandrone",
       "name": "",
       "visible": true,
@@ -8853,8 +8853,8 @@
       "roles": ["dps"],
       "source": "preset"
     },
-    "K8zATpO": {
-      "id": "K8zATpO",
+    "J_f7VZO": {
+      "id": "J_f7VZO",
       "characterId": "odette",
       "name": "",
       "visible": true,
@@ -8899,10 +8899,10 @@
       "artifactSet": "heart_of_the_furnace",
       "styles": ["off-field"],
       "roles": ["dps", "support"],
-      "source": "custom"
+      "source": "preset"
     },
-    "K8zATve": {
-      "id": "K8zATve",
+    "J_f7Vfe": {
+      "id": "J_f7Vfe",
       "characterId": "odette",
       "name": "",
       "visible": false,
@@ -8952,10 +8952,10 @@
       "styles": ["off-field"],
       "roles": ["dps", "support"],
       "minCons": 4,
-      "source": "custom"
+      "source": "preset"
     },
-    "KIGz2-m": {
-      "id": "KIGz2-m",
+    "K8yw4km": {
+      "id": "K8yw4km",
       "characterId": "alyosha",
       "name": "",
       "visible": true,
@@ -9004,10 +9004,10 @@
       "artifactSet": "noblesse_oblige",
       "styles": ["off-field"],
       "roles": ["support", "sustain"],
-      "source": "custom"
+      "source": "preset"
     },
-    "JsL3jYu": {
-      "id": "JsL3jYu",
+    "KIHCeIu": {
+      "id": "KIHCeIu",
       "characterId": "traveler_cryo",
       "name": "",
       "visible": true,
@@ -9062,6 +9062,106 @@
       ],
       "normalizer": 0,
       "artifactSet": "disenchantment_in_deep_shadow",
+      "styles": ["on-field"],
+      "roles": ["dps"],
+      "source": "preset"
+    },
+    "Kau_ZmG": {
+      "id": "Kau_ZmG",
+      "characterId": "vodyanitsa",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        },
+        {
+          "stat": "hp",
+          "weight": 100
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "hp%",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "artifactSet": "tenacity_of_the_millelith",
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
+      "source": "custom"
+    },
+    "KRbF-zO": {
+      "id": "KRbF-zO",
+      "characterId": "vesna",
+      "name": "",
+      "visible": true,
+      "composition": "4pc",
+      "substats": [
+        {
+          "stat": "cr",
+          "weight": 100
+        },
+        {
+          "stat": "cd",
+          "weight": 100
+        },
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 50
+        },
+        {
+          "stat": "er",
+          "weight": 50
+        }
+      ],
+      "sandsWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "gobletWeights": [
+        {
+          "stat": "atk%",
+          "weight": 100
+        },
+        {
+          "stat": "em",
+          "weight": 100
+        }
+      ],
+      "circletWeights": [
+        {
+          "stat": "cr",
+          "weight": 100
+        }
+      ],
+      "normalizer": 0,
+      "artifactSet": "scarlet_proof",
       "styles": ["on-field"],
       "roles": ["dps"],
       "source": "custom"
@@ -9184,10 +9284,12 @@
     "prune": ["Jj0rLZm", "Jj10PaG"],
     "nicole": ["JQOwU2m"],
     "lohen": ["JZiz0Du"],
-    "sandrone": ["J_f6hou"],
-    "odette": ["K8zATpO", "K8zATve"],
-    "alyosha": ["KIGz2-m"],
-    "traveler_cryo": ["JsL3jYu"]
+    "sandrone": ["JsL3jYu"],
+    "odette": ["J_f7VZO", "J_f7Vfe"],
+    "alyosha": ["K8yw4km"],
+    "traveler_cryo": ["KIHCeIu"],
+    "vodyanitsa": ["Kau_ZmG"],
+    "vesna": ["KRbF-zO"]
   },
   "characterWeapons": {
     "ineffa": ["fractured_halo"],
@@ -9314,7 +9416,10 @@
     "varka": ["gest_of_the_mighty_wolf"],
     "linnea": ["golden_frostbound_oath"],
     "nicole": ["angelos_heptades"],
-    "odette": ["whitelake_frostfeather"]
+    "odette": ["whitelake_frostfeather"],
+    "alyosha": ["favonius_lance", "symphonist_of_scents"],
+    "vodyanitsa": ["hymn_of_the_maelstrom"],
+    "vesna": ["beyond_the_chrysalis"]
   },
   "computeOptions": {
     "expandElementalGoblet": true,
