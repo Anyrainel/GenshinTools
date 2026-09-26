@@ -1,8 +1,10 @@
 import {
+  ArrowRight,
   Check,
   ChevronDown,
   CircleUserRound,
   Cloud,
+  ExternalLink,
   HeartHandshake,
   Languages,
   LogIn,
@@ -140,6 +142,9 @@ export function AppBar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [siteMenuAlignOffset, setSiteMenuAlignOffset] = useState(0);
+  const siteBrandRef = useRef<HTMLAnchorElement>(null);
+  const siteTriggerRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const isExpandedActionBar = useMediaQuery("(min-width: 640px)");
 
@@ -485,62 +490,86 @@ export function AppBar({
   );
 
   const renderSiteSwitcher = () => (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-10 min-w-0 gap-2 px-1.5 text-muted-foreground hover:text-foreground sm:px-2 2xl:ml-2"
-          aria-label={t.ui("app.siteSwitcherLabel")}
+    <div className="flex shrink-0 items-center gap-1 md:gap-3">
+      <Link
+        ref={siteBrandRef}
+        to="/"
+        className="flex shrink-0 items-center gap-2 rounded-md px-1.5 py-1 font-semibold hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label={t.ui("app.title")}
+      >
+        <img src={getAssetUrl("/logo-gi.svg")} className="w-8 h-8" alt="" />
+        <span className="hidden font-semibold text-lg whitespace-nowrap sm:inline">
+          {t.ui("app.title")}
+        </span>
+      </Link>
+      <DropdownMenu
+        onOpenChange={(open) => {
+          if (open && siteBrandRef.current && siteTriggerRef.current) {
+            setSiteMenuAlignOffset(
+              Math.round(
+                siteBrandRef.current.getBoundingClientRect().left -
+                  siteTriggerRef.current.getBoundingClientRect().left
+              )
+            );
+          }
+        }}
+      >
+        <div ref={siteTriggerRef}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-10 min-w-0 gap-1.5 rounded-md px-1 text-muted-foreground hover:bg-accent/50 hover:text-foreground focus-visible:bg-accent/70 focus-visible:ring-0 data-[state=open]:bg-accent/50 data-[state=open]:text-foreground"
+              aria-label={t.ui("app.siteSwitcherLabel")}
+            >
+              <span className="rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+                {t.ui("app.gameGenshinShort")}
+              </span>
+              <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+            </Button>
+          </DropdownMenuTrigger>
+        </div>
+        <DropdownMenuContent
+          align="start"
+          alignOffset={siteMenuAlignOffset}
+          className="w-max min-w-48"
         >
-          <img
-            src={getAssetUrl("/logo-gi.svg")}
-            className="w-8 h-8"
-            alt="Logo"
-          />
-          <span className="hidden font-semibold text-lg whitespace-nowrap sm:inline">
-            {t.ui("app.title")}
-          </span>
-          <span className="rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
-            {t.ui("app.gameGenshinShort")}
-          </span>
-          <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-72">
-        <DropdownMenuLabel>{t.ui("app.siteSwitcherLabel")}</DropdownMenuLabel>
-        <DropdownMenuItem asChild>
-          <Link to="/" className="gap-2">
-            <img
-              src={getAssetUrl("/logo-gi.svg")}
-              className="h-7 w-7"
-              alt="Logo"
-            />
-            <span className="min-w-0 flex-1">
-              <span className="block font-medium">{t.ui("app.title")}</span>
-              <span className="block text-xs text-muted-foreground">
+          <DropdownMenuItem asChild>
+            <Link to="/" className="gap-2">
+              <img
+                src={getAssetUrl("/logo-gi.svg")}
+                className="h-7 w-7"
+                alt=""
+              />
+              <span className="min-w-0 flex-1 font-medium">
                 {t.ui("app.gameGenshin")}
               </span>
-            </span>
-            <Check className="text-primary" aria-hidden="true" />
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={STAR_RAIL_SITE_URL} className="gap-2">
-            <img
-              src={getAssetUrl("/logo-hsr.svg")}
-              className="h-7 w-7"
-              alt=""
-            />
-            <span className="min-w-0 flex-1">
-              <span className="block font-medium">{t.ui("app.title")}</span>
-              <span className="block text-xs text-muted-foreground">
+              <ArrowRight className="text-primary" aria-hidden="true" />
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <a
+              href={STAR_RAIL_SITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="gap-2"
+            >
+              <img
+                src={getAssetUrl("/logo-hsr.svg")}
+                className="h-7 w-7"
+                alt=""
+              />
+              <span className="min-w-0 flex-1 font-medium">
                 {t.ui("app.gameStarRail")}
               </span>
-            </span>
-          </a>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <ExternalLink
+                className="text-muted-foreground"
+                aria-hidden="true"
+              />
+            </a>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 
   return (

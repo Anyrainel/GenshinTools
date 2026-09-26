@@ -81,8 +81,11 @@ describe("AppBar", () => {
   it("renders navigation links", () => {
     renderAppBar(<AppBar />);
 
-    // Check for logo/title
-    expect(screen.getAllByAltText("Logo").length).toBeGreaterThan(0);
+    // Check for the home shortcut and title.
+    expect(screen.getByRole("link", { name: "app.title" })).toHaveAttribute(
+      "href",
+      "/"
+    );
     expect(screen.getAllByText("app.title").length).toBeGreaterThan(0);
 
     // Check desktop nav
@@ -96,7 +99,10 @@ describe("AppBar", () => {
     const siteSwitcher = screen.getByRole("button", {
       name: "app.siteSwitcherLabel",
     });
-    expect(within(siteSwitcher).getByAltText("Logo")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "app.title" })).toHaveAttribute(
+      "href",
+      "/"
+    );
 
     await userEvent.click(siteSwitcher);
 
@@ -104,11 +110,15 @@ describe("AppBar", () => {
       name: /app\.gameGenshin/,
     });
     expect(genshinItem).toHaveAttribute("href", "/");
+    expect(genshinItem.querySelector(".lucide-arrow-right")).not.toBeNull();
+    expect(genshinItem.querySelector(".lucide-check")).toBeNull();
 
     const starRailItem = screen.getByRole("menuitem", {
       name: /app.gameStarRail/,
     });
     expect(starRailItem).toHaveAttribute("href", "http://127.0.0.1:41737");
+    expect(starRailItem).toHaveAttribute("target", "_blank");
+    expect(screen.queryByText("app.siteSwitcherLabel")).toBeNull();
   });
 
   it("keeps the site switcher reachable on mobile", async () => {
