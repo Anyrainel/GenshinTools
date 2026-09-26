@@ -7,7 +7,6 @@ import {
   Loader2,
   Monitor,
   Smartphone,
-  Star,
   Upload,
 } from "lucide-react";
 import {
@@ -19,6 +18,8 @@ import {
 } from "react";
 
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ImportMethodItem } from "@/components/shared/ImportMethodItem";
+import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -77,6 +78,7 @@ export const AccountImportControl = forwardRef<
   ref
 ) {
   const { t } = useLanguage();
+  const [method, setMethod] = useState("json");
   const [isOpen, setIsOpen] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -142,6 +144,7 @@ export const AccountImportControl = forwardRef<
 
   useImperativeHandle(ref, () => ({
     open: () => {
+      setMethod("json");
       setErrorMessage(null);
       setIsOpen(true);
     },
@@ -239,7 +242,7 @@ export const AccountImportControl = forwardRef<
         if (!open) setErrorMessage(null);
       }}
     >
-      <ResponsiveDialogContent className="md:max-w-lg">
+      <ResponsiveDialogContent className="md:max-w-xl">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {t.ui("import.titleAccountData")}
@@ -249,46 +252,28 @@ export const AccountImportControl = forwardRef<
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        <div className="flex flex-col gap-3 pt-1">
-          {/* ── Recommended: GOOD Import Card ── */}
-          <div
-            className={cn(
-              "relative rounded-lg border p-4",
-              "border-primary/40 bg-primary/[0.04]"
-            )}
+        <Accordion
+          type="single"
+          value={method}
+          onValueChange={(value) => {
+            setMethod(value);
+            setErrorMessage(null);
+          }}
+          disabled={isBusy}
+          className="space-y-3 pt-1"
+        >
+          <ImportMethodItem
+            value="json"
+            title={t.ui("import.goodTitle")}
+            icon={Monitor}
+            summary={t.ui("import.fileScope")}
+            badge={t.ui("import.recommended")}
           >
-            {/* Badge */}
-            <span
-              className={cn(
-                "absolute -top-2.5 right-3",
-                "inline-flex items-center gap-1 rounded-full px-2.5 py-0.5",
-                "bg-primary/70 text-primary-foreground text-xs font-semibold"
-              )}
-            >
-              <Star className="w-3 h-3" />
-              {t.ui("import.recommended")}
-            </span>
-
-            {/* Header row */}
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-primary/10 p-2 shrink-0">
-                <Monitor className="w-5 h-5 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-semibold text-sm md:text-base text-foreground">
-                  {t.ui("import.goodTitle")}
-                </h3>
-                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-                  {t.ui("import.goodBenefit")}
-                </p>
-              </div>
-            </div>
-
             {/* PC requirement banner + tool links */}
-            <div className="mt-3 p-3 rounded-md bg-yellow-500/10 border border-yellow-500/20">
+            <div className="mt-3 p-3 rounded-md bg-secondary border border-border">
               <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-yellow-500 shrink-0" />
-                <span className="text-sm text-yellow-500">
+                <Info className="w-4 h-4 text-foreground shrink-0" />
+                <span className="text-sm text-foreground">
                   {t.ui("import.goodPcHint")}
                 </span>
               </div>
@@ -371,29 +356,20 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.uidInvalid")}
                 </p>
               )}
-              <p className="text-xs text-sky-600 text-right">
+              <p className="text-xs text-muted-foreground text-right">
                 {t.ui("import.goodSplitFileHint")}
               </p>
             </div>
-          </div>
-
-          {/* ── Quick: UID Import Card ── */}
-          <div className="rounded-lg border border-border p-4">
-            {/* Header row */}
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-muted/60 p-2 shrink-0">
-                <Smartphone className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-semibold text-sm md:text-base text-foreground">
-                  {t.ui("import.uidTitle")}
-                </h3>
-                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-                  {t.ui("import.uidDescription")}
-                </p>
-              </div>
-            </div>
-
+          </ImportMethodItem>
+          <ImportMethodItem
+            value="uid"
+            title={t.ui("import.uidTitle")}
+            icon={Smartphone}
+            summary={t.ui("import.uidScope")}
+          >
+            <p className="text-xs text-muted-foreground">
+              {t.ui("import.uidDescription")}
+            </p>
             {/* UID input row */}
             <div className="flex flex-col gap-1.5 mt-3">
               <div className="flex flex-wrap items-center gap-2">
@@ -439,7 +415,7 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.uidInvalid")}
                 </p>
               )}
-              <p className="text-xs text-sky-600 text-right">
+              <p className="text-xs text-muted-foreground text-right">
                 {t
                   .ui("import.enkaStatusHint")
                   .split(/\{link\}|\{\/link\}/)
@@ -450,7 +426,7 @@ export const AccountImportControl = forwardRef<
                         href="https://status.enka.network/"
                         target="_blank"
                         rel="noreferrer"
-                        className="underline text-sky-300 hover:text-sky-200"
+                        className="underline text-primary hover:text-primary/80"
                       >
                         {part}
                       </a>
@@ -460,24 +436,13 @@ export const AccountImportControl = forwardRef<
                   )}
               </p>
             </div>
-          </div>
-
-          {/* ── HoYoLAB / 米游社 Cookie Import Card ── */}
-          <div className="rounded-lg border border-border p-4">
-            <div className="flex items-start gap-3">
-              <div className="rounded-lg bg-muted/60 p-2 shrink-0">
-                <KeyRound className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-semibold text-sm md:text-base text-foreground">
-                  {t.ui("import.hoyolabTitle")}
-                </h3>
-                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">
-                  {t.ui("import.hoyolabDescription")}
-                </p>
-              </div>
-            </div>
-
+          </ImportMethodItem>
+          <ImportMethodItem
+            value="hoyolab"
+            title={t.ui("import.hoyolabTitle")}
+            icon={KeyRound}
+            summary={t.ui("import.hoyolabScope")}
+          >
             <div className="flex flex-col gap-2 mt-3">
               <div className="flex flex-wrap items-center gap-2">
                 <button
@@ -564,8 +529,8 @@ export const AccountImportControl = forwardRef<
                 {t.ui("import.hoyolabPrivacyNote")}
               </p>
             </div>
-          </div>
-        </div>
+          </ImportMethodItem>
+        </Accordion>
 
         {errorMessage && (
           <div className="flex items-start gap-2 text-sm text-destructive px-3 py-2.5 bg-destructive/10 border border-destructive/20 rounded-md max-h-24 overflow-y-auto break-words mt-3">
@@ -607,7 +572,7 @@ export const AccountImportControl = forwardRef<
               </ol>
             </section>
 
-            <div className="flex items-start gap-2 text-xs px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-md text-yellow-600 dark:text-yellow-400">
+            <div className="flex items-start gap-2 text-xs px-3 py-2 bg-secondary border border-border rounded-md text-foreground">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{t.ui("import.hoyolabGuideSecurity")}</span>
             </div>

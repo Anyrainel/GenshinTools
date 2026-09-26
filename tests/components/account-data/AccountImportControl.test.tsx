@@ -55,6 +55,35 @@ const TestWrapper = ({
 };
 
 describe("AccountImportControl", () => {
+  it("defaults to JSON and switches one method at a time without losing UID input", () => {
+    render(<TestWrapper />);
+    const file = screen.getByRole("button", { name: /import.goodTitle/ });
+    const uid = screen.getByRole("button", { name: /import.uidTitle/ });
+    const hoyolab = screen.getByRole("button", { name: /import.hoyolabTitle/ });
+    expect(file).toHaveAttribute("aria-expanded", "true");
+    expect(uid).toHaveAttribute("aria-expanded", "false");
+    expect(hoyolab).toHaveAttribute("aria-expanded", "false");
+    expect(
+      screen
+        .getAllByRole("button")
+        .filter((button) => button.hasAttribute("aria-expanded"))
+    ).toEqual([file, uid, hoyolab]);
+    fireEvent.click(uid);
+    expect(file).toHaveAttribute("aria-expanded", "false");
+    fireEvent.change(screen.getByPlaceholderText("import.uidPlaceholder"), {
+      target: { value: "123456789" },
+    });
+    fireEvent.click(hoyolab);
+    expect(uid).toHaveAttribute("aria-expanded", "false");
+    expect(hoyolab).toHaveAttribute("aria-expanded", "true");
+    fireEvent.click(uid);
+    expect(screen.getByPlaceholderText("import.uidPlaceholder")).toHaveValue(
+      "123456789"
+    );
+    fireEvent.click(uid);
+    expect(uid).toHaveAttribute("aria-expanded", "true");
+  });
+
   it("renders dialog content when opened", async () => {
     render(<TestWrapper />);
     await waitFor(() => {
@@ -110,6 +139,8 @@ describe("AccountImportControl", () => {
     const onUidImport = vi.fn().mockResolvedValue(undefined);
     render(<TestWrapper onUidImport={onUidImport} />);
 
+    fireEvent.click(screen.getByRole("button", { name: /import.uidTitle/ }));
+
     await waitFor(() => {
       expect(
         screen.getAllByPlaceholderText("import.uidPlaceholder").length
@@ -136,6 +167,8 @@ describe("AccountImportControl", () => {
 
     try {
       render(<TestWrapper onUidImport={onUidImport} />);
+
+      fireEvent.click(screen.getByRole("button", { name: /import.uidTitle/ }));
 
       await waitFor(() => {
         expect(
@@ -168,18 +201,19 @@ describe("AccountImportControl", () => {
     const onHoyolabImport = vi.fn().mockResolvedValue(undefined);
     render(<TestWrapper onHoyolabImport={onHoyolabImport} />);
 
+    fireEvent.click(
+      screen.getByRole("button", { name: /import.hoyolabTitle/ })
+    );
+
     await waitFor(() => {
       expect(
         screen.getAllByPlaceholderText("import.uidPlaceholder").length
-      ).toBeGreaterThan(1);
+      ).toBeGreaterThan(0);
     });
 
-    fireEvent.change(
-      screen.getAllByPlaceholderText("import.uidPlaceholder")[1],
-      {
-        target: { value: "338699543" },
-      }
-    );
+    fireEvent.change(screen.getByPlaceholderText("import.uidPlaceholder"), {
+      target: { value: "338699543" },
+    });
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText("ltuid_v2")).toBeInTheDocument();
@@ -195,9 +229,7 @@ describe("AccountImportControl", () => {
       target: { value: "token-value" },
     });
 
-    fireEvent.click(
-      screen.getAllByRole("button", { name: "import.action" })[1]
-    );
+    fireEvent.click(screen.getByRole("button", { name: "import.action" }));
 
     expect(onHoyolabImport).toHaveBeenCalledWith(
       "338699543",
@@ -214,18 +246,19 @@ describe("AccountImportControl", () => {
     const onHoyolabImport = vi.fn().mockResolvedValue(undefined);
     render(<TestWrapper onHoyolabImport={onHoyolabImport} />);
 
+    fireEvent.click(
+      screen.getByRole("button", { name: /import.hoyolabTitle/ })
+    );
+
     await waitFor(() => {
       expect(
         screen.getAllByPlaceholderText("import.uidPlaceholder").length
-      ).toBeGreaterThan(1);
+      ).toBeGreaterThan(0);
     });
 
-    fireEvent.change(
-      screen.getAllByPlaceholderText("import.uidPlaceholder")[1],
-      {
-        target: { value: "800000000" },
-      }
-    );
+    fireEvent.change(screen.getByPlaceholderText("import.uidPlaceholder"), {
+      target: { value: "800000000" },
+    });
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText("ltuid_v2")).toBeInTheDocument();
@@ -241,9 +274,7 @@ describe("AccountImportControl", () => {
       target: { value: "token-value" },
     });
 
-    fireEvent.click(
-      screen.getAllByRole("button", { name: "import.action" })[1]
-    );
+    fireEvent.click(screen.getByRole("button", { name: "import.action" }));
 
     expect(onHoyolabImport).toHaveBeenCalledWith(
       "800000000",

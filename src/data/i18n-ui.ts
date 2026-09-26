@@ -467,12 +467,20 @@ export const i18nUiData = {
       zh: "现支持分别导入角色、武器和圣遗物文件！",
     },
     goodFileButton: { en: "Import .json file", zh: "导入 .json 文件" },
-    goodTitle: { en: "Full Data Import", zh: "完整数据导入" },
-    recommended: { en: "Recommended", zh: "推荐" },
-    goodBenefit: {
-      en: "Full artifact inventory with swap, upgrade, and reroll recommendations.",
-      zh: "完整背包数据，获取替换、强化和洗练建议。",
+    goodTitle: { en: "JSON File Import", zh: "JSON 文件导入" },
+    fileScope: {
+      en: "Coverage depends on the exported file",
+      zh: "数据范围以导出文件为准",
     },
+    uidScope: {
+      en: "Public showcase and equipped items only",
+      zh: "仅公开展柜及已装备物品",
+    },
+    hoyolabScope: {
+      en: "Characters and equipped items only",
+      zh: "仅角色及已装备物品",
+    },
+    recommended: { en: "Recommended", zh: "推荐" },
     goodPcHint: {
       en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
@@ -522,10 +530,6 @@ export const i18nUiData = {
     hoyolabTitle: {
       en: "HoYoLAB / 米游社 Import",
       zh: "米游社 / HoYoLAB 导入",
-    },
-    hoyolabDescription: {
-      en: "Fetch your full character roster (all owned characters with equipped gear) using your HoYoLAB or 米游社 account cookie values.",
-      zh: "使用你的米游社 / HoYoLAB 账号 Cookie 值获取所有已拥有角色及其装备。",
     },
     hoyolabMissingCookie: {
       en: "Fill in the HoYoLAB / 米游社 cookie fields first.",
