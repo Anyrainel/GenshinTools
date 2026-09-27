@@ -5038,49 +5038,48 @@
             "cr",
             "cd",
             "em",
-            "er"
+            "er",
+            "atk%"
           ],
           "mustPresent": [
             "cr",
-            "cd",
-            "em",
-            "er"
+            "cd"
           ],
           "minStatCount": 3
         },
         "sands": {
           "mainStats": [
+            "atk%",
             "em"
           ],
           "substats": [
             "cr",
             "cd",
             "em",
-            "er"
+            "er",
+            "atk%"
           ],
           "mustPresent": [
             "cr",
-            "cd",
-            "em",
-            "er"
+            "cd"
           ],
           "minStatCount": 3
         },
         "goblet": {
           "mainStats": [
+            "atk%",
             "em"
           ],
           "substats": [
             "cr",
             "cd",
             "em",
-            "er"
+            "er",
+            "atk%"
           ],
           "mustPresent": [
             "cr",
-            "cd",
-            "em",
-            "er"
+            "cd"
           ],
           "minStatCount": 3
         },
@@ -5093,17 +5092,21 @@
             "cr",
             "cd",
             "em",
-            "er"
+            "er",
+            "atk%"
           ],
           "mustPresent": [
             "cr",
-            "cd",
-            "em",
-            "er"
+            "cd"
           ],
           "minStatCount": 3
         },
         "servedCharacters": [
+          {
+            "characterId": "vesna",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
+          },
           {
             "characterId": "yumemizuki_mizuki",
             "hasPerfectMerge": true,
@@ -6300,7 +6303,8 @@
           "substats": [
             "hp%",
             "atk%",
-            "em"
+            "em",
+            "hp"
           ],
           "mustPresent": [
             "hp%"
@@ -6315,7 +6319,8 @@
           "substats": [
             "hp%",
             "atk%",
-            "em"
+            "em",
+            "hp"
           ],
           "mustPresent": [
             "hp%"
@@ -6329,7 +6334,8 @@
           "substats": [
             "hp%",
             "atk%",
-            "em"
+            "em",
+            "hp"
           ],
           "mustPresent": [
             "hp%"
@@ -6344,7 +6350,8 @@
           "substats": [
             "hp%",
             "atk%",
-            "em"
+            "em",
+            "hp"
           ],
           "mustPresent": [
             "hp%"
@@ -6371,6 +6378,11 @@
             "characterId": "sigewinne",
             "hasPerfectMerge": true,
             "has4pcBuild": false
+          },
+          {
+            "characterId": "vodyanitsa",
+            "hasPerfectMerge": true,
+            "has4pcBuild": true
           }
         ]
       },
