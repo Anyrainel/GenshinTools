@@ -47,10 +47,10 @@ vi.mock("@/contexts/LanguageContext", () => ({
 }));
 
 vi.mock("@/contexts/ThemeContext", () => ({
-  THEME_IDS: ["default", "dark"],
-  SELECTABLE_THEME_IDS: ["default", "dark"],
+  THEME_IDS: ["abyss", "mondstadt"],
+  SELECTABLE_THEME_IDS: ["abyss", "mondstadt"],
   useTheme: () => ({
-    theme: "default",
+    theme: "abyss",
     setTheme: vi.fn(),
   }),
 }));

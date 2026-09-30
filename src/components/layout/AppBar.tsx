@@ -50,6 +50,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { generateThemeVars } from "@/lib/themeGenerator";
 import { cn, getAssetUrl } from "@/lib/utils";
 
 const STAR_RAIL_SITE_URL =
@@ -272,6 +273,13 @@ export function AppBar({
       >
         {theme === themeId && <Check className="w-4 h-4" />}
         {theme !== themeId && <span className="w-4" />}
+        <span
+          aria-hidden="true"
+          className="h-3.5 w-3.5 shrink-0 rounded-full border border-foreground/30"
+          style={{
+            backgroundColor: `hsl(${generateThemeVars(themeId).primary})`,
+          }}
+        />
         {getThemeLabel(themeId)}
       </DropdownMenuItem>
     ));
