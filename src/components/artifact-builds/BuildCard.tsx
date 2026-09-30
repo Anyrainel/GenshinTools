@@ -450,14 +450,12 @@ function BuildCardComponent({
                     </>
                   )}
 
-                  {isMobile &&
-                    currentRoles.includes("dps") &&
-                    element != null && (
-                      <DropdownMenuItem onClick={() => setAutoTuneOpen(true)}>
-                        <Wand2 className="mr-2 h-4 w-4" />
-                        <span>{t.ui("buildCard.autoTune")}</span>
-                      </DropdownMenuItem>
-                    )}
+                  {currentRoles.includes("dps") && element != null && (
+                    <DropdownMenuItem onClick={() => setAutoTuneOpen(true)}>
+                      <Wand2 className="mr-2 h-4 w-4" />
+                      <span>{t.ui("buildCard.autoTune")}</span>
+                    </DropdownMenuItem>
+                  )}
 
                   {build.source === "modified" && (
                     <DropdownMenuItem
@@ -531,35 +529,18 @@ function BuildCardComponent({
                     );
                   })}
                 </div>
-                <div className="flex items-end gap-2">
-                  <div className="flex-1 min-w-0">
-                    <WeightedStatSelect
-                      label={t.ui("buildCard.substats")}
-                      values={build.substats}
-                      onValuesChange={(values) =>
-                        handleBuildChange({
-                          substats: values as WeightedSubStat[],
-                        })
-                      }
-                      options={statPools.substat}
-                      maxLength={5}
-                      compact={isMobile}
-                    />
-                  </div>
-                  {currentRoles.includes("dps") && element != null && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-7 gap-1 flex-shrink-0 hidden md:inline-flex"
-                      onClick={() => setAutoTuneOpen(true)}
-                    >
-                      <Wand2 className="w-3.5 h-3.5" />
-                      <span className="text-xs">
-                        {t.ui("buildCard.autoTune")}
-                      </span>
-                    </Button>
-                  )}
-                </div>
+                <WeightedStatSelect
+                  label={t.ui("buildCard.substats")}
+                  values={build.substats}
+                  onValuesChange={(values) =>
+                    handleBuildChange({
+                      substats: values as WeightedSubStat[],
+                    })
+                  }
+                  options={statPools.substat}
+                  maxLength={5}
+                  compact={isMobile}
+                />
               </div>
             </div>
           </div>
