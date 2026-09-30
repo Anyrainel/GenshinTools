@@ -64,7 +64,7 @@ function LightweightMultiSelect({
               ? (placeholder ?? "—")
               : selectedOptions.map((opt, i) => (
                   <React.Fragment key={opt.value}>
-                    {i > 0 && ", "}
+                    {i > 0 && ","}
                     <span style={opt.color ? { color: opt.color } : undefined}>
                       {opt.label}
                     </span>
