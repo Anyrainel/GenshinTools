@@ -326,9 +326,8 @@ function BuildCardComponent({
   const multiSelectItemClass = "text-xs md:text-sm";
 
   const labelsRow = (
-    <div className="flex items-center flex-wrap gap-1 md:gap-3 lg:gap-4 2xl:gap-2 3xl:gap-4">
+    <div className="flex items-center flex-wrap gap-1 md:gap-2">
       <LightweightMultiSelect
-        className="ml-1 md:ml-3 lg:ml-4 2xl:ml-0 3xl:ml-4"
         options={styleOptions}
         value={currentStyles}
         onValueChange={(value: string[]) =>
@@ -380,14 +379,14 @@ function BuildCardComponent({
     <>
       <div className="border border-border/50 rounded-lg bg-muted/30">
         <div className="px-2 md:px-3 pt-2 space-y-1.5 md:space-y-0">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 md:gap-2">
             <Switch
               checked={build.visible}
               onCheckedChange={handleToggleVisibility}
               className="data-[state=checked]:bg-primary/70 flex-shrink-0"
             />
             {!isMobile && (
-              <div className="flex-1 min-w-0 px-2">
+              <div className="flex-1 min-w-0">
                 <Input
                   value={localName}
                   onChange={(e) => handleNameChange(e.target.value)}
@@ -398,7 +397,7 @@ function BuildCardComponent({
               </div>
             )}
             {labelsRow}
-            <div className="flex items-center gap-0.5 ml-auto flex-shrink-0">
+            <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
               <ValidationPopover
                 isValid={validation.isValid}
                 message={
