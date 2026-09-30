@@ -30,6 +30,27 @@ export function SortToggleGroup({
 }: SortToggleGroupProps) {
   const { t } = useLanguage();
 
+  const options = [
+    {
+      value: "off" as const,
+      label: t.ui("filters.sortOff"),
+      icon: Minus,
+      className: "rounded-l-sm rounded-r-none border-r-0",
+    },
+    {
+      value: "asc" as const,
+      label: t.ui("filters.sortAsc"),
+      icon: ArrowUp,
+      className: "rounded-none border-r-0",
+    },
+    {
+      value: "desc" as const,
+      label: t.ui("filters.sortDesc"),
+      icon: ArrowDown,
+      className: "rounded-l-none rounded-r-sm",
+    },
+  ];
+
   const toggleGroup = (
     <ToggleGroup
       type="single"
@@ -40,33 +61,24 @@ export function SortToggleGroup({
       }}
       className={cn("gap-0", disabled && "opacity-50 pointer-events-none")}
     >
-      <ToggleGroupItem
-        value="off"
-        aria-label="No sorting"
-        disabled={disabled}
-        className="h-7 w-12 rounded-l-sm rounded-r-none border border-r-0 text-xs gap-0.5 data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100"
-      >
-        <Minus className="h-3 w-3" />
-        {t.ui("filters.sortOff")}
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        value="asc"
-        aria-label="Sort ascending"
-        disabled={disabled}
-        className="h-7 w-12 rounded-none border border-r-0 text-xs gap-0.5 data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100"
-      >
-        <ArrowUp className="h-3 w-3" />
-        {t.ui("filters.sortAsc")}
-      </ToggleGroupItem>
-      <ToggleGroupItem
-        value="desc"
-        aria-label="Sort descending"
-        disabled={disabled}
-        className="h-7 w-12 rounded-l-none rounded-r-sm border text-xs gap-0.5 data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100"
-      >
-        <ArrowDown className="h-3 w-3" />
-        {t.ui("filters.sortDesc")}
-      </ToggleGroupItem>
+      {options.map(({ value, label, icon: Icon, className }) => (
+        <Tooltip key={value}>
+          <TooltipTrigger asChild>
+            <ToggleGroupItem
+              value={value}
+              aria-label={label}
+              disabled={disabled}
+              className={cn(
+                "h-7 w-9 px-0 border data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100",
+                className
+              )}
+            >
+              <Icon className="h-4 w-4" />
+            </ToggleGroupItem>
+          </TooltipTrigger>
+          <TooltipContent>{label}</TooltipContent>
+        </Tooltip>
+      ))}
     </ToggleGroup>
   );
 

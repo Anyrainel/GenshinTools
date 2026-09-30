@@ -1987,9 +1987,9 @@ export const i18nUiData = {
       zh: "请先导入数据以按评分排序",
     },
     searchPlaceholder: { en: "Search characters...", zh: "搜索角色..." },
-    sortOff: { en: "Off", zh: "关" },
-    sortAsc: { en: "Asc", zh: "升" },
-    sortDesc: { en: "Desc", zh: "降" },
+    sortOff: { en: "No sorting", zh: "不排序" },
+    sortAsc: { en: "Sort ascending", zh: "升序排列" },
+    sortDesc: { en: "Sort descending", zh: "降序排列" },
     tierSortDisabled: {
       en: "Configure tiers on the Tier List page first",
       zh: "请先在榜单页面配置评级",
