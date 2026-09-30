@@ -1,4 +1,4 @@
-import { AlertTriangle, Search, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { SortToggleGroup } from "@/components/shared/SortToggleGroup";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,7 +27,7 @@ import {
   weaponResourcesByName,
 } from "@/data/gameResources";
 import type { CharacterFilters } from "@/data/types";
-import { getAssetUrl } from "@/lib/utils";
+import { cn, getAssetUrl } from "@/lib/utils";
 
 interface CharacterFilterSidebarProps {
   filters: CharacterFilters;
@@ -125,55 +125,38 @@ export function CharacterFilterSidebar({
             {t.ui("filters.sort")}
           </h2>
           <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-2 items-center">
-            {/* Tier sort row - with optional disabled tooltip */}
-            {hasTierData ? (
-              <Label className="text-foreground text-sm font-medium">
-                {t.ui("filters.sortByTier")}
-              </Label>
-            ) : (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label className="text-muted-foreground text-sm font-medium flex items-center gap-1 cursor-help">
-                    {t.ui("filters.sortByTier")}
-                    <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-                  </Label>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t.ui("filters.tierSortDisabled")}</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
+            <Label
+              className={cn(
+                "text-sm font-medium",
+                hasTierData ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              {t.ui("filters.sortByTier")}
+            </Label>
             <SortToggleGroup
               value={filters.tierSort}
               onChange={(v: SortDirection) =>
                 onFiltersChange({ ...filters, tierSort: v })
               }
               disabled={!hasTierData}
+              disabledTooltip={t.ui("filters.tierSortDisabled")}
             />
             {/* Score sort row */}
-            {hasScoreData ? (
-              <Label className="text-foreground text-sm font-medium">
-                {t.ui("filters.sortByScore")}
-              </Label>
-            ) : (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Label className="text-muted-foreground text-sm font-medium flex items-center gap-1 cursor-help">
-                    {t.ui("filters.sortByScore")}
-                    <AlertTriangle className="h-3.5 w-3.5 text-amber-500" />
-                  </Label>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t.ui("filters.scoreSortDisabled")}</p>
-                </TooltipContent>
-              </Tooltip>
-            )}
+            <Label
+              className={cn(
+                "text-sm font-medium",
+                hasScoreData ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              {t.ui("filters.sortByScore")}
+            </Label>
             <SortToggleGroup
               value={filters.scoreSort}
               onChange={(v: SortDirection) =>
                 onFiltersChange({ ...filters, scoreSort: v })
               }
               disabled={!hasScoreData}
+              disabledTooltip={t.ui("filters.scoreSortDisabled")}
             />
             <Label className="text-foreground text-sm font-medium">
               {t.ui("filters.sortByReleaseDate")}

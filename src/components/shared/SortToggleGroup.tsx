@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import {
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { SortDirection } from "@/data/enums";
+import { cn } from "@/lib/utils";
 
 interface SortToggleGroupProps {
   label?: string;
@@ -37,7 +38,7 @@ export function SortToggleGroup({
         // ToggleGroup returns empty string when deselecting, but we handle clicks explicitly
         if (v && !disabled) onChange(v as SortDirection);
       }}
-      className={`gap-0 ${disabled ? "opacity-50 pointer-events-none" : ""}`}
+      className={cn("gap-0", disabled && "opacity-50 pointer-events-none")}
     >
       <ToggleGroupItem
         value="off"
@@ -69,37 +70,36 @@ export function SortToggleGroup({
     </ToggleGroup>
   );
 
-  // If no label provided, just return the toggle group (for use in grid layouts)
-  if (!label) {
-    return toggleGroup;
-  }
+  const controls =
+    disabled && disabledTooltip ? (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="cursor-help">{toggleGroup}</div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{disabledTooltip}</p>
+        </TooltipContent>
+      </Tooltip>
+    ) : (
+      toggleGroup
+    );
 
-  const labelContent = (
-    <Label
-      className={`text-foreground text-sm font-medium min-w-[4rem] flex items-center gap-1 ${disabled ? "text-muted-foreground" : ""}`}
-    >
-      {label}
-      {disabled && (
-        <AlertTriangle className="h-3.5 w-3.5 text-amber-500 flex-shrink-0" />
-      )}
-    </Label>
-  );
+  // If no label provided, just return the controls (for use in grid layouts)
+  if (!label) {
+    return controls;
+  }
 
   return (
     <div className="flex items-center gap-2">
-      {disabled && disabledTooltip ? (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span className="cursor-help">{labelContent}</span>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{disabledTooltip}</p>
-          </TooltipContent>
-        </Tooltip>
-      ) : (
-        labelContent
-      )}
-      {toggleGroup}
+      <Label
+        className={cn(
+          "text-sm font-medium min-w-[4rem]",
+          disabled ? "text-muted-foreground" : "text-foreground"
+        )}
+      >
+        {label}
+      </Label>
+      {controls}
     </div>
   );
 }
