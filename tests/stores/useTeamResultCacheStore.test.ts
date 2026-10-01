@@ -28,11 +28,19 @@ describe("migrateTeamResultCacheStore", () => {
     expect(result.resultsByTeamId).toEqual({});
   });
 
-  it("preserves v3 results", () => {
+  it("clears v3 results computed with beta 7.1 weapons or pre-release Vesna formulas", () => {
+    const result = migrateTeamResultCacheStore(
+      { resultsByTeamId: { "team-1": { investmentResult: { timestamp: 1 } } } },
+      3
+    );
+    expect(result.resultsByTeamId).toEqual({});
+  });
+
+  it("preserves v4 results", () => {
     const resultsByTeamId = {
       "team-1": { investmentResult: { timestamp: 1 } },
     };
-    const result = migrateTeamResultCacheStore({ resultsByTeamId }, 3);
+    const result = migrateTeamResultCacheStore({ resultsByTeamId }, 4);
     expect(result.resultsByTeamId).toBe(resultsByTeamId);
   });
 });

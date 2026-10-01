@@ -20,6 +20,7 @@ import {
   filterValidBuildGroups,
   getBuildValidationErrors,
 } from "@/lib/artifact-builds/buildValidation";
+import { resolveReleasedWeaponId } from "@/lib/weaponIds";
 import { PersistedBuildsStoreSchema } from "@/stores/schemas";
 import { invalidateScores } from "@/stores/useAccountScoreCacheStore";
 
@@ -495,7 +496,9 @@ export const useBuildsStore = create<BuildsState>()(
           // Restore weapons from preset (or clear if no preset)
           const presetWeapons = preset?.characterWeapons?.[characterId];
           if (presetWeapons?.length) {
-            state.characterWeapons[characterId] = [...presetWeapons];
+            state.characterWeapons[characterId] = [
+              ...new Set(presetWeapons.map(resolveReleasedWeaponId)),
+            ];
           } else {
             delete state.characterWeapons[characterId];
           }

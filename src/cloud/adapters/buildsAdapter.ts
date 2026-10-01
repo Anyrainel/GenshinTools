@@ -6,6 +6,7 @@ import {
 } from "@/lib/artifact-builds/buildDeltas";
 import { getDefaultBuildPresetId } from "@/lib/artifact-builds/buildPresetRegistry";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
+import { migrateReleasedCharacterWeapons } from "@/stores/migration/releasedWeaponIds";
 import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
 export type ArtifactScoreCloudConfig = Record<string, unknown> & {
@@ -52,7 +53,7 @@ export function buildsToCloud(
     {
       namespace: "builds",
       partitionKey: "all",
-      schemaVersion: 1,
+      schemaVersion: 2,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultBuildsSnapshot(snapshot),
       payload: {
@@ -106,7 +107,9 @@ export function buildsFromCloud(
       hiddenCharacterIds,
       null
     ),
-    characterWeapons: getRestoredCharacterWeapons(payload),
+    characterWeapons: migrateReleasedCharacterWeapons(
+      getRestoredCharacterWeapons(payload)
+    ),
     computeOptions: payload?.computeOptions ?? {},
     artifactScore: payload?.artifactScore ?? { global: {} },
     author: payload?.author ?? "",

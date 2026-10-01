@@ -10,6 +10,7 @@ import type {
 } from "@/data/types";
 import { createLocatedCharacterPlaceholder } from "@/lib/account-data/import/locationCharacters";
 import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
+import { migrateReleasedAccountWeapons } from "@/stores/migration/releasedWeaponIds";
 import {
   assignArtifactIdentities,
   assignWeaponIdentities,
@@ -174,9 +175,11 @@ export function accountFromCloud(
       id: profileId,
       name: app?.name ?? `Account ${profileId}`,
       lastUpdate: app?.lastImportedAt ?? Date.now(),
-      data: restoreAccountData(
-        rosters.get(profileId),
-        artifactsByProfile.get(profileId)
+      data: migrateReleasedAccountWeapons(
+        restoreAccountData(
+          rosters.get(profileId),
+          artifactsByProfile.get(profileId)
+        )
       ),
     };
   }
@@ -288,7 +291,7 @@ function cloudPartition<TPayload>(
   return {
     namespace,
     partitionKey: encodePathSegment(partitionKey),
-    schemaVersion: 1,
+    schemaVersion: 2,
     conflictPolicy: "profile-import-wins",
     payload,
   };

@@ -27,6 +27,7 @@ import {
   calculateTeamERSequence,
   getActionParticles,
   getDefaultProcCount,
+  getEnergyLoopRepeatCount,
   getHitParticles,
   getParticleElement,
   hasPeriodicGeneration,
@@ -510,14 +511,17 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
         source: { kind: "loop" as const, iteration: "first" as const },
       });
       if (isRepeating) {
-        segments.push({
-          timeline: loopTimeline,
-          source: { kind: "loop" as const, iteration: "subsequent" as const },
-        });
+        const repeats = getEnergyLoopRepeatCount(erTeam.map(toTeamMember));
+        for (let iteration = 1; iteration < repeats; iteration++) {
+          segments.push({
+            timeline: loopTimeline,
+            source: { kind: "loop" as const, iteration: "subsequent" as const },
+          });
+        }
       }
       return segments;
     },
-    [startupERTs, isRepeating]
+    [startupERTs, isRepeating, erTeam]
   );
 
   const sequenceOptions = useMemo<ERSequenceOptions>(

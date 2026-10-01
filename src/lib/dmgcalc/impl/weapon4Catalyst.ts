@@ -489,8 +489,8 @@ class ClashOfKings extends WeaponBase {
 // cannot read, and it REPLACES the base bonus instead of adding to it, so it
 // must be an explicit user toggle: the base branch is what every wielder gets,
 // and the Radiance branch is opt-in. The "on" choice is only offered when the
-// team can produce a Stellar reaction at all. Mirrors weapon_sword.
-const weaponCatalystOption = {
+// team can produce a Stellar reaction at all. Mirrors New Bough.
+const wintersHeavyHeartOption = {
   label: { zh: "辉映状态", en: "Radiance State" },
   choices: [
     { value: "off", label: { zh: "关闭", en: "Off" } },
@@ -503,19 +503,17 @@ const weaponCatalystOption = {
   ] as const,
 } satisfies OptionDef;
 
-@RegisterWeapon("weapon_catalyst", weaponCatalystOption)
-class WeaponCatalyst extends WeaponBase {
+@RegisterWeapon("winters_heavy_heart", wintersHeavyHeartOption)
+class WintersHeavyHeart extends WeaponBase {
   private readonly radianceOn =
-    resolveOption(weaponCatalystOption, this.option, this.teamMeta) === "on";
+    resolveOption(wintersHeavyHeartOption, this.option, this.teamMeta) === "on";
 
-  // BETA. Party-composition scaling: each Cryo party member grants EM, each
+  // Party-composition scaling: each Cryo party member grants EM, each
   // Electro party member grants ATK%. The wielder counts toward their own
   // element. Both clauses are unconditional, so no trigger label.
   //
   // Under Radiance this is replaced: every Cryo or Electro member instead
   // grants EM plus Stellar reaction DMG%, for at most 4 counted characters.
-  //
-  // ZH/EN differ on the Radiance EM at R4 (35 vs 30) — ZH wins per beta rules.
   get buffs() {
     let cryo = 0;
     let electro = 0;

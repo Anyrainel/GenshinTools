@@ -226,7 +226,7 @@ describe("cloud source adapters", () => {
     expect(partition).toMatchObject({
       namespace: "builds",
       partitionKey: "all",
-      schemaVersion: 1,
+      schemaVersion: 2,
       conflictPolicy: "explicit-choice",
     });
     expect(partition.payload).not.toHaveProperty("validationErrors");
@@ -280,7 +280,7 @@ describe("cloud source adapters", () => {
     );
   });
 
-  it("reads legacy build character metadata while schema version remains one", () => {
+  it("reads legacy build character metadata from schema version one", () => {
     const build = customBuild();
     const restored = buildsFromCloud([
       {
@@ -349,7 +349,7 @@ describe("cloud source adapters", () => {
     expect(partitions[0]).toMatchObject({
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 3,
+      schemaVersion: 4,
     });
     expect(partitions[0].payload).not.toHaveProperty("resultsByTeamId");
     expect(teamFromCloud(partitions)).toEqual({

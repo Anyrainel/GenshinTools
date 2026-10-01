@@ -13,7 +13,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "account",
     includeInBackup: true,
     namespaces: ["profile.app", "profile.game", "profile.artifacts"],
-    currentVersion: 1,
+    currentVersion: 2,
     conflictPolicy: "profile-import-wins",
   },
   {
@@ -22,7 +22,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "builds",
     includeInBackup: true,
     namespaces: ["builds"],
-    currentVersion: 1,
+    currentVersion: 2,
     conflictPolicy: "explicit-choice",
   },
   {
@@ -31,7 +31,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "teams",
     includeInBackup: true,
     namespaces: ["teams"],
-    currentVersion: 3,
+    currentVersion: 4,
     conflictPolicy: "explicit-choice",
   },
   {
@@ -44,7 +44,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "tiers",
     includeInBackup: true,
     namespaces: ["tiers"],
-    currentVersion: 1,
+    currentVersion: 2,
     conflictPolicy: "explicit-choice",
   },
   {

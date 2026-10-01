@@ -7,6 +7,7 @@ import {
 } from "@/lib/artifact-builds/buildDeltas";
 import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
 import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
+import { migrateReleasedCharacterWeapons } from "./releasedWeaponIds";
 
 // Migrates old SubStat[] to WeightedSubStat[]. Uses default weight 100 when no
 // build-based weights are available (e.g. during store migration).
@@ -33,6 +34,7 @@ interface LegacyBuildsState {
   validationErrors?: Record<string, string[]>;
   activePresetId?: string | null;
   hiddenCharacters?: Record<string, boolean>;
+  characterWeapons?: Record<string, string[]>;
   updatedAt?: number;
 }
 
@@ -122,5 +124,10 @@ export function migrateBuildsStore(
     state.updatedAt = Date.now();
   }
 
+  if (version < 9) {
+    state.characterWeapons = migrateReleasedCharacterWeapons(
+      state.characterWeapons ?? {}
+    );
+  }
   return state as Record<string, unknown>;
 }

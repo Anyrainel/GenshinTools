@@ -3,6 +3,58 @@ import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
+@RegisterWeapon("hymn_of_the_maelstrom")
+class HymnOfTheMaelstrom extends WeaponBase {
+  get buffs() {
+    const buffs: StatBuff[] = [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        {
+          key: "heal%",
+          value: r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]),
+        },
+      ]),
+    ];
+    // Healing oneself also qualifies. These catalysts restore their own HP but
+    // are intentionally absent from the metadata for party healer roles.
+    const canHeal =
+      this.teamMeta.isHealer[this.charId] ||
+      this.charId === "neuvillette" ||
+      this.charId === "wriothesley";
+    if (!canHeal) return buffs;
+
+    const enhanced =
+      this.teamMeta.hasReaction("frozen") ||
+      this.teamMeta.hasReaction("stellarSwirl");
+    const multiplier = enhanced ? 1.75 : 1;
+    const triggers = enhanced ? ["heal", "frozen", "stellarSwirl"] : ["heal"];
+    // Peak model: three maintained healing stacks. The 75% enhancement applies
+    // to each stack's HP bonus, ATK scaling rate, and ATK cap.
+    buffs.push(
+      new StatBuff(wbs(this, triggers), { receiver: "self" }, [
+        {
+          key: "hp%",
+          value:
+            3 * multiplier * r(this.refinement, [0.04, 0.05, 0.06, 0.07, 0.08]),
+        },
+      ]),
+      new ScalingBuff(
+        wbs(this, triggers, "hymn-of-the-maelstrom-vintage"),
+        { receiver: "teamOnField" },
+        [],
+        "hp",
+        "atk%",
+        (3 *
+          multiplier *
+          r(this.refinement, [0.004, 0.005, 0.006, 0.007, 0.008])) /
+          1000,
+        3 * multiplier * r(this.refinement, [0.08, 0.1, 0.12, 0.14, 0.16]),
+        40000
+      )
+    );
+    return buffs;
+  }
+}
+
 @RegisterWeapon("nocturnes_curtain_call")
 class NocturnesCurtainCall extends WeaponBase {
   get buffs() {

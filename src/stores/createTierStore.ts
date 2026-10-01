@@ -55,6 +55,7 @@ interface CreateTierStoreOptions<
   /** localStorage key for persistence */
   storageKey: string;
   version?: number;
+  normalizeAssignments?: (assignments: TierAssignment) => TierAssignment;
   migrate?: (persistedState: unknown, version: number) => unknown;
   persistedSchema?: z.ZodType<TPersisted>;
   /** Extra fields for newly created tier-list instances. */
@@ -217,7 +218,9 @@ export function createTierStore<
                   ? assignments(current.tierAssignments)
                   : assignments;
               return updateActiveTierList(state, {
-                tierAssignments,
+                tierAssignments:
+                  options.normalizeAssignments?.(tierAssignments) ??
+                  tierAssignments,
               } as Partial<TInstance>);
             }),
 
@@ -247,7 +250,9 @@ export function createTierStore<
           loadTierListData: (data) =>
             set((state) =>
               updateActiveTierList(state, {
-                tierAssignments: data.tierAssignments,
+                tierAssignments:
+                  options.normalizeAssignments?.(data.tierAssignments) ??
+                  data.tierAssignments,
                 tierCustomization: data.tierCustomization,
                 customTitle: data.customTitle || "",
                 author: data.author || "",

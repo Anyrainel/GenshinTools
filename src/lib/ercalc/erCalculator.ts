@@ -519,6 +519,8 @@ interface CharSimState {
   erScalingAccum: number;
   erScalingSources: Record<string, { per100: number; max?: number }>;
   weaponLastFireTime: number;
+  /** Phase of a weapon's three-cast E/Q sequence; cleared on leaving field. */
+  weaponCastPhase: number;
   /** Current NA on-hit pity probability (0–1). Increments each miss, resets on proc or swap-in. */
   /** Distribution over the NA on-hit pity counter: `naPityDist[k]` is the
    *  probability that exactly k consecutive non-proc hits have accumulated.
@@ -559,6 +561,7 @@ function freshState(): CharSimState {
     erScalingAccum: 0,
     erScalingSources: {},
     weaponLastFireTime: -999,
+    weaponCastPhase: 0,
     naPityDist: [1],
     hitCounts: { NA: 0, CA: 0, PA: 0 },
     pendingProcs: [],
@@ -886,11 +889,26 @@ function collectFlatEventsAt(
         (source.healAction === "E" && isSkill));
     const reactionFires =
       trig === "reaction" && act.reactionProc === true && (isBurst || isSkill);
+    let sequenceFires = false;
+    if (trig === "thirdSkillOrBurst" && (isBurst || isSkill)) {
+      const wearerState = state?.get(source.id);
+      if (wearerState) {
+        // Advance even when the energy cap is on cooldown: it suppresses
+        // the third effect's energy, without changing the effect sequence.
+        wearerState.weaponCastPhase = (wearerState.weaponCastPhase + 1) % 3;
+        sequenceFires = wearerState.weaponCastPhase === 0;
+      } else {
+        // A single-node preview has no sequence context. Show the refund
+        // with its explicit condition; the simulation resolves the phase.
+        sequenceFires = true;
+      }
+    }
     const fires =
       (trig === "burst" && isBurst) ||
       (trig === "skill" && isSkill) ||
       healFires ||
-      reactionFires;
+      reactionFires ||
+      sequenceFires;
     if (fires) {
       // Most energy weapons pay their wearer; Frostbreath pays the wearer's
       // teammates instead.
@@ -907,6 +925,14 @@ function collectFlatEventsAt(
           sourceLabel: source.weaponId ?? "weapon",
           amount: we.energy.totalEnergy[source.refinement ?? 0],
           isErScaling: false,
+          conditionEn:
+            trig === "thirdSkillOrBurst"
+              ? "Every third Skill/Burst cast; sequence resets on leaving the field"
+              : undefined,
+          conditionZh:
+            trig === "thirdSkillOrBurst"
+              ? "每第三次施放元素战技或元素爆发；退场时重置顺序"
+              : undefined,
         });
       }
     }
@@ -1163,6 +1189,10 @@ function simulateSequence(
     // nor change who is considered on field for the nodes that follow.
     if (!isPseudoNode(act)) {
       if (act.char !== prevActChar) {
+        if (prevActChar !== undefined) {
+          const outgoing = state.get(prevActChar);
+          if (outgoing) outgoing.weaponCastPhase = 0;
+        }
         const incoming = state.get(act.char)!;
         incoming.naPityDist = [1];
       }
@@ -1542,12 +1572,29 @@ function concatTimelines(t1: ERTimeline, t2: ERTimeline): ERTimeline {
 
 // ─── Public API ───
 
+/** Loop copies used by automatic sustained-energy checks. Authored finite
+ * sequences remain unchanged. A three-cast weapon needs all three phases
+ * plus another phase cycle to expose cooldown-blocked short-loop refunds. */
+export function getEnergyLoopRepeatCount(team: TeamMember[]): number {
+  return team.some((member) => {
+    const energy = member.weaponId
+      ? weaponEnergyById[member.weaponId]?.energy
+      : undefined;
+    return (
+      energy?.effect === "flatEnergy" && energy.trigger === "thirdSkillOrBurst"
+    );
+  })
+    ? 6
+    : 2;
+}
+
 /**
  * Calculate the minimum ER% for each team member to burst every rotation.
  *
  * Supports three calculation modes:
  * - **zero-energy-start**: Can I burst starting from 0? Uses T1(+T2) as one-shot.
- * - **full-energy-repeat**: Can I sustain forever? Doubles the repeating timeline.
+ * - **full-energy-repeat**: Can I sustain forever? Repeats the timeline to
+ *   check sustained burst windows, including sequenced weapon-energy phases.
  * - **zero-energy-repeat**: Both checks; takes max ER per character.
  *
  * The `timeline` parameter is the primary (or only) timeline:
@@ -1594,7 +1641,7 @@ export function calculateTeamER(
 
   // full-energy-repeat
   const repeating = timeline2 ?? timeline;
-  const expanded = expandRepeat(repeating, 2);
+  const expanded = expandRepeat(repeating, getEnergyLoopRepeatCount(team));
   return simulateSequence(
     team,
     expanded.actions,
@@ -1608,8 +1655,8 @@ export function calculateTeamER(
 
 /**
  * Calculate ER over an explicit authored sequence. Each Q / specialQ in each
- * segment is retained as its own window; loop repeat checks are represented by
- * adding the loop segment twice.
+ * segment is retained as its own window. Callers author repeated-loop copies;
+ * automatic sustained checks use getEnergyLoopRepeatCount to cover weapon phases.
  */
 export function calculateTeamERSequence(
   team: TeamMember[],

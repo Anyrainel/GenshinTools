@@ -19,12 +19,26 @@ describe("migrateAccountScoreCacheStore", () => {
     });
   });
 
+  it("discards v2 scores carrying retired 7.1 beta weapon identities", () => {
+    expect(
+      migrateAccountScoreCacheStore(
+        {
+          scoresByProfileId: {
+            "0": { qiqi: { normalized: { normalizedScore: 123 } } },
+          },
+          staleScoreCharIdsByProfileId: { "0": [] },
+        },
+        2
+      )
+    ).toEqual({ scoresByProfileId: {}, staleScoreCharIdsByProfileId: {} });
+  });
+
   it("preserves current-version cache state", () => {
     const current = {
       scoresByProfileId: { "0": { odette: null } },
       staleScoreCharIdsByProfileId: { "0": ["odette"] },
     };
 
-    expect(migrateAccountScoreCacheStore(current, 2)).toBe(current);
+    expect(migrateAccountScoreCacheStore(current, 3)).toBe(current);
   });
 });

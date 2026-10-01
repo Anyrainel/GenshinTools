@@ -5,6 +5,7 @@ import {
   legacyAccountProfileIdToNumberOrDefault,
 } from "@/lib/account-data/accountProfile";
 import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
+import { migrateReleasedAccountWeapons } from "./releasedWeaponIds";
 
 type PersistedAccountStore = {
   accounts: Record<AccountProfileId, AccountState>;
@@ -72,7 +73,7 @@ function normalizeAccountStoreIds(
  * Zustand persist migration function.
  * Exported for unit testing; do not call directly in application code.
  */
-export function migrateAccountStore(
+function migrateAccountShape(
   persistedState: unknown,
   version: number
 ): PersistedAccountStore {
@@ -144,4 +145,18 @@ export function migrateAccountStore(
   }
 
   return normalizeAccountStoreIds(state);
+}
+
+export function migrateAccountStore(
+  persistedState: unknown,
+  version: number
+): PersistedAccountStore {
+  const state = migrateAccountShape(persistedState, version);
+  if (version < 7) {
+    for (const account of Object.values(state.accounts)) {
+      if (account.data)
+        account.data = migrateReleasedAccountWeapons(account.data);
+    }
+  }
+  return state;
 }

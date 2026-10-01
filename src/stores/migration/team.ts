@@ -22,6 +22,7 @@ import {
   type LegacyPersistedTeam,
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
+import { migrateReleasedTeamWeapons } from "./releasedWeaponIds";
 import {
   migrateLegacyFormulaUnitConfigs,
   migrateLegacySkirkFormulaUnitConfigs,
@@ -601,6 +602,9 @@ export function migrateTeamStore(
     );
   }
 
+  if (version < 22) {
+    Object.assign(state, migrateReleasedTeamWeapons(state));
+  }
   state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});
 
   delete state.teams;

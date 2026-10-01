@@ -1,6 +1,7 @@
 import type { CloudExportPartition } from "@/cloud/types";
 import type { TierAssignment, TierCustomization } from "@/data/types";
 import type { AccountProfileId } from "@/lib/account-data/types";
+import { migrateReleasedWeaponRecord } from "@/stores/migration/releasedWeaponIds";
 
 export type CharacterTierListSnapshot = {
   tierLists: Record<number, CharacterTierListInstanceSnapshot>;
@@ -71,7 +72,7 @@ export function tiersToCloud(
     {
       namespace: "tiers",
       partitionKey: "all",
-      schemaVersion: 1,
+      schemaVersion: 2,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTiersSnapshot(snapshot),
       payload: {
@@ -97,6 +98,17 @@ export function tiersFromCloud(partitions: CloudExportPartition[]) {
     (partition) => partition.namespace === "tiers"
   );
   const current = partition?.payload as TiersCloudPayload | undefined;
+  const weaponPayload = current?.weapon;
+  const migratedWeaponPayload =
+    weaponPayload && partition && partition.schemaVersion < 2
+      ? {
+          ...weaponPayload,
+          lists: weaponPayload.lists.map((list) => ({
+            ...list,
+            tierAssignments: migrateReleasedWeaponRecord(list.tierAssignments),
+          })),
+        }
+      : weaponPayload;
   const updatedAt =
     getMetadataUpdatedAt(partition) ?? current?.updatedAt ?? Date.now();
   return {
@@ -109,7 +121,10 @@ export function tiersFromCloud(partitions: CloudExportPartition[]) {
           updatedAt
         ),
     weapon: current
-      ? genericSnapshotFromPayload(current.weapon, updatedAt)
+      ? genericSnapshotFromPayload(
+          migratedWeaponPayload ?? current.weapon,
+          updatedAt
+        )
       : tierSnapshot<TierListInstanceSnapshot>(
           [],
           undefined,

@@ -8,6 +8,27 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
+@RegisterWeapon("beyond_the_chrysalis")
+class BeyondTheChrysalis extends WeaponBase {
+  // Consecutive E/Q casts allow the two 10s damage buffs to overlap.
+  // Both effects are removed on switching out; energy recovery lives in ercalc.
+  readonly buffs = [
+    new StatBuff(wbs(this, ["E", "Q"]), { receiver: "selfOnField" }, [
+      { key: "cd", value: r(this.refinement, [0.56, 0.72, 0.88, 1.04, 1.2]) },
+    ]),
+    new StatBuff(
+      wbs(this, ["E", "Q"]),
+      { receiver: "selfOnField", filter: { reactions: ["stellarSwirl"] } },
+      [
+        {
+          key: "reactionDmg%",
+          value: r(this.refinement, [0.36, 0.45, 0.54, 0.63, 0.72]),
+        },
+      ]
+    ),
+  ];
+}
+
 @RegisterWeapon("athame_artis")
 class AthameArtis extends WeaponBase {
   // Burst CD + Blade of the Daylight Hours: self ATK% + team ATK%

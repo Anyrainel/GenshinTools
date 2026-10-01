@@ -289,7 +289,7 @@ Radiance (辉映) is a per-character state, not a reaction trigger — see [Part
 
 **Decide by the verb.**
 
-- 「效果变更为」/「改为」 (the Radiance clause **replaces** the base effect) → give the entity its own two-choice `OptionDef`: `off` first so it is the default, `on` gated by `when: (tm) => tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl")`. Then branch: `if (radianceOn) { return [replacement]; } return [base];`. Reference: `weaponSwordOption` in `weapon4Sword.ts`.
+- 「效果变更为」/「改为」 (the Radiance clause **replaces** the base effect) → give the entity its own two-choice `OptionDef`: `off` first so it is the default, `on` gated by `when: (tm) => tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl")`. Then branch: `if (radianceOn) { return [replacement]; } return [base];`. Reference: `newBoughOption` in `weapon4Sword.ts`.
 - 「提升」/「获得」 within a 触发星烁反应 window (the clause **adds** to the base effect) → no option needed; gate on `hasReaction(r, this.charId)` per U12. A false positive only over-grants.
 
 **[BUG]** if a 变更为/改为 clause is gated on `hasReaction(...)` alone — a wrong gate is two-sided there, granting an unearned branch *and* stripping the base one. **[BUG]** if a Radiance branch is applied additively on top of the base branch.

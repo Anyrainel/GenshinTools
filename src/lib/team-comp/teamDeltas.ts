@@ -13,6 +13,7 @@ import type {
   TeamCompInput,
   TeamSetupConfig,
 } from "@/lib/team-comp/types";
+import { resolveReleasedWeaponId } from "@/lib/weaponIds";
 
 export type TeamCompDelta = PresetDelta<TeamComp>;
 
@@ -135,9 +136,10 @@ export function teamArraysToComp({
   );
   const slots: TeamComp["slots"] = [];
   for (let i = 0; i < maxLength; i++) {
+    const weaponId = weapons[i];
     slots.push({
       charId: characters[i] ?? null,
-      weaponId: weapons[i] ?? null,
+      weaponId: weaponId == null ? null : resolveReleasedWeaponId(weaponId),
       artifactSet: artifacts[i] ?? null,
     });
   }
@@ -226,7 +228,15 @@ export function teamCompInputToComp(
       id: input.id,
       name: input.name ?? "",
       reactions: [...(input.reactions ?? [])],
-      slots: trimTrailingEmptySlots(input.slots),
+      slots: trimTrailingEmptySlots(
+        input.slots.map((slot) => ({
+          ...slot,
+          weaponId:
+            slot.weaponId == null
+              ? null
+              : resolveReleasedWeaponId(slot.weaponId),
+        }))
+      ),
     };
   }
   return teamArraysToComp({

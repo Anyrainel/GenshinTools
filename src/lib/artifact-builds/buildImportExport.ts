@@ -6,6 +6,7 @@ import {
   setBuildDeltaOrderForCharacter,
   upsertCustomBuildDelta,
 } from "@/lib/artifact-builds/buildDeltas";
+import { resolveReleasedWeaponId } from "@/lib/weaponIds";
 import type { BuildsState } from "@/stores/useBuildsStore";
 import { migrateBuild } from "./buildMigration";
 import { DEFAULT_COMPUTE_OPTIONS } from "./computeFilters";
@@ -65,7 +66,9 @@ export function executeSubscribePreset(
   // Copy weapons only for characters without existing customizations
   for (const [charId, weapons] of Object.entries(payload.characterWeapons)) {
     if (!state.characterWeapons[charId]?.length) {
-      state.characterWeapons[charId] = [...weapons];
+      state.characterWeapons[charId] = [
+        ...new Set(weapons.map(resolveReleasedWeaponId)),
+      ];
     }
   }
 }
@@ -109,7 +112,9 @@ export function executeImportBuilds(
 
     // Merge Weapons
     for (const [charId, weapons] of Object.entries(v5.characterWeapons)) {
-      state.characterWeapons[charId] = weapons;
+      state.characterWeapons[charId] = [
+        ...new Set(weapons.map(resolveReleasedWeaponId)),
+      ];
     }
   } else {
     // Legacy V4 Import
@@ -146,7 +151,9 @@ export function executeImportBuilds(
     // Handle character weapons if present in payload
     for (const { characterId, weapons } of v4.data) {
       if (weapons && weapons.length > 0) {
-        state.characterWeapons[characterId] = weapons.slice(0, 5);
+        state.characterWeapons[characterId] = [
+          ...new Set(weapons.map(resolveReleasedWeaponId)),
+        ].slice(0, 5);
       } else {
         delete state.characterWeapons[characterId];
       }

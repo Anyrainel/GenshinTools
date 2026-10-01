@@ -4,6 +4,7 @@ import {
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import type { TeamSetupConfig } from "@/lib/team-comp/types";
+import { migrateReleasedTeamWeapons } from "@/stores/migration/releasedWeaponIds";
 import {
   migrateLegacyFormulaUnitConfigs,
   migrateLegacySkirkFormulaUnitConfigs,
@@ -38,7 +39,7 @@ export function teamToCloud(
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 3,
+      schemaVersion: 4,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -67,7 +68,7 @@ export function teamFromCloud(
   if (partition && partition.schemaVersion < 3) {
     configsByTeamId = migrateLegacySkirkFormulaUnitConfigs(configsByTeamId);
   }
-  return {
+  const restored = {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],
     configsByTeamId,
@@ -76,6 +77,9 @@ export function teamFromCloud(
     updatedAt:
       getMetadataUpdatedAt(partition) ?? current?.updatedAt ?? Date.now(),
   };
+  return partition && partition.schemaVersion < 4
+    ? migrateReleasedTeamWeapons(restored)
+    : restored;
 }
 
 function getMetadataUpdatedAt(

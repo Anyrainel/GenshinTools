@@ -509,7 +509,7 @@ class JadeVista extends WeaponBase {
   }
 }
 
-const weaponBowOption = {
+const breezeborneRefrainOption = {
   label: { zh: "全队增益覆盖率", en: "Party Buff Uptime" },
   choices: [
     { value: "1", label: { zh: "100%（无缝续接）", en: "100% (kept up)" } },
@@ -518,11 +518,11 @@ const weaponBowOption = {
   ] as const,
 } satisfies OptionDef;
 
-@RegisterWeapon("weapon_bow", weaponBowOption)
-class WeaponBow extends WeaponBase {
-  private readonly o = resolveOption(weaponBowOption, this.option);
+@RegisterWeapon("breezeborne_refrain", breezeborneRefrainOption)
+class BreezeborneRefrain extends WeaponBase {
+  private readonly o = resolveOption(breezeborneRefrainOption, this.option);
 
-  // BETA. Unconditional ER%. E/Q hits each grant 1 point (once per 0.03s); at 3
+  // Unconditional ER%. E/Q hits each grant 1 point (once per 0.03s); at 3
   // points the whole party gains a Stellar-Conduct / Stellar Swirl reaction DMG
   // bonus for 12s, during which no further points can be gathered. Uptime
   // therefore depends on how fast 3 more E/Q hits land after each window, so
@@ -534,7 +534,7 @@ class WeaponBow extends WeaponBase {
         { key: "er", value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]) },
       ]),
       new StatBuff(
-        wbs(this, ["E", "Q"], "weapon-bow-stellar-dmg"),
+        wbs(this, ["E", "Q"], "breezeborne-refrain-stellar-dmg"),
         {
           receiver: "team",
           filter: { reactions: ["stellarConduct", "stellarSwirl"] },

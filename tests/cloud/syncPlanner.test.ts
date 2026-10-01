@@ -154,7 +154,7 @@ describe("cloud sync planner", () => {
       action: "unsupported",
       reason: "newer-cloud-schema",
       remoteSchemaVersion: 3,
-      supportedSchemaVersion: 1,
+      supportedSchemaVersion: 2,
     });
   });
 

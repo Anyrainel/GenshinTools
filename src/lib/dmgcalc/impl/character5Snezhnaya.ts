@@ -1297,7 +1297,7 @@ class Vesna extends CharacterBase {
       ),
     ];
 
-    // P2 Effortless: only active under 辉映·星扩散. Counts every party member
+    // P2 Truth Prevails: only active under 辉映·星扩散. Counts every party member
     // (Vesna included); C4 raises the effect by 200% → ×3.
     if (this.radianceOn) {
       const elements = Object.values(this.teamMeta.elements).filter(
@@ -1325,7 +1325,7 @@ class Vesna extends CharacterBase {
       }
     }
 
-    // C1: Vesna's own Stellar Swirl DMG +20% while in the Spirit Blade state.
+    // C1: Vesna's own Stellar Swirl DMG +20% while Armed for Action.
     if (this.constellation >= 1) {
       buffs.push(
         new StatBuff(
@@ -1336,12 +1336,12 @@ class Vesna extends CharacterBase {
       );
     }
 
-    // C2: Unruffled is granted at max stacks on entering the Spirit Blade
-    // state, and being at max stacks additionally grants ATK +60%.
+    // C2: Disciplinary Action is granted at max stacks on entering Armed for
+    // Action, and being at max stacks additionally grants ATK +40%.
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
-          { key: "atk%", value: 0.6 },
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "selfOnField" }, [
+          { key: "atk%", value: 0.4 },
         ])
       );
     }
@@ -1361,20 +1361,18 @@ class Vesna extends CharacterBase {
   })();
 
   /**
-   * P1 Unruffled — each stack makes a spirit blade deal "+10% of the original"
+   * P1 Disciplinary Action — each stack makes a spirit blade deal "+10% of the original"
    * (cap 160% of the original) → `baseDmg%` +0.1 per stack. It covers only the
    * spirit blade / Stellar spirit blade hits, not Vesna's own strikes, the
-   * Spirit Feather or the E cast, so it is attached per formula part instead
+   * Wind Pinion or the E cast, so it is attached per formula part instead
    * of as a tag-filtered self buff.
    *
-   * 「施放灵剑·刺、灵剑·落、灵剑·舞或元素爆发灵剑·爆后，获得1层」 — the stack is
-   * granted AFTER the cast, and 「施放元素战技灵剑·起…时，所有「从容」将被清除」
-   * means the E cast that opens the Spirit Blade state wipes the counter. So
-   * below C2 a cast never buffs itself and 6 stacks is structurally
-   * unreachable: 灵剑·刺 lands at 0 stacks, 灵剑·落 at 1, the 灵剑·舞 casts at
-   * 2/3/4 (5 for the extra C1 dance) and Q 灵剑·爆 at 5 (6 at C1).
+   * 「施放特殊元素战技翔风剑或元素爆发致礼·献予女皇陛下后」 grants the stack
+   * AFTER the cast. The E opener clears all stacks, so below C2 the Lv. 1
+   * strike lands at 0 stacks, Lv. 2 at 1, the Lv. 3 casts at 2/3/4 (5 for
+   * the extra C1 cast), and the burst at 5 (6 at C1).
    *
-   * At C2「进入「灵剑武装」状态时，立刻获得满层的「从容」」grants all 6 on entry,
+   * At C2「进入巡风列装模式时，会获得最大层数的整肃」grants all 6 on entry,
    * so every blade hit sits at the flat 60%.
    */
   private unruffled(stacks: number): StatBuff[] {
@@ -1388,27 +1386,22 @@ class Vesna extends CharacterBase {
     ];
   }
 
-  // Rotation: E > NA (feathers) > 灵剑·刺 > 灵剑·落 > 灵剑·舞 x3 (+1 at C1) > Q
+  // Rotation: E > NA (pinions) > Lv. 1 > Lv. 2 > Lv. 3 x3 (+1 at C1) > Q
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "vesna-skill", count: 1 },
       { id: "vesna-normal", count: 1 },
-      // The Spirit Feather fires on Normal/Charged/Plunging Attacks in the
-      // Spirit Blade state; its ICD is unknown, so this is a moderate estimate.
+      // Wind Pinions accompany Normal/Charged/Plunging Attacks in Armed for
+      // Action; their ICD is unknown, so this is a moderate estimate.
       { id: "vesna-feather", count: 5 },
       { id: "vesna-blade-pierce", count: 1 },
       { id: "vesna-blade-plunge", count: 1 },
-      // The E text caps 灵剑·舞 at 3 uses per Spirit Blade state and ends the
-      // state on the third, and C1 adds a 4th use plus a free first cast. One
-      // state per rotation (15s state vs 18s CD), so the cap is the rotation
-      // count. 3 is the intended peak, not just a nominal ceiling: P1 Unruffled
-      // caps at 6 stacks (one per 刺/落/舞/Q, cleared by the E cast) and
-      // 刺 + 落 + 3x舞 + Q lands exactly on 6 (160% of the original). Spirit
-      // Blade Force is not binding either — 2 orbs from E + 1 from Q + one per
-      // 灵羽 covers the 5 special-skill casts needed to reach the third 舞.
+      // E caps Lv. 3 at 3 casts per Armed for Action mode; C1 raises it to 4.
+      // Sword Essence comes from the opener, burst, and Wind Pinions. The
+      // special-skill casts plus burst reach 6 Disciplinary Action stacks.
       { id: "vesna-blade-dance", count: 3, bonus: [{ minC: 1, delta: 1 }] },
       { id: "vesna-burst", count: 1 },
-      // C6 opens a 5s 灵剑·踏 window after every 灵剑·舞, with no per-state cap
+      // C6 opens a 5s Transpose window after every Lv. 3, with no per-state cap
       // or cooldown of its own, so the count is one per dance — keep it in step
       // with "vesna-blade-dance" above (3 + 1 from C1, which any C6 account has).
       { id: "vesna-c6-tread", count: 0, bonus: [{ minC: 6, delta: 4 }] },
@@ -1416,7 +1409,7 @@ class Vesna extends CharacterBase {
   }
 
   protected readonly formulaMap = (() => {
-    // The Spirit Blade state converts Vesna's Normal/Charged/Plunging Attacks
+    // Armed for Action converts Vesna's Normal/Charged/Plunging Attacks
     // to Anemo DMG that "cannot be overridden by another elemental infusion".
     // The peak model assumes the state is up, so no Physical variants exist.
     const anemoNormal = {
@@ -1458,8 +1451,8 @@ class Vesna extends CharacterBase {
     const on = this.radianceOn;
     const suffix = on ? { zh: "·星扩散", en: " (SSw)" } : { zh: "", en: "" };
 
-    // 灵剑·舞 is a single formula entry that the combo consumes 3 times (4 at
-    // C1), so it cannot carry the 2/3/4(/5) per-cast Unruffled counts. It takes
+    // Lv. 3 is a single formula entry that the combo consumes 3 times (4 at
+    // C1), so it cannot carry the 2/3/4(/5) per-cast Disciplinary Action counts. It takes
     // their mean instead, which is exact for the rotation total: `baseDmg%`
     // enters the damage as (1 + value), so summing across casts is linear in
     // the stack count and only the per-row split differs.
@@ -1488,53 +1481,51 @@ class Vesna extends CharacterBase {
           { formula: new DirectFormula(this.param("A", 7), anemoCharge) },
         ],
       },
-      // The Charged Attack Stamina Cost row carries no param, so param8 is the
-      // during-fall DMG and param9/param10 are the low/high impact rows. Only
-      // the high-impact row is modeled — the during-fall and low-impact rows
-      // are intentionally left out.
+      // Release data includes charged-attack stamina at param8, so param11
+      // is the high-plunge impact coefficient.
       "vesna-plunge-high": {
         label: { zh: "下落·高", en: "Plunge High" },
         parts: [
-          { formula: new DirectFormula(this.param("A", 10), anemoPlunge) },
+          { formula: new DirectFormula(this.param("A", 11), anemoPlunge) },
         ],
       },
       "vesna-skill": {
-        label: { zh: "E灵剑·起", en: "E Blade Inception" },
+        label: { zh: "E操典·制胜有道", en: "E The Art of Victory" },
         parts: [{ formula: new DirectFormula(this.param("E", 1), anemoSkill) }],
       },
       "vesna-feather": {
-        label: { zh: "灵羽", en: "Spirit Feather" },
+        label: { zh: "风翎", en: "Wind Pinion" },
         parts: [
           { formula: new DirectFormula(this.param("E", 10), anemoSkill) },
         ],
       },
-      // 灵剑·刺 has a single talent row — Vesna's own strike. Separate blade
-      // rows only appear from 灵剑·落 onwards.
+      // The release description and glossary explicitly summon Spirit Blades
+      // at Lv. 2 and Lv. 3 only; Lv. 1 is Vesna's ordinary skill strike.
       "vesna-blade-pierce": {
-        label: { zh: "灵剑·刺", en: "Blade Pierce" },
+        label: { zh: "翔风剑·一阶", en: "Windborne Sword Lv. 1" },
         parts: [{ formula: new DirectFormula(this.param("E", 2), anemoSkill) }],
       },
       "vesna-blade-plunge": {
         label: {
-          zh: `灵剑·落${suffix.zh}`,
-          en: `Blade Plunge${suffix.en}`,
+          zh: `翔风剑·二阶${suffix.zh}`,
+          en: `Windborne Sword Lv. 2${suffix.en}`,
         },
         parts: [
-          // Vesna's own strike — not a spirit blade, so no Unruffled bonus.
+          // Vesna's own strike receives no Disciplinary Action bonus.
           { formula: new DirectFormula(this.param("E", 3), anemoSkill) },
           {
             formula: on
               ? new StellarDirectFormula(this.param("E", 5), swSkill)
               : new DirectFormula(this.param("E", 4), anemoSkill),
-            // 灵剑·刺 has landed and granted its stack → 1.
+            // Lv. 1 has landed and granted its stack → 1.
             bespokeBuffs: this.unruffled(1),
           },
         ],
       },
       "vesna-blade-dance": {
         label: {
-          zh: `灵剑·舞${suffix.zh}`,
-          en: `Blade Dance${suffix.en}`,
+          zh: `翔风剑·三阶${suffix.zh}`,
+          en: `Windborne Sword Lv. 3${suffix.en}`,
         },
         parts: [
           {
@@ -1557,8 +1548,8 @@ class Vesna extends CharacterBase {
       // pairing the 灵剑·落 and 灵剑·舞 rows use above.
       "vesna-burst": {
         label: {
-          zh: `Q灵剑·爆${suffix.zh}`,
-          en: `Q Blade Burst${suffix.en}`,
+          zh: `Q致礼·献予女皇陛下${suffix.zh}`,
+          en: `Q For the Tsaritsa!${suffix.en}`,
         },
         parts: [
           {
@@ -1570,25 +1561,37 @@ class Vesna extends CharacterBase {
         ],
       },
       "vesna-c6-tread": {
-        label: { zh: "C6灵剑·踏", en: "C6 Blade Tread" },
+        label: { zh: "C6翔风剑·变移", en: "C6 Transpose" },
         minC: 6,
         parts: [
           // Vesna's own kick — 150% ATK Anemo, not a spirit blade.
           { formula: new DirectFormula(1.5, anemoSkill, "atk") },
           {
-            // The Stellar spirit blade it drives (200% ATK) is explicitly
-            // covered by Ascension Talent 1. C6 implies C2, so the stack count
+            // The spirit blade it drives (200% ATK) is explicitly covered by
+            // Ascension Talent 1. C6 implies C2, so the stack count
             // passed here is always overridden by the max-on-entry branch.
-            formula: new StellarDirectFormula(2.0, swSkill, "atk"),
+            formula: on
+              ? new StellarDirectFormula(2.0, swSkill, "atk")
+              : new DirectFormula(2.0, anemoSkill, "atk"),
             bespokeBuffs: this.unruffled(6),
           },
+          // Transpose also summons a wind pinion while Armed for Action.
+          { formula: new DirectFormula(this.param("E", 10), anemoSkill) },
         ],
       },
     };
   })();
 }
 
-@RegisterCharacter("vodyanitsa")
+const vodyanitsaOption = {
+  label: { zh: "受治疗角色生命值", en: "Healed Character HP" },
+  choices: [
+    { value: "high", label: { zh: "不低于40%", en: "40% or above" } },
+    { value: "low", label: { zh: "低于40%", en: "Below 40%" } },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("vodyanitsa", vodyanitsaOption)
 class Vodyanitsa extends CharacterBase {
   /**
    * P1 turns the party's 星辉风旋 into 「流荡风旋」 during her Elemental Skill,
@@ -1597,6 +1600,8 @@ class Vodyanitsa extends CharacterBase {
    * to produce Stellar Swirl, so there is no user-facing option here.
    */
   private readonly stellarMode = this.teamMeta.hasReaction("stellarSwirl");
+  private readonly healedTargetLowHp =
+    resolveOption(vodyanitsaOption, this.option, this.teamMeta) === "low";
 
   readonly buffs = (() => {
     const isC6 = this.constellation >= 6;
@@ -1623,7 +1628,10 @@ class Vodyanitsa extends CharacterBase {
     // Stellar Swirl reactions but for a much larger amount.
     const scoreFilter: DamageTagFilter = this.stellarMode
       ? { reactions: ["stellarSwirl"] }
-      : { elements: ["Hydro", "Cryo"] };
+      : {
+          elements: ["Hydro", "Cryo"],
+          abilities: ["normal", "charge", "plunge", "skill", "burst"],
+        };
     const soloTarget: BuffTarget = {
       receiver: "teamOnField",
       filter: scoreFilter,
@@ -1701,13 +1709,19 @@ class Vodyanitsa extends CharacterBase {
       );
     }
 
-    // C4: healing a target above 40% HP grants Vodyanitsa +20% Max HP,
-    // 3 stacks. (The below-40% branch is a healing bonus only.)
+    // C4: healing a target at or above 40% HP grants +20% Max HP per stack,
+    // up to 3 stacks; below 40% instead increases that healing by 50%.
     if (this.constellation >= 4) {
       buffs.push(
-        new StatBuff(cbs(this, "C4", ["heal"]), { receiver: "self" }, [
-          { key: "hp%", value: 0.6 },
-        ])
+        this.healedTargetLowHp
+          ? new StatBuff(
+              cbs(this, "C4", ["heal", "low-hp"]),
+              { receiver: "self" },
+              [{ key: "heal%", value: 0.5 }]
+            )
+          : new StatBuff(cbs(this, "C4", ["heal"]), { receiver: "self" }, [
+              { key: "hp%", value: 0.6 },
+            ])
       );
     }
 

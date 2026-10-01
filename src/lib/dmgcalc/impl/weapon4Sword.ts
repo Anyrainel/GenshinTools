@@ -4,6 +4,16 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { r, royalSeriesOption, wbs } from "./helpers";
 
+@RegisterWeapon("silver_light")
+class SilverLight extends WeaponBase {
+  // Peak model: two independent 12s stacks from consecutive skill casts.
+  readonly buffs = [
+    new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+      { key: "em", value: 2 * r(this.refinement, [52, 65, 78, 91, 104]) },
+    ]),
+  ];
+}
+
 @RegisterWeapon("moonweavers_dawn")
 class MoonweaversDawn extends WeaponBase {
   get buffs() {
@@ -506,7 +516,7 @@ class HereticsMoltenBlade extends WeaponBase {
 // must be an explicit user toggle: the base branch is what every wielder gets,
 // and the Radiance branch is opt-in. The "on" choice is only offered when the
 // team can produce a Stellar reaction at all.
-const weaponSwordOption = {
+const newBoughOption = {
   label: { zh: "辉映状态", en: "Radiance State" },
   choices: [
     { value: "off", label: { zh: "关闭", en: "Off" } },
@@ -519,12 +529,12 @@ const weaponSwordOption = {
   ] as const,
 } satisfies OptionDef;
 
-@RegisterWeapon("weapon_sword", weaponSwordOption)
-class WeaponSword extends WeaponBase {
+@RegisterWeapon("new_bough", newBoughOption)
+class NewBough extends WeaponBase {
   private readonly radianceOn =
-    resolveOption(weaponSwordOption, this.option, this.teamMeta) === "on";
+    resolveOption(newBoughOption, this.option, this.teamMeta) === "on";
 
-  // BETA. In the 12s after E, every attack hit grants ATK% + EM for 6s, once
+  // In the 12s after E, every attack hit grants ATK% + EM for 6s, once
   // per second, max 3 stacks. Stacks also build off-field, so max stacks are
   // easy to maintain over the window — hardcoded at 3 per U8.
   //

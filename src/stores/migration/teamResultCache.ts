@@ -40,5 +40,10 @@ export function migrateTeamResultCacheStore(
     // optimizer/analyzer results cannot be reconciled.
     state.resultsByTeamId = {};
   }
+  if (version < 4) {
+    // Released 7.1 weapon IDs/passives changed; saved rankings and damage
+    // calculated with beta weapon IDs cannot be reconciled safely.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

@@ -24,6 +24,7 @@ export type WeaponEnergyEffect =
       trigger:
         | "burst" // Elemental Burst (wearer)
         | "skill" // Elemental Skill (wearer)
+        | "thirdSkillOrBurst" // Every third E/Q cast; sequence resets on swap-out
         | "heal" // Wearer is a healer (approximated: fires at wearer's Q)
         | "reaction" // Wearer participates in a reaction (fires at wearer's Q)
         | "partyPlunge"; // Per plunge (NA/CA/PA gated to plunge) by any team member
@@ -72,6 +73,16 @@ const favoniusWeapons: WeaponEnergyEntry[] = [
 ];
 
 const otherWeapons: WeaponEnergyEntry[] = [
+  {
+    id: "beyond_the_chrysalis",
+    type: "Sword",
+    energy: {
+      effect: "flatEnergy",
+      totalEnergy: [5, 5.5, 6, 6.5, 7],
+      trigger: "thirdSkillOrBurst",
+      cooldown: 4,
+    },
+  },
   // Prototype Amber: 4/4.5/5/5.5/6 energy every 2s for 6s on burst
   // = 3 ticks = 12/13.5/15/16.5/18 total
   {
