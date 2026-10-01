@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
+import releasedCharacterStats from "@/data/game/character_stats.json";
 import type { CharacterStatsMap } from "@/data/gameStatsLoader";
 import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
+import { characters } from "@/data/resources";
 import type { CharacterResource, TierAssignment } from "@/data/types";
 import {
   defaultCharacterFilters,
@@ -86,6 +88,18 @@ const tierAssignments: TierAssignment = {
 };
 
 const options = { characterStatsMap: mockCharacterStats };
+
+it("keeps the released Snezhnaya characters visible under their region filter", () => {
+  const filtered = filterAndSortCharacters(
+    characters,
+    { ...defaultCharacterFilters, regions: ["Snezhnaya"] },
+    { characterStatsMap: releasedCharacterStats as CharacterStatsMap }
+  );
+  const ids = filtered.map((character) => character.id);
+  for (const id of ["alyosha", "odette", "sandrone", "vesna", "vodyanitsa"]) {
+    expect(ids).toContain(id);
+  }
+});
 
 // Non-manekin characters count (default filters hide manekin)
 const nonManekinCount = mockCharacters.filter(
