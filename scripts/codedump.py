@@ -17,6 +17,7 @@ import os
 import re
 import sys
 from collections.abc import Sequence
+from pathlib import Path
 from typing import Any, cast
 
 from pydantic import BaseModel
@@ -59,7 +60,7 @@ SKIP_EXISTING_IMAGES = True
 
 def load_existing_data(project_root: str) -> tuple[dict[str, Any], dict[str, Any]]:
     """Load existing data from resources.ts and i18n-game.ts"""
-    combined = load_ts_data(project_root)
+    combined = load_ts_data(project_root, include_beta=False)
     i18n = combined.pop("i18nGameData", {})
     return combined, i18n
 
@@ -460,6 +461,7 @@ def main():
     parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
     parser.add_argument("--enka", action="store_true", help="Generate Enka ID maps")
     parser.add_argument("--good-keys", action="store_true", help="Generate GOOD-format keys JSON")
+    parser.add_argument("--strict", action="store_true", help="Stop on scraping failures")
     parser.add_argument(
         "--details",
         action="store_true",
@@ -472,7 +474,7 @@ def main():
     )
     args = parser.parse_args()
 
-    # Default to all if no flags provided
+    # No-flag calls must include source export and all derived generators.
     # (enemy disabled — see banner at top of file.)
     if not (
         args.character
@@ -483,12 +485,13 @@ def main():
         or args.enka
         or args.good_keys
     ):
-        args.character = True
-        args.weapon = True
-        args.artifact = True
-        # args.enemy = True  # enemy disabled
-        args.enka = False
-        args.good_keys = True
+        if args.details:
+            args.character = args.weapon = args.artifact = args.good_keys = True
+        else:
+            from refresh_game_data import refresh
+
+            root = Path(__file__).resolve().parent.parent
+            return refresh(root, root.parent / "HoyoData")
 
     print("=== Genshin Impact Data Scraper ===")
     print(
@@ -600,6 +603,8 @@ def main():
                 #     i18n_data["enemies"] = e_i18n
 
             except Exception as e:
+                if args.strict:
+                    raise
                 print(f"Error during scraping: {e}")
                 import traceback
 
@@ -690,4 +695,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

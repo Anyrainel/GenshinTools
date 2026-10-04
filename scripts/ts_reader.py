@@ -48,7 +48,7 @@ def extract_json_from_ts(content: str, variable_name: str) -> Any:
         return {}
 
 
-def load_ts_data(project_root: str | Path) -> dict[str, Any]:
+def load_ts_data(project_root: str | Path, *, include_beta: bool = True) -> dict[str, Any]:
     """Load resources.ts + i18n-game.ts into a single dict.
 
     Returns the same shape that ext_audit_data.ts used to produce:
@@ -66,7 +66,7 @@ def load_ts_data(project_root: str | Path) -> dict[str, Any]:
 
     # Merge beta resources (appended to characters/weapons/artifacts lists)
     beta_path = data_dir / "resources_beta.ts"
-    if beta_path.exists():
+    if include_beta and beta_path.exists():
         beta_content = beta_path.read_text("utf-8")
         beta_chars = extract_json_from_ts(beta_content, "betaCharacters")
         beta_weapons = extract_json_from_ts(beta_content, "betaWeapons")
@@ -94,7 +94,7 @@ def load_ts_data(project_root: str | Path) -> dict[str, Any]:
 
     # Merge beta i18n names (official entries take priority)
     i18n_beta_path = data_dir / "i18n-beta.ts"
-    if i18n_beta_path.exists():
+    if include_beta and i18n_beta_path.exists():
         beta_content = i18n_beta_path.read_text("utf-8")
         beta_i18n = extract_json_from_ts(beta_content, "i18nBetaData")
         if beta_i18n:
