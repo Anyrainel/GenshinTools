@@ -6,8 +6,8 @@ Run the complete released-data refresh from GenshinTools:
 npm run data:refresh
 ```
 
-The existing no-flag command, `uv run --project scripts python scripts/codedump.py`,
-now calls the same pipeline. Explicit codedump flags still run individual steps.
+Explicit `scripts/codedump.py` flags run individual generation steps. Use the
+command above for a full refresh.
 
 The sequence is:
 

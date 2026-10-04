@@ -36,14 +36,15 @@ class GameDataRefreshTests(unittest.TestCase):
         self.assertEqual(command[-2:], ["--website-root", str(self.root)])
         self.assertEqual(process.call_args.kwargs["cwd"], self.producer)
 
-    def test_old_no_flag_command_calls_full_refresh(self):
+    def test_old_no_flag_command_redirects_to_single_refresh_entry_point(self):
         with (
             patch.object(sys, "argv", ["codedump.py"]),
             patch("refresh_game_data.refresh", return_value=7) as full_refresh,
         ):
-            self.assertEqual(codedump.main(), 7)
-        website = Path(codedump.__file__).resolve().parent.parent
-        full_refresh.assert_called_once_with(website, website.parent / "HoyoData")
+            with self.assertRaises(SystemExit) as error:
+                codedump.main()
+        self.assertEqual(error.exception.code, 2)
+        full_refresh.assert_not_called()
 
     def test_full_refresh_generates_mappings_after_source_and_metadata(self):
         with (

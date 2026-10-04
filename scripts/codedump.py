@@ -17,7 +17,6 @@ import os
 import re
 import sys
 from collections.abc import Sequence
-from pathlib import Path
 from typing import Any, cast
 
 from pydantic import BaseModel
@@ -474,7 +473,7 @@ def main():
     )
     args = parser.parse_args()
 
-    # No-flag calls must include source export and all derived generators.
+    # Full refresh orchestration has one entry point: npm run data:refresh.
     # (enemy disabled — see banner at top of file.)
     if not (
         args.character
@@ -488,10 +487,7 @@ def main():
         if args.details:
             args.character = args.weapon = args.artifact = args.good_keys = True
         else:
-            from refresh_game_data import refresh
-
-            root = Path(__file__).resolve().parent.parent
-            return refresh(root, root.parent / "HoyoData")
+            parser.error("Choose a generation mode; for a full refresh run npm run data:refresh")
 
     print("=== Genshin Impact Data Scraper ===")
     print(
