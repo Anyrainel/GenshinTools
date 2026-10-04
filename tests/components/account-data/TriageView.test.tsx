@@ -120,7 +120,17 @@ const mockDecisions = vi.hoisted(() => {
 });
 
 vi.mock("@/lib/account-data/triage/triageEngine", () => ({
-  runTriage: () => ({ decisions: mockDecisions, flexPatterns: [] }),
+  runTriage: () => ({
+    decisions: mockDecisions,
+    flexPatterns: [],
+    statistics: {
+      sets: [],
+      characters: [],
+      totalDemand: 0,
+      totalSupply: 0,
+      totalBuilds: 0,
+    },
+  }),
 }));
 
 vi.mock("@/components/account-data/TriageTabContent", () => ({

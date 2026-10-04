@@ -16,6 +16,7 @@ function makeRule(opts: {
   return {
     characterId: "test",
     buildId: "b1",
+    demandWeight: 1,
     demandSource: { type: "4pc", setKey: "test_set" },
     slot: "flower",
     mainStat: "hp",

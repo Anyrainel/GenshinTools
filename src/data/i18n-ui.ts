@@ -2876,6 +2876,41 @@ export const i18nUiData = {
     // Help dialog
     help: {
       title: { en: "How does this work?", zh: "这是怎么运作的？" },
+      explanationTab: { en: "How it works", zh: "机制说明" },
+      setsTab: { en: "Set demand", zh: "套装供需" },
+      buildsTab: { en: "Active builds", zh: "生效配装" },
+      fractionalDemand: {
+        en: "A slot's demand is split evenly among accepted main stats. Each half of a 2+2 build contributes half demand (a repeated 2-piece bonus contributes full demand). Contributions are summed per set, slot, main stat, and core-stat group, then rounded up once.",
+        zh: "每个部位的需求由达到权重门槛的主词条均分；2+2 配装中，每种两件套效果的需求再减半（两组效果相同则按完整需求计）。按套装、部位、主词条和核心副词条组合汇总后，统一向上取整。",
+      },
+      totalDemand: { en: "Total demand", zh: "需求总量" },
+      totalInventory: { en: "5★ inventory", zh: "五星库存" },
+      setColumn: { en: "Set / 2-piece pool", zh: "套装 / 两件套池" },
+      inventoryColumn: { en: "Supply", zh: "库存" },
+      sharedPool: { en: "2pc shared", zh: "两件套共享" },
+      setStatisticsDetail: {
+        en: "Sorted by demand. Each slot sums its already-rounded demand groups; set totals sum the five slots. Backup margins and special keeps are excluded. Expand a row for slot details. Supply counts all 5★ artifacts, regardless of quality or main stat.",
+        zh: "按需求从高到低排列。先汇总各部位已取整的需求组，再相加得到套装需求总量，不含备用数量和特殊保留。展开可查看各部位明细。库存包含所有五星圣遗物，不筛选质量或主词条。",
+      },
+      sharedPoolDetail: {
+        en: "2-piece demand is shared across sets with the same bonus and appears once as a pool. Supply can overlap between sets and pools; the inventory total counts each artifact once.",
+        zh: "相同两件套效果的套装共用需求，只以一个共享池展示。套装与共享池的库存可能重叠，但五星库存总量中每件圣遗物只计一次。",
+      },
+      slotNumbers: { en: "Demand / supply", zh: "需求 / 库存" },
+      activeBuildTotal: { en: "{0} active builds", zh: "共 {0} 个生效配装" },
+      activeBuildDetail: {
+        en: "Sorted by build count. Only enabled, valid builds count, with one constellation-matched build per set configuration. Ownership follows your settings. If no constellation requirement is met, the lowest requirement is used.",
+        zh: "按配装数量从高到低排列。只统计已启用且配置完整的配装，每种套装搭配选取一个符合当前命座的配装；是否包含未拥有角色取决于设置。若命座均不满足，则选取要求最低的配装。",
+      },
+      buildCountColumn: { en: "Builds", zh: "配装数" },
+      noActiveBuilds: {
+        en: "No builds passed the current selection.",
+        zh: "当前没有通过筛选的配装。",
+      },
+      noSetStatistics: {
+        en: "No demand or 5★ inventory to show.",
+        zh: "暂无配装需求或五星库存。",
+      },
       desc: {
         en: "Compares every artifact's substats against your builds to decide what to keep.",
         zh: "将每件圣遗物的副词条与你的配装需求进行比对，决定保留还是分解。",

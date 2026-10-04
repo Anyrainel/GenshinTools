@@ -1,5 +1,5 @@
 import { TRIAGE_SUPPORT_ARTIFACT_SETS } from "@/data/constants";
-import type { MainStat, SubStat } from "@/data/enums";
+import type { SubStat } from "@/data/enums";
 import { allSlots } from "@/data/enums";
 import type { AccountData, ArtifactData, Build } from "@/data/types";
 import { getAllSubstats } from "@/lib/account-data/artifactProjection";
@@ -10,41 +10,28 @@ import {
 import { getSubstatAvgRoll } from "@/lib/artifact/scoring/utils";
 import { runConcentrationValueRules } from "./concentrationValue";
 import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./constants";
+import { countDemand, makeEmbryoKey } from "./demandCounting";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { startedWithFourSubstats } from "./initialSubstats";
-import { extractRules } from "./ruleBuilder";
+import { extractRules, selectActiveBuildGroups } from "./ruleBuilder";
+import { buildTriageStatistics } from "./statistics";
 import { evaluateTier, type TierResult } from "./tierEvaluator";
 import type {
-  DemandSource,
   EmbryoMatch,
   EmbryoResult,
   FlexPattern,
   QualityTier,
   SupplyDemandInfo,
   TriageDecision,
+  TriageDemandGroup,
   TriageLabel,
   TriageRule,
   TriageRuleId,
   TriageSettings,
   TriageSpecialRule,
+  TriageStatistics,
 } from "./types";
-
-// Embryo key
-
-function makeEmbryoKey(
-  source: DemandSource,
-  slot: string,
-  mainStat: MainStat,
-  desired: SubStat[]
-): string {
-  const subs = desired.join(",");
-  if (source.type === "4pc")
-    return `4pc:${source.setKey}:${slot}:${mainStat}:${subs}`;
-  if (source.type === "2pc")
-    return `2pc:${source.halfSetId}:${slot}:${mainStat}:${subs}`;
-  return `flex:${slot}:${mainStat}:${subs}`;
-}
 
 // Set matching
 
@@ -62,7 +49,11 @@ export function runTriage(
   accountData: AccountData,
   buildGroups: { characterId: string; builds: Build[] }[],
   settings: TriageSettings
-): { decisions: TriageDecision[]; flexPatterns: FlexPattern[] } {
+): {
+  decisions: TriageDecision[];
+  flexPatterns: FlexPattern[];
+  statistics: TriageStatistics;
+} {
   // 1. Extract rules
   const rules = extractRules(buildGroups, accountData, settings);
 
@@ -84,8 +75,8 @@ export function runTriage(
       : !settings.disabledFlexPatterns.includes(flexPattern.key)
   );
 
-  // 3. Count demand per embryoKey (unique characters)
-  const demandCounts = new Map<string, Set<string>>();
+  // 3. Sum fractional, character-deduplicated demand and round per embryo key.
+  const demandCounts = countDemand(rules);
   const statWeightsByEmbryoKey = new Map<string, StatWeightMap>();
   for (const rule of rules) {
     const key = makeEmbryoKey(
@@ -94,8 +85,6 @@ export function runTriage(
       rule.mainStat,
       rule.desired
     );
-    if (!demandCounts.has(key)) demandCounts.set(key, new Set());
-    demandCounts.get(key)!.add(rule.characterId);
     mergeMaxStatWeights(statWeightsByEmbryoKey, key, rule.statWeights);
   }
 
@@ -358,7 +347,7 @@ export function runTriage(
   const allEdges: RankedEdge[] = [];
   for (const prelim of prelims) {
     for (const evaluation of prelim.evaluations) {
-      if ((demandCounts.get(evaluation.embryoKey)?.size ?? 0) === 0) continue;
+      if ((demandCounts.get(evaluation.embryoKey)?.demand ?? 0) === 0) continue;
       allEdges.push({ ...evaluation, prelim });
     }
   }
@@ -418,7 +407,7 @@ export function runTriage(
     if (allocated.has(edge.prelim)) continue;
     if (edge.tier !== "solid" && edge.tier !== "filler") continue;
 
-    const demand = demandCounts.get(edge.embryoKey)?.size ?? 0;
+    const demand = demandCounts.get(edge.embryoKey)?.demand ?? 0;
     const capacity = demand + settings.qualityMargin;
     const used = usedCapacity.get(edge.embryoKey) ?? 0;
     if (used >= capacity) continue;
@@ -595,6 +584,11 @@ export function runTriage(
       supplyDemand: p.supplyDemand,
     })),
     flexPatterns: allFlex,
+    statistics: buildTriageStatistics(
+      selectActiveBuildGroups(buildGroups, accountData, settings),
+      demandCounts,
+      fiveStarArtifacts.map(({ artifact }) => artifact)
+    ),
   };
 }
 
@@ -733,7 +727,7 @@ function compareOwnershipConflict<T extends RankedTriageEdge>(
 
 function buildStableOwnedEdges<T extends RankedTriageEdge>(
   edges: T[],
-  demandCounts: Map<string, Set<string>>
+  demandCounts: Map<string, TriageDemandGroup>
 ): T[] {
   const dedupedByKeyAndArtifact = new Map<string, T>();
   for (const edge of edges) {
@@ -753,7 +747,7 @@ function buildStableOwnedEdges<T extends RankedTriageEdge>(
   const stats = new Map<string, DemandQueueStats>();
   for (const [embryoKey, keyEdges] of edgesByKey) {
     keyEdges.sort(compareRankedEdges);
-    const demand = demandCounts.get(embryoKey)?.size ?? 0;
+    const demand = demandCounts.get(embryoKey)?.demand ?? 0;
     const supply = keyEdges.length;
     stats.set(embryoKey, {
       demand,
@@ -803,7 +797,7 @@ function buildStableOwnedEdges<T extends RankedTriageEdge>(
 
 function buildSupplyDemandByEdge<T extends RankedTriageEdge>(
   edges: T[],
-  demandCounts: Map<string, Set<string>>
+  demandCounts: Map<string, TriageDemandGroup>
 ): Map<T, SupplyDemandInfo> {
   const result = new Map<T, SupplyDemandInfo>();
   const edgesByKey = new Map<string, T[]>();
@@ -813,7 +807,7 @@ function buildSupplyDemandByEdge<T extends RankedTriageEdge>(
   }
 
   for (const [embryoKey, keyEdges] of edgesByKey) {
-    const demand = demandCounts.get(embryoKey)?.size ?? 0;
+    const demand = demandCounts.get(embryoKey)?.demand ?? 0;
     const supplyByTier: Record<QualityTier, number> = {
       prime: 0,
       solid: 0,

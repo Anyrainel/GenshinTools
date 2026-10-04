@@ -37,6 +37,7 @@ import type {
   QualityTier,
   TriageDecision,
   TriageSettings,
+  TriageStatistics,
 } from "@/lib/account-data/triage/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
@@ -92,6 +93,7 @@ export function TriageHeader({
   onSettingsChange,
   flexPatterns,
   decisions,
+  statistics,
   tierFilter,
   onToggleTier,
   artifactSetFilter,
@@ -112,6 +114,7 @@ export function TriageHeader({
   onSettingsChange: (s: TriageSettings) => void;
   flexPatterns: FlexPattern[];
   decisions: TriageDecision[];
+  statistics: TriageStatistics;
   tierFilter: Set<QualityTier>;
   onToggleTier: (tier: QualityTier) => void;
   artifactSetFilter: Set<string>;
@@ -336,7 +339,11 @@ export function TriageHeader({
           collapsible
         />
       </div>
-      <TriageHelpDialog open={helpOpen} onOpenChange={setHelpOpen} />
+      <TriageHelpDialog
+        open={helpOpen}
+        onOpenChange={setHelpOpen}
+        statistics={statistics}
+      />
       <FlexPatternDialog
         open={flexOpen}
         onOpenChange={setFlexOpen}

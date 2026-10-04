@@ -104,11 +104,13 @@ function buildToRules(
   // Determine demand source
   const demandSources: Array<{
     source: TriageRule["demandSource"];
+    weight: number;
   }> = [];
 
   if (build.composition === "4pc" && build.artifactSet) {
     demandSources.push({
       source: { type: "4pc", setKey: build.artifactSet },
+      weight: 1,
     });
   } else if (build.composition === "2pc+2pc") {
     const firstHalfSetId =
@@ -118,20 +120,22 @@ function buildToRules(
     if (firstHalfSetId)
       demandSources.push({
         source: { type: "2pc", halfSetId: firstHalfSetId },
+        weight: firstHalfSetId === secondHalfSetId ? 1 : 0.5,
       });
     if (secondHalfSetId && secondHalfSetId !== firstHalfSetId)
       demandSources.push({
         source: { type: "2pc", halfSetId: secondHalfSetId },
+        weight: 0.5,
       });
   }
 
-  for (const { source } of demandSources) {
+  for (const { source, weight } of demandSources) {
     for (const slot of allSlots) {
-      const acceptedMain = getAcceptedMainStats(
-        build,
-        slot,
-        settings.mainStatThreshold
-      );
+      const acceptedMain = [
+        ...new Set(
+          getAcceptedMainStats(build, slot, settings.mainStatThreshold)
+        ),
+      ];
       for (const mainStat of acceptedMain) {
         const fillers = deriveFillers(desired, slot, mainStat);
         const tierEntry = lookupTierEntry(slot, mainStat, desired, fillers);
@@ -139,6 +143,7 @@ function buildToRules(
         rules.push({
           characterId,
           buildId: build.id,
+          demandWeight: weight / acceptedMain.length,
           demandSource: source,
           slot,
           mainStat,
@@ -162,7 +167,19 @@ export function extractRules(
   accountData: AccountData,
   settings: TriageSettings
 ): TriageRule[] {
-  const rules: TriageRule[] = [];
+  return selectActiveBuildGroups(buildGroups, accountData, settings).flatMap(
+    ({ characterId, builds }) =>
+      builds.flatMap((build) => buildToRules(build, characterId, settings))
+  );
+}
+
+/** The same selected builds drive rule generation and the help-dialog counts. */
+export function selectActiveBuildGroups(
+  buildGroups: { characterId: string; builds: Build[] }[],
+  accountData: AccountData,
+  settings: TriageSettings
+): { characterId: string; builds: Build[] }[] {
+  const active: { characterId: string; builds: Build[] }[] = [];
 
   // Build character constellation map
   const consMap = new Map<string, number>();
@@ -176,10 +193,8 @@ export function extractRules(
 
     const constellation = consMap.get(characterId) ?? 0;
     const selected = selectBuildPerSet(builds, constellation);
-    for (const build of selected) {
-      rules.push(...buildToRules(build, characterId, settings));
-    }
+    if (selected.length > 0) active.push({ characterId, builds: selected });
   }
 
-  return rules;
+  return active;
 }

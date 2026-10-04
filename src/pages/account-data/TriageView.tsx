@@ -114,11 +114,18 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const isStale =
     deferredSettings !== settings || deferredBuildGroups !== buildGroups;
 
-  const { decisions, flexPatterns } = useMemo(() => {
+  const { decisions, flexPatterns, statistics } = useMemo(() => {
     if (!accountData)
       return {
         decisions: [] as TriageDecision[],
         flexPatterns: [] as FlexPattern[],
+        statistics: {
+          sets: [],
+          characters: [],
+          totalDemand: 0,
+          totalSupply: 0,
+          totalBuilds: 0,
+        },
       };
     return runTriage(accountData, deferredBuildGroups, deferredSettings);
   }, [accountData, deferredBuildGroups, deferredSettings]);
@@ -269,6 +276,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           onSettingsChange={setSettings}
           flexPatterns={flexPatterns}
           decisions={decisions}
+          statistics={statistics}
           tierFilter={tierFilter}
           onToggleTier={toggleTier}
           artifactSetFilter={artifactSetFilter}

@@ -158,6 +158,8 @@ export type DemandTierEntry = {
 export type TriageRule = {
   characterId: string;
   buildId: string;
+  /** Fraction of the build's slot demand assigned to this set/main-stat choice. */
+  demandWeight: number;
   demandSource: DemandSource;
   slot: Slot;
   mainStat: MainStat;
@@ -166,6 +168,28 @@ export type TriageRule = {
   fillers: SubStat[];
   statWeights: StatWeightMap;
   tierEntry: DemandTierEntry;
+};
+
+export type TriageDemandGroup = {
+  source: DemandSource;
+  slot: Slot;
+  demand: number;
+};
+
+export type TriageSetStatistics = {
+  key: string;
+  source: DemandSource;
+  demand: number;
+  supply: number;
+  slots: Record<Slot, { demand: number; supply: number }>;
+};
+
+export type TriageStatistics = {
+  sets: TriageSetStatistics[];
+  characters: { characterId: string; buildCount: number }[];
+  totalDemand: number;
+  totalSupply: number;
+  totalBuilds: number;
 };
 
 export type FlexPattern = {
