@@ -203,8 +203,16 @@ describe("fractional triage demand", () => {
     const set = result.statistics.sets.find(
       (row) => row.key === "4pc:test_set"
     )!;
-    expect(set.slots.circlet).toEqual({ demand: 2, supply: 1 });
-    expect(set.slots.sands).toEqual({ demand: 2, supply: 0 });
+    expect(set.slots.circlet).toEqual({
+      demand: 2,
+      gap: 2,
+      supplyByTier: { prime: 0, solid: 0, filler: 1, fodder: 0 },
+    });
+    expect(set.slots.sands).toEqual({
+      demand: 2,
+      gap: 2,
+      supplyByTier: { prime: 0, solid: 0, filler: 0, fodder: 0 },
+    });
     expect(set.demand).toBe(10);
     expect(result.statistics.totalDemand).toBe(10);
     expect(result.statistics.totalSupply).toBe(1);
@@ -241,16 +249,18 @@ describe("fractional triage demand", () => {
     ).toEqual(["c2"]);
     const { statistics } = runTriage(account, groups, settings);
     expect(statistics.characters).toEqual([
-      { characterId: "b", buildCount: 2 },
-      { characterId: "a", buildCount: 1 },
+      { characterId: "b", totalBuildCount: 2, activeBuildCount: 2 },
+      { characterId: "a", totalBuildCount: 3, activeBuildCount: 1 },
+      { characterId: "unowned", totalBuildCount: 1, activeBuildCount: 0 },
     ]);
     expect(statistics.sets[0].demand).toBeGreaterThanOrEqual(
       statistics.sets[1].demand
     );
-    expect(statistics.totalBuilds).toBe(3);
+    expect(statistics.totalBuilds).toBe(6);
+    expect(statistics.totalActiveBuilds).toBe(3);
   });
 
-  it("shows half-set demand once and counts overlapping supply only once in the inventory total", () => {
+  it("shows half-set demand once and assigns supply only to its shared pool", () => {
     const build = {
       ...base,
       composition: "2pc+2pc",
@@ -274,11 +284,12 @@ describe("fractional triage demand", () => {
       settings
     );
     expect(
-      result.statistics.sets.find((row) => row.key === `2pc:${halfA}`)?.supply
+      result.statistics.sets.find((row) => row.key === `2pc:${halfA}`)
+        ?.supplyByTier.fodder
     ).toBe(1);
     expect(
-      result.statistics.sets.find((row) => row.key === `4pc:${setKey}`)?.supply
-    ).toBe(1);
+      result.statistics.sets.find((row) => row.key === `4pc:${setKey}`)
+    ).toBeUndefined();
     expect(result.statistics.totalSupply).toBe(1);
     expect(
       result.statistics.sets.filter((row) => row.source.type === "2pc")

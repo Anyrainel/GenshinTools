@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type { TriageStatistics } from "@/lib/account-data/triage/types";
 import { cn } from "@/lib/utils";
 import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS } from "../shared/colors";
+import { TriageKeepChart } from "./TriageKeepChart";
 import { TriageStatisticsPanel } from "./TriageStatisticsPanel";
 
 const TIER_KEY = {
@@ -71,7 +72,7 @@ export function TriageHelpDialog({
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="sm:max-w-xl">
+      <ResponsiveDialogContent className="sm:max-w-2xl">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {t.ui("triage.help.title")}
@@ -82,7 +83,7 @@ export function TriageHelpDialog({
         </ResponsiveDialogHeader>
 
         <Tabs defaultValue="explanation" className="min-h-0">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full h-auto grid-cols-2 sm:grid-cols-4">
             <TabsTrigger value="explanation">
               {t.ui("triage.help.explanationTab")}
             </TabsTrigger>
@@ -91,6 +92,9 @@ export function TriageHelpDialog({
             </TabsTrigger>
             <TabsTrigger value="builds">
               {t.ui("triage.help.buildsTab")}
+            </TabsTrigger>
+            <TabsTrigger value="keeps">
+              {t.ui("triage.help.keepsTab")}
             </TabsTrigger>
           </TabsList>
           <TabsContent
@@ -335,7 +339,17 @@ export function TriageHelpDialog({
             value="builds"
             className="max-h-[60vh] overflow-y-auto pr-1"
           >
-            <TriageStatisticsPanel statistics={statistics} view="builds" />
+            <TriageStatisticsPanel
+              statistics={statistics}
+              view="builds"
+              onNavigate={() => onOpenChange(false)}
+            />
+          </TabsContent>
+          <TabsContent
+            value="keeps"
+            className="max-h-[60vh] overflow-y-auto pr-1"
+          >
+            <TriageKeepChart counts={statistics.keepReasons} />
           </TabsContent>
         </Tabs>
       </ResponsiveDialogContent>

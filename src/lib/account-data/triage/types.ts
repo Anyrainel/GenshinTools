@@ -180,16 +180,38 @@ export type TriageSetStatistics = {
   key: string;
   source: DemandSource;
   demand: number;
-  supply: number;
-  slots: Record<Slot, { demand: number; supply: number }>;
+  gap: number;
+  supplyByTier: Record<QualityTier, number>;
+  slots: Record<Slot, TriageSlotStatistics>;
+};
+
+export type TriageSlotStatistics = {
+  demand: number;
+  gap: number;
+  supplyByTier: Record<QualityTier, number>;
+};
+
+export type TriageKeepReason = "prime" | "solid" | "filler" | "flex" | "other";
+
+export type TriageSupplyEntry = {
+  artifact: ArtifactData;
+  embryoKey: string;
+  tier: QualityTier;
 };
 
 export type TriageStatistics = {
   sets: TriageSetStatistics[];
-  characters: { characterId: string; buildCount: number }[];
+  characters: {
+    characterId: string;
+    totalBuildCount: number;
+    activeBuildCount: number;
+  }[];
   totalDemand: number;
+  totalGap: number;
   totalSupply: number;
   totalBuilds: number;
+  totalActiveBuilds: number;
+  keepReasons: Record<TriageKeepReason, number>;
 };
 
 export type FlexPattern = {

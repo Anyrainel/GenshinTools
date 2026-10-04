@@ -33,6 +33,7 @@ import type {
 } from "@/lib/account-data/triage/types";
 import {
   selectEnabledBuildGroups,
+  selectResolvedBuildGroups,
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import {
@@ -65,6 +66,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;
   const buildGroups = useBuildsStore(selectEnabledBuildGroups);
+  const allBuildGroups = useBuildsStore(selectResolvedBuildGroups);
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 
@@ -111,8 +113,11 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
 
   const deferredSettings = useDeferredValue(settings);
   const deferredBuildGroups = useDeferredValue(buildGroups);
+  const deferredAllBuildGroups = useDeferredValue(allBuildGroups);
   const isStale =
-    deferredSettings !== settings || deferredBuildGroups !== buildGroups;
+    deferredSettings !== settings ||
+    deferredBuildGroups !== buildGroups ||
+    deferredAllBuildGroups !== allBuildGroups;
 
   const { decisions, flexPatterns, statistics } = useMemo(() => {
     if (!accountData)
@@ -125,10 +130,23 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
           totalDemand: 0,
           totalSupply: 0,
           totalBuilds: 0,
+          totalActiveBuilds: 0,
+          totalGap: 0,
+          keepReasons: { prime: 0, solid: 0, filler: 0, flex: 0, other: 0 },
         },
       };
-    return runTriage(accountData, deferredBuildGroups, deferredSettings);
-  }, [accountData, deferredBuildGroups, deferredSettings]);
+    return runTriage(
+      accountData,
+      deferredBuildGroups,
+      deferredSettings,
+      deferredAllBuildGroups
+    );
+  }, [
+    accountData,
+    deferredBuildGroups,
+    deferredSettings,
+    deferredAllBuildGroups,
+  ]);
 
   const hasSP = useCallback(
     (d: TriageDecision) =>

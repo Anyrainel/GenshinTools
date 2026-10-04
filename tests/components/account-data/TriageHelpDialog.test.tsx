@@ -7,28 +7,38 @@ import { render } from "../../utils/render";
 
 const statistics: TriageStatistics = {
   totalDemand: 7,
+  totalGap: 6,
   totalSupply: 3,
-  totalBuilds: 3,
+  totalBuilds: 5,
+  totalActiveBuilds: 3,
+  keepReasons: { prime: 2, solid: 1, filler: 0, flex: 1, other: 1 },
   sets: [
     {
       key: "4pc:gladiators_finale",
       source: { type: "4pc", setKey: "gladiators_finale" },
       demand: 7,
-      supply: 3,
+      gap: 6,
+      supplyByTier: { prime: 2, solid: 1, filler: 0, fodder: 0 },
       slots: Object.fromEntries(
         allSlots.map((slot) => [
           slot,
           {
             demand: slot === "circlet" ? 3 : 1,
-            supply: slot === "flower" ? 3 : 0,
+            gap: slot === "flower" ? 0 : slot === "circlet" ? 3 : 1,
+            supplyByTier: {
+              prime: slot === "flower" ? 2 : 0,
+              solid: slot === "flower" ? 1 : 0,
+              filler: 0,
+              fodder: 0,
+            },
           },
         ])
       ) as TriageStatistics["sets"][number]["slots"],
     },
   ],
   characters: [
-    { characterId: "amber", buildCount: 2 },
-    { characterId: "kaeya", buildCount: 1 },
+    { characterId: "amber", totalBuildCount: 3, activeBuildCount: 2 },
+    { characterId: "kaeya", totalBuildCount: 2, activeBuildCount: 1 },
   ],
 };
 function selectTab(name: string) {
@@ -42,37 +52,76 @@ beforeEach(() => {
 });
 
 describe("TriageHelpDialog statistics", () => {
-  it("defaults to the explanation and shows demand, supply, slot details, and selected builds in tabs", () => {
+  it("defaults to explanation, shows gap and tier supply, and expands slot details", () => {
     render(
       <TriageHelpDialog open onOpenChange={vi.fn()} statistics={statistics} />
     );
+    expect(screen.getAllByRole("tab")).toHaveLength(4);
     expect(screen.getByRole("tab", { name: "How it works" })).toHaveAttribute(
       "aria-selected",
       "true"
     );
     expect(screen.getByText(/demand is split evenly/)).toBeVisible();
     selectTab("Set demand");
+    expect(screen.getByText("Gap: 6")).toBeVisible();
     expect(screen.getByText("Total demand: 7")).toBeVisible();
     expect(screen.getByText("5★ inventory: 3")).toBeVisible();
-    const row = screen.getByText("Gladiator's Finale").closest("tr")!;
-    expect(
-      within(row)
-        .getAllByRole("cell")
-        .map((cell) => cell.textContent)
-    ).toEqual([expect.stringContaining("Gladiator's Finale"), "7", "3"]);
-    fireEvent.click(screen.getByText("Gladiator's Finale"));
-    expect(screen.getByText("3 / 0")).toBeVisible();
+    const expand = screen.getByRole("button", { name: "Gladiator's Finale" });
+    const cells = within(expand.closest("tr")!).getAllByRole("cell");
+    expect(cells[1]).toHaveTextContent("6");
+    expect(cells[2]).toHaveTextContent("7");
+    expect(cells[3]).toHaveTextContent("Prime2Solid1Filler0Fodder0");
+    fireEvent.click(expand);
+    expect(expand).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("rowheader", { name: "Circlet" })).toBeVisible();
+  });
+
+  it("shows total and active counts with the existing character build deep link", () => {
+    const onOpenChange = vi.fn();
+    render(
+      <TriageHelpDialog
+        open
+        onOpenChange={onOpenChange}
+        statistics={statistics}
+      />
+    );
     selectTab("Active builds");
-    expect(screen.getByText("3 active builds")).toBeVisible();
+    expect(screen.getByText("5 total builds · 3 active")).toBeVisible();
+    const link = screen.getByRole("link", { name: "View Amber's builds" });
+    expect(link).toHaveAttribute(
+      "href",
+      "/artifact-filter/configure?char=amber"
+    );
     expect(
       screen
         .getAllByRole("row")
         .slice(1)
         .map((row) => row.textContent)
-    ).toEqual(["Amber2", "Kaeya1"]);
+    ).toEqual(["Amber32", "Kaeya21"]);
+    fireEvent.click(link);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
-  it("shows useful empty states when no builds or inventory are available", () => {
+  it("shows five exclusive keep reasons and a pie chart with counts and percentages", () => {
+    render(
+      <TriageHelpDialog open onOpenChange={vi.fn()} statistics={statistics} />
+    );
+    selectTab("Keep reasons");
+    expect(screen.getByText("5 artifacts kept")).toBeVisible();
+    expect(screen.getByRole("img", { name: "Keep reasons" })).toBeVisible();
+    for (const label of [
+      "Prime keeps",
+      "Solid keeps",
+      "Filler keeps",
+      "Flex keeps",
+      "Other keeps",
+    ])
+      expect(screen.getByText(label)).toBeVisible();
+    expect(screen.getByText("2 (40.0%)")).toBeVisible();
+    expect(screen.getByText("0 (0.0%)")).toBeVisible();
+  });
+
+  it("shows empty states for missing inventory, builds, and keeps", () => {
     render(
       <TriageHelpDialog
         open
@@ -81,8 +130,11 @@ describe("TriageHelpDialog statistics", () => {
           sets: [],
           characters: [],
           totalDemand: 0,
+          totalGap: 0,
           totalSupply: 0,
           totalBuilds: 0,
+          totalActiveBuilds: 0,
+          keepReasons: { prime: 0, solid: 0, filler: 0, flex: 0, other: 0 },
         }}
       />
     );
@@ -94,5 +146,12 @@ describe("TriageHelpDialog statistics", () => {
     expect(
       screen.getByText("No builds passed the current selection.")
     ).toBeVisible();
+    selectTab("Keep reasons");
+    expect(
+      screen.getByText("No artifacts are kept by the current rules.")
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("img", { name: "Keep reasons" })
+    ).not.toBeInTheDocument();
   });
 });

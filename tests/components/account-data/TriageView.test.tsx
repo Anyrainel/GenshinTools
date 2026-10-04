@@ -129,6 +129,9 @@ vi.mock("@/lib/account-data/triage/triageEngine", () => ({
       totalDemand: 0,
       totalSupply: 0,
       totalBuilds: 0,
+      totalActiveBuilds: 0,
+      totalGap: 0,
+      keepReasons: { prime: 0, solid: 0, filler: 0, flex: 0, other: 0 },
     },
   }),
 }));

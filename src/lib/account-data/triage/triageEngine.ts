@@ -48,7 +48,8 @@ function matchesSet(rule: TriageRule, setKey: string): boolean {
 export function runTriage(
   accountData: AccountData,
   buildGroups: { characterId: string; builds: Build[] }[],
-  settings: TriageSettings
+  settings: TriageSettings,
+  allBuildGroups = buildGroups
 ): {
   decisions: TriageDecision[];
   flexPatterns: FlexPattern[];
@@ -574,21 +575,29 @@ export function runTriage(
   }
 
   // Build final decisions
+  const decisions = prelims.map((p) => ({
+    artifact: p.artifact,
+    label: p.bestLabel,
+    decidingResult: p.bestResult,
+    allResults: p.embryoResults,
+    specialRules: p.specialRules,
+    supplyDemand: p.supplyDemand,
+  }));
   return {
-    decisions: prelims.map((p) => ({
-      artifact: p.artifact,
-      label: p.bestLabel,
-      decidingResult: p.bestResult,
-      allResults: p.embryoResults,
-      specialRules: p.specialRules,
-      supplyDemand: p.supplyDemand,
-    })),
+    decisions,
     flexPatterns: allFlex,
-    statistics: buildTriageStatistics(
-      selectActiveBuildGroups(buildGroups, accountData, settings),
-      demandCounts,
-      fiveStarArtifacts.map(({ artifact }) => artifact)
-    ),
+    statistics: buildTriageStatistics({
+      activeGroups: selectActiveBuildGroups(buildGroups, accountData, settings),
+      buildGroups: allBuildGroups,
+      demandGroups: demandCounts,
+      artifacts: fiveStarArtifacts.map(({ artifact }) => artifact),
+      supply: rankedEdges.map((edge) => ({
+        artifact: edge.prelim.artifact,
+        embryoKey: edge.embryoKey,
+        tier: edge.tier,
+      })),
+      decisions,
+    }),
   };
 }
 
