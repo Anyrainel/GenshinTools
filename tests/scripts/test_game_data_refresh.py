@@ -12,7 +12,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
 import codedump  # noqa: E402
 from enka import generate_stat_map, run  # noqa: E402
-from refresh_game_data import refresh, validate_outputs  # noqa: E402
+from generate_website_data import generate, validate_outputs  # noqa: E402
+from refresh_game_data import refresh  # noqa: E402
 from ts_reader import load_ts_data  # noqa: E402
 
 
@@ -22,7 +23,7 @@ class GameDataRefreshTests(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.root = Path(self.directory.name) / "website"
         self.producer = Path(self.directory.name) / "producer"
-        cli = self.producer / "src/anime_game_data/cli.py"
+        cli = self.producer / "src/hoyodata/cli.py"
         cli.parent.mkdir(parents=True)
         cli.touch()
 
@@ -33,7 +34,8 @@ class GameDataRefreshTests(unittest.TestCase):
         self.assertEqual(process.call_count, 1)
         command = process.call_args.args[0]
         self.assertIn("--pull", command)
-        self.assertEqual(command[-2:], ["--website-root", str(self.root)])
+        self.assertEqual(command[:4], ["uv", "run", "hoyodata", "genshintools"])
+        self.assertIn(str(self.root), command)
         self.assertEqual(process.call_args.kwargs["cwd"], self.producer)
 
     def test_old_no_flag_command_redirects_to_single_refresh_entry_point(self):
@@ -46,28 +48,47 @@ class GameDataRefreshTests(unittest.TestCase):
         self.assertEqual(error.exception.code, 2)
         full_refresh.assert_not_called()
 
-    def test_full_refresh_generates_mappings_after_source_and_metadata(self):
+    def test_website_stage_generates_mappings_after_catalogs_and_metadata(self):
         with (
-            patch("refresh_game_data.subprocess.run") as process,
-            patch("refresh_game_data.validate_outputs") as validate,
+            patch("generate_website_data.subprocess.run") as process,
+            patch("generate_website_data.validate_outputs") as validate,
         ):
             process.return_value = subprocess.CompletedProcess([], 0)
-            self.assertEqual(refresh(self.root, self.producer, pull=False), 0)
+            self.assertEqual(generate(self.root), 0)
         commands = [call.args[0] for call in process.call_args_list]
-        self.assertNotIn("--pull", commands[0])
-        self.assertIn("--strict", commands[1])
-        self.assertTrue(commands[2][1].endswith("gen_char_info.py"))
-        self.assertIn("--good-keys", commands[3])
-        self.assertIn("--enka", commands[3])
+        self.assertIn("--strict", commands[0])
+        self.assertTrue(commands[1][1].endswith("gen_char_info.py"))
+        self.assertIn("--good-keys", commands[2])
+        self.assertIn("--enka", commands[2])
         validate.assert_called_once_with(self.root)
 
     def test_dry_run_does_not_run_or_validate(self):
         with (
-            patch("refresh_game_data.subprocess.run") as process,
-            patch("refresh_game_data.validate_outputs") as validate,
+            patch("generate_website_data.subprocess.run") as process,
+            patch("generate_website_data.validate_outputs") as validate,
         ):
-            self.assertEqual(refresh(self.root, self.producer, dry_run=True), 0)
+            self.assertEqual(generate(self.root, dry_run=True), 0)
         process.assert_not_called()
+        validate.assert_not_called()
+
+    def test_cached_refresh_delegates_to_same_target_without_pull(self):
+        with patch("refresh_game_data.subprocess.run") as process:
+            process.return_value = subprocess.CompletedProcess([], 0)
+            self.assertEqual(refresh(self.root, self.producer, cached_sources=True), 0)
+        command = process.call_args.args[0]
+        self.assertIn("genshintools", command)
+        self.assertIn("--cached-sources", command)
+        self.assertNotIn("--pull", command)
+        self.assertEqual(process.call_count, 1)
+
+    def test_website_failure_does_not_validate_or_generate_later_outputs(self):
+        with (
+            patch("generate_website_data.subprocess.run") as process,
+            patch("generate_website_data.validate_outputs") as validate,
+        ):
+            process.return_value = subprocess.CompletedProcess([], 8)
+            self.assertEqual(generate(self.root), 8)
+        self.assertEqual(process.call_count, 1)
         validate.assert_not_called()
 
     def test_missing_new_character_mapping_is_rejected(self):

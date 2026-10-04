@@ -1,6 +1,7 @@
 # Game data refresh
 
-Run the complete released-data refresh from GenshinTools:
+HoyoData owns the complete released-data export. From GenshinTools, this command
+delegates to its `genshintools` target:
 
 ```powershell
 npm run data:refresh
@@ -11,7 +12,7 @@ command above for a full refresh.
 
 The sequence is:
 
-1. Pull the AGD checkout and run HoyoData's reference export, including character,
+1. Pull the AGD checkout and export all GenshinTools source data, including character,
    weapon, artifact, enemy, achievement, boss, and capture-cache data.
 2. Refresh HoYoWiki catalogs and artwork, plus artifact half sets.
 3. Regenerate character metadata, including constellation talent bonuses.
@@ -38,15 +39,15 @@ npm run data:refresh -- --dry-run
 # Export the existing AGD checkout without pulling it
 npm run data:refresh -- --skip-pull
 
-# Regenerate derived files from existing website JSON/catalogs without networking
+# Export cached raw data and rebuild using existing website catalogs/artwork
 npm run data:refresh -- --cached-sources
 ```
 
-HoyoData's `reference` command remains a lower-level source export. Running it
-alone does not refresh the website catalogs, character metadata, or scanner
-mappings. This split caused the September 7.1 refresh to omit the GOOD mapping
-step. The old codedump default only scraped website catalogs and generated GOOD
-keys; it did not invoke HoyoData, character metadata, or Enka generation.
+From HoyoData, run `uv run hoyodata genshintools --pull` for the same full pipeline.
+The old `reference` target has been removed. `scripts/generate_website_data.py`
+is the internal website-generation stage called by HoyoData; it cannot refresh
+source data by itself. GenshinTools coverage excludes unrelated lore and engine
+constants and still rejects missing required data, mappings, catalogs, or assets.
 
 Unreleased beta data remains managed by `scripts/lunaris.py`. Damage implementations,
 particle/energy data, and manually curated metadata are separate reviewed work;

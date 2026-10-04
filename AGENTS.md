@@ -14,7 +14,7 @@ React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tail
 - `npm run depcheck` — dependency boundary rules via dependency-cruiser
 - `npm run test` / `npm run test:watch` / `npm run test:coverage` — Vitest
 - `npm run regtest` — artifact generator golden-file regression test
-- `npm run data:refresh` — complete released game-data refresh (HoyoData export, website catalogs/assets, character metadata, Enka stat IDs, GOODScanner mappings, and coverage checks). Use this single entry point for routine version refreshes. HoyoData must be available beside this checkout, or pass `-- --hoyodata-root <path>`. `-- --cached-sources` rebuilds derived outputs offline; beta scraping and damage/energy implementation work remain separate.
+- `npm run data:refresh` — delegates to HoyoData's `genshintools` target for all released source data, website catalogs/assets, character metadata, Enka stat IDs, GOODScanner mappings, and coverage checks. HoyoData must be beside this checkout, or pass `-- --hoyodata-root <path>`. `-- --cached-sources` exports cached raw data and rebuilds with cached website catalogs/artwork; beta scraping and damage/energy implementation work remain separate.
 
 ## Production Deployment
 
