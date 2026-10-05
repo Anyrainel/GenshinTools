@@ -1,6 +1,20 @@
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
+import {
+  artifactTextResource,
+  weaponTextResource,
+} from "@/data/gameDataLoader";
+
+beforeAll(async () => {
+  // Match app boot and finish lazy imports before synchronous provider tests.
+  await Promise.all(
+    (["en", "zh"] as const).flatMap((language) => [
+      weaponTextResource.preload(language),
+      artifactTextResource.preload(language),
+    ])
+  );
+});
 
 // Mock localStorage
 const localStorageMock = (() => {
