@@ -130,8 +130,7 @@ def download_image(
         img.save(filepath, "WEBP", quality=90, lossless=lossless)
         return True
     except Exception as e:
-        tqdm.write(f"Failed to download image {url}: {e}")
-        return False
+        raise RuntimeError(f"Failed to download image {url}: {e}") from e
 
 
 class HoyolabAssetManager:
@@ -293,8 +292,9 @@ class HoyolabScraper:
             time.sleep(3)  # Wait for initial load
             return True
         except Exception as e:
-            tqdm.write(f"Could not navigate to {base_url} with language {language}: {e}")
-            return False
+            raise RuntimeError(
+                f"Could not navigate to {base_url} with language {language}: {e}"
+            ) from e
 
     def _scroll_until_all_loaded(self, card_selector: str, max_scrolls: int = 20) -> int:
         page = self._ensure_page()
@@ -330,6 +330,8 @@ class HoyolabScraper:
 
         time.sleep(2)  # Wait for final images/cards to settle
         final_count = page.locator(card_selector).count()
+        if not final_count:
+            raise RuntimeError(f"Wiki catalog has no cards: {card_selector}")
         # print(f"Final card count: {final_count}")
         return final_count
 
@@ -387,8 +389,7 @@ class HoyolabScraper:
             if name in CHARACTER_BLOCKLIST:
                 return None
         except Exception as e:
-            tqdm.write(f"SKIP (Char {index}): Exception extracting name: {e}")
-            return None
+            raise RuntimeError(f"Character card {index}: could not extract name") from e
 
         if name in ELEMENTLESS_CHARACTERS:
             element = ""
@@ -404,8 +405,7 @@ class HoyolabScraper:
                     tqdm.write(f"SKIP ({name}): Could not find element from src: {element_src}")
                     return None
             except Exception as e:
-                tqdm.write(f"SKIP ({name}): Exception extracting element: {e}")
-                return None
+                raise RuntimeError(f"{name}: could not extract element") from e
 
         try:
             icon_div = card.locator("div.character-card-icon").first
@@ -418,8 +418,7 @@ class HoyolabScraper:
                 tqdm.write(f"SKIP ({name}): Could not find rarity from classes: {rarity_classes}")
                 return None
         except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting rarity: {e}")
-            return None
+            raise RuntimeError(f"{name}: could not extract rarity") from e
 
         try:
             char_img = card.locator("img.d-img-show").first
@@ -432,8 +431,7 @@ class HoyolabScraper:
                 return None
             cleaned_image_url = clean_image_url(original_image_url)
         except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting image: {e}")
-            return None
+            raise RuntimeError(f"{name}: could not extract image") from e
 
         return CharacterSource(
             entry_id="",
@@ -484,8 +482,7 @@ class HoyolabScraper:
                 return None
             name = name_text.strip()
         except Exception as e:
-            tqdm.write(f"SKIP (Art {index}): Exception extracting name: {e}")
-            return None
+            raise RuntimeError(f"Artifact card {index}: could not extract name") from e
 
         try:
             image_urls: dict[str, str] = {}
@@ -515,8 +512,7 @@ class HoyolabScraper:
                 return None
 
         except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting images: {e}")
-            return None
+            raise RuntimeError(f"{name}: could not extract images") from e
 
         try:
             desc_items = card.locator("div.artifact-card-desc-item").all()
@@ -540,8 +536,7 @@ class HoyolabScraper:
                 effects=effects,
             )
         except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting details: {e}")
-            return None
+            raise RuntimeError(f"{name}: could not extract details") from e
 
     def scrape_artifacts(self, language: str = "en") -> list[ArtifactSource]:
         page = self._ensure_page()
@@ -584,8 +579,7 @@ class HoyolabScraper:
                 return None
             name = name_text.strip()
         except Exception as e:
-            tqdm.write(f"SKIP (Wep {index}): Exception extracting name: {e}")
-            return None
+            raise RuntimeError(f"Weapon card {index}: could not extract name") from e
 
         try:
             # Rarity check
@@ -605,8 +599,7 @@ class HoyolabScraper:
                 return None
 
         except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting rarity: {e}")
-            return None
+            raise RuntimeError(f"{name}: could not extract rarity") from e
 
         try:
             weapon_img = card.locator("img.d-img-show").first
@@ -616,8 +609,7 @@ class HoyolabScraper:
                 return None
             cleaned_image_url = clean_image_url(original_image_url)
         except Exception as e:
-            tqdm.write(f"SKIP ({name}): Exception extracting image: {e}")
-            return None
+            raise RuntimeError(f"{name}: could not extract image") from e
 
         return WeaponSource(
             entry_id="",
@@ -635,8 +627,9 @@ class HoyolabScraper:
         try:
             detail_page.wait_for_selector("div.base-info-content", timeout=5000)
         except Exception as e:
-            print(f"Warning: Could not find base-info-content on weapon detail page: {str(e)}")
-            return {}
+            raise RuntimeError(
+                f"Warning: Could not find base-info-content on weapon detail page: {str(e)}"
+            ) from e
 
         items = detail_page.locator("div.base-info-item").all()
         data: dict[str, str | int] = {
@@ -665,8 +658,8 @@ class HoyolabScraper:
                 elif key not in IGNORE_KEYS and not data["effect"]:
                     data["effect"] = value
 
-            except Exception:
-                continue
+            except Exception as error:
+                raise RuntimeError("Could not read weapon detail field") from error
 
         try:
             ascension_info = detail_page.locator(
@@ -687,13 +680,15 @@ class HoyolabScraper:
                             if atk_text:
                                 try:
                                     data["base_atk"] = int(atk_text.strip())
-                                except ValueError:
-                                    print(f"Warning: Could not parse ATK value: {atk_text}")
+                                except ValueError as error:
+                                    raise ValueError(
+                                        f"Could not parse wiki ATK value: {atk_text}"
+                                    ) from error
 
                             if sec_text:
                                 data["secondary_stat_value"] = sec_text.strip()
         except Exception as e:
-            print(f"Error scraping stats: {e}")
+            raise RuntimeError(f"Error scraping stats: {e}") from e
 
         return data
 
@@ -742,7 +737,7 @@ class HoyolabScraper:
                     detail_page.close()
 
                 except Exception as e:
-                    tqdm.write(f"Error scraping details for {weapon_data.name}: {e}")
+                    raise RuntimeError(f"Error scraping details for {weapon_data.name}: {e}") from e
             else:
                 # Fast path: just grab the entry ID without loading the detail page
                 eid = self._get_entry_id_from_card(card)
@@ -796,7 +791,7 @@ class HoyolabScraper:
                             )
                         )
         except Exception as e:
-            print(f"Error scraping elements/weapons: {e}")
+            raise RuntimeError(f"Error scraping elements/weapons: {e}") from e
 
         return elements, weapon_types
 
@@ -831,9 +826,11 @@ class HoyolabScraper:
             new_page = new_page_info.value
             eid = extract_id_from_url(new_page.url)
             new_page.close()
+            if not eid:
+                raise ValueError("Wiki card did not open a valid entry URL")
             return eid
-        except Exception:
-            return ""
+        except Exception as error:
+            raise RuntimeError("Could not open wiki entry from card") from error
 
     def scrape_enemies(self, language: str = "en") -> list[EnemySource]:
         """Scrape enemies via the Hoyolab wiki API (no browser rendering needed)."""
@@ -926,6 +923,8 @@ class HoyolabScraper:
                 return name_locator.first.text_content()
 
         except Exception as e:
-            print(f"Error fetching name for entry {entry_id} in {language}: {e}")
+            raise RuntimeError(
+                f"Error fetching name for entry {entry_id} in {language}: {e}"
+            ) from e
 
         return None

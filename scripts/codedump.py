@@ -460,7 +460,6 @@ def main():
     parser.add_argument("--half-set", action="store_true", help="Recompute half sets only")
     parser.add_argument("--enka", action="store_true", help="Generate Enka ID maps")
     parser.add_argument("--good-keys", action="store_true", help="Generate GOOD-format keys JSON")
-    parser.add_argument("--strict", action="store_true", help="Stop on scraping failures")
     parser.add_argument(
         "--details",
         action="store_true",
@@ -549,62 +548,53 @@ def main():
     if args.character or args.artifact or args.weapon:  # enemy disabled
         print("=== [2/5] Hoyolab Data ===")
         with HoyolabScraper() as scraper:
-            try:
-                if args.character:
-                    print("--- Character ---")
-                    chars_en = scraper.scrape_characters("en")
-                    new_elements, new_weapon_types = scraper.scrape_elements_and_weapons("en")
-                    chars_zh = scraper.scrape_characters("zh")
-                    c_data, c_i18n, matched_chars = process_characters(
-                        chars_en,
-                        chars_zh,
-                        fandom_data,
-                        existing_char_map,
-                        scraper,
-                        details=args.details,
-                    )
-                    character_data = c_data
-                    i18n_data["characters"] = c_i18n
-                    elements = new_elements
-                    weapon_types = new_weapon_types
+            if args.character:
+                print("--- Character ---")
+                chars_en = scraper.scrape_characters("en")
+                new_elements, new_weapon_types = scraper.scrape_elements_and_weapons("en")
+                chars_zh = scraper.scrape_characters("zh")
+                c_data, c_i18n, matched_chars = process_characters(
+                    chars_en,
+                    chars_zh,
+                    fandom_data,
+                    existing_char_map,
+                    scraper,
+                    details=args.details,
+                )
+                character_data = c_data
+                i18n_data["characters"] = c_i18n
+                elements = new_elements
+                weapon_types = new_weapon_types
 
-                if args.artifact:
-                    print("--- Artifact ---")
-                    arts_en = scraper.scrape_artifacts("en")
-                    arts_zh = scraper.scrape_artifacts("zh")
-                    a_data, a_i18n, matched_arts = process_artifacts(arts_en, arts_zh, scraper)
-                    artifact_data = a_data
-                    i18n_data["artifacts"] = a_i18n
+            if args.artifact:
+                print("--- Artifact ---")
+                arts_en = scraper.scrape_artifacts("en")
+                arts_zh = scraper.scrape_artifacts("zh")
+                a_data, a_i18n, matched_arts = process_artifacts(arts_en, arts_zh, scraper)
+                artifact_data = a_data
+                i18n_data["artifacts"] = a_i18n
 
-                if args.weapon:
-                    print("--- Weapon ---")
-                    weaps_en = scraper.scrape_weapons("en", fetch_details=args.details)
-                    weaps_zh = scraper.scrape_weapons("zh", fetch_details=args.details)
+            if args.weapon:
+                print("--- Weapon ---")
+                weaps_en = scraper.scrape_weapons("en", fetch_details=args.details)
+                weaps_zh = scraper.scrape_weapons("zh", fetch_details=args.details)
 
-                    w_data, w_i18n, matched_weaps = process_weapons(
-                        weaps_en, weaps_zh, existing_weapon_map, scraper
-                    )
-                    weapon_data = w_data
-                    i18n_data["weapons"] = w_i18n
+                w_data, w_i18n, matched_weaps = process_weapons(
+                    weaps_en, weaps_zh, existing_weapon_map, scraper
+                )
+                weapon_data = w_data
+                i18n_data["weapons"] = w_i18n
 
-                # enemy disabled — see banner at top of file.
-                # if args.enemy:
-                #     print("--- Enemy ---")
-                #     enemies_en = scraper.scrape_enemies("en")
-                #     enemies_zh = scraper.scrape_enemies("zh")
-                #     e_data, e_i18n, matched_enemies = process_enemies(
-                #         enemies_en, enemies_zh, scraper
-                #     )
-                #     enemy_data = e_data
-                #     i18n_data["enemies"] = e_i18n
-
-            except Exception as e:
-                if args.strict:
-                    raise
-                print(f"Error during scraping: {e}")
-                import traceback
-
-                traceback.print_exc()
+            # enemy disabled — see banner at top of file.
+            # if args.enemy:
+            #     print("--- Enemy ---")
+            #     enemies_en = scraper.scrape_enemies("en")
+            #     enemies_zh = scraper.scrape_enemies("zh")
+            #     e_data, e_i18n, matched_enemies = process_enemies(
+            #         enemies_en, enemies_zh, scraper
+            #     )
+            #     enemy_data = e_data
+            #     i18n_data["enemies"] = e_i18n
 
     # 2.5 Recompute Half Sets (if requested or if artifacts were updated)
     if args.half_set or args.artifact:

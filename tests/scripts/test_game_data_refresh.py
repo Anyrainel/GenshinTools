@@ -56,7 +56,7 @@ class GameDataRefreshTests(unittest.TestCase):
             process.return_value = subprocess.CompletedProcess([], 0)
             self.assertEqual(generate(self.root), 0)
         commands = [call.args[0] for call in process.call_args_list]
-        self.assertIn("--strict", commands[0])
+        self.assertIn("--character", commands[0])
         self.assertTrue(commands[1][1].endswith("gen_char_info.py"))
         self.assertIn("--good-keys", commands[2])
         self.assertIn("--enka", commands[2])
@@ -70,6 +70,50 @@ class GameDataRefreshTests(unittest.TestCase):
             self.assertEqual(generate(self.root, dry_run=True), 0)
         process.assert_not_called()
         validate.assert_not_called()
+
+    def test_scraping_failure_without_flags_aborts_before_writing_partial_data(self):
+        with (
+            patch.object(sys, "argv", ["codedump.py", "--weapon", "--good-keys"]),
+            patch("codedump.load_existing_data", return_value=({}, {})),
+            patch("codedump.HoyolabScraper") as scraper,
+            patch("codedump.write_data") as write,
+            patch("codedump.generate_mappings_json") as mappings,
+        ):
+            scraper.return_value.__enter__.return_value.scrape_weapons.side_effect = (
+                RuntimeError("wiki navigation failed")
+            )
+            with self.assertRaisesRegex(RuntimeError, "wiki navigation failed"):
+                codedump.main()
+        write.assert_not_called()
+        mappings.assert_not_called()
+
+    def test_scraping_failure_exits_unsuccessfully_for_pipeline_callers(self):
+        program = """
+import sys
+from unittest.mock import patch
+sys.path.insert(0, sys.argv[1])
+import codedump
+sys.argv = ["codedump.py", "--weapon"]
+with (
+    patch("codedump.load_existing_data", return_value=({}, {})),
+    patch("codedump.HoyolabScraper") as scraper,
+    patch("codedump.write_data", side_effect=AssertionError("partial write attempted")),
+):
+    scraper.return_value.__enter__.return_value.scrape_weapons.side_effect = RuntimeError(
+        "injected catalog failure"
+    )
+    codedump.main()
+"""
+        completed = subprocess.run(
+            [sys.executable, "-c", program, str(Path(codedump.__file__).parent)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertTrue(
+            completed.stderr.rstrip().endswith("RuntimeError: injected catalog failure")
+        )
 
     def test_cached_refresh_delegates_to_same_target_without_pull(self):
         with patch("refresh_game_data.subprocess.run") as process:

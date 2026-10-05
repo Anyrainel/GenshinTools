@@ -21,6 +21,12 @@ The sequence is:
 5. Check mapping coverage, character catalog coverage, website assets, and
    scheduled boss artwork.
 
+All wiki generation modes fail on scraping, parsing, and asset-download exceptions;
+there is no permissive mode or optional strict flag. Expected exclusions such as
+unreleased placeholder entries remain exclusions. Detailed wiki/Fandom extraction
+is retained behind `codedump.py --details` for explicit maintenance; routine refreshes
+use HoYoWiki catalogs/names/artwork and HoyoData for detailed game data.
+
 The command stops on failure and exits unsuccessfully. Earlier successful steps
 may have written files; inspect the diff and rerun after addressing the failure.
 Coverage baseline changes require separate review and acceptance in HoyoData.

@@ -103,7 +103,7 @@ def match_items[T: BaseItemSource](
                 char_en = cast(CharacterSource, item_en)
                 char_zh = cast(CharacterSource, item_zh)
                 if char_en.element != char_zh.element or char_en.rarity != char_zh.rarity:
-                    print(
+                    raise ValueError(
                         f"ERROR: {item_type} {eid} - element/rarity mismatch: "
                         f"EN={char_en.element} {char_en.rarity}*, "
                         f"ZH={char_zh.element} {char_zh.rarity}*"

@@ -89,7 +89,6 @@ def generate(
                     "--character",
                     "--weapon",
                     "--artifact",
-                    "--strict",
                 ],
                 root,
             )

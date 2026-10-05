@@ -78,8 +78,7 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
                     break
 
             if not target_table:
-                tqdm.write("Could not find the Playable Characters table")
-                return {}
+                raise RuntimeError("Could not find the Fandom Playable Characters table")
 
             rows = target_table.locator("tr").all()
             if len(rows) > 0:
@@ -190,15 +189,15 @@ def get_character_data() -> dict[tuple[str, int, str], CharacterData]:
                     # Removed per-item print to reduce noise, using tqdm bar instead
 
                 except Exception as e:
-                    tqdm.write(f"Error processing row: {e}")
-                    continue
+                    raise RuntimeError(f"Error processing row: {e}") from e
 
         except Exception as e:
-            tqdm.write(f"Error scraping Fandom: {e}")
-            return {}
+            raise RuntimeError(f"Error scraping Fandom: {e}") from e
         finally:
             browser.close()
 
+    if not characters:
+        raise RuntimeError("Fandom character catalog is empty")
     tqdm.write(f"Successfully scraped {len(characters)} characters from Fandom")
 
     character_lookup: dict[tuple[str, int, str], CharacterData] = {}
