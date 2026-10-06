@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { migrateTeamResultCacheStore } from "@/stores/migration/teamResultCache";
+import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 
 describe("migrateTeamResultCacheStore", () => {
   it("clears pre-v3 results after formula entry units or branches change", () => {
@@ -36,11 +37,40 @@ describe("migrateTeamResultCacheStore", () => {
     expect(result.resultsByTeamId).toEqual({});
   });
 
-  it("preserves v4 results", () => {
+  it("invalidates v4 Vesna results through persisted-store hydration", async () => {
+    window.localStorage.setItem(
+      "team-result-cache",
+      JSON.stringify({
+        version: 4,
+        state: {
+          resultsByTeamId: {
+            "vesna-flagship": {
+              optimizationResult: { timestamp: 100, totalDamage: 123456 },
+              investmentResult: {
+                timestamp: 100,
+                bestAtTier: [],
+                nodesByJin: [],
+              },
+              weaponChoiceResult: { timestamp: 100, perCharacter: {} },
+              artifactChoiceResult: { timestamp: 100, perCharacter: {} },
+            },
+          },
+        },
+      })
+    );
+    await useTeamResultCacheStore.persist.rehydrate();
+    expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
+    expect(
+      JSON.parse(window.localStorage.getItem("team-result-cache")!).version
+    ).toBe(5);
+    window.localStorage.removeItem("team-result-cache");
+  });
+
+  it("preserves v5 results", () => {
     const resultsByTeamId = {
       "team-1": { investmentResult: { timestamp: 1 } },
     };
-    const result = migrateTeamResultCacheStore({ resultsByTeamId }, 4);
+    const result = migrateTeamResultCacheStore({ resultsByTeamId }, 5);
     expect(result.resultsByTeamId).toBe(resultsByTeamId);
   });
 });

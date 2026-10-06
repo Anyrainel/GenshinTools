@@ -30,9 +30,13 @@
           "minCr": 0.05
         }
       },
-      "damage": 26759700.7183,
+      "damage": 26806313.4337,
       "comboResult": {
         "lineDamages": [
+          {
+            "perHit": 16739.0831,
+            "total": 33478.1662
+          },
           {
             "perHit": 139232.0434,
             "total": 278464.0868
@@ -70,8 +74,8 @@
             "total": 5396173.7353
           },
           {
-            "perHit": 1048547.7186,
-            "total": 2097095.4371
+            "perHit": 1055114.9932,
+            "total": 2110229.9863
           },
           {
             "perHit": 388717.9989,
@@ -178,7 +182,7 @@
             "total": 7093.9197
           }
         ],
-        "totalDamage": 26759700.7183
+        "totalDamage": 26806313.4337
       },
       "artifacts": {
         "vesna": {
@@ -423,8 +427,14 @@
         }
       },
       "display": {
-        "totalDamage": 26759700.7183,
+        "totalDamage": 26806313.4337,
         "partsByFormula": {
+          "vesna.vesna-normal-1": [
+            {
+              "damage": 16739.0831,
+              "template": "direct"
+            }
+          ],
           "vesna.vesna-normal": [
             {
               "damage": 16739.0831,
@@ -520,7 +530,8 @@
             },
             {
               "damage": 5253.8197,
-              "template": "direct"
+              "template": "direct",
+              "hits": 2.25
             }
           ],
           "vesna.rx-stellarSwirl-vesna": [
@@ -1478,7 +1489,7 @@
         "marginalGains": {
           "vesna": {
             "atk": 0.002,
-            "atk%": 0.0066,
+            "atk%": 0.0067,
             "em": 0.0066,
             "cr": 0.0096,
             "cd": 0.0096

@@ -1367,10 +1367,11 @@ class Vesna extends CharacterBase {
    * Wind Pinion or the E cast, so it is attached per formula part instead
    * of as a tag-filtered self buff.
    *
-   * 「施放特殊元素战技翔风剑或元素爆发致礼·献予女皇陛下后」 grants the stack
-   * AFTER the cast. The E opener clears all stacks, so below C2 the Lv. 1
-   * strike lands at 0 stacks, Lv. 2 at 1, the Lv. 3 casts at 2/3/4 (5 for
-   * the extra C1 cast), and the burst at 5 (6 at C1).
+   * Prydwen's combo guide places Q after Lv. 2 and gives it two prior-cast
+   * stacks. Following that convention, Lv. 2 uses 1 and Lv. 3 uses 3/4/5
+   * (6 for the extra C1 cast). Delayed skill-blade stack timing remains
+   * unverified; "after using" alone does not establish the damage event order.
+   * https://www.prydwen.gg/genshin-impact/characters/vesna
    *
    * At C2「进入巡风列装模式时，会获得最大层数的整肃」grants all 6 on entry,
    * so every blade hit sits at the flat 60%.
@@ -1386,21 +1387,21 @@ class Vesna extends CharacterBase {
     ];
   }
 
-  // Rotation: E > NA (pinions) > Lv. 1 > Lv. 2 > Lv. 3 x3 (+1 at C1) > Q
+  // Prydwen: E N1C E N1C E Q E N1C E N1C E; C1 adds one free Lv. 3.
   protected override get comboDescriptor(): ComboTemplate {
     return [
       { id: "vesna-skill", count: 1 },
-      { id: "vesna-normal", count: 1 },
-      // Wind Pinions accompany Normal/Charged/Plunging Attacks in Armed for
-      // Action; their ICD is unknown, so this is a moderate estimate.
-      { id: "vesna-feather", count: 5 },
+      { id: "vesna-normal-1", count: 4, bonus: [{ minC: 6, delta: -3 }] },
+      { id: "vesna-charge", count: 4, bonus: [{ minC: 6, delta: -3 }] },
+      // Meropide: N1C summons 3 pinions; 12 give 2 Essence, plus E's 2 + Q's 1.
+      // C6's first three Transposes supply 9 pinions, leaving one N1C (3).
+      // https://meropide.cn/chs/characters/薇斯纳/theorycraft/
+      { id: "vesna-feather", count: 12, bonus: [{ minC: 6, delta: -9 }] },
       { id: "vesna-blade-pierce", count: 1 },
       { id: "vesna-blade-plunge", count: 1 },
-      // E caps Lv. 3 at 3 casts per Armed for Action mode; C1 raises it to 4.
-      // Sword Essence comes from the opener, burst, and Wind Pinions. The
-      // special-skill casts plus burst reach 6 Disciplinary Action stacks.
-      { id: "vesna-blade-dance", count: 3, bonus: [{ minC: 1, delta: 1 }] },
       { id: "vesna-burst", count: 1 },
+      // E caps Lv. 3 at 3 casts per Armed for Action mode; C1 raises it to 4.
+      { id: "vesna-blade-dance", count: 3, bonus: [{ minC: 1, delta: 1 }] },
       // C6 opens a 5s Transpose window after every Lv. 3, with no per-state cap
       // or cooldown of its own, so the count is one per dance — keep it in step
       // with "vesna-blade-dance" above (3 + 1 from C1, which any C6 account has).
@@ -1452,14 +1453,20 @@ class Vesna extends CharacterBase {
     const suffix = on ? { zh: "·星扩散", en: " (SSw)" } : { zh: "", en: "" };
 
     // Lv. 3 is a single formula entry that the combo consumes 3 times (4 at
-    // C1), so it cannot carry the 2/3/4(/5) per-cast Disciplinary Action counts. It takes
+    // C1), so it cannot carry the 3/4/5(/6) per-cast Disciplinary Action counts. It takes
     // their mean instead, which is exact for the rotation total: `baseDmg%`
     // enters the damage as (1 + value), so summing across casts is linear in
     // the stack count and only the per-row split differs.
-    const danceStacks = this.constellation >= 1 ? 3.5 : 3;
-    const burstStacks = this.constellation >= 1 ? 6 : 5;
+    const danceStacks = this.constellation >= 1 ? 4.5 : 4;
+    const burstStacks = 2;
 
     return {
+      "vesna-normal-1": {
+        label: { zh: "普通攻击·一段", en: "Normal Attack: 1-Hit" },
+        parts: [
+          { formula: new DirectFormula(this.param("A", 1), anemoNormal) },
+        ],
+      },
       "vesna-normal": {
         label: { zh: "普通攻击", en: "Normal Attack" },
         parts: [
@@ -1517,7 +1524,7 @@ class Vesna extends CharacterBase {
             formula: on
               ? new StellarDirectFormula(this.param("E", 5), swSkill)
               : new DirectFormula(this.param("E", 4), anemoSkill),
-            // Lv. 1 has landed and granted its stack → 1.
+            // Prior-cast approximation: Lv. 1 has granted one stack.
             bespokeBuffs: this.unruffled(1),
           },
         ],
@@ -1575,8 +1582,12 @@ class Vesna extends CharacterBase {
               : new DirectFormula(2.0, anemoSkill, "atk"),
             bespokeBuffs: this.unruffled(6),
           },
-          // Transpose also summons a wind pinion while Armed for Action.
-          { formula: new DirectFormula(this.param("E", 10), anemoSkill) },
+          // Meropide: 3 pinions on each of the first 3 Transposes, none after
+          // the last Lv. 3 ends stance. Average 9/4 preserves the action unit.
+          {
+            formula: new DirectFormula(this.param("E", 10), anemoSkill),
+            hits: 9 / 4,
+          },
         ],
       },
     };

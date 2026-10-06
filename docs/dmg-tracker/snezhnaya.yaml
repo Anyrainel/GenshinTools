@@ -192,3 +192,69 @@
     plus peak level-2 3.0 Cryo Vortex. Contributor ordering uses the verified
     Anemo/Cryo priority rules and 0.6/0.3/0.05/0.05 weights. Added a targeted
     Odette team reaction regression test.
+
+- id: vesna-default-pinion-count
+  entity: vesna
+  rule: U9
+  status: completed
+  category: bug
+  summary: >
+    The default rotation counts one full N6 chain and only five Wind Pinions,
+    which is internally inconsistent and cannot fund all five Windborne Sword
+    casts from the opener plus a mid-rotation Burst.
+  detail: >
+    Added a distinct vesna-normal-1 formula while keeping vesna-normal as the
+    full N6 action for existing saved combos. Default is four N1C chains and
+    twelve pinions, funding five swords together with E's two Essence and Q's
+    one. C1 adds one free Lv3 cast. Q is now modeled before Lv3, following
+    Prydwen's E N1C E N1C E Q E N1C E N1C E rotation. P1 uses two prior-cast
+    stacks for Q and a Lv3 average of four at C0, 4.5 at C1, six at C2+.
+    C6 uses one N1C and three regular pinions; Transpose supplies the other nine.
+    Formula IDs keep their existing combat-action units; no schema change.
+    https://meropide.cn/chs/characters/薇斯纳/theorycraft/
+    https://www.prydwen.gg/genshin-impact/characters/vesna
+
+- id: vesna-c6-transpose-pinion-count
+  entity: vesna
+  rule: U9
+  status: completed
+  category: bug
+  summary: >
+    C6 Transpose currently includes one Wind Pinion on all four casts. It should
+    emit three pinions while Armed for Action is active, and none on the final
+    Transpose after the fourth Lv3 sword has already ended that stance.
+  detail: >
+    Kept four Transpose actions and the pinion part inside their existing
+    formula, with an explicit per-action average of 9/4 pinions: three on each
+    of the first three actions, none on the fourth. The default now adds one
+    N1C with three regular pinions, totaling twelve pinions and two Essence.
+    Existing saved Transpose counts retain their attack-action unit.
+    Meropide documents three pinions per Transpose and explicitly notes the
+    fourth Transpose occurs outside stance and creates none.
+    https://meropide.cn/chs/characters/薇斯纳/theorycraft/
+
+- id: vesna-p1-cast-stack-timing
+  entity: vesna
+  rule: U9
+  status: open
+  category: needs-data
+  summary: >
+    P1 assumes each sword and Burst hit benefits only from stacks gained by
+    previous casts. The talent grants a stack on using the ability, so the
+    delayed Spirit Blade hits may already benefit from that same cast's stack.
+  detail: >
+    The model retains previous-cast timing, modeling Lv2 at one stack and a
+    Burst after Lv2 at two. The code now labels this as an approximation. Confirm
+    the stack event relative to blade damage with gameplay or ability configs.
+    For an E, Lv1, Lv2, Q, Lv3 x3 default, same-cast gain means Lv2 uses two
+    stacks, Q three, Lv3 four/five/six (mean five); previous-cast gain means
+    Lv2 one, Q two, Lv3 three/four/five (mean four). C2 always uses six.
+    KQM TCL currently lacks tested findings for Vesna; neither its talent text
+    nor Meropide's research specifies this event ordering.
+    Prydwen's original Vesna guide (updated September 27, 2026) explicitly says
+    that Burst after the second sword benefits from two P1 stacks, supporting
+    the existing previous-cast treatment for Burst. Retain that treatment
+    unless direct event-order evidence establishes otherwise; the unresolved
+    question is whether delayed sword blades use the same timing as Burst.
+    https://library.keqingmains.com/characters/anemo/vesna
+    https://www.prydwen.gg/genshin-impact/characters/vesna

@@ -45,5 +45,11 @@ export function migrateTeamResultCacheStore(
     // calculated with beta weapon IDs cannot be reconciled safely.
     state.resultsByTeamId = {};
   }
+  if (version < 5) {
+    // v4 cached optimizer/analyzer results use Vesna's old P1 ramp and
+    // C6 pinion counts. The result shape is unchanged, but damage and rankings
+    // cannot be reconciled without recomputing them.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

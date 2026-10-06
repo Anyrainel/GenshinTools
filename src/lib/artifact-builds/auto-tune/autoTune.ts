@@ -49,7 +49,7 @@ export const TUNABLE_SUBSTATS: SubStat[] = [
 /** Default calc context for weight generation */
 export const DEFAULT_CALC_CTX: CalcContext = {
   enemyLevel: 100,
-  enemyRes: 10,
+  enemyRes: 0.1,
   rollMultiplier: 0.85,
   substatBudget: "8_6",
 };
