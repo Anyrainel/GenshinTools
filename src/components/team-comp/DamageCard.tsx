@@ -88,6 +88,7 @@ import {
 } from "./GeneratorControls";
 import { type ReuseEntry, StatSheetPanel } from "./StatSheetPanel";
 import { SwapGuide } from "./SwapGuide";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 const SESSION_PREFIX = "dmgCard.";
 
@@ -456,11 +457,7 @@ function ComboBreakdown({
             ) : (
               /* ── Per-character combo grid ── */
               <>
-                <div
-                  className={cn(
-                    "grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2 mt-3"
-                  )}
-                >
+                <TeamCharacterGrid className="mt-3">
                   {teamCharIds.map((charId) => {
                     const charRes = charactersById[charId];
                     const lines = byChar.get(charId);
@@ -615,7 +612,7 @@ function ComboBreakdown({
                       </div>
                     );
                   })}
-                </div>
+                </TeamCharacterGrid>
 
                 {/* Team Reactions section */}
                 {teamReactionLines.length > 0 && (

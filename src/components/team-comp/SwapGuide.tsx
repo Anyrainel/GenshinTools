@@ -33,6 +33,7 @@ import { resolveBuildInfo } from "@/lib/team-comp/teamConfigUtils";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getRarityColor } from "../shared/colors";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 const SLOTS: Slot[] = ["flower", "plume", "sands", "goblet", "circlet"];
 
@@ -157,8 +158,8 @@ export function SwapGuide({
         </div>
       </div>
 
-      {/* 2x2 on small screens, 4x1 on large — same as StatSheetPanel */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2 p-1 md:p-2">
+      {/* Match the available-width layout of StatSheetPanel. */}
+      <TeamCharacterGrid className="p-1 md:p-2">
         {characters.map((charId, i) => {
           if (!charId) return <div key={i} />;
           const equipped = equippedArtifactsByChar[charId] ?? {};
@@ -175,7 +176,7 @@ export function SwapGuide({
             />
           );
         })}
-      </div>
+      </TeamCharacterGrid>
       <ArtifactManagerDialog
         open={equipDialogOpen}
         onOpenChange={setEquipDialogOpen}

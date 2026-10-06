@@ -17,6 +17,7 @@ import { fmtStat } from "@/lib/team-comp/displayFormatter";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { getValueColor, VALUE_COLORS } from "../shared/colors";
 import { BuffDialog, type BuffLedgerFormula } from "./BuffDialog";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 type Props = {
   buffs: ResolvedBuff[];
@@ -275,15 +276,15 @@ export function BuffLedger({ buffs, characters, t, formulas }: Props) {
                   }
                 </span>
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
+              <TeamCharacterGrid>
                 {resonanceBuffs.map((b, i) => (
                   <BuffChip key={i} buff={b} t={t} formulas={formulas} />
                 ))}
-              </div>
+              </TeamCharacterGrid>
             </div>
           )}
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
+          <TeamCharacterGrid>
             {characters.map((charId, i) => {
               if (!charId)
                 return (
@@ -329,7 +330,7 @@ export function BuffLedger({ buffs, characters, t, formulas }: Props) {
                 </div>
               );
             })}
-          </div>
+          </TeamCharacterGrid>
         </div>
       </CollapsibleContent>
     </Collapsible>

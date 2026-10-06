@@ -23,6 +23,7 @@ import {
   findMatchingTeams,
 } from "@/stores/teamStoreIntegration";
 import { useTeamStore } from "@/stores/useTeamStore";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 interface ErResultsPanelProps {
   results: ERResult[];
@@ -244,7 +245,7 @@ export function ErResultsPanel({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5 p-2">
+      <TeamCharacterGrid className="gap-1.5 p-2">
         {team.map((slot) => {
           const result = results.find((r) => r.characterId === slot.charId);
           const hasData = !!result?.hasQ;
@@ -379,7 +380,7 @@ export function ErResultsPanel({
             </div>
           );
         })}
-      </div>
+      </TeamCharacterGrid>
     </section>
   );
 }

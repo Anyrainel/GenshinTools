@@ -1,6 +1,7 @@
 import { ArrowRightLeft } from "lucide-react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
-import { ItemIcon } from "@/components/shared/ItemIcon";
+import { ICON_CONFIG, ItemIcon } from "@/components/shared/ItemIcon";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";
@@ -11,17 +12,33 @@ export function ArtifactSlotGrid({
   artifactsObj,
   t,
   onSwap,
-  compact,
 }: {
   artifactsObj: Record<string, ArtifactData>;
   t: ReturnType<typeof useLanguage>["t"];
   /** When provided, artifacts become clickable to trigger a swap */
   onSwap?: (slot: Slot, artifact: ArtifactData) => void;
-  /** When true, use smaller icon size */
-  compact?: boolean;
 }) {
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [compact, setCompact] = useState(true);
+
+  useLayoutEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+    // Five 56px icons plus four gaps; measure the actual row, including sidebars.
+    const updateSize = () => {
+      const gap = Number.parseFloat(getComputedStyle(grid).columnGap) || 0;
+      const fullSizeWidth =
+        allSlots.length * ICON_CONFIG.md.icon + (allSlots.length - 1) * gap;
+      setCompact(grid.getBoundingClientRect().width < fullSizeWidth);
+    };
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(grid);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="grid grid-cols-5 gap-0.5 md:gap-1 lg:gap-1.5">
+    <div ref={gridRef} className="grid grid-cols-5 gap-0.5 md:gap-1 lg:gap-1.5">
       {allSlots.map((slot) => {
         const art = artifactsObj[slot];
         if (!art)

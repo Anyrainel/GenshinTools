@@ -36,6 +36,7 @@ import {
 import { ExtraBuffsPanel } from "./ExtraBuffsPanel";
 import { FormulaLabel } from "./FormulaLabel";
 import { ReactionPartControls } from "./ReactionPartControls";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 /** Derive the contributing elements for a reaction formula ID. */
 function getReactionElements(formulaId: string): Element[] {
@@ -221,7 +222,7 @@ export function FormulaSelectorCard({
         {allFormulas.length > 0 ? (
           <div className="flex flex-col gap-2">
             {/* ── Unified grid: one column per character ── */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
+            <TeamCharacterGrid>
               {characters.map((cid, idx) => {
                 if (!cid) return <div key={idx} />;
                 const charFormulas = displayFormulas[cid];
@@ -764,7 +765,7 @@ export function FormulaSelectorCard({
                   </div>
                 );
               })}
-            </div>
+            </TeamCharacterGrid>
 
             {/* ── Team Reactions ── */}
             {teamBuild &&

@@ -56,6 +56,7 @@ import {
   RollQualityInputs,
   StellarDirectCoeffInput,
 } from "./GeneratorControls";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 // Substat display order (most common optimization targets first)
 const SUBSTAT_ORDER: SubStat[] = [
@@ -949,7 +950,7 @@ export function WeaponChoiceResultCard({
 
         {/* Results grid — always show character panels when charIds exist */}
         {charIds.length > 0 ? (
-          <div className={cn("grid grid-cols-2 gap-2 lg:grid-cols-4")}>
+          <TeamCharacterGrid className="gap-2">
             {charIds.map((charId) => {
               const rankings = hasResult
                 ? result.perCharacter[charId]
@@ -1004,7 +1005,7 @@ export function WeaponChoiceResultCard({
                 </div>
               );
             })}
-          </div>
+          </TeamCharacterGrid>
         ) : (
           <p className="text-sm text-muted-foreground text-center py-8">
             {t.ui("teamComp.analyzerNoResults")}

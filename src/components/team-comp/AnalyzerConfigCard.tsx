@@ -37,6 +37,7 @@ import {
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
 } from "./cardStyles";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 function getArtifactIconProps(bc: TeamSlotConfig): {
   artifactSetId?: string;
@@ -96,7 +97,7 @@ export function AnalyzerConfigCard({
         </span>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2">
+        <TeamCharacterGrid>
           {charConfigs.map((cfg) => {
             const bc = configs.find((b) => b.charId === cfg.charId);
             if (!bc) return null;
@@ -120,7 +121,7 @@ export function AnalyzerConfigCard({
               </div>
             );
           })}
-        </div>
+        </TeamCharacterGrid>
       </CardContent>
     </Card>
   );

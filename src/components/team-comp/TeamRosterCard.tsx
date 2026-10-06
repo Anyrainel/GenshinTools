@@ -59,6 +59,7 @@ import {
   CARD_HEADER_CLS,
   CARD_TITLE_CLS,
 } from "./cardStyles";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 interface TeamRosterCardProps {
   teamComp: TeamComp;
@@ -336,9 +337,7 @@ export function TeamRosterCard({
         </h3>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
-        <div
-          className={cn("grid", "grid-cols-2 lg:grid-cols-4 gap-1 lg:gap-2")}
-        >
+        <TeamCharacterGrid>
           {characters.map((charId, i) => {
             if (!charId) {
               // Only the first empty slot (right after the last filled slot) is interactive
@@ -784,7 +783,7 @@ export function TeamRosterCard({
               </div>
             );
           })}
-        </div>
+        </TeamCharacterGrid>
       </CardContent>
     </Card>
   );

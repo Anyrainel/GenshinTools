@@ -27,6 +27,7 @@ import {
 } from "@/lib/dmgcalc/utils";
 import type { TeamCharConfig } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 const LABEL_CLS =
   "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
@@ -281,7 +282,7 @@ export function CharCrErSettings({
   };
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 pb-1 md:pb-2">
+    <TeamCharacterGrid className="pb-1 md:pb-2">
       {charIds.map((charId) => {
         const cs = configs[charId];
         const crMode = cs?.crMode ?? "min";
@@ -437,6 +438,6 @@ export function CharCrErSettings({
           </div>
         );
       })}
-    </div>
+    </TeamCharacterGrid>
   );
 }

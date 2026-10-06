@@ -43,6 +43,7 @@ import { detectEquippedSets, setsMatch } from "@/lib/team-comp/teamConfigUtils";
 import type { OptFailReason } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
 import { ArtifactSlotGrid } from "./ArtifactSlotGrid";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 export type ReuseEntry = {
   mode: "shared" | "locked";
@@ -331,19 +332,11 @@ export function StatSheetPanel({
     }));
   };
 
-  // Compact mode: shrink artifact icons when cards are narrow
-  // Activates below 650px (2x2 cramped) and between 1024-1279px (4x1 cramped)
-  const isNarrow = useMediaQuery("(max-width: 649px)");
-  const isMidCramped = useMediaQuery(
-    "(min-width: 1024px) and (max-width: 1279px)"
-  );
-  const compact = isNarrow || isMidCramped;
-
   // Hide chevrons on view-mode bar when below desktop width
   const showChevrons = useMediaQuery("(min-width: 1280px)");
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 xl:gap-2">
+    <TeamCharacterGrid>
       {characters.map((charId, i) => {
         if (!charId) return <div key={i} />;
 
@@ -499,7 +492,6 @@ export function StatSheetPanel({
                 <ArtifactSlotGrid
                   artifactsObj={artifactsObj}
                   t={t}
-                  compact={compact}
                   onSwap={
                     onArtifactSwap && !isFrozen
                       ? (slot, art) => onArtifactSwap(charId, slot, art)
@@ -601,7 +593,7 @@ export function StatSheetPanel({
           </div>
         );
       })}
-    </div>
+    </TeamCharacterGrid>
   );
 }
 
