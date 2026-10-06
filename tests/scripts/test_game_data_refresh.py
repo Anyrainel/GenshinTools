@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
 import codedump  # noqa: E402
 from enka import generate_stat_map, run  # noqa: E402
-from generate_website_data import generate, validate_outputs  # noqa: E402
+from generate_website_data import generate, validate_outputs, validate_stat_outputs  # noqa: E402
 from refresh_game_data import refresh  # noqa: E402
 from ts_reader import load_ts_data  # noqa: E402
 
@@ -182,6 +182,53 @@ with (
                     "affix_map": {"2": {"property": "Hp"}},
                 }
             )
+
+    def test_zero_or_nonfinite_stat_exports_cannot_pass_refresh_validation(self):
+        game = self.root / "src/data/game"
+        game.mkdir(parents=True)
+        valid = {
+            "character_stats.json": {
+                "furina": {
+                    "levels": {
+                        "90": {"baseHp": "15307", "baseAtk": "244", "baseDef": "696"}
+                    }
+                }
+            },
+            "weapon_stats.json": {"weapon": {"levels": {"90": {"baseAtk": 542}}}},
+            "artifact_stat.json": {
+                "mainStats": {"rarity4": {"hp": [645]}, "rarity5": {"hp": [717]}}
+            },
+        }
+        for filename, value in valid.items():
+            (game / filename).write_text(json.dumps(value), encoding="utf-8")
+        validate_stat_outputs(self.root)
+        for filename, changed in (
+            (
+                "character_stats.json",
+                {
+                    "furina": {
+                        "levels": {
+                            "90": {"baseHp": "0", "baseAtk": "244", "baseDef": "696"}
+                        }
+                    }
+                },
+            ),
+            (
+                "weapon_stats.json",
+                {"weapon": {"levels": {"90": {"baseAtk": float("nan")}}}},
+            ),
+            (
+                "artifact_stat.json",
+                {"mainStats": {"rarity4": {"hp": [0]}, "rarity5": {"hp": [717]}}},
+            ),
+        ):
+            with self.subTest(filename=filename):
+                (game / filename).write_text(json.dumps(changed), encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "Invalid"):
+                    validate_stat_outputs(self.root)
+                (game / filename).write_text(
+                    json.dumps(valid[filename]), encoding="utf-8"
+                )
 
     def test_released_catalog_regeneration_does_not_promote_beta_entries(self):
         data = self.root / "src/data"

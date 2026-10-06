@@ -4812,6 +4812,14 @@
         ],
         [
           {
+            "id": 81732,
+            "order": 1732,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
             "id": 82008,
             "order": 2008,
             "reward": 10,
@@ -5628,6 +5636,14 @@
             "order": 2311,
             "reward": 5,
             "version": "7.0"
+          }
+        ],
+        [
+          {
+            "id": 82312,
+            "order": 2312,
+            "reward": 5,
+            "version": "7.1"
           }
         ],
         [
@@ -7836,6 +7852,70 @@
             "order": 5173,
             "reward": 10,
             "version": "7.0"
+          }
+        ],
+        [
+          {
+            "id": 84399,
+            "order": 5174,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84400,
+            "order": 5175,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84401,
+            "order": 5176,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84402,
+            "order": 5177,
+            "reward": 10,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84403,
+            "order": 5178,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84404,
+            "order": 5179,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84405,
+            "order": 5180,
+            "reward": 5,
+            "version": "7.1"
+          }
+        ],
+        [
+          {
+            "id": 84406,
+            "order": 5181,
+            "reward": 10,
+            "version": "7.1"
           }
         ],
         [

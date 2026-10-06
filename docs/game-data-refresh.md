@@ -18,8 +18,8 @@ The sequence is:
 3. Regenerate character metadata, including constellation talent bonuses.
 4. Regenerate Enka stat IDs from the capture cache and GOODScanner mappings from
    the exported game JSON and the new character metadata.
-5. Check mapping coverage, character catalog coverage, website assets, and
-   scheduled boss artwork.
+5. Check mapping coverage, character catalog coverage, website assets,
+   scheduled boss artwork, and positive finite character/weapon/artifact stats.
 
 All wiki generation modes fail on scraping, parsing, and asset-download exceptions;
 there is no permissive mode or optional strict flag. Expected exclusions such as
@@ -31,6 +31,16 @@ The command stops on failure and exits unsuccessfully. Earlier successful steps
 may have written files; inspect the diff and rerun after addressing the failure.
 Coverage baseline changes require separate review and acceptance in HoyoData.
 The command does not commit, push, or deploy.
+
+Achievement coverage follows eligible definitions in the released source, not
+the historical release-version map. HoyoData annotates new IDs from cached
+production history when available; missing optional version labels cannot
+silently exclude new achievements. Logic, both languages, and scanner mappings
+are generated together.
+
+HoyoData recovers renamed numeric property/curve fields from content anchors
+before generating stats. Final validation rejects zero or non-finite base stats
+and artifact main stats, even when the exported collections are non-empty.
 
 HoyoData (formerly GIlore) is expected at `../HoyoData`. Override it with
 `npm run data:refresh -- --hoyodata-root <path>`. Both repositories need their

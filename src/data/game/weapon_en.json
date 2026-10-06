@@ -26,13 +26,13 @@
   "a_thousand_floating_dreams": {
     "id": "14511",
     "name": "A Thousand Floating Dreams",
-    "descHtmlTpl": "Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">{0}</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">{1}</span>. Each of the aforementioned effects can have up to 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">{2}</span>. Multiple such effects from multiple such weapons can stack.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["32", "10%", "40"],
-      ["40", "14%", "42"],
-      ["48", "18%", "44"],
-      ["56", "22%", "46"],
-      ["64", "26%", "48"]
+      ["Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">32</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">10%</span>. Each of the aforementioned effects can have up to 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">40</span>. Multiple such effects from multiple such weapons can stack."],
+      ["Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">40</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">14%</span>. The aforementioned effects can have 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">42</span>. Multiple such effects from multiple such weapons can stack."],
+      ["Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">48</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">18%</span>. The aforementioned effects can have 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">44</span>. Multiple such effects from multiple such weapons can stack."],
+      ["Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">56</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">22%</span>. The aforementioned effects can have 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">46</span>. Multiple such effects from multiple such weapons can stack."],
+      ["Party members other than the equipping character will provide the equipping character with buffs based on whether their Elemental Type is the same as the latter or not. If their Elemental Types are the same, increase Elemental Mastery by <span style=\"color: #99FFFFFF;\">64</span>. If not, increase the equipping character's DMG Bonus from their Elemental Type by <span style=\"color: #99FFFFFF;\">26%</span>. The aforementioned effects can have 3 stacks. Additionally, all nearby party members other than the equipping character will have their Elemental Mastery increased by <span style=\"color: #99FFFFFF;\">48</span>. Multiple such effects from multiple such weapons can stack."]
     ]
   },
   "absolution": {
@@ -146,13 +146,13 @@
   "ashgraven_drinking_horn": {
     "id": "14427",
     "name": "Ash-Graven Drinking Horn",
-    "descHtmlTpl": "When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">{0}</span> of Max HP at the target's location. This effect can be triggered once every 15s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["40%"],
-      ["50%"],
-      ["60%"],
-      ["70%"],
-      ["80%"]
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">40%</span> of Max HP at the target location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">50%</span> of Max HP at the target's location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">60%</span> of Max HP at the target's location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">70%</span> of Max HP at the target's location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">80%</span> of Max HP at the target's location. This effect can be triggered once every 15s."]
     ]
   },
   "astral_vultures_crimson_plumage": {
@@ -290,13 +290,13 @@
   "blackcliff_slasher": {
     "id": "12408",
     "name": "Blackcliff Slasher",
-    "descHtmlTpl": "After defeating an opponent, ATK is increased by <span style=\"color: #99FFFFFF;\">{0}</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["12%"],
-      ["15%"],
-      ["18%"],
-      ["21%"],
-      ["24%"]
+      ["After defeating an opponent, ATK is increased by <span style=\"color: #99FFFFFF;\">12%</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others."],
+      ["After defeating an opponent, ATK is increased by <span style=\"color: #99FFFFFF;\">15%</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others."],
+      ["After defeating an enemy, ATK is increased by <span style=\"color: #99FFFFFF;\">18%</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others."],
+      ["After defeating an enemy, ATK is increased by <span style=\"color: #99FFFFFF;\">21%</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others."],
+      ["After defeating an enemy, ATK is increased by <span style=\"color: #99FFFFFF;\">24%</span> for 30s. This effect has a maximum of 3 stacks, and the duration of each stack is independent of the others."]
     ]
   },
   "blackcliff_warbow": {
@@ -350,13 +350,13 @@
   "bloodtainted_greatsword": {
     "id": "12302",
     "name": "Bloodtainted Greatsword",
-    "descHtmlTpl": "Increases DMG dealt against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">{0}</span>.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["12%"],
-      ["15%"],
-      ["18%"],
-      ["21%"],
-      ["24%"]
+      ["Increases DMG dealt against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">12%</span>."],
+      ["Increases DMG dealt against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">15%</span>."],
+      ["Increases DMG dealt against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">18%</span>."],
+      ["Increases DMG dealt against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">21%</span>."],
+      ["Increases DMG against opponents affected by Pyro or Electro by <span style=\"color: #99FFFFFF;\">24%</span>."]
     ]
   },
   "breezeborne_refrain": {
@@ -626,13 +626,13 @@
   "dragonspine_spear": {
     "id": "13409",
     "name": "Dragonspine Spear",
-    "descHtmlTpl": "Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">{0}</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">{2}</span> of ATK. Can only occur once every 10s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["60%", "80%", "200%"],
-      ["70%", "95%", "240%"],
-      ["80%", "110%", "280%"],
-      ["90%", "125%", "320%"],
-      ["100%", "140%", "360%"]
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">60%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">80%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">200%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">70%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">95%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">240%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">80%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">110%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">280%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">90%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">125%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">320%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">100%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">140%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">360%</span> of ATK. Can only occur once every 10s."]
     ]
   },
   "earth_shaker": {
@@ -1034,13 +1034,13 @@
   "frostbearer": {
     "id": "14412",
     "name": "Frostbearer",
-    "descHtmlTpl": "Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">{0}</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">{2}</span> of ATK. Can only occur once every 10s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["60%", "80%", "200%"],
-      ["70%", "95%", "240%"],
-      ["80%", "110%", "280%"],
-      ["90%", "125%", "320%"],
-      ["100%", "140%", "360%"]
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">60%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">80%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">200%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">70%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">95%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">240%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">80%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">110%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">280%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">90%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">125%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">320%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">100%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">140%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">360%</span> of ATK. Can only occur once every 10s."]
     ]
   },
   "frostbreath": {
@@ -1118,13 +1118,13 @@
   "halberd": {
     "id": "13302",
     "name": "Halberd",
-    "descHtmlTpl": "Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">{0}</span> ATK as DMG. This effect can only occur once every 10s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["160%"],
-      ["200%"],
-      ["240%"],
-      ["280%"],
-      ["320%"]
+      ["Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">160%</span> ATK as DMG. Can only occur once every 10s."],
+      ["Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">200%</span> ATK as DMG. This effect can only occur once every 10s."],
+      ["Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">240%</span> ATK as DMG. This effect can only occur once every 10s."],
+      ["Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">280%</span> ATK as DMG. This effect can only occur once every 10s."],
+      ["Normal Attacks deal an additional <span style=\"color: #99FFFFFF;\">320%</span> ATK as DMG. This effect can only occur once every 10s."]
     ]
   },
   "hamayumi": {
@@ -1378,13 +1378,13 @@
   "lost_prayer_to_the_sacred_winds": {
     "id": "14502",
     "name": "Lost Prayer to the Sacred Winds",
-    "descHtmlTpl": "Increases Movement SPD by 10%. When in battle, gain an <span style=\"color: #99FFFFFF;\">{0}</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["8%"],
-      ["10%"],
-      ["12%"],
-      ["14%"],
-      ["16%"]
+      ["Increases Movement SPD by 10%. When in battle, gain an <span style=\"color: #99FFFFFF;\">8%</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat."],
+      ["Increases Movement SPD by 10%. When in battle, earn a <span style=\"color: #99FFFFFF;\">10%</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat."],
+      ["Increases Movement SPD by 10%. When in battle, gain a <span style=\"color: #99FFFFFF;\">12%</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat."],
+      ["Increases Movement SPD by 10%. When in battle, gain a <span style=\"color: #99FFFFFF;\">14%</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat."],
+      ["Increases Movement SPD by 10%. When in battle, gain a <span style=\"color: #99FFFFFF;\">16%</span> Elemental DMG Bonus every 4s. Max 4 stacks. Lasts until the character falls or leaves combat."]
     ]
   },
   "lumidouce_elegy": {
@@ -1510,13 +1510,13 @@
   "mistsplitter_reforged": {
     "id": "11509",
     "name": "Mistsplitter Reforged",
-    "descHtmlTpl": "Gain a <span style=\"color: #99FFFFFF;\">{0}</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">{1}/{2}/{3}</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of the Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["12%", "8", "16", "28%"],
-      ["15%", "10", "20", "35%"],
-      ["18%", "12", "24", "42%"],
-      ["21%", "14", "28", "49%"],
-      ["24%", "16", "32", "56%"]
+      ["Gain a <span style=\"color: #99FFFFFF;\">12%</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">8/16/28%</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently."],
+      ["Gain a <span style=\"color: #99FFFFFF;\">15%</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">10/20/35%</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently."],
+      ["Gain a <span style=\"color: #99FFFFFF;\">18%</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">12/24/42%</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently."],
+      ["Gain a <span style=\"color: #99FFFFFF;\">21%</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">14/28/49%</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently."],
+      ["Gain a <span style=\"color: #99FFFFFF;\">24%</span> Elemental DMG Bonus for all elements and receive the might of the Mistsplitter's Emblem. At stack levels 1/2/3, the Mistsplitter's Emblem provides a <span style=\"color: #99FFFFFF;\">16/32/56%</span> Elemental DMG Bonus for the character's Elemental Type. The character will obtain 1 stack of the Mistsplitter's Emblem in each of the following scenarios: Normal Attack deals Elemental DMG (stack lasts 5s), casting Elemental Burst (stack lasts 10s); Energy is less than 100% (stack disappears when Energy is full). Each stack's duration is calculated independently."]
     ]
   },
   "mitternachts_waltz": {
@@ -1606,13 +1606,13 @@
   "nocturnes_curtain_call": {
     "id": "14522",
     "name": "Nocturne's Curtain Call",
-    "descHtmlTpl": "Max HP increases by <span style=\"color: #99FFFFFF;\">{0}</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG on opponents, the equipping character will recover <span style=\"color: #99FFFFFF;\">{1}</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">{2}</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">{3}</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["10%", "14", "14%", "60%"],
-      ["12%", "15", "16%", "80%"],
-      ["14%", "16", "18%", "100%"],
-      ["16%", "17", "20%", "120%"],
-      ["18%", "18", "22%", "140%"]
+      ["Max HP increases by <span style=\"color: #99FFFFFF;\">10%</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG on opponents, the equipping character will recover <span style=\"color: #99FFFFFF;\">14</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">14%</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">60%</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field."],
+      ["Max HP increases by <span style=\"color: #99FFFFFF;\">12%</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG, the equipping character will recover <span style=\"color: #99FFFFFF;\">15</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">16%</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">80%</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field."],
+      ["Max HP increases by <span style=\"color: #99FFFFFF;\">14%</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG, the equipping character will recover <span style=\"color: #99FFFFFF;\">16</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">18%</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">100%</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field."],
+      ["Max HP increases by <span style=\"color: #99FFFFFF;\">16%</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG, the equipping character will recover <span style=\"color: #99FFFFFF;\">17</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">20%</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">120%</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field."],
+      ["Max HP increases by <span style=\"color: #99FFFFFF;\">18%</span>. When triggering Lunar reactions or inflicting Lunar Reaction DMG, the equipping character will recover <span style=\"color: #99FFFFFF;\">18</span> Energy, and receive the Bountiful Sea's Sacred Wine effect for 12s: Max HP increases by an additional <span style=\"color: #99FFFFFF;\">22%</span>, CRIT DMG from Lunar Reaction DMG increases by <span style=\"color: #99FFFFFF;\">140%</span>. The Energy recovery effect can be triggered at most once every 18s, and can be triggered even when the equipping character is off-field."]
     ]
   },
   "oathsworn_eye": {
@@ -1630,13 +1630,13 @@
   "otherworldly_story": {
     "id": "14303",
     "name": "Otherworldly Story",
-    "descHtmlTpl": "Picking up an Elemental Energy Orb/Particle recovers <span style=\"color: #99FFFFFF;\">{0}</span> HP.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["1%"],
-      ["1.25%"],
-      ["1.5%"],
-      ["1.75%"],
-      ["2%"]
+      ["Picking up an Elemental Energy Orb/Particle recovers <span style=\"color: #99FFFFFF;\">1%</span> HP."],
+      ["Each Elemental Orb or Particle collected restores <span style=\"color: #99FFFFFF;\">1.25%</span> HP."],
+      ["Each Elemental Orb or Particle collected restores <span style=\"color: #99FFFFFF;\">1.5%</span> HP."],
+      ["Each Elemental Orb or Particle collected restores <span style=\"color: #99FFFFFF;\">1.75%</span> HP."],
+      ["Each Elemental Orb or Particle collected restores <span style=\"color: #99FFFFFF;\">2%</span> HP."]
     ]
   },
   "peak_patrol_song": {
@@ -2022,37 +2022,37 @@
   "sacrificial_bow": {
     "id": "15403",
     "name": "Sacrificial Bow",
-    "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["40%", "30"],
-      ["50%", "26"],
-      ["60%", "22"],
-      ["70%", "19"],
-      ["80%", "16"]
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">40%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">30</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">50%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">26</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">60%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">22s</span>."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">70%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">19</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">80%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">16s</span>."]
     ]
   },
   "sacrificial_fragments": {
     "id": "14403",
     "name": "Sacrificial Fragments",
-    "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["40%", "30"],
-      ["50%", "26"],
-      ["60%", "22"],
-      ["70%", "19"],
-      ["80%", "16"]
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">40%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">30</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">50%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">26</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">60%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">22s</span>."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">70%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">19</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">80%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">16</span>s."]
     ]
   },
   "sacrificial_greatsword": {
     "id": "12403",
     "name": "Sacrificial Greatsword",
-    "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["40%", "30"],
-      ["50%", "26"],
-      ["60%", "22"],
-      ["70%", "19"],
-      ["80%", "16"]
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">40%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">30</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">50%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">26</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">60%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">22s</span>."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">70%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">19</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">80%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">16s</span>."]
     ]
   },
   "sacrificial_jade": {
@@ -2070,13 +2070,13 @@
   "sacrificial_sword": {
     "id": "11403",
     "name": "Sacrificial Sword",
-    "descHtmlTpl": "After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">{0}</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">{1}</span>s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["40%", "30"],
-      ["50%", "26"],
-      ["60%", "22"],
-      ["70%", "19"],
-      ["80%", "16"]
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">40%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">30</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">50%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">26</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">60%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">22s</span>."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">70%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">19</span>s."],
+      ["After damaging an opponent with an Elemental Skill, the skill has a <span style=\"color: #99FFFFFF;\">80%</span> chance to end its own CD. Can only occur once every <span style=\"color: #99FFFFFF;\">16s</span>."]
     ]
   },
   "sapwood_blade": {
@@ -2106,13 +2106,13 @@
   "sequence_of_solitude": {
     "id": "15432",
     "name": "Sequence of Solitude",
-    "descHtmlTpl": "When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">{0}</span> of Max HP at the target's location. This effect can be triggered once every 15s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["40%"],
-      ["50%"],
-      ["60%"],
-      ["70%"],
-      ["80%"]
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">40%</span> of Max HP at the target location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">50%</span> of Max HP at the target's location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">60%</span> of Max HP at the target's location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">70%</span> of Max HP at the target's location. This effect can be triggered once every 15s."],
+      ["When an attack hits an opponent, deal AoE DMG equal to <span style=\"color: #99FFFFFF;\">80%</span> of Max HP at the target's location. This effect can be triggered once every 15s."]
     ]
   },
   "serenitys_call": {
@@ -2214,13 +2214,13 @@
   "skyward_blade": {
     "id": "11502",
     "name": "Skyward Blade",
-    "descHtmlTpl": "CRIT Rate increased by <span style=\"color: #99FFFFFF;\">{0}</span>. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Skypiercing Might lasts for 12s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["4%", "20%"],
-      ["5%", "25%"],
-      ["6%", "30%"],
-      ["7%", "35%"],
-      ["8%", "40%"]
+      ["CRIT Rate increased by <span style=\"color: #99FFFFFF;\">4%</span>. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">20%</span> of ATK. Skypiercing Might lasts for 12s."],
+      ["CRIT Rate increased by <span style=\"color: #99FFFFFF;\">5%</span>, Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">25%</span> of ATK. Skypiercing Might lasts for 12s."],
+      ["CRIT Rate increased by <span style=\"color: #99FFFFFF;\">6%</span>. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">30%</span> of ATK. Skypiercing Might lasts for 12s."],
+      ["CRIT Rate increased by <span style=\"color: #99FFFFFF;\">7%</span>. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">35%</span> of ATK. Skypiercing Might lasts for 12s."],
+      ["CRIT Rate increased by <span style=\"color: #99FFFFFF;\">8%</span>. Gains Skypiercing Might upon using an Elemental Burst: Increases Movement SPD by <span style=\"color: #99FFFFFF;\">10%</span>, increases ATK SPD by <span style=\"color: #99FFFFFF;\">10%</span>, and Normal and Charged hits deal additional DMG equal to <span style=\"color: #99FFFFFF;\">40%</span> of ATK. Skypiercing Might lasts for 12s."]
     ]
   },
   "skyward_harp": {
@@ -2286,13 +2286,13 @@
   "snowtombed_starsilver": {
     "id": "12411",
     "name": "Snow-Tombed Starsilver",
-    "descHtmlTpl": "Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">{0}</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">{1}</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">{2}</span> of ATK. Can only occur once every 10s.",
+    "descHtmlTpl": "{0}",
     "refinements": [
-      ["60%", "80%", "200%"],
-      ["70%", "95%", "240%"],
-      ["80%", "110%", "280%"],
-      ["90%", "125%", "320%"],
-      ["100%", "140%", "360%"]
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">60%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">80%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">200%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">70%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">95%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">240%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has an <span style=\"color: #99FFFFFF;\">80%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">110%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">280%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">90%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">125%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">320%</span> of ATK. Can only occur once every 10s."],
+      ["Hitting an opponent with Normal and Charged Attacks has a <span style=\"color: #99FFFFFF;\">100%</span> chance of forming and dropping an Everfrost Icicle above them, dealing AoE DMG equal to <span style=\"color: #99FFFFFF;\">140%</span> of ATK. Opponents affected by Cryo are instead dealt DMG equal to <span style=\"color: #99FFFFFF;\">360%</span> of ATK. Can only occur once every 10s."]
     ]
   },
   "solar_pearl": {

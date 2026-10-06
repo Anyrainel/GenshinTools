@@ -4986,6 +4986,10 @@
       "desc": "You can always wake someone who's truly drunk.",
       "name": "Drunk as Charged"
     },
+    "81732": {
+      "desc": "Complete \"Secret Tsarist Assignment: Part I.\"",
+      "name": "Winter Night's Letter"
+    },
     "82001": {
       "desc": "Hit a falcon mid-flight with your bow.",
       "name": "Nothing Special, Just Practice"
@@ -6179,6 +6183,10 @@
       "desc": "Knock the Chimeric Winged Lion out of the sky by destroying all Anemo Orbs while it is in the Galeforce state.",
       "name": "Winged Lion Down"
     },
+    "82312": {
+      "desc": "Break Guardian Blade of Drifting Snow's \"Ice Coffin\" using only Pyro attacks.",
+      "name": "\"Passion Ablaze\""
+    },
     "84000": {
       "desc": "Complete the Mondstadt Archon Quests.",
       "name": "The End of the Beginning"
@@ -7194,6 +7202,38 @@
     "84398": {
       "desc": "Complete \"Wraith's Nocturne.\"",
       "name": "Wraith's Nocturne"
+    },
+    "84399": {
+      "desc": "Challenge Danica to the most entertaining \"Mora Game.\"",
+      "name": "The Deciding Factor"
+    },
+    "84400": {
+      "desc": "Make the acquaintance of all seven... or eight gods who rule over Teyvat's mortal realm.",
+      "name": "The Seven"
+    },
+    "84401": {
+      "desc": "Defeat the monster created by the Ruler of Life.",
+      "name": "What Is Born Must Perish"
+    },
+    "84402": {
+      "desc": "Complete \"White Night, Like a Dream Upon Waking.\"",
+      "name": "White Night, Like a Dream Upon Waking"
+    },
+    "84403": {
+      "desc": "Within The Jester's memories, encounter Hroptatyr before he became \"The Wise.\"",
+      "name": "Nine Days and Nine Nights Beneath the Tree"
+    },
+    "84404": {
+      "desc": "Enjoy a rare moment of relaxation before the decisive battle begins...",
+      "name": "Tea for Four"
+    },
+    "84405": {
+      "desc": "Defeat Ronova, the \"Ruler of Death.\"",
+      "name": "And With the End, Destruction"
+    },
+    "84406": {
+      "desc": "Complete \"A Rekviem for the Underworld.\"",
+      "name": "A Rekviem for the Underworld"
     },
     "84501": {
       "desc": "Successfully conduct cultural exchange with the hilichurls in \"Language Exchange.\"",

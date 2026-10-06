@@ -5,6 +5,7 @@ Internal pipeline stage; use npm run data:refresh for the complete export.
 
 import argparse
 import json
+import math
 import os
 import subprocess
 import sys
@@ -14,6 +15,36 @@ from mappings import _to_good_key
 from ts_reader import extract_json_from_ts
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def validate_stat_outputs(root: Path) -> None:
+    game = root / "src/data/game"
+    for filename, fields in (
+        ("character_stats.json", ("baseHp", "baseAtk", "baseDef")),
+        ("weapon_stats.json", ("baseAtk",)),
+    ):
+        entries = json.loads((game / filename).read_text("utf-8"))
+        if not entries:
+            raise ValueError(f"Empty stats export: {filename}")
+        for identifier, entry in entries.items():
+            if not entry["levels"]:
+                raise ValueError(f"Missing stat levels: {filename} {identifier}")
+            for level, row in entry["levels"].items():
+                for field in fields:
+                    value = float(row[field])
+                    if not math.isfinite(value) or value <= 0:
+                        raise ValueError(
+                            f"Invalid stat export: {filename} {identifier} "
+                            f"level {level} {field}={value}"
+                        )
+    artifact = json.loads((game / "artifact_stat.json").read_text("utf-8"))
+    for rarity in ("rarity4", "rarity5"):
+        stats = artifact["mainStats"][rarity]
+        if not stats:
+            raise ValueError(f"Empty artifact main stats: {rarity}")
+        for stat, values in stats.items():
+            if not values or any(not math.isfinite(value) or value <= 0 for value in values):
+                raise ValueError(f"Invalid artifact main stats: {rarity} {stat}")
 
 
 def validate_outputs(root: Path) -> None:
@@ -70,6 +101,7 @@ def validate_outputs(root: Path) -> None:
                 asset = root / "public" / path.lstrip("/")
                 if not asset.is_file() or not asset.stat().st_size:
                     raise ValueError(f"Missing website asset: {asset}")
+    validate_stat_outputs(root)
 
 
 def generate(
