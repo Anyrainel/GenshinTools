@@ -42,14 +42,12 @@ export function StatDisplay({
         key={statKey}
         className={cn(
           "relative z-10 flex min-w-0 justify-between items-center",
-          compact ? "text-xs" : "text-sm",
+          compact ? "text-[10px] md:text-xs" : "text-sm",
           weight > 0 ? "text-foreground" : "text-gray-400"
         )}
       >
         <span className="min-w-0 flex-1 truncate">{statName}</span>
-        <span className={cn("flex-shrink-0", compact && "text-xs")}>
-          {displayValue}
-        </span>
+        <span className="flex-shrink-0 whitespace-nowrap">{displayValue}</span>
       </div>
     );
   };
@@ -63,7 +61,7 @@ export function StatDisplay({
           className={cn(
             "min-w-0 flex-1 truncate font-bold",
             isMainStatWrong ? "text-amber-100/70" : "text-amber-100",
-            compact ? "text-xs" : "text-base"
+            compact ? "text-[10px] md:text-xs" : "text-base"
           )}
         >
           {compact
@@ -72,7 +70,7 @@ export function StatDisplay({
         </div>
         <div
           className={cn(
-            "rounded bg-black/40 font-mono",
+            "shrink-0 whitespace-nowrap rounded bg-black/40 font-mono",
             compact ? "text-[10px]" : "text-xs px-1",
             getRarityColor(artifact.rarity, "text")
           )}
@@ -110,7 +108,10 @@ export function StatDisplay({
             Object.keys(artifact.substats ?? {}).length -
             Object.keys(artifact.unactivatedSubstats ?? {}).length,
         }).map((_, i) => (
-          <div key={`empty-${i}`} className={compact ? "text-xs" : "text-sm"}>
+          <div
+            key={`empty-${i}`}
+            className={compact ? "text-[10px] md:text-xs" : "text-sm"}
+          >
             &nbsp;
           </div>
         ))}
