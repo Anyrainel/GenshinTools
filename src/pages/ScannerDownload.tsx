@@ -7,6 +7,7 @@ import {
   Monitor,
   ScanLine,
   Wifi,
+  X,
 } from "lucide-react";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -21,27 +22,28 @@ import { cn, getAssetUrl } from "@/lib/utils";
 
 export default function ScannerDownload() {
   const { t } = useLanguage();
-  const sharedFeatures = [
-    t.ui("scannerDownload.ocrFeature"),
-    t.ui("scannerDownload.exportFeature"),
-    t.ui("scannerDownload.managerFeature"),
+  const features = [
+    { label: t.ui("scannerDownload.captureFeature"), captureOnly: true },
+    { label: t.ui("scannerDownload.ocrFeature"), captureOnly: false },
+    { label: t.ui("scannerDownload.exportFeature"), captureOnly: false },
+    { label: t.ui("scannerDownload.managerFeature"), captureOnly: false },
   ];
   const editions = [
     {
       name: "GGScanner",
       recommended: true,
+      capture: true,
       icon: Wifi,
       description: t.ui("scannerDownload.captureDescription"),
       url: SCANNER_CAPTURE_URL,
-      features: [t.ui("scannerDownload.captureFeature"), ...sharedFeatures],
     },
     {
       name: "GGScannerOCR",
       recommended: false,
+      capture: false,
       icon: ScanLine,
       description: t.ui("scannerDownload.ocrDescription"),
       url: SCANNER_OCR_URL,
-      features: sharedFeatures,
     },
   ];
   const steps = [
@@ -119,22 +121,35 @@ export default function ScannerDownload() {
                     </span>
                   </div>
                   <h2 className="text-2xl font-bold">{edition.name}</h2>
-                  <p className="mt-2 min-h-[3rem] text-sm leading-6 text-foreground/80">
+                  <p className="mt-2 text-sm leading-6 text-foreground/80">
                     {edition.description}
                   </p>
                   <ul className="my-5 flex-1 space-y-3">
-                    {edition.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex items-start gap-3 text-sm leading-6"
-                      >
-                        <Check
-                          className="mt-1 size-4 shrink-0 text-primary"
-                          aria-hidden
-                        />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
+                    {features.map((feature) => {
+                      const included = edition.capture || !feature.captureOnly;
+                      const FeatureIcon = included ? Check : X;
+                      return (
+                        <li
+                          key={feature.label}
+                          className="flex items-start gap-3 text-sm leading-6"
+                        >
+                          <FeatureIcon
+                            className={cn(
+                              "mt-1 size-4 shrink-0",
+                              included ? "text-primary" : "text-foreground/70"
+                            )}
+                            aria-hidden
+                          />
+                          <span className="sr-only">
+                            {included
+                              ? t.ui("scannerDownload.included")
+                              : t.ui("scannerDownload.notIncluded")}
+                            :{" "}
+                          </span>
+                          <span>{feature.label}</span>
+                        </li>
+                      );
+                    })}
                   </ul>
                   <Button
                     asChild
