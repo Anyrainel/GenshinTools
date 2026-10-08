@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   Check,
   ChevronDown,
   CircleUserRound,
@@ -145,9 +144,6 @@ export function AppBar({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
-  const [siteMenuAlignOffset, setSiteMenuAlignOffset] = useState(0);
-  const siteBrandRef = useRef<HTMLAnchorElement>(null);
-  const siteTriggerRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
   const isExpandedActionBar = useMediaQuery("(min-width: 640px)");
 
@@ -201,7 +197,9 @@ export function AppBar({
   const menuActions = isExpandedActionBar
     ? desktopOverflowActions
     : pageActions;
-  const hasMoreMenuUtilities = !standaloneUtilityActions;
+  const showStandaloneUtilities =
+    standaloneUtilityActions && isExpandedActionBar;
+  const hasMoreMenuUtilities = !showStandaloneUtilities;
   const hasMoreMenu = menuActions.length > 0 || hasMoreMenuUtilities;
   const hasPageActionControls =
     pageActions.length > 0 || Boolean(legacyActions);
@@ -506,51 +504,37 @@ export function AppBar({
   );
 
   const renderSiteSwitcher = () => (
-    <div className="flex shrink-0 items-center gap-1 md:gap-3">
+    <div className="flex shrink-0 items-center gap-1">
       <Link
-        ref={siteBrandRef}
         to="/"
-        className="flex shrink-0 items-center gap-2 rounded-md px-1.5 py-1 font-semibold hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={t.ui("app.title")}
+        title={t.ui("common.home")}
       >
         <img src={getAssetUrl("/logo-gi.svg")} className="w-8 h-8" alt="" />
-        <span className="hidden font-semibold text-lg whitespace-nowrap sm:inline">
-          {t.ui("app.title")}
-        </span>
       </Link>
-      <DropdownMenu
-        onOpenChange={(open) => {
-          if (open && siteBrandRef.current && siteTriggerRef.current) {
-            setSiteMenuAlignOffset(
-              Math.round(
-                siteBrandRef.current.getBoundingClientRect().left -
-                  siteTriggerRef.current.getBoundingClientRect().left
-              )
-            );
-          }
-        }}
-      >
-        <div ref={siteTriggerRef}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="h-10 min-w-0 gap-1.5 rounded-md px-1 text-muted-foreground hover:bg-accent/50 hover:text-foreground focus-visible:bg-accent/70 focus-visible:ring-0 data-[state=open]:bg-accent/50 data-[state=open]:text-foreground"
-              aria-label={t.ui("app.siteSwitcherLabel")}
-            >
-              <span className="rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
-                {t.ui("app.gameGenshinShort")}
-              </span>
-              <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
-            </Button>
-          </DropdownMenuTrigger>
-        </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="h-10 w-36 gap-2 rounded-md px-2 hover:bg-accent/50 focus-visible:ring-2 data-[state=open]:bg-accent/50 sm:w-auto sm:min-w-56"
+            aria-label={t.ui("app.siteSwitcherLabel")}
+          >
+            <span className="hidden text-lg font-semibold sm:inline">
+              {t.ui("app.title")}
+            </span>
+            <span className="ml-auto whitespace-nowrap rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+              {t.ui("app.gameGenshinShort")}
+            </span>
+            <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          </Button>
+        </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          alignOffset={siteMenuAlignOffset}
-          className="w-max min-w-48"
+          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
         >
           <DropdownMenuItem asChild>
-            <Link to="/" className="gap-2">
+            <Link to="/" className="gap-2" aria-current="true">
               <img
                 src={getAssetUrl("/logo-gi.svg")}
                 className="h-7 w-7"
@@ -559,7 +543,7 @@ export function AppBar({
               <span className="min-w-0 flex-1 font-medium">
                 {t.ui("app.gameGenshin")}
               </span>
-              <ArrowRight className="text-primary" aria-hidden="true" />
+              <Check className="shrink-0 text-primary" aria-hidden="true" />
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -779,7 +763,7 @@ export function AppBar({
               <div className="h-6 w-px bg-foreground/30" aria-hidden="true" />
             )}
 
-            {standaloneUtilityActions
+            {showStandaloneUtilities
               ? renderStandaloneUtilityActions()
               : renderAccountMenu()}
           </div>

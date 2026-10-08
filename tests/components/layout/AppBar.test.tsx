@@ -124,8 +124,9 @@ describe("AppBar", () => {
       name: /app\.gameGenshin/,
     });
     expect(genshinItem).toHaveAttribute("href", "/");
-    expect(genshinItem.querySelector(".lucide-arrow-right")).not.toBeNull();
-    expect(genshinItem.querySelector(".lucide-check")).toBeNull();
+    expect(genshinItem.querySelector(".lucide-check")).not.toBeNull();
+    expect(genshinItem).toHaveAttribute("aria-current", "true");
+    expect(within(siteSwitcher).getByText("app.title")).toBeInTheDocument();
 
     const starRailItem = screen.getByRole("menuitem", {
       name: /app.gameStarRail/,
