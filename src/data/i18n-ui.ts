@@ -486,12 +486,16 @@ export const i18nUiData = {
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
     },
     toolGoodCapture: {
-      en: "GGScanner (Packet Capture)",
-      zh: "GGScanner (抓包)",
+      en: "GGScanner (Capture + OCR)",
+      zh: "GGScanner (抓包 + 扫图)",
     },
     toolGoodScanner: {
       en: "GGScannerOCR (OCR, 16:9 Chinese client)",
       zh: "GGScannerOCR (扫图, 16:9)",
+    },
+    scannerEditionHint: {
+      en: "Recommended: GGScanner includes capture, OCR scanning, and management. GGScannerOCR provides scanning and management without packet capture.",
+      zh: "推荐使用 GGScanner，包含抓包、扫图与管理功能。GGScannerOCR 不包含抓包，仅提供扫图与管理功能。",
     },
     proxyHint: {
       en: "Slow GitHub connection? Direct download:",

@@ -52,11 +52,13 @@ interface AccountImportControlProps {
 const TOOLS = [
   {
     labelKey: "import.toolGoodCapture" as const,
+    recommended: true,
     fileName: "GGScanner.exe",
     url: "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScanner.exe",
   },
   {
     labelKey: "import.toolGoodScanner" as const,
+    recommended: false,
     fileName: "GGScannerOCR.exe",
     url: "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScannerOCR.exe",
   },
@@ -288,16 +290,25 @@ export const AccountImportControl = forwardRef<
                     className={cn(
                       "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
                       "text-xs font-medium",
-                      "border border-primary/30 bg-primary/15",
-                      "text-foreground/80 hover:bg-primary/25 hover:border-primary/50",
+                      tool.recommended
+                        ? "border border-primary bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "border border-border bg-secondary text-secondary-foreground hover:bg-secondary/80",
                       "transition-colors"
                     )}
                   >
                     {t.ui(tool.labelKey)}
+                    {tool.recommended && (
+                      <span className="text-xs">
+                        · {t.ui("import.recommended")}
+                      </span>
+                    )}
                     <Download className="w-3 h-3 opacity-60" />
                   </a>
                 ))}
               </div>
+              <p className="mt-2 text-xs text-foreground/80 lg:ml-6">
+                {t.ui("import.scannerEditionHint")}
+              </p>
             </div>
             <div className="flex flex-wrap items-center gap-1 mt-2">
               <span className="text-xs text-foreground/80">

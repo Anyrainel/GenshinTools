@@ -4,8 +4,8 @@ import type { useArtifactManagerConnection } from "@/hooks/useArtifactManagerCon
 import { cn } from "@/lib/utils";
 
 const GGSCANNER_RELEASES = "https://github.com/Anyrainel/GGScanner/releases";
-const GGSCANNER_OCR_PROXY_EXE =
-  "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScannerOCR.exe";
+const GGSCANNER_PROXY_EXE =
+  "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScanner.exe";
 
 export function ConnectionStatus({
   connection,
@@ -130,12 +130,12 @@ export function SetupInstructions({
               {t.ui("import.proxyHint")}
             </span>
             <a
-              href={GGSCANNER_OCR_PROXY_EXE}
+              href={GGSCANNER_PROXY_EXE}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 transition-colors"
             >
-              GGScannerOCR.exe
+              GGScanner.exe
               <Download className="w-3 h-3 opacity-60" />
             </a>
           </div>
