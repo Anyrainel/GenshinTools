@@ -4,6 +4,7 @@ import {
   ChevronDown,
   CircleUserRound,
   Cloud,
+  Download,
   ExternalLink,
   HeartHandshake,
   Languages,
@@ -49,6 +50,7 @@ import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
 import type { ThemeId } from "@/data/enums";
+import { SCANNER_DOWNLOAD_PAGE } from "@/data/scannerDownloads";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { generateThemeVars } from "@/lib/themeGenerator";
 import { cn, getAssetUrl } from "@/lib/utils";
@@ -434,6 +436,12 @@ export function AppBar({
             </DropdownMenuItem>
           </>
         )}
+        <DropdownMenuItem asChild className="gap-2">
+          <Link to={SCANNER_DOWNLOAD_PAGE}>
+            <Download className="w-4 h-4" />
+            {t.ui("scannerDownload.menu")}
+          </Link>
+        </DropdownMenuItem>
         {isAuthenticated && (
           <>
             <DropdownMenuSeparator />

@@ -1,6 +1,6 @@
 import {
   AlertCircle,
-  ExternalLink,
+  Download,
   Info,
   KeyRound,
   Loader2,
@@ -18,10 +18,6 @@ import {
 
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ImportMethodItem } from "@/components/shared/ImportMethodItem";
-import {
-  GGSCANNER_PROJECT_URL,
-  ScannerDownloadLinks,
-} from "@/components/shared/ScannerDownloadLinks";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -34,12 +30,12 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SCANNER_DOWNLOAD_PAGE } from "@/data/scannerDownloads";
 import type { GOODData } from "@/lib/account-data/import/goodConversion";
 import {
   type HoyolabCredentials,
   uidToRegion,
 } from "@/lib/account-data/import/hoyolabFetcher";
-import { cn } from "@/lib/utils";
 
 interface AccountImportControlProps {
   onLocalImport: (data: GOODData, optionalUid: string) => void;
@@ -265,29 +261,17 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.goodPcHint")}
                 </span>
               </div>
-              <ScannerDownloadLinks t={t} className="mt-2 lg:ml-6" />
-              <p className="mt-2 text-xs text-foreground/80 lg:ml-6">
-                {t.ui("import.scannerEditionHint")}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-1 mt-2">
-              <span className="text-xs text-foreground/80">
-                {t.ui("import.githubProject")}
-              </span>
-              <a
-                href={GGSCANNER_PROJECT_URL}
-                target="_blank"
-                rel="noreferrer"
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
-                  "text-xs font-medium",
-                  "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-                  "transition-colors"
-                )}
+              <Button
+                asChild
+                variant="secondary"
+                size="sm"
+                className="mt-3 gap-2 lg:ml-6"
               >
-                GGScanner
-                <ExternalLink className="w-3 h-3 opacity-60" />
-              </a>
+                <a href={SCANNER_DOWNLOAD_PAGE}>
+                  <Download className="size-4" />
+                  {t.ui("scannerDownload.menu")}
+                </a>
+              </Button>
             </div>
 
             <div className="mt-3 flex flex-col gap-1.5">

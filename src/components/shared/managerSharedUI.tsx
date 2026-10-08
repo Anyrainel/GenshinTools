@@ -1,9 +1,5 @@
-import { ExternalLink } from "lucide-react";
-import {
-  GGSCANNER_RELEASES_URL,
-  ScannerDownloadLinks,
-} from "@/components/shared/ScannerDownloadLinks";
 import type { useLanguage } from "@/contexts/LanguageContext";
+import { SCANNER_DOWNLOAD_PAGE } from "@/data/scannerDownloads";
 import type { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { cn } from "@/lib/utils";
 
@@ -106,13 +102,10 @@ export function SetupInstructions({
 }) {
   const link = (
     <a
-      href={GGSCANNER_RELEASES_URL}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-blue-400 hover:underline"
+      href={SCANNER_DOWNLOAD_PAGE}
+      className="font-medium text-primary hover:underline"
     >
-      GGScanner
-      <ExternalLink className="h-3 w-3" />
+      {t.ui("scannerDownload.menu")}
     </a>
   );
 
@@ -125,15 +118,6 @@ export function SetupInstructions({
           {step1Parts[0]}
           {link}
           {step1Parts[1]}
-          <div className="flex flex-wrap items-center gap-1.5 mt-1 ml-0">
-            <span className="text-xs text-foreground/80">
-              {t.ui("import.proxyHint")}
-            </span>
-            <ScannerDownloadLinks t={t} />
-          </div>
-          <p className="mt-2 text-xs text-foreground/80">
-            {t.ui("import.scannerEditionHint")}
-          </p>
         </li>
         <li>{t.ui("manager.setupStep2")}</li>
         <li>{t.ui("manager.setupStep3")}</li>

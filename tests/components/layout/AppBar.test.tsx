@@ -78,6 +78,20 @@ describe("AppBar", () => {
     sessionState = createSessionState();
   });
 
+  it.each([
+    false,
+    true,
+  ])("offers scanner downloads when authenticated is %s", async (isAuthenticated) => {
+    sessionState = createSessionState({ isAuthenticated });
+    renderAppBar(<AppBar />);
+    await userEvent.click(
+      screen.getByRole("button", { name: "accountSystem.accountMenu" })
+    );
+    expect(
+      screen.getByRole("menuitem", { name: "scannerDownload.menu" })
+    ).toHaveAttribute("href", "/download-scanner");
+  });
+
   it("renders navigation links", () => {
     renderAppBar(<AppBar />);
 

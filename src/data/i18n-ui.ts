@@ -1,4 +1,88 @@
 export const i18nUiData = {
+  scannerDownload: {
+    menu: { en: "Download GGScanner", zh: "下载 GGScanner" },
+    platform: {
+      en: "For Windows PCs · Genshin Impact & Star Rail",
+      zh: "Windows 电脑 · 原神与星穹铁道",
+    },
+    tagline: {
+      en: "Your collection, ready for GGArtifact.",
+      zh: "把游戏背包，带进 GGArtifact。",
+    },
+    introduction: {
+      en: "Bring your Characters, weapons, Artifacts, and achievements into GGArtifact. Capture or scan your in-game data, then use it to plan builds and organize your collection.",
+      zh: "导入角色、武器、圣遗物与成就，用自己的账号数据规划配装、整理背包。GGScanner 支持抓包和扫图，连接游戏与 GGArtifact。",
+    },
+    editions: { en: "Choose your edition", zh: "选择下载版本" },
+    recommended: { en: "Recommended", zh: "推荐版本" },
+    ocrEdition: { en: "OCR edition", zh: "纯扫图版" },
+    captureDescription: {
+      en: "The complete companion. Capture your account data, with OCR scanning and management included.",
+      zh: "功能完整的配套工具。支持抓包导出账号数据，同时包含扫图与管理功能。",
+    },
+    ocrDescription: {
+      en: "Prefer screen scanning? Get OCR and management, without packet capture.",
+      zh: "只想通过画面扫描？保留扫图与管理功能，不包含抓包。",
+    },
+    captureFeature: {
+      en: "Capture account data and achievements",
+      zh: "抓包读取账号数据与成就",
+    },
+    ocrFeature: {
+      en: "Scan Characters, weapons, and Artifacts",
+      zh: "扫图识别角色、武器与圣遗物",
+    },
+    exportFeature: {
+      en: "Export a file ready to import into GGArtifact",
+      zh: "导出文件，直接导入 GGArtifact",
+    },
+    managerFeature: {
+      en: "Lock, unlock, and equip Artifacts in game",
+      zh: "在游戏内锁定、解锁与装备圣遗物",
+    },
+    downloadOcr: { en: "Download GGScannerOCR", zh: "下载 GGScannerOCR" },
+    choiceNote: {
+      en: "Both editions support Genshin Impact and Honkai: Star Rail. Capture starts only when you choose to use it.",
+      zh: "两个版本都支持原神和星穹铁道。抓包功能由你主动启动。",
+    },
+    allReleases: {
+      en: "GitHub releases & direct downloads",
+      zh: "GitHub 发布页与直接下载",
+    },
+    setupTitle: {
+      en: "From your game to your next build",
+      zh: "从游戏背包，到下一套配装",
+    },
+    stepOneTitle: {
+      en: "Open GGScanner on your PC",
+      zh: "在电脑上打开 GGScanner",
+    },
+    stepOneBody: {
+      en: "Download your preferred edition and run it as administrator on the PC you use to play.",
+      zh: "下载所需版本，在运行游戏的电脑上以管理员身份打开。",
+    },
+    stepTwoTitle: { en: "Capture or scan your account", zh: "抓包或扫描账号" },
+    stepTwoBody: {
+      en: "Choose Genshin Impact. Start capture before entering the game, or use OCR scanning with the Chinese game client at 16:9.",
+      zh: "选择原神。进入游戏前开始抓包；也可使用中文客户端，在 16:9 画面下扫图。",
+    },
+    stepThreeTitle: {
+      en: "Bring your data into GGArtifact",
+      zh: "把数据导入 GGArtifact",
+    },
+    stepThreeBody: {
+      en: "Save the exported file, then import it from the Account Data page to view and work with your collection.",
+      zh: "保存导出的文件，在「账号数据」页面导入，即可查看账号并规划配装。",
+    },
+    resourcesTitle: { en: "Scanner data files", zh: "扫描器数据文件" },
+    resourcesDescription: {
+      en: "Need the data files separately? Download the current game references here.",
+      zh: "需要单独下载资料文件？这里提供当前游戏资料的 JSON 文件。",
+    },
+    gameData: { en: "Game reference data", zh: "游戏资料" },
+    ocrNames: { en: "OCR name mappings", zh: "扫图名称对照表" },
+    achievementData: { en: "Achievement reference", zh: "成就对照表" },
+  },
   seo: {
     homeTitle: {
       en: "GGArtifact — Genshin Impact Artifact Optimizer",
@@ -484,26 +568,6 @@ export const i18nUiData = {
     goodPcHint: {
       en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
-    },
-    toolGoodCapture: {
-      en: "GGScanner (Capture + OCR)",
-      zh: "GGScanner (抓包 + 扫图)",
-    },
-    toolGoodScanner: {
-      en: "GGScannerOCR (OCR, 16:9 Chinese client)",
-      zh: "GGScannerOCR (扫图, 16:9)",
-    },
-    scannerEditionHint: {
-      en: "Recommended: GGScanner includes capture, OCR scanning, and management. GGScannerOCR provides scanning and management without packet capture.",
-      zh: "推荐使用 GGScanner，包含抓包、扫图与管理功能。GGScannerOCR 不包含抓包，仅提供扫图与管理功能。",
-    },
-    proxyHint: {
-      en: "Slow GitHub connection? Direct download:",
-      zh: "GitHub 下载慢？直接下载：",
-    },
-    githubProject: {
-      en: "GitHub project:",
-      zh: "GitHub 项目：",
     },
     wrongFormat: {
       en: "This file is not in GOOD format. Please export using a supported scanner tool.",
@@ -3098,8 +3162,8 @@ export const i18nUiData = {
       zh: "连接本地圣遗物管理器以在游戏中应用更改。",
     },
     setupStep1: {
-      en: "Download and open {0}",
-      zh: "下载并打开 {0}",
+      en: "Open {0} to choose and download the scanner",
+      zh: "打开 {0}，选择并下载扫描器",
     },
     setupStep2: {
       en: 'Go to the "Manager" tab',
