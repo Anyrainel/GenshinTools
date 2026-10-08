@@ -1,6 +1,5 @@
 import {
   AlertCircle,
-  Download,
   ExternalLink,
   Info,
   KeyRound,
@@ -19,6 +18,10 @@ import {
 
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ImportMethodItem } from "@/components/shared/ImportMethodItem";
+import {
+  GGSCANNER_PROJECT_URL,
+  ScannerDownloadLinks,
+} from "@/components/shared/ScannerDownloadLinks";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -48,23 +51,6 @@ interface AccountImportControlProps {
   ) => Promise<void>;
   initialUid?: string;
 }
-
-const TOOLS = [
-  {
-    labelKey: "import.toolGoodCapture" as const,
-    recommended: true,
-    fileName: "GGScanner.exe",
-    url: "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScanner.exe",
-  },
-  {
-    labelKey: "import.toolGoodScanner" as const,
-    recommended: false,
-    fileName: "GGScannerOCR.exe",
-    url: "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScannerOCR.exe",
-  },
-] as const;
-
-const GGSCANNER_PROJECT_URL = "https://github.com/Anyrainel/GGScanner";
 
 /**
  * AccountImportControl - A dialog for importing account data.
@@ -279,33 +265,7 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.goodPcHint")}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2 lg:ml-6">
-                {TOOLS.map((tool) => (
-                  <a
-                    key={tool.labelKey}
-                    href={tool.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    download={tool.fileName}
-                    className={cn(
-                      "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5",
-                      "text-xs font-medium",
-                      tool.recommended
-                        ? "border border-primary bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "border border-border bg-secondary text-secondary-foreground hover:bg-secondary/80",
-                      "transition-colors"
-                    )}
-                  >
-                    {t.ui(tool.labelKey)}
-                    {tool.recommended && (
-                      <span className="text-xs">
-                        · {t.ui("import.recommended")}
-                      </span>
-                    )}
-                    <Download className="w-3 h-3 opacity-60" />
-                  </a>
-                ))}
-              </div>
+              <ScannerDownloadLinks t={t} className="mt-2 lg:ml-6" />
               <p className="mt-2 text-xs text-foreground/80 lg:ml-6">
                 {t.ui("import.scannerEditionHint")}
               </p>

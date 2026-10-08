@@ -1,11 +1,11 @@
-import { Download, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import {
+  GGSCANNER_RELEASES_URL,
+  ScannerDownloadLinks,
+} from "@/components/shared/ScannerDownloadLinks";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { cn } from "@/lib/utils";
-
-const GGSCANNER_RELEASES = "https://github.com/Anyrainel/GGScanner/releases";
-const GGSCANNER_PROXY_EXE =
-  "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScanner.exe";
 
 export function ConnectionStatus({
   connection,
@@ -106,7 +106,7 @@ export function SetupInstructions({
 }) {
   const link = (
     <a
-      href={GGSCANNER_RELEASES}
+      href={GGSCANNER_RELEASES_URL}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-1 text-blue-400 hover:underline"
@@ -125,20 +125,15 @@ export function SetupInstructions({
           {step1Parts[0]}
           {link}
           {step1Parts[1]}
-          <div className="flex items-center gap-1.5 mt-1 ml-0">
+          <div className="flex flex-wrap items-center gap-1.5 mt-1 ml-0">
             <span className="text-xs text-foreground/80">
               {t.ui("import.proxyHint")}
             </span>
-            <a
-              href={GGSCANNER_PROXY_EXE}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 transition-colors"
-            >
-              GGScanner.exe
-              <Download className="w-3 h-3 opacity-60" />
-            </a>
+            <ScannerDownloadLinks t={t} />
           </div>
+          <p className="mt-2 text-xs text-foreground/80">
+            {t.ui("import.scannerEditionHint")}
+          </p>
         </li>
         <li>{t.ui("manager.setupStep2")}</li>
         <li>{t.ui("manager.setupStep3")}</li>
