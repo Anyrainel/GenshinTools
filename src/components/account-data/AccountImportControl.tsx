@@ -52,17 +52,17 @@ interface AccountImportControlProps {
 const TOOLS = [
   {
     labelKey: "import.toolGoodCapture" as const,
-    fileName: "GOODCapture.exe",
-    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODCapture.exe",
+    fileName: "GGScanner.exe",
+    url: "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScanner.exe",
   },
   {
     labelKey: "import.toolGoodScanner" as const,
-    fileName: "GOODScanner.exe",
-    url: "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe",
+    fileName: "GGScannerOCR.exe",
+    url: "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScannerOCR.exe",
   },
 ] as const;
 
-const GOODSCANNER_PROJECT_URL = "https://github.com/Anyrainel/GOODScanner";
+const GGSCANNER_PROJECT_URL = "https://github.com/Anyrainel/GGScanner";
 
 /**
  * AccountImportControl - A dialog for importing account data.
@@ -304,7 +304,7 @@ export const AccountImportControl = forwardRef<
                 {t.ui("import.githubProject")}
               </span>
               <a
-                href={GOODSCANNER_PROJECT_URL}
+                href={GGSCANNER_PROJECT_URL}
                 target="_blank"
                 rel="noreferrer"
                 className={cn(
@@ -314,7 +314,7 @@ export const AccountImportControl = forwardRef<
                   "transition-colors"
                 )}
               >
-                GOODScanner
+                GGScanner
                 <ExternalLink className="w-3 h-3 opacity-60" />
               </a>
             </div>

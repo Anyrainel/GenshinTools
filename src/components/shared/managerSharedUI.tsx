@@ -3,10 +3,9 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import type { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { cn } from "@/lib/utils";
 
-const GOODSCANNER_RELEASES =
-  "https://github.com/Anyrainel/GOODScanner/releases";
-const GOODSCANNER_PROXY_EXE =
-  "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe";
+const GGSCANNER_RELEASES = "https://github.com/Anyrainel/GGScanner/releases";
+const GGSCANNER_OCR_PROXY_EXE =
+  "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScannerOCR.exe";
 
 export function ConnectionStatus({
   connection,
@@ -107,12 +106,12 @@ export function SetupInstructions({
 }) {
   const link = (
     <a
-      href={GOODSCANNER_RELEASES}
+      href={GGSCANNER_RELEASES}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-1 text-blue-400 hover:underline"
     >
-      GOODScanner
+      GGScanner
       <ExternalLink className="h-3 w-3" />
     </a>
   );
@@ -131,12 +130,12 @@ export function SetupInstructions({
               {t.ui("import.proxyHint")}
             </span>
             <a
-              href={GOODSCANNER_PROXY_EXE}
+              href={GGSCANNER_OCR_PROXY_EXE}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 transition-colors"
             >
-              GOODScanner.exe
+              GGScannerOCR.exe
               <Download className="w-3 h-3 opacity-60" />
             </a>
           </div>

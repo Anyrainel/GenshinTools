@@ -100,37 +100,37 @@ describe("AccountImportControl", () => {
     });
   });
 
-  it("renders GOODScanner tool link", async () => {
+  it("renders GGScannerOCR tool link", async () => {
     render(<TestWrapper />);
     await waitFor(() => {
       const link = screen.getByText("import.toolGoodScanner");
       expect(link.closest("a")).toHaveAttribute(
         "href",
-        "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODScanner.exe"
+        "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScannerOCR.exe"
       );
     });
   });
 
-  it("renders GOODCapture tool link instead of Irminsul", async () => {
+  it("renders GGScanner capture tool link instead of Irminsul", async () => {
     render(<TestWrapper />);
     await waitFor(() => {
       const link = screen.getByText("import.toolGoodCapture");
       expect(link.closest("a")).toHaveAttribute(
         "href",
-        "https://gh-proxy.org/https://github.com/Anyrainel/GOODScanner/releases/latest/download/GOODCapture.exe"
+        "https://gh-proxy.org/https://github.com/Anyrainel/GGScanner/releases/latest/download/GGScanner.exe"
       );
       expect(screen.queryByText("import.toolIrminsul")).not.toBeInTheDocument();
       expect(screen.queryByText("irminsul.exe")).not.toBeInTheDocument();
     });
   });
 
-  it("renders GOODScanner project link below the direct download buttons", async () => {
+  it("renders GGScanner project link below the direct download buttons", async () => {
     render(<TestWrapper />);
     await waitFor(() => {
       expect(screen.getByText("import.githubProject")).toBeInTheDocument();
-      expect(screen.getByText("GOODScanner").closest("a")).toHaveAttribute(
+      expect(screen.getByText("GGScanner").closest("a")).toHaveAttribute(
         "href",
-        "https://github.com/Anyrainel/GOODScanner"
+        "https://github.com/Anyrainel/GGScanner"
       );
     });
   });

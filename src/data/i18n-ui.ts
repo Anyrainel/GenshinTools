@@ -486,12 +486,12 @@ export const i18nUiData = {
       zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
     },
     toolGoodCapture: {
-      en: "GOODCapture (Packet Capture)",
-      zh: "GOODCapture (抓包)",
+      en: "GGScanner (Packet Capture)",
+      zh: "GGScanner (抓包)",
     },
     toolGoodScanner: {
-      en: "GOODScanner (OCR, 16:9 Chinese client)",
-      zh: "GOODScanner (扫图, 16:9)",
+      en: "GGScannerOCR (OCR, 16:9 Chinese client)",
+      zh: "GGScannerOCR (扫图, 16:9)",
     },
     proxyHint: {
       en: "Slow GitHub connection? Direct download:",
@@ -2292,8 +2292,8 @@ export const i18nUiData = {
         zh: "1. 使用 {import} 加载社区榜单预设。\n2. 使用 {customize} 修改梯度名称和设置。\n3. 切换到武器标签页，为武器单独创建优先级排名。",
       },
       accountData: {
-        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from GOODScanner / GOODCapture) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.\n4. Use Set Evaluation to check build completeness, and Artifact Triage for lock/unlock advice.",
-        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 GOODScanner 或 GOODCapture）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。\n4. 套装评估可以查看配装完成度，锁定助手则帮你判断该锁定和回收哪些圣遗物。",
+        en: "1. Open {import} menu to find tools for GOOD JSON files (e.g. from GGScanner / GGScannerOCR) or import via UID (Enka).\n2. View build scores in {characters} tab.\n3. Check personalized upgrade suggestions in {recommendations} tab.\n4. Use Set Evaluation to check build completeness, and Artifact Triage for lock/unlock advice.",
+        zh: "1. 打开 {import} 菜单查找 GOOD JSON 文件工具（如 GGScanner 或 GGScannerOCR）或通过 UID (Enka) 导入。\n2. 在 {characters} 标签页中查看配装评分。\n3. 在 {recommendations} 标签页中查看个性化升级建议。\n4. 套装评估可以查看配装完成度，锁定助手则帮你判断该锁定和回收哪些圣遗物。",
       },
       teamComp: {
         en: "1. Pick {characters} , weapons, and artifact sets in each team card.\n2. Click {optimize} to find the best artifact loadout.\n3. Use {import} to load community presets.",
@@ -2382,8 +2382,8 @@ export const i18nUiData = {
     accountData: {
       importTitle: { en: "Import Your Data", zh: "导入数据" },
       importContent: {
-        en: "Import your character data using GOOD format (from GOODScanner or similar tools) or fetch directly from Enka.Network using your UID.",
-        zh: "使用 GOOD 格式导入角色数据（来自 GOODScanner 等工具），或通过 UID 从 Enka.Network 获取。",
+        en: "Import your character data using GOOD format (from GGScanner or similar tools) or fetch directly from Enka.Network using your UID.",
+        zh: "使用 GOOD 格式导入角色数据（来自 GGScanner 等工具），或通过 UID 从 Enka.Network 获取。",
       },
       charactersTitle: { en: "Character Overview", zh: "角色列表" },
       charactersContent: {
@@ -2576,8 +2576,8 @@ export const i18nUiData = {
     getStarted: { en: "Get Started", zh: "使用教程" },
     // Step 1: Account Data
     step1ActionHint: {
-      en: "Import data via Account Management on the Account Data page. Recommended: bundled GOOD Scanner. Also supports other tools or UID import.",
-      zh: "在「账号数据」页面通过“账号管理”导入数据。推荐使用网站配套GOODScanner，也可以使用其他工具或UID导入。",
+      en: "Import data via Account Management on the Account Data page. Recommended: GGScanner. Also supports other tools or UID import.",
+      zh: "在「账号数据」页面通过“账号管理”导入数据。推荐使用网站配套的 GGScanner，也可以使用其他工具或 UID 导入。",
     },
     previewCharacters: {
       en: "View character progression and scores",
@@ -3150,8 +3150,8 @@ export const i18nUiData = {
       zh: "浏览器扩展可能在修改请求头。请尝试禁用扩展或使用无痕模式。",
     },
     errorNotGOODScanner: {
-      en: "Server found on this port, but it is not GOODScanner (HTTP 404). Check that the port number matches.",
-      zh: "该端口有服务器响应，但不是 GOODScanner（HTTP 404）。请检查端口号是否正确。",
+      en: "Server found on this port, but it is not GGScanner (HTTP 404). Check that the port number matches.",
+      zh: "该端口有服务器响应，但不是 GGScanner（HTTP 404）。请检查端口号是否正确。",
     },
     errorRejected: {
       en: "Server rejected the request (HTTP 403). A browser extension or firewall may be modifying requests.",
@@ -3162,8 +3162,8 @@ export const i18nUiData = {
       zh: "服务器要求身份验证（HTTP 401）。代理或防火墙可能在拦截请求。",
     },
     errorTimeout: {
-      en: "Server timed out (HTTP 408). GOODScanner may be overloaded or unresponsive.",
-      zh: "服务器超时（HTTP 408）。GOODScanner 可能负载过重或无响应。",
+      en: "Server timed out (HTTP 408). GGScanner may be overloaded or unresponsive.",
+      zh: "服务器超时（HTTP 408）。GGScanner 可能负载过重或无响应。",
     },
     errorServer: {
       en: "Server error (HTTP {0}).",
@@ -3183,8 +3183,8 @@ export const i18nUiData = {
     title: { en: "Scan from Game", zh: "从游戏扫描" },
     recentTitle: { en: "Scan Recent Artifacts", zh: "扫描最近圣遗物" },
     description: {
-      en: "Scan your in-game inventory with GOODScanner and sync the results into this account.",
-      zh: "使用 GOODScanner 扫描游戏内背包，并将结果同步到当前账号。",
+      en: "Scan your in-game inventory with GGScanner and sync the results into this account.",
+      zh: "使用 GGScanner 扫描游戏内背包，并将结果同步到当前账号。",
     },
     recentDescription: {
       en: "Scan only recently acquired 5-star artifacts and merge them into this account.",
