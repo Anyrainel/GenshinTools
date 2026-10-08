@@ -12,10 +12,20 @@ describe("Scanner download page", () => {
     render(<ScannerDownload />);
     expect(
       screen.getByRole("link", { name: "scannerDownload.menu" })
-    ).toHaveAttribute("href", expect.stringContaining("/GGScanner.exe"));
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining(
+        "/GOODScanner/releases/latest/download/GOODCapture.exe"
+      )
+    );
     expect(
       screen.getByRole("link", { name: "scannerDownload.downloadOcr" })
-    ).toHaveAttribute("href", expect.stringContaining("/GGScannerOCR.exe"));
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining(
+        "/GOODScanner/releases/latest/download/GOODScanner.exe"
+      )
+    );
     for (const [name, path] of [
       ["gameData", "/good/data_cache.json"],
       ["ocrNames", "/good/mappings.json"],
