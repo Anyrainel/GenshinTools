@@ -25,7 +25,6 @@ export default function ScannerDownload() {
   const features = [
     { label: t.ui("scannerDownload.captureFeature"), captureOnly: true },
     { label: t.ui("scannerDownload.ocrFeature"), captureOnly: false },
-    { label: t.ui("scannerDownload.exportFeature"), captureOnly: false },
     { label: t.ui("scannerDownload.managerFeature"), captureOnly: false },
   ];
   const editions = [

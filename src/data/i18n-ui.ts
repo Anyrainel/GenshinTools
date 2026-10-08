@@ -10,8 +10,8 @@ export const i18nUiData = {
       zh: "把游戏背包，带进 GGArtifact。",
     },
     introduction: {
-      en: "Export Characters, weapons, Artifacts, and achievements for GGArtifact.",
-      zh: "导出角色、武器、圣遗物与成就，导入 GGArtifact。",
+      en: "Save Characters, weapons, Artifacts, and achievements as a JSON file to import into GGArtifact.",
+      zh: "将角色、武器、圣遗物与成就保存为 JSON 文件，导入 GGArtifact。",
     },
     editions: { en: "Choose your edition", zh: "选择下载版本" },
     recommended: { en: "Recommended", zh: "推荐版本" },
@@ -31,10 +31,6 @@ export const i18nUiData = {
     ocrFeature: {
       en: "Scan Characters, weapons, Artifacts & achievements",
       zh: "角色、武器、圣遗物、成就扫图",
-    },
-    exportFeature: {
-      en: "Import into GGArtifact",
-      zh: "导入 GGArtifact",
     },
     managerFeature: {
       en: "Lock, unlock & equip Artifacts",
