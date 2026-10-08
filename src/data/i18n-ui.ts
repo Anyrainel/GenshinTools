@@ -29,8 +29,8 @@ export const i18nUiData = {
       zh: "账号与成就抓包",
     },
     ocrFeature: {
-      en: "Scan Characters, weapons & Artifacts",
-      zh: "角色、武器、圣遗物扫图",
+      en: "Scan Characters, weapons, Artifacts & achievements",
+      zh: "角色、武器、圣遗物、成就扫图",
     },
     exportFeature: {
       en: "Import into GGArtifact",
