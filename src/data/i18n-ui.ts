@@ -1124,7 +1124,8 @@ export const i18nUiData = {
     },
   },
   app: {
-    title: { en: "GG Artifact", zh: "GG圣遗物" },
+    brand: { en: "GGArtifact", zh: "GGArtifact" },
+    title: { en: "GGArtifact", zh: "GG圣遗物" },
     language: { en: "Language", zh: "语言" },
     siteSwitcherLabel: { en: "Switch game site", zh: "切换游戏站点" },
     gameGenshin: { en: "Genshin Impact", zh: "原神" },

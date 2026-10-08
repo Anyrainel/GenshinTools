@@ -96,11 +96,11 @@ describe("AppBar", () => {
     renderAppBar(<AppBar />);
 
     // Check for the home shortcut and title.
-    expect(screen.getByRole("link", { name: "app.title" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "app.brand" })).toHaveAttribute(
       "href",
       "/"
     );
-    expect(screen.getAllByText("app.title").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("app.brand").length).toBeGreaterThan(0);
 
     // Check desktop nav
     expect(screen.getByText("Home")).toBeInTheDocument();
@@ -113,7 +113,7 @@ describe("AppBar", () => {
     const siteSwitcher = screen.getByRole("button", {
       name: "app.siteSwitcherLabel",
     });
-    expect(screen.getByRole("link", { name: "app.title" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "app.brand" })).toHaveAttribute(
       "href",
       "/"
     );
@@ -126,7 +126,7 @@ describe("AppBar", () => {
     expect(genshinItem).toHaveAttribute("href", "/");
     expect(genshinItem.querySelector(".lucide-check")).not.toBeNull();
     expect(genshinItem).toHaveAttribute("aria-current", "true");
-    expect(within(siteSwitcher).getByText("app.title")).toBeInTheDocument();
+    expect(within(siteSwitcher).getByText("app.brand")).toBeInTheDocument();
 
     const starRailItem = screen.getByRole("menuitem", {
       name: /app.gameStarRail/,

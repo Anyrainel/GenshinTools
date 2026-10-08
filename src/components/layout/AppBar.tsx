@@ -508,7 +508,7 @@ export function AppBar({
       <Link
         to="/"
         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label={t.ui("app.title")}
+        aria-label={t.ui("app.brand")}
         title={t.ui("common.home")}
       >
         <img src={getAssetUrl("/logo-gi.svg")} className="w-8 h-8" alt="" />
@@ -521,7 +521,7 @@ export function AppBar({
             aria-label={t.ui("app.siteSwitcherLabel")}
           >
             <span className="hidden text-lg font-semibold sm:inline">
-              {t.ui("app.title")}
+              {t.ui("app.brand")}
             </span>
             <span className="ml-auto whitespace-nowrap rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
               {t.ui("app.gameGenshinShort")}
@@ -601,7 +601,7 @@ export function AppBar({
                       className="w-6 h-6"
                       alt="Logo"
                     />
-                    {t.ui("app.title")}
+                    {t.ui("app.brand")}
                   </SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col gap-1.5 mt-4 overflow-y-auto flex-1">
