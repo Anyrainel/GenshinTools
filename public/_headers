@@ -69,16 +69,6 @@
   CDN-Cache-Control: public, max-age=604800
   Access-Control-Allow-Origin: *
 
-/good/mappings.json
-  Cache-Control: public, max-age=3600, stale-while-revalidate=3600
-  CDN-Cache-Control: public, max-age=3600
-  Access-Control-Allow-Origin: *
-
-/good/data_cache.json
-  Cache-Control: public, max-age=3600, stale-while-revalidate=3600
-  CDN-Cache-Control: public, max-age=3600
-  Access-Control-Allow-Origin: *
-
 # Shared non-achievement reference for OCR, capture and manager.
 /good/genshin_scanner_data.json
   Cache-Control: no-cache, must-revalidate

@@ -78,7 +78,6 @@ export const i18nUiData = {
       zh: "需要单独下载资料文件？这里提供当前游戏资料的 JSON 文件。",
     },
     gameData: { en: "Game reference data", zh: "游戏资料" },
-    ocrNames: { en: "OCR name mappings", zh: "扫图名称对照表" },
     achievementData: { en: "Achievement reference", zh: "成就对照表" },
   },
   seo: {

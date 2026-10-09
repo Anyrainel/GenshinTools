@@ -49,7 +49,9 @@ def validate_stat_outputs(root: Path) -> None:
 
 def validate_outputs(root: Path) -> None:
     game = root / "src" / "data" / "game"
-    mappings = json.loads((root / "public" / "good" / "mappings.json").read_text("utf-8"))
+    mappings = json.loads(
+        (root / "public" / "good" / "genshin_scanner_data.json").read_text("utf-8")
+    )["mappings"]
     sources = {
         "characters": ["character_4_en.json", "character_5_en.json"],
         "weapons": ["weapon_en.json"],

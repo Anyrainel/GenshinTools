@@ -64,7 +64,9 @@ def generate_stat_map(cache: dict) -> dict[str, str]:
 
 
 def run(project_root: Path = ROOT) -> None:
-    cache = json.loads((project_root / "public" / "good" / "data_cache.json").read_text("utf-8"))
+    cache = json.loads(
+        (project_root / "public" / "good" / "genshin_scanner_data.json").read_text("utf-8")
+    )["capture"]
     stat_map = generate_stat_map(cache)
     output = project_root / "src" / "data" / "enkaIdMap.ts"
     lines = [

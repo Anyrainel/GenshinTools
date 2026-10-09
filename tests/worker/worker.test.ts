@@ -248,7 +248,7 @@ describe("Worker API routing", () => {
     expect(isStaticAssetRequest("/@vite/client")).toBe(true);
     expect(isStaticAssetRequest("/@react-refresh")).toBe(true);
     expect(isStaticAssetRequest("/character/avatar.webp")).toBe(true);
-    expect(isStaticAssetRequest("/good/mappings.json")).toBe(true);
+    expect(isStaticAssetRequest("/good/genshin_scanner_data.json")).toBe(true);
     expect(isStaticAssetRequest("/favicon.svg")).toBe(true);
     expect(isStaticAssetRequest("/account/cloud-backup")).toBe(false);
     expect(isStaticAssetRequest("/team-comp/damage")).toBe(false);

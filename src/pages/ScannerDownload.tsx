@@ -60,8 +60,10 @@ export default function ScannerDownload() {
     },
   ];
   const resources = [
-    { title: t.ui("scannerDownload.gameData"), path: "/good/data_cache.json" },
-    { title: t.ui("scannerDownload.ocrNames"), path: "/good/mappings.json" },
+    {
+      title: t.ui("scannerDownload.gameData"),
+      path: "/good/genshin_scanner_data.json",
+    },
     {
       title: t.ui("scannerDownload.achievementData"),
       path: "/good/mapping_achievements.json",

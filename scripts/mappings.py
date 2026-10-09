@@ -1,6 +1,6 @@
-"""Generate public/good/mappings.json with GOOD-format keys.
+"""Generate the shared scanner reference's OCR mappings with GOOD-format keys.
 
-Extracted from codedump.py — all mappings.json data processing lives here.
+Extracted from codedump.py — OCR mapping generation lives here.
 """
 
 import json
@@ -64,10 +64,10 @@ def _parse_char_info(path: str) -> dict[str, dict[str, str]]:
     return result
 
 
-def generate_mappings_json(project_root: str) -> None:
-    """Generate public/good/mappings.json with GOOD-format keys and Chinese names."""
+def generate_scanner_mappings(project_root: str) -> None:
+    """Fill the shared scanner reference with GOOD keys and Chinese names."""
     game_dir = os.path.join(project_root, "src", "data", "game")
-    out_path = os.path.join(project_root, "public", "good", "mappings.json")
+    out_path = os.path.join(project_root, "public", "good", "genshin_scanner_data.json")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
     # --- Read charInfo.ts for c3/c5 talent data ---
@@ -155,8 +155,13 @@ def generate_mappings_json(project_root: str) -> None:
 
     # --- Write ---
     result = {"characters": chars, "weapons": weapons, "artifactSets": artifact_sets}
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, separators=(",", ":"))
+    with open(out_path, encoding="utf-8") as f:
+        document = json.load(f)
+    document["mappings"] = result
+    temporary = out_path + ".new"
+    with open(temporary, "w", encoding="utf-8") as f:
+        json.dump(document, f, ensure_ascii=False, separators=(",", ":"))
+    os.replace(temporary, out_path)
 
     print(f"Written {out_path}")
     print(f"  {len(chars)} characters, {len(weapons)} weapons, {len(artifact_sets)} artifact sets")

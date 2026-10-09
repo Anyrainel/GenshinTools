@@ -27,8 +27,7 @@ describe("Scanner download page", () => {
       )
     );
     for (const [name, path] of [
-      ["gameData", "/good/data_cache.json"],
-      ["ocrNames", "/good/mappings.json"],
+      ["gameData", "/good/genshin_scanner_data.json"],
       ["achievementData", "/good/mapping_achievements.json"],
     ]) {
       const link = screen.getByRole("link", {

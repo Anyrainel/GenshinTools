@@ -77,7 +77,7 @@ class GameDataRefreshTests(unittest.TestCase):
             patch("codedump.load_existing_data", return_value=({}, {})),
             patch("codedump.HoyolabScraper") as scraper,
             patch("codedump.write_data") as write,
-            patch("codedump.generate_mappings_json") as mappings,
+            patch("codedump.generate_scanner_mappings") as mappings,
         ):
             scraper.return_value.__enter__.return_value.scrape_weapons.side_effect = (
                 RuntimeError("wiki navigation failed")
@@ -146,8 +146,10 @@ with (
             encoding="utf-8",
         )
         (game / "weapon_stats.json").write_text("{}", encoding="utf-8")
-        (good / "mappings.json").write_text(
-            json.dumps({"characters": [{"id": "Furina", "n": {"zh": "芙宁娜"}}]}),
+        (good / "genshin_scanner_data.json").write_text(
+            json.dumps(
+                {"mappings": {"characters": [{"id": "Furina", "n": {"zh": "芙宁娜"}}]}}
+            ),
             encoding="utf-8",
         )
         with self.assertRaisesRegex(ValueError, "missing GOOD mappings.*Vesna"):
@@ -164,8 +166,8 @@ with (
         self.assertEqual(result["FIGHT_PROP_WIND_ADD_HURT"], "anemo_dmg_")
         (self.root / "public/good").mkdir(parents=True)
         (self.root / "src/data").mkdir(parents=True)
-        (self.root / "public/good/data_cache.json").write_text(
-            json.dumps(cache), encoding="utf-8"
+        (self.root / "public/good/genshin_scanner_data.json").write_text(
+            json.dumps({"capture": cache}), encoding="utf-8"
         )
         run(self.root)
         output = (self.root / "src/data/enkaIdMap.ts").read_text("utf-8")

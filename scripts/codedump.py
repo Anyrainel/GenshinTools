@@ -24,7 +24,7 @@ from tqdm import tqdm
 
 import enka
 import fandom
-from mappings import generate_mappings_json
+from mappings import generate_scanner_mappings
 from ts_reader import load_ts_data
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -677,7 +677,7 @@ def main():
     # 6. GOOD Keys JSON
     if args.good_keys:
         print("=== GOOD Keys JSON ===")
-        generate_mappings_json(project_root)
+        generate_scanner_mappings(project_root)
 
 
 if __name__ == "__main__":
