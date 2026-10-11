@@ -1,18 +1,22 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import type { WeaponType } from "@/data/enums";
+import { allArtifacts, allCharacters, allWeapons } from "@/data/gameResources";
 import {
   CHARACTER_LEVEL_TIERS,
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
+import { artifactHalfSets } from "@/data/resources";
 import {
-  artifactHalfSets,
-  artifacts,
-  characters,
-  weapons,
-} from "@/data/resources";
+  betaArtifacts,
+  betaCharacters,
+  betaWeapons,
+} from "@/data/resources_beta";
 import { DEFAULT_CALC_CONTEXT } from "@/lib/dmgcalc/constants";
-import { compileComboTeamDamage } from "@/lib/dmgcalc/core/formulaCompiler";
+import {
+  compileComboTeamDamage,
+  fillVarsFromSheet,
+} from "@/lib/dmgcalc/core/formulaCompiler";
 import {
   createArtifactHalfSet,
   createArtifactSet,
@@ -50,13 +54,26 @@ function config(charId: string, weaponId: string): TeamSlotConfig {
   };
 }
 
-describe("released calculator entity readiness", () => {
+describe("released and beta calculator entity readiness", () => {
+  it("includes beta catalog entries in the push gate", () => {
+    expect(process.env.__BETA_ENABLED_OVERRIDE__).toBe("true");
+    // Test setup enables beta before catalogs and resource loaders initialize.
+    // A changed setup must not silently narrow the gate to released entities.
+    for (const [catalog, beta] of [
+      [allCharacters, betaCharacters],
+      [allWeapons, betaWeapons],
+      [allArtifacts, betaArtifacts],
+    ]) {
+      const ids = catalog.map(({ id }) => id);
+      for (const { id } of beta) expect(ids).toContain(id);
+    }
+  });
   it.each(
-    characters.map(({ id }) => id)
+    allCharacters.map(({ id }) => id)
   )("character %s builds at every level tier", (charId) => {
     const stats = characterStatsResource.peek()![charId];
     expect(stats, `${charId} has bundled stats`).toBeDefined();
-    const weaponId = weapons
+    const weaponId = allWeapons
       .map(({ id }) => id)
       .find(
         (id) => weaponStatsResource.peek()![id]?.type === stats.weaponType
@@ -81,7 +98,7 @@ describe("released calculator entity readiness", () => {
   });
 
   it.each(
-    weapons.map(({ id }) => id)
+    allWeapons.map(({ id }) => id)
   )("weapon %s builds at R1 and R5", (weaponId) => {
     const stats = weaponStatsResource.peek()![weaponId];
     expect(stats, `${weaponId} has bundled stats`).toBeDefined();
@@ -97,7 +114,7 @@ describe("released calculator entity readiness", () => {
   });
 
   it.each(
-    artifacts.map(({ id }) => id)
+    allArtifacts.map(({ id }) => id)
   )("artifact %s initializes stats and buffs", (setId) => {
     const artifact = createArtifactSet(setId, "kaeya", new TeamMeta(["kaeya"]));
     expect(artifact.stats).toBeDefined();
@@ -168,6 +185,60 @@ describe("released calculator entity readiness", () => {
     const damage = compiled.evaluate(
       new Float64Array(compiled.varMapping.totalVars)
     );
+    expect(Number.isFinite(damage)).toBe(true);
+    expect(damage).toBeGreaterThan(0);
+    expect(damage).toBeCloseTo(displayed.totalDamage, 2);
+  });
+
+  it.each([
+    [0, "stable"],
+    [0, "collapse"],
+    [6, "stable"],
+    [6, "collapse"],
+  ] as const)("compiles a beta team at C%i in %s mode with matching displayed damage", (constellation, mode) => {
+    const configs = [
+      { ...config("mitya", "weapon_catalyst"), constellation },
+      { ...config("valeriy", "prized_isshin_blade"), constellation },
+      config("qiqi", "sacrificial_sword"),
+    ];
+    const build = new TeamBuild(configs, { mitya: mode });
+    const combo: ComboFormula = {
+      id: "beta-readiness",
+      label: { en: "Beta readiness", zh: "测试角色" },
+      lines: configs.flatMap(({ charId }) =>
+        Object.entries(build.catalog.getCombo(charId)).map(
+          ([formulaId, count]) => ({ charId, formulaId, count })
+        )
+      ),
+    };
+    const sheets = Object.fromEntries(
+      configs.map(({ charId }) => [
+        charId,
+        new StatSheet([
+          { key: "atk", value: 311 },
+          { key: "atk%", value: 0.466 },
+          { key: "em", value: 160 },
+          { key: "cr", value: 0.31 },
+          { key: "cd", value: 0.622 },
+        ]),
+      ])
+    );
+    const displayed = build.getComboDamageResult(
+      combo,
+      sheets,
+      DEFAULT_CALC_CONTEXT
+    );
+    const compiled = compileComboTeamDamage(
+      build,
+      combo,
+      configs.map(({ charId }) => charId),
+      sheets,
+      DEFAULT_CALC_CONTEXT
+    );
+    const vars = new Float64Array(compiled.numVars);
+    for (const [charId, index] of compiled.charIdxMap!)
+      fillVarsFromSheet(sheets[charId], compiled.varMapping, index, vars);
+    const damage = compiled.evaluate(vars);
     expect(Number.isFinite(damage)).toBe(true);
     expect(damage).toBeGreaterThan(0);
     expect(damage).toBeCloseTo(displayed.totalDamage, 2);

@@ -122,6 +122,10 @@ const CONSTRAINT_ALLOWLIST: Record<string, Set<string>> = {
   // bonus onto the sweep. The general ban on ability-scoping reaction-CRIT
   // keys stays — this kit shape is the exception, not a new rule.
   "sandrone/C2": new Set(["reactionCd:forbidsDims-abilities"]),
+  // Valeriy C6 increases Electro CR, then additionally increases CD when that
+  // Electro damage is Stellar-Conduct. Retain both filters so Cryo Stellar
+  // hits do not receive the bonus (ZH: 若受到的雷元素伤害为星超导反应伤害).
+  "valeriy/C6": new Set(["reactionCd:forbidsDims-elements"]),
 };
 
 function isAllowlisted(

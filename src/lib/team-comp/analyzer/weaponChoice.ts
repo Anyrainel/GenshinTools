@@ -33,7 +33,6 @@ import {
   compileComboTeamDamage,
   fillVarsFromSheet,
 } from "../../dmgcalc/core/formulaCompiler";
-import { hasWeaponImplementation } from "../../dmgcalc/core/registry";
 import type { StatSheet } from "../../dmgcalc/core/statSheet";
 import { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import type { GeneratorResult } from "../generator/generator";
@@ -113,8 +112,7 @@ function getWeaponCandidates(
   const candidates: WeaponCandidate[] = [];
 
   for (const [weaponId, stats] of Object.entries(weaponStats)) {
-    if (stats.type !== weaponType || !hasWeaponImplementation(weaponId))
-      continue;
+    if (stats.type !== weaponType) continue;
     const resource = weaponsById[weaponId];
     const rarity = resource?.rarity ?? stats.rarity;
     if (rarity <= 2) continue;

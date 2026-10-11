@@ -105,38 +105,47 @@ describe("runWeaponChoice artifact mode", () => {
   });
 });
 
-describe("runWeaponChoice entity readiness", () => {
-  it("excludes weapons without a calculator implementation before evaluating choices", async () => {
-    const configs = [SUBOPTIMAL_ARTIFACT_CONFIGS[0]];
+describe("runWeaponChoice beta weapons", () => {
+  it("evaluates the beta catalyst at both five-star refinements", async () => {
+    const configs: TeamSlotConfig[] = [
+      {
+        charId: "lisa",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "weapon_catalyst",
+        refinement: 1,
+        artifactSet: null,
+      },
+    ];
     const teamBuild = new TeamBuild(configs);
-    const formulaId = Object.keys(
-      teamBuild.catalog.getFormulaIds().hu_tao ?? {}
-    )[0];
-    const weaponStats = weaponStatsResource.peek();
-    if (!weaponStats) throw new Error("Weapon stats are not loaded");
-
-    const gen = runWeaponChoice({
+    const formulaId = Object.keys(teamBuild.catalog.getFormulaIds().lisa)[0];
+    const stats = weaponStatsResource.peek()!;
+    const generator = runWeaponChoice({
       baseConfigs: configs,
       charConfigs: toWeaponChoiceCharConfigs(configs),
-      combo: singleFormulaCombo("hu_tao", formulaId),
+      combo: singleFormulaCombo("lisa", formulaId),
       calcContext: CTX,
-      weaponStats: {
-        staff_of_homa: weaponStats.staff_of_homa,
-        unimplemented_polearm: weaponStats.staff_of_homa,
-      },
+      weaponStats: { weapon_catalyst: stats.weapon_catalyst },
       opts: {},
     });
-
     let completed = false;
-    for await (const result of gen) {
+    for await (const result of generator) {
       if (!result.done) continue;
       completed = true;
-      expect(result.perCharacter.hu_tao).toHaveLength(2);
+      const rankings = result.perCharacter.lisa;
+      expect(rankings).toHaveLength(2);
       expect(
-        result.perCharacter.hu_tao.map((choice) =>
-          choice.type !== "artifact" ? choice.weaponId : null
+        rankings.map((choice) =>
+          choice.type === "weapon" ? choice.weaponId : null
         )
-      ).toEqual(["staff_of_homa", "staff_of_homa"]);
+      ).toEqual(["weapon_catalyst", "weapon_catalyst"]);
+      expect(
+        rankings
+          .map((choice) =>
+            choice.type === "weapon" ? choice.refinement : null
+          )
+          .sort()
+      ).toEqual([1, 5]);
     }
     expect(completed).toBe(true);
   });

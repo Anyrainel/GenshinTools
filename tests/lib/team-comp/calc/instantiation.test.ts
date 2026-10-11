@@ -659,6 +659,29 @@ describe("Entity Instantiation", () => {
       return errors;
     }
 
+    it("allows Valeriy C6's reviewed Electro-only Stellar CRIT DMG scope", () => {
+      const entries = [{ key: "reactionCd" as const, value: 0.4 }];
+      const target = {
+        receiver: "team" as const,
+        filter: {
+          elements: ["Electro" as const],
+          reactions: ["stellarConduct" as const],
+        },
+      };
+      const source = {
+        type: "character" as const,
+        id: "valeriy",
+        origin: "C6",
+      };
+      expect(() => validateStatBuff(entries, target, source)).not.toThrow();
+      expect(() =>
+        validateStatBuff(entries, target, { ...source, id: "unreviewed" })
+      ).toThrow("elements filter");
+      expect(() =>
+        validateStatBuff(entries, target, { ...source, origin: "C2" })
+      ).toThrow("elements filter");
+    });
+
     it("allows elevated% only on elevated-capable reaction filters", () => {
       const source = { type: "character" as const, id: "test", origin: "C6" };
 

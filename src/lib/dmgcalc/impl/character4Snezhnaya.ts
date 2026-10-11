@@ -2,10 +2,228 @@ import { DirectFormula } from "../core/damageFormula";
 import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import type { ComboTemplate, OptionDef } from "../types";
+import type { ComboTemplate, DamageTag, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
 // 4★ Snezhnaya Characters
+
+const valeriyOption = {
+  label: { zh: "攻斥指令·冲击势能", en: "Assault Order: Charge Consumed" },
+  choices: [
+    {
+      value: "stellar-100",
+      label: {
+        zh: "辉映·星超导 / 100点",
+        en: "Radiance: Stellar-Conduct / 100",
+      },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "stellar-130",
+      label: {
+        zh: "辉映·星超导 / 130点（C4）",
+        en: "Radiance: Stellar-Conduct / 130 (C4)",
+      },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "stellar-40",
+      label: { zh: "辉映·星超导 / 40点", en: "Radiance: Stellar-Conduct / 40" },
+      when: (tm) => tm.hasReaction("stellarConduct"),
+    },
+    {
+      value: "normal-100",
+      label: { zh: "无辉映 / 100点", en: "No Radiance / 100" },
+    },
+    {
+      value: "normal-130",
+      label: { zh: "无辉映 / 130点（C4）", en: "No Radiance / 130 (C4)" },
+    },
+    {
+      value: "normal-40",
+      label: { zh: "无辉映 / 40点", en: "No Radiance / 40" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("valeriy", valeriyOption)
+class Valeriy extends CharacterBase {
+  private readonly state = resolveOption(
+    valeriyOption,
+    this.option,
+    this.teamMeta
+  );
+  private readonly radianceOn = this.state.startsWith("stellar-");
+  private readonly charge = Math.min(
+    Number(this.state.split("-")[1]),
+    this.constellation >= 4 ? 130 : 100
+  );
+
+  readonly buffs = (() => {
+    const buffs: StatBuff[] = [
+      // Fifteen stacks are shared by all on-field recipients; use one buff,
+      // not a per-teammate copy. Charge is consumed before the buff is granted.
+      new ScalingBuff(
+        { ...cbs(this, "A/P2", ["charge"]), maxStacks: 15 },
+        {
+          receiver: "teamOnField",
+          filter: {
+            elements: ["Electro"],
+            abilities: ["normal", "charge", "plunge", "skill", "burst"],
+            ...(this.radianceOn
+              ? { reactions: ["stellarConduct" as const] }
+              : {}),
+          },
+        },
+        [],
+        "atk",
+        "baseDmg",
+        this.param("A", this.radianceOn ? 7 : 6) +
+          this.charge * (this.radianceOn ? 0.009 : 0.003)
+      ),
+    ];
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(cbs(this, "C2", ["E"]), { receiver: "team" }, [
+          { key: "em", value: 100 },
+        ])
+      );
+    }
+    if (this.constellation >= 6) {
+      // The C6 damage bonus is applied to the two affected formula parts below.
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["charge", "Q"]),
+          { receiver: "team", filter: { elements: ["Electro"] } },
+          [{ key: "cr", value: 0.1 }]
+        )
+      );
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["charge", "Q"]),
+          {
+            receiver: "team",
+            filter: { elements: ["Electro"], reactions: ["stellarConduct"] },
+          },
+          [{ key: "reactionCd", value: 0.4 }]
+        )
+      );
+    }
+    return buffs;
+  })();
+
+  protected override get comboDescriptor(): ComboTemplate {
+    // Stormshell frequency is not supplied in the beta talent text. Expose a
+    // per-hit entry and a conservative starter count; actual rotations can edit it.
+    return [
+      { id: "valeriy-skill", count: 1 },
+      { id: "valeriy-thunderclap", count: 1 },
+      { id: "valeriy-burst", count: 1 },
+      { id: "valeriy-stormshell", count: 1 },
+    ];
+  }
+
+  protected readonly formulaMap = (() => {
+    const normal: DamageTag = {
+      element: "Physical",
+      ability: "normal",
+      reaction: "none",
+    };
+    const c6 =
+      this.constellation >= 6
+        ? [
+            new StatBuff(
+              cbs(this, "C6", ["charge", "Q"]),
+              { receiver: "self" },
+              [{ key: "dmg%", value: 1 }]
+            ),
+          ]
+        : [];
+    return {
+      "valeriy-normal": {
+        label: { zh: "普通攻击三段", en: "Normal Attack (N3)" },
+        parts: [1, 2, 3].map((i) => ({
+          formula: new DirectFormula(this.param("A", i), normal),
+        })),
+      },
+      "valeriy-charge": {
+        label: { zh: "普通重击", en: "Charged Attack" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 4), {
+              element: "Physical",
+              ability: "charge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "valeriy-thunderclap": {
+        label: { zh: "臼炮直射·抵近轰击", en: "Thunderclap" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 5), {
+              element: "Electro",
+              ability: "charge",
+              reaction: "none",
+            }),
+            bespokeBuffs: c6,
+          },
+        ],
+      },
+      "valeriy-plunge-high": {
+        label: { zh: "下落·高", en: "High Plunge" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 10), {
+              element: "Physical",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "valeriy-skill": {
+        label: { zh: "E伤害", en: "E" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 1), {
+              element: "Electro",
+              ability: "skill",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "valeriy-burst": {
+        label: { zh: "Q冲击波", en: "Q Shockwave" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 1), {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "valeriy-stormshell": {
+        label: { zh: "雷霰重弹·每次伤害", en: "Stormshell (Per Hit)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 2), {
+              element: "Electro",
+              ability: "burst",
+              reaction: "none",
+            }),
+            offField: true,
+            bespokeBuffs: c6,
+          },
+        ],
+      },
+    };
+  })();
+}
 
 const alyoshaOption = {
   label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },

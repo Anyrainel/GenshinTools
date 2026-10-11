@@ -1,7 +1,54 @@
+import type { ReactionType } from "@/data/enums";
+import { REACTION_ELEMENT_REQUIREMENTS } from "../constants";
 import { WeaponBase } from "../core/implModel";
 import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
+
+@RegisterWeapon("weapon_catalyst")
+class WeaponCatalyst extends WeaponBase {
+  get buffs() {
+    const buffs = [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        { key: "cd", value: r(this.refinement, [0.24, 0.3, 0.36, 0.42, 0.48]) },
+      ]),
+      new StatBuff(wbs(this, ["E"]), { receiver: "self" }, [
+        { key: "em", value: r(this.refinement, [48, 60, 72, 84, 96]) },
+      ]),
+    ];
+    // Peak model: maintain three Formula Dissociation stacks within the 20s
+    // skill buff. Reactions from any teammate qualify, including the wearer.
+    const canReact = Object.keys(REACTION_ELEMENT_REQUIREMENTS).some(
+      (reaction) =>
+        reaction !== "none" &&
+        this.teamMeta.hasReaction(reaction as ReactionType)
+    );
+    if (canReact) {
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E", "elemental-reaction"]),
+          { receiver: "self" },
+          [{ key: "em", value: 3 * r(this.refinement, [24, 30, 36, 42, 48]) }]
+        )
+      );
+    }
+    if (this.teamMeta.hasReaction("stellarConduct")) {
+      buffs.push(
+        new StatBuff(
+          wbs(this, ["E", "stellarConduct"]),
+          { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+          [
+            {
+              key: "reactionCd",
+              value: 3 * r(this.refinement, [0.12, 0.15, 0.18, 0.21, 0.24]),
+            },
+          ]
+        )
+      );
+    }
+    return buffs;
+  }
+}
 
 @RegisterWeapon("hymn_of_the_maelstrom")
 class HymnOfTheMaelstrom extends WeaponBase {

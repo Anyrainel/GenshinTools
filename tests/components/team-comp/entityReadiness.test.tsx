@@ -45,11 +45,11 @@ const team = teamCompInputToComp({
   reactions: [],
 });
 
-function Roster() {
+function Roster({ teamComp = team }: { teamComp?: typeof team }) {
   const { t } = useLanguage();
   return (
     <TeamRosterCard
-      teamComp={team}
+      teamComp={teamComp}
       setupConfig={{ combatOptions: {} }}
       updateTeamComp={vi.fn()}
       updateTeamSetupConfig={vi.fn()}
@@ -66,7 +66,7 @@ describe("team picker calculator readiness", () => {
   it.each([
     "grid",
     "roster",
-  ])("%s excludes unsupported entities while retaining implemented released and beta entities", (view) => {
+  ])("%s offers released and beta entities without implementation filtering", (view) => {
     render(
       view === "grid" ? (
         <TeamCard teamComp={team} index={0} onUpdateComp={vi.fn()} />
@@ -82,12 +82,40 @@ describe("team picker calculator readiness", () => {
     )?.filter;
     expect(characterFilter).toBeDefined();
     expect(weaponFilter).toBeDefined();
-    for (const id of ["mitya", "valeriy", "missing_character"]) {
-      expect(characterFilter?.({ id })).toBe(false);
+    for (const id of ["mitya", "valeriy"]) {
+      expect(characterFilter?.({ id })).toBe(true);
     }
     expect(characterFilter?.({ id: "vesna" })).toBe(true);
+    // The selected Xingqiu takes swords. Catalyst availability is tested below
+    // with a compatible wearer, so type filtering still applies here.
     expect(weaponFilter?.(weaponsById.weapon_catalyst)).toBe(false);
     expect(weaponFilter?.(weaponsById.beyond_the_chrysalis)).toBe(true);
     expect(weaponFilter?.(weaponsById.prized_isshin_blade)).toBe(true);
+  });
+
+  it.each([
+    "grid",
+    "roster",
+  ])("%s offers the beta catalyst to a compatible wearer", (view) => {
+    const catalystTeam = teamCompInputToComp({
+      id: "beta-catalyst-team",
+      name: "",
+      characters: ["lisa", null, null, null],
+      weapons: [null, null, null, null],
+      artifacts: [null, null, null, null],
+      reactions: [],
+    });
+    render(
+      view === "grid" ? (
+        <TeamCard teamComp={catalystTeam} index={0} onUpdateComp={vi.fn()} />
+      ) : (
+        <Roster teamComp={catalystTeam} />
+      )
+    );
+    const weaponFilter = pickers.find(
+      (picker) => picker.type === "weapon"
+    )?.filter;
+    expect(weaponFilter).toBeDefined();
+    expect(weaponFilter?.(weaponsById.weapon_catalyst)).toBe(true);
   });
 });

@@ -21,6 +21,248 @@ import type {
 } from "../types";
 import { cbs } from "./helpers";
 
+const mityaOption = {
+  label: { zh: "侦测炉心", en: "Energy Device" },
+  choices: [
+    {
+      value: "collapse",
+      label: { zh: "过载（站场重击）", en: "Collapse (Charged Attacks)" },
+    },
+    {
+      value: "stable",
+      label: { zh: "稳态（满递变信标）", en: "Stable (Maximum Prisms)" },
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("mitya", mityaOption)
+class Mitya extends CharacterBase {
+  private readonly stable =
+    resolveOption(mityaOption, this.option) === "stable";
+  private readonly prismCap = this.constellation >= 1 ? 5 : 4;
+
+  readonly buffs = (() => {
+    const buffs: StatBuff[] = [
+      // Peak model: four recently generated Prisms; P2 lasts after consumption.
+      new StatBuff(cbs(this, "P2", ["E", "Q"]), { receiver: "self" }, [
+        { key: "cr", value: 0.2 },
+      ]),
+      new ScalingBuff(
+        cbs(this, "P3", []),
+        { receiver: "team", filter: { reactions: ["stellarConduct"] } },
+        [],
+        "em",
+        "reactionBaseDmg%",
+        0.00028,
+        0.14
+      ),
+    ];
+    if (this.teamMeta.hasReaction("stellarConduct")) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P3", ["stellarConduct"]),
+          { receiver: "team", filter: { elements: ["Cryo", "Electro"] } },
+          [{ key: "polestarField", value: 1 }]
+        )
+      );
+    }
+    if (this.stable) {
+      buffs.push(
+        new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
+          { key: "em", value: 30 * this.prismCap },
+        ])
+      );
+    }
+    if (this.constellation >= 1) {
+      buffs.push(
+        new StatBuff(cbs(this, "C1", ["E"]), { receiver: "teamOnField" }, [
+          { key: "cd", value: 0.5 },
+        ])
+      );
+    }
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: "team", filter: { elements: ["Cryo", "Electro"] } },
+          [{ key: "resReduction%", value: 0.25 }]
+        )
+      );
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", ["E"]),
+          { receiver: this.stable ? "team" : "teamOnField" },
+          [{ key: "em", value: this.stable ? 100 : 200 }]
+        )
+      );
+    }
+    if (this.constellation >= 6) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", []),
+          { receiver: "team", filter: { reactions: ["stellarConduct"] } },
+          [{ key: "elevated%", value: 0.2 }]
+        )
+      );
+    }
+    return buffs;
+  })();
+
+  protected override get comboDescriptor(): ComboTemplate {
+    // Collapse starter: Q supplies three Prisms and E supplies one at C1.
+    // Stable mode uses the option's full-Prism assumption for its single
+    // expiration explosion. Reaction-generated Prisms and C6 random refunds
+    // depend on the team's rotation; users can edit the per-hit counts.
+    return this.stable
+      ? [
+          { id: "mitya-e-tap", count: 1 },
+          { id: "mitya-burst", count: 1 },
+          { id: "mitya-stable-pulse", count: 1 },
+          { id: "mitya-prism-shatter", count: 1 },
+        ]
+      : [
+          { id: "mitya-e-hold", count: 1 },
+          { id: "mitya-burst", count: 1 },
+          { id: "mitya-prism-detonation", count: 1 },
+          {
+            id: "mitya-prism-consume",
+            count: 3,
+            bonus: [{ minC: 1, delta: 1 }],
+          },
+        ];
+  }
+
+  protected readonly formulaMap = (() => {
+    const normal: DamageTag = {
+      element: "Electro",
+      ability: "normal",
+      reaction: "none",
+    };
+    const charge: DamageTag = {
+      element: "Electro",
+      ability: "charge",
+      reaction: "none",
+    };
+    const skill: DamageTag = {
+      element: "Electro",
+      ability: "skill",
+      reaction: "none",
+    };
+    const stellarSkill: DamageTag = { ...skill, reaction: "stellarConduct" };
+    return {
+      "mitya-normal": {
+        label: { zh: "普通攻击三段", en: "Normal Attack (N3)" },
+        parts: [1, 2, 3].map((i) => ({
+          formula: new DirectFormula(this.param("A", i), normal),
+        })),
+      },
+      "mitya-charge": {
+        label: { zh: "普通重击", en: "Charged Attack" },
+        parts: [{ formula: new DirectFormula(this.param("A", 4), charge) }],
+      },
+      "mitya-plunge-high": {
+        label: { zh: "下落·高", en: "High Plunge" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 7), {
+              element: "Electro",
+              ability: "plunge",
+              reaction: "none",
+            }),
+          },
+        ],
+      },
+      "mitya-prism-detonation": {
+        label: { zh: "递变聚爆·首击", en: "Detonation First Hit" },
+        when: !this.stable,
+        parts: [{ formula: new DirectFormula(this.param("A", 8), charge) }],
+      },
+      "mitya-prism-consume": {
+        label: { zh: "递变聚爆·每枚信标", en: "Detonation Per Prism" },
+        when: !this.stable,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param("A", 9),
+              { ...charge, reaction: "stellarConduct" },
+              "em"
+            ),
+          },
+        ],
+      },
+      "mitya-e-tap": {
+        label: { zh: "E短按", en: "E Tap" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), skill) }],
+      },
+      "mitya-e-hold": {
+        label: { zh: "E长按", en: "E Hold" },
+        parts: [{ formula: new DirectFormula(this.param("E", 2), skill) }],
+      },
+      "mitya-stable-pulse": {
+        label: { zh: "稳态炉心·每次伤害", en: "Stabilizer Pulse" },
+        when: this.stable,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 3), skill),
+            offField: true,
+          },
+        ],
+      },
+      "mitya-prism-surge": {
+        label: { zh: "稳态炉心·溢出信标", en: "Prism Surge" },
+        when: this.stable,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param("E", 4),
+              stellarSkill,
+              "em"
+            ),
+            offField: true,
+          },
+        ],
+      },
+      "mitya-prism-shatter": {
+        label: { zh: "稳态炉心·满信标引爆", en: "Full Prism Shatter" },
+        when: this.stable,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param("E", 5) * this.prismCap,
+              stellarSkill,
+              "em"
+            ),
+            offField: true,
+          },
+        ],
+      },
+      "mitya-burst": {
+        label: { zh: "Q伤害", en: "Q" },
+        parts: [
+          {
+            formula: new DirectFormula(
+              this.param("Q", 1),
+              { element: "Electro", ability: "burst", reaction: "none" },
+              "atk",
+              { key: "em", multiplier: this.param("Q", 2) }
+            ),
+          },
+        ],
+      },
+      "mitya-c4": {
+        label: { zh: "C4炉心追加伤害", en: "C4 Device Proc" },
+        minC: 4,
+        parts: [
+          {
+            formula: new StellarDirectFormula(4, stellarSkill, "em"),
+            offField: this.stable,
+          },
+        ],
+      },
+    };
+  })();
+}
+
 class ArlecchinoNormalFormula extends DirectFormula {
   constructor(
     talentMultiplier: number,

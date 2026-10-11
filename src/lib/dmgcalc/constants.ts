@@ -190,9 +190,10 @@ export const STELLAR_SUPERSEDES: Partial<
  * Party members whose passive converts a base reaction into a Stellar reaction.
  * Sandrone/Odette/Traveler (Cryo) P3 convert both 超导→星超导 and 冰元素扩散→星扩散;
  * Vesna P3 only converts 冰元素扩散→星扩散, so she does not unlock Stellar-Conduct.
+ * Mitya P3 only converts 超导→星超导.
  */
 export const STELLAR_ENABLERS: Record<StellarReactionType, string[]> = {
-  stellarConduct: ["sandrone", "odette", "traveler_cryo"],
+  stellarConduct: ["sandrone", "odette", "traveler_cryo", "mitya"],
   stellarSwirl: ["sandrone", "odette", "traveler_cryo", "vesna"],
 };
 
