@@ -93,10 +93,13 @@ export function AnalyzerConfigCard({
       <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
         <span className={CARD_TITLE_CLS}>
           <Users className="w-4 h-4 opacity-70" />
-          {t.ui("teamComp.teamRoster")}
+          {t.ui("teamComp.investmentRange")}
         </span>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
+        <p className="px-2 py-2 text-sm text-muted-foreground">
+          {t.ui("teamComp.investmentRangeDesc")}
+        </p>
         <TeamCharacterGrid>
           {charConfigs.map((cfg) => {
             const bc = configs.find((b) => b.charId === cfg.charId);

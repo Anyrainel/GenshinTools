@@ -90,6 +90,8 @@ interface ItemPickerProps<T extends ItemPickerType> {
   triggerSize?: ItemIconSize;
   menuSize?: ItemIconSize;
   placeholder?: string;
+  /** Accessible name for the item selection button. */
+  triggerLabel?: string;
   showItemName?: boolean;
   /** Show element badge overlay on character icons */
   showElementBadge?: boolean;
@@ -115,6 +117,8 @@ function ItemPickerComponent<T extends ItemPickerType>({
   tooltipSide = "right",
   triggerSize = "lg",
   menuSize = "md",
+  placeholder,
+  triggerLabel,
   showItemName = false,
   showElementBadge = false,
   defaultOpen = false,
@@ -160,7 +164,10 @@ function ItemPickerComponent<T extends ItemPickerType>({
   }, [onClear]);
 
   const trigger = (
-    <div
+    <button
+      type="button"
+      disabled={disabled}
+      aria-label={triggerLabel ?? placeholder}
       className={cn(
         "flex flex-col items-center gap-2",
         "cursor-pointer hover:scale-105 transition-transform select-none relative",
@@ -178,7 +185,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
         frozen={frozen}
       />
       {showItemName && value && <PickerItemName type={type} value={value} />}
-    </div>
+    </button>
   );
 
   const content = (

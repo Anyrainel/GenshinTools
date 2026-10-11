@@ -1,7 +1,15 @@
-import { BarChart3, Loader2, Play } from "lucide-react";
+import { BarChart3, ChevronDown, Loader2, Play } from "lucide-react";
 import { useCallback, useState } from "react";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  LightweightSelect,
+  LightweightSelectContent,
+  LightweightSelectItem,
+  LightweightSelectTrigger,
+  LightweightSelectValue,
+} from "@/components/ui/lightweight-select";
 import {
   OptionButton,
   OptionButtonCell,
@@ -16,6 +24,7 @@ import type {
   AnalyzerCharConfig,
   AnalyzerResult,
 } from "@/lib/team-comp/analyzer/types";
+import { fmtDamage } from "@/lib/team-comp/displayFormatter";
 import { cn } from "@/lib/utils";
 import { AnalyzerChart } from "./AnalyzerChart";
 import { AnalyzerSequence } from "./AnalyzerSequence";
@@ -63,6 +72,14 @@ export function AnalyzerResultCard({
 
   type ResultTab = "table" | "sequence";
   const [resultTab, setResultTab] = useState<ResultTab>("table");
+  const [selectedBudget, setSelectedBudget] = useState(1);
+  const baseline = result?.sequence[0];
+  const selectedStep =
+    result?.sequence.find(
+      (step) => step.jin - (baseline?.jin ?? 0) === selectedBudget
+    ) ??
+    result?.sequence[1] ??
+    baseline;
 
   const overallPct = progress ? Math.round(progress.overallProgress * 100) : 0;
 
@@ -78,73 +95,85 @@ export function AnalyzerResultCard({
 
   return (
     <Card className={CARD_CLS}>
-      <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
+      <CardHeader
+        className={cn(
+          CARD_HEADER_CLS,
+          "py-2 flex-row items-center justify-between gap-2 space-y-0"
+        )}
+      >
         <span className={CARD_TITLE_CLS}>
           <BarChart3 className="w-4 h-4 opacity-70" />
-          {t.ui("teamComp.analyzerChart")}
+          {t.ui("teamComp.investmentResults")}
         </span>
+        <Button
+          onClick={isComputing ? onStop : onRun}
+          variant={isComputing ? "destructive" : "default"}
+          size="sm"
+          className="shrink-0"
+        >
+          {isComputing ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-1" />
+              {t.ui("common.stop")}
+            </>
+          ) : (
+            <>
+              <Play className="w-4 h-4 mr-1" />
+              {t.ui("teamComp.runAnalysis")}
+            </>
+          )}
+        </Button>
       </CardHeader>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-        <div className={CONTROLS_CLS}>
-          <EnemyInputs
-            enemyLevel={ctx.enemyLevel ?? ""}
-            onEnemyLevelChange={(raw) => {
-              const num = Number(raw);
-              if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
-            }}
-            enemyRes={
-              ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
-            }
-            onEnemyResChange={(raw) => {
-              const num = Number(raw);
-              if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
-            }}
-            t={t}
-          />
-          <RollQualityInputs
-            rollMultiplier={
-              ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
-            }
-            onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
-            substatBudget={
-              ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
-            }
-            onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
-            t={t}
-          />
-          {hasStellarConduct && (
-            <StellarDirectCoeffInput
-              stellarAttachHits={ctx.stellarAttachHits}
-              stellarDirectCoeff={ctx.stellarDirectCoeff}
-              onStellarAttachHitsChange={(hits) =>
-                patchCtx({
-                  stellarAttachHits: hits,
-                  stellarDirectCoeff: undefined,
-                })
-              }
-              t={t}
-            />
-          )}
-
-          <Button
-            onClick={isComputing ? onStop : onRun}
-            variant={isComputing ? "destructive" : "default"}
-            size="sm"
-            className="shrink-0"
-          >
-            {isComputing ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                {t.ui("common.stop")}
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-1" />
-                {t.ui("teamComp.runAnalysis")}
-              </>
-            )}
-          </Button>
-        </div>
+        <details className="group rounded-lg border border-border bg-background/30">
+          <summary className="flex cursor-pointer list-none items-center gap-2 p-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+            <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            {t.ui("teamComp.analysisAssumptions")}
+          </summary>
+          <div className="px-2 pb-2">
+            <div className={CONTROLS_CLS}>
+              <EnemyInputs
+                enemyLevel={ctx.enemyLevel ?? ""}
+                onEnemyLevelChange={(raw) => {
+                  const num = Number(raw);
+                  if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
+                }}
+                enemyRes={
+                  ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
+                }
+                onEnemyResChange={(raw) => {
+                  const num = Number(raw);
+                  if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
+                }}
+                t={t}
+              />
+              <RollQualityInputs
+                rollMultiplier={
+                  ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
+                }
+                onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
+                substatBudget={
+                  ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
+                }
+                onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
+                t={t}
+              />
+              {hasStellarConduct && (
+                <StellarDirectCoeffInput
+                  stellarAttachHits={ctx.stellarAttachHits}
+                  stellarDirectCoeff={ctx.stellarDirectCoeff}
+                  onStellarAttachHitsChange={(hits) =>
+                    patchCtx({
+                      stellarAttachHits: hits,
+                      stellarDirectCoeff: undefined,
+                    })
+                  }
+                  t={t}
+                />
+              )}
+            </div>
+          </div>
+        </details>
 
         {isComputing && progress ? (
           <div className="space-y-1">
@@ -165,6 +194,90 @@ export function AnalyzerResultCard({
 
         {result ? (
           <>
+            {baseline && selectedStep && (
+              <section className="rounded-lg border border-primary/30 bg-primary/5 p-3 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-semibold">
+                      {t.ui("teamComp.investmentBestAtBudget")}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm">
+                        {t.ui("teamComp.investmentBudget")}
+                      </span>
+                      <LightweightSelect
+                        value={String(selectedStep.jin - baseline.jin)}
+                        onValueChange={(value) =>
+                          setSelectedBudget(Number(value))
+                        }
+                      >
+                        <LightweightSelectTrigger
+                          className="h-8 w-20"
+                          aria-label={t.ui("teamComp.investmentBudget")}
+                        >
+                          <LightweightSelectValue />
+                        </LightweightSelectTrigger>
+                        <LightweightSelectContent>
+                          {result.sequence.map((step) => (
+                            <LightweightSelectItem
+                              key={step.jin}
+                              value={String(step.jin - baseline.jin)}
+                            >
+                              +{step.jin - baseline.jin}
+                            </LightweightSelectItem>
+                          ))}
+                        </LightweightSelectContent>
+                      </LightweightSelect>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xl font-bold tabular-nums text-primary">
+                      +{selectedStep.gainVsBaselinePct.toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {t.ui("teamComp.investmentGain")}
+                    </div>
+                    <div className="text-xs tabular-nums">
+                      {t.ui("common.damage")}: {fmtDamage(selectedStep.damage)}
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                  {charIds.map((charId) => {
+                    const allocation = selectedStep.allocation[charId];
+                    if (!allocation) return null;
+                    return (
+                      <div
+                        key={charId}
+                        className="flex items-center gap-2 rounded-md border border-border bg-background/50 p-2"
+                      >
+                        <ItemIcon characterId={charId} size="xs" />
+                        <div className="min-w-0 flex-1">
+                          <div className="truncate text-xs font-semibold">
+                            {t.character(charId)}
+                          </div>
+                          <div className="text-xs">
+                            {t.format(
+                              "common.constellationFormat",
+                              allocation.constellation
+                            )}
+                          </div>
+                        </div>
+                        <div className="shrink-0 text-center">
+                          <ItemIcon weaponId={allocation.weaponId} size="xs" />
+                          <div className="text-xs">
+                            {t.format(
+                              "common.refinementFormat",
+                              allocation.refinement
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
             <AnalyzerChart result={result} charIds={charIds} />
 
             <OptionButtonRow className="px-0 pt-2">

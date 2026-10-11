@@ -2,6 +2,11 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
+import {
+  OptionButton,
+  OptionButtonCell,
+  OptionButtonRow,
+} from "@/components/ui/option-button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   characterStatsResource,
@@ -567,6 +572,41 @@ export function WeaponChoiceDetail({
       >
         {headerContent}
 
+        <section className="rounded-lg border border-border bg-gradient-card p-3">
+          <h3 className="font-semibold">{t.ui("teamComp.comparisonGoal")}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t.ui("teamComp.comparisonGuide")}
+          </p>
+          <OptionButtonRow className="px-0 pb-0 flex-col sm:flex-row">
+            <OptionButtonCell>
+              <OptionButton
+                selected={choiceMode === "weapon"}
+                onClick={() => {
+                  if (choiceMode !== "weapon") {
+                    stop();
+                    setChoiceMode("weapon");
+                  }
+                }}
+                title={t.ui("teamComp.choiceModeWeapon")}
+                subtitle={t.ui("teamComp.choiceModeWeaponDesc")}
+              />
+            </OptionButtonCell>
+            <OptionButtonCell>
+              <OptionButton
+                selected={choiceMode === "artifact"}
+                onClick={() => {
+                  if (choiceMode !== "artifact") {
+                    stop();
+                    setChoiceMode("artifact");
+                  }
+                }}
+                title={t.ui("teamComp.choiceModeArtifact")}
+                subtitle={t.ui("teamComp.choiceModeArtifactDesc")}
+              />
+            </OptionButtonCell>
+          </OptionButtonRow>
+        </section>
+
         {/* 1. Team Roster (refinement hidden — weapons are the test variable) */}
         <TeamRosterCard
           teamComp={teamComp}
@@ -626,7 +666,6 @@ export function WeaponChoiceDetail({
           charIds={charIds}
           isComputing={isComputing}
           choiceMode={choiceMode}
-          onChoiceModeChange={setChoiceMode}
           result={activeDisplayResult}
           progress={computeResult?.progress}
           error={error}

@@ -126,6 +126,12 @@ export const getNavigationConfig = (
         value: "weapon",
         icon: Medal,
       },
+      {
+        label: t.ui("teammateSearch.title"),
+        href: "/team-comp/teammates",
+        value: "teammates",
+        icon: Users,
+      },
     ],
   },
   {

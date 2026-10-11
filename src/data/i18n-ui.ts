@@ -1,4 +1,68 @@
 export const i18nUiData = {
+  teammateSearch: {
+    error: {
+      en: "Teammate search failed. Try again or choose a different anchor.",
+      zh: "队友搜索失败，请重试或更换目标角色。",
+    },
+    removeMember: { en: "Remove fixed character", zh: "移除固定角色" },
+    title: { en: "Find teammates", zh: "寻找队友" },
+    description: {
+      en: "Keep 1–3 characters and find teammates from your account.",
+      zh: "固定1至3名角色，从账号中寻找合适的队友。",
+    },
+    fixedMembers: { en: "Characters to keep", zh: "固定角色" },
+    anchor: { en: "Damage target", zh: "伤害目标角色" },
+    addMember: { en: "Keep another character", zh: "再固定一名角色" },
+    settings: {
+      en: "Constellation & refinement assumptions",
+      zh: "命座与精炼设置",
+    },
+    constellation4: {
+      en: "3–4★ character constellations",
+      zh: "三星、四星角色命座",
+    },
+    constellation5: { en: "5★ character constellations", zh: "五星角色命座" },
+    refinement34: { en: "3–4★ weapon refinements", zh: "三星、四星武器精炼" },
+    refinement5: { en: "5★ weapon refinements", zh: "五星武器精炼" },
+    accountValue: { en: "Use account value", zh: "使用账号数据" },
+    search: { en: "Find my teammates", zh: "开始寻找队友" },
+    cancel: { en: "Stop search", zh: "停止搜索" },
+    screening: {
+      en: "Comparing teammates and weapons…",
+      zh: "正在比较队友与武器…",
+    },
+    artifacts: {
+      en: "Optimizing inventory artifacts…",
+      zh: "正在优化背包圣遗物…",
+    },
+    evaluated: { en: "Configurations checked", zh: "已比较配置数" },
+    assumptions: {
+      en: "Ranks the first member’s default combo, not full-team DPS. Approximate search using owned weapon copies. Frozen artifacts are excluded; locked pieces can be moved from other characters. Rank overrides apply to all team members. Energy and survivability are not checked.",
+      zh: "按首位角色的默认输出组合排序，并非全队秒伤。搜索结果为近似方案，武器使用已拥有的副本。排除已冻结的圣遗物，其余圣遗物可从其他角色调配，包括已锁定的圣遗物。命座与精炼设置适用于全队。不检查充能循环与生存能力。",
+    },
+    noAccount: {
+      en: "Import your account to search owned teammates and equipment.",
+      zh: "请先导入账号数据，再搜索已拥有的队友与装备。",
+    },
+    noResults: {
+      en: "No complete team found with the available characters and weapons.",
+      zh: "现有角色与武器无法组成完整队伍。",
+    },
+    saveTeam: { en: "Save team & loadout", zh: "保存队伍与配装" },
+    saved: {
+      en: "Team saved. Review its setup in Damage optimization.",
+      zh: "队伍已保存，可前往伤害优化确认配置。",
+    },
+    damage: { en: "Anchor combo damage", zh: "目标角色组合伤害" },
+    partialSearch: {
+      en: "Approximate results from a limited search",
+      zh: "有限搜索得到的近似结果",
+    },
+    skipped: {
+      en: "Unavailable configurations skipped",
+      zh: "已跳过不可用配置",
+    },
+  },
   scannerDownload: {
     menu: { en: "Download GGScanner", zh: "下载 GGScanner" },
     platform: {
@@ -1486,6 +1550,47 @@ export const i18nUiData = {
     nodkrai: { en: "Nod-Krai", zh: "挪德卡莱" },
   },
   teamComp: {
+    investmentBudget: { en: "Additional 5★ copies", zh: "新增金数" },
+    investmentGain: {
+      en: "Gain from your starting point",
+      zh: "相对当前配置的提升",
+    },
+    investmentBestAtBudget: {
+      en: "Best team at this budget",
+      zh: "该档位的最佳配置",
+    },
+    analysisAssumptions: { en: "Calculation settings", zh: "计算设置" },
+    analysisAssumptionsDesc: {
+      en: "Enemy stats, artifact quality, and stat requirements",
+      zh: "敌人属性、圣遗物练度与属性要求",
+    },
+    comparisonGoal: {
+      en: "What would you like to compare?",
+      zh: "想比较什么？",
+    },
+    comparisonGuide: {
+      en: "Choose a comparison, check your team and damage target, then compare the results.",
+      zh: "选择比较项目，确认队伍与伤害目标，再查看比较结果。",
+    },
+    percentOfBest: { en: "% of best", zh: "最优方案占比" },
+    showAllChoices: { en: "Show all choices", zh: "查看全部方案" },
+    showTopChoices: { en: "Show top choices", zh: "只看前列方案" },
+    investmentRange: {
+      en: "Your starting point and upgrade limits",
+      zh: "当前配置与提升上限",
+    },
+    investmentRangeDesc: {
+      en: "Set your current constellations and weapons, then the highest upgrades you want to consider.",
+      zh: "设置当前命座与武器配置，再选择愿意考虑的命座、精炼上限。",
+    },
+    investmentGuide: {
+      en: "Set upgrade limits, check the rotation, then find the strongest team at each investment level.",
+      zh: "设置提升范围，确认输出循环，再比较各投资档位的最佳队伍配置。",
+    },
+    investmentResults: {
+      en: "Where should you invest next?",
+      zh: "下一步该提升什么？",
+    },
     emptyTeamTitle: {
       en: "Team Damage Calculator",
       zh: "队伍伤害计算器",
@@ -1899,10 +2004,6 @@ export const i18nUiData = {
       en: "Optimizing paths…",
       zh: "优化路径中…",
     },
-    analyzerChart: {
-      en: "Chart",
-      zh: "图表",
-    },
     analyzerTable: {
       en: "Table",
       zh: "表格",
@@ -1920,12 +2021,12 @@ export const i18nUiData = {
       zh: "最优升级顺序",
     },
     analyzerMinConfig: {
-      en: "Min Config",
-      zh: "最低配置",
+      en: "Starting point",
+      zh: "当前配置",
     },
     analyzerMaxConfig: {
-      en: "Max Config",
-      zh: "最高配置",
+      en: "Upgrade limit",
+      zh: "提升上限",
     },
     analyzerWeapon4StarR0: {
       en: "3/4★R5",

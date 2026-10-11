@@ -480,6 +480,10 @@ export function InvestmentDetail({
       >
         {headerContent}
 
+        <p className="px-2 py-2 text-sm text-muted-foreground">
+          {t.ui("teamComp.investmentGuide")}
+        </p>
+
         {/* 1. Character Config Card */}
         <AnalyzerConfigCard
           charConfigs={charConfigs}

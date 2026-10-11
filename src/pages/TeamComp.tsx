@@ -26,16 +26,18 @@ import { DamageView } from "./team-comp/DamageView";
 import type { FrozenViewHandle } from "./team-comp/FrozenView";
 import { FrozenView } from "./team-comp/FrozenView";
 import { InvestmentView } from "./team-comp/InvestmentView";
+import { TeammateSearchView } from "./team-comp/TeammateSearchView";
 import { WeaponChoiceView } from "./team-comp/WeaponChoiceView";
 
-type TeamCompTab = "damage" | "frozen" | "investment" | "weapon";
+type TeamCompTab = "damage" | "frozen" | "investment" | "weapon" | "teammates";
 
 function isValidTab(tab: string | null): tab is TeamCompTab {
   return (
     tab === "damage" ||
     tab === "frozen" ||
     tab === "investment" ||
-    tab === "weapon"
+    tab === "weapon" ||
+    tab === "teammates"
   );
 }
 
@@ -149,6 +151,14 @@ export default function TeamCompPage() {
         }
       >
         <FrozenView ref={frozenViewRef} />
+      </PageLayout>
+    );
+  }
+
+  if (activeTab === "teammates") {
+    return (
+      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+        <TeammateSearchView />
       </PageLayout>
     );
   }

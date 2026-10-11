@@ -1,5 +1,5 @@
-import { ArrowRight, Loader2, Play } from "lucide-react";
-import { type ReactNode, useCallback } from "react";
+import { ArrowRight, ChevronDown, Loader2, Play } from "lucide-react";
+import { type ReactNode, useCallback, useState } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -11,15 +11,10 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import {
-  OptionButton,
-  OptionButtonCell,
-  OptionButtonRow,
-} from "@/components/ui/option-button";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { SubStat } from "@/data/enums";
@@ -192,7 +187,6 @@ interface WeaponChoiceResultCardProps {
   charIds: string[];
   isComputing: boolean;
   choiceMode: "weapon" | "artifact";
-  onChoiceModeChange: (mode: "weapon" | "artifact") => void;
   result: WeaponChoiceResult | null;
   progress?: WeaponChoiceProgress;
   error: Error | null;
@@ -426,13 +420,16 @@ function WeaponEntryRow({
   const hasDetail = !!(entry.mainStats || entry.substatRolls);
 
   const row = (
-    <div
+    <button
+      type="button"
+      disabled={!hasDetail}
+      aria-label={detailLabel}
       className={cn(
-        "flex items-center gap-1 px-1 py-1 text-xs md:text-sm lg:gap-1.5 lg:px-2 lg:text-xs xl:text-sm",
+        "flex w-full items-center gap-1 px-1 py-1.5 text-left text-xs md:text-sm lg:gap-1.5 lg:px-2 lg:text-xs xl:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary",
         isTop
-          ? "bg-sky-900/30 border border-sky-600/30"
+          ? "bg-primary/10 border border-primary/30"
           : "border border-transparent",
-        hasDetail && "cursor-default"
+        hasDetail && "cursor-pointer hover:bg-accent"
       )}
     >
       <span className="w-4 lg:w-5 text-right text-muted-foreground font-mono shrink-0">
@@ -444,12 +441,12 @@ function WeaponEntryRow({
       <span
         className={cn(
           "w-11 lg:w-14 text-right font-mono font-bold shrink-0",
-          isTop ? "text-sky-300" : "text-foreground"
+          isTop ? "text-primary" : "text-foreground"
         )}
       >
         {entry.percentOfBest.toFixed(1)}%
       </span>
-    </div>
+    </button>
   );
 
   if (!hasDetail) return row;
@@ -478,11 +475,11 @@ function WeaponEntryRow({
     );
   }
 
-  // Desktop: hover card
+  // Desktop: explicit click / keyboard activation, matching the mobile drawer.
   return (
-    <HoverCard openDelay={300}>
-      <HoverCardTrigger asChild>{row}</HoverCardTrigger>
-      <HoverCardContent
+    <Popover>
+      <PopoverTrigger asChild>{row}</PopoverTrigger>
+      <PopoverContent
         side="right"
         className="w-64 p-3 border-border bg-popover"
       >
@@ -493,8 +490,8 @@ function WeaponEntryRow({
           charId={charId}
           t={t}
         />
-      </HoverCardContent>
-    </HoverCard>
+      </PopoverContent>
+    </Popover>
   );
 }
 
@@ -517,11 +514,25 @@ export function CharacterWeaponPanel({
   t: WeaponChoiceResultCardProps["t"];
 }) {
   const highlightCount = getHighlightCount(rankings);
+  const [showAll, setShowAll] = useState(false);
+  const shortlist = rankings.slice(0, 5);
+  // Keep a practical R1 option visible when refinements fill the top ranks.
+  const bestR1 = rankings.find(
+    (entry) =>
+      entry.type !== "artifact" &&
+      entry.refinement === 1 &&
+      weaponsById[entry.weaponId]?.rarity === 5
+  );
+  if (bestR1 && !shortlist.includes(bestR1)) shortlist.push(bestR1);
+  const visibleRankings = showAll ? rankings : shortlist;
   return (
     <div className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden">
       <CharPanelHeader charId={charId} scopeHint={scopeHint} t={t} />
+      <div className="px-2 py-1 text-right text-xs text-muted-foreground">
+        {t.ui("teamComp.percentOfBest")}
+      </div>
       <div className="overflow-y-auto max-h-72 md:max-h-96">
-        {rankings.map((entry, idx) => (
+        {visibleRankings.map((entry) => (
           <WeaponEntryRow
             key={
               entry.type === "artifact"
@@ -532,13 +543,25 @@ export function CharacterWeaponPanel({
             characters={characters}
             weapons={weapons}
             charId={charId}
-            idx={idx}
-            isTop={idx < highlightCount}
+            idx={rankings.indexOf(entry)}
+            isTop={rankings.indexOf(entry) < highlightCount}
             isMobile={isMobile}
             t={t}
           />
         ))}
       </div>
+      {rankings.length > shortlist.length && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="rounded-none border-t border-border text-xs"
+          onClick={() => setShowAll((value) => !value)}
+        >
+          {showAll
+            ? t.ui("teamComp.showTopChoices")
+            : `${t.ui("teamComp.showAllChoices")} (${rankings.length})`}
+        </Button>
+      )}
     </div>
   );
 }
@@ -718,7 +741,6 @@ export function WeaponChoiceResultCard({
   charIds,
   isComputing,
   choiceMode,
-  onChoiceModeChange,
   result,
   progress,
   error,
@@ -759,108 +781,98 @@ export function WeaponChoiceResultCard({
 
   return (
     <Card className={CARD_CLS}>
-      <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
+      <CardHeader
+        className={cn(
+          CARD_HEADER_CLS,
+          "py-2 flex-row items-center justify-between gap-2 space-y-0"
+        )}
+      >
         <span className={CARD_TITLE_CLS}>
           {t.ui("teamComp.weaponChoiceResults")}
         </span>
+        <Button
+          onClick={isComputing ? onStop : onRun}
+          variant={isComputing ? "destructive" : "default"}
+          size="sm"
+          className="shrink-0"
+        >
+          {isComputing ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin mr-1" />
+              {t.ui("common.stop")}
+            </>
+          ) : (
+            <>
+              <Play className="w-4 h-4 mr-1" />
+              {t.ui("teamComp.runAnalysis")}
+            </>
+          )}
+        </Button>
       </CardHeader>
-      <OptionButtonRow>
-        {(
-          [
-            {
-              key: "weapon" as const,
-              label: "teamComp.choiceModeWeapon" as const,
-              desc: "teamComp.choiceModeWeaponDesc" as const,
-            },
-            {
-              key: "artifact" as const,
-              label: "teamComp.choiceModeArtifact" as const,
-              desc: "teamComp.choiceModeArtifactDesc" as const,
-            },
-          ] as const
-        ).map(({ key, label, desc }) => (
-          <OptionButtonCell key={key}>
-            <OptionButton
-              selected={choiceMode === key}
-              onClick={() => onChoiceModeChange(key)}
-              title={t.ui(label)}
-              subtitle={t.ui(desc)}
-            />
-          </OptionButtonCell>
-        ))}
-      </OptionButtonRow>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-        {/* Per-character CR/ER settings */}
-        <CharCrErSettings
-          characters={characters}
-          charConfigs={setupConfig.charConfigs}
-          onCharConfigsChange={(charConfigs) =>
-            onSetupConfigChange({ charConfigs })
-          }
-          t={t}
-        />
-
-        {/* Settings row */}
-        <div className={CONTROLS_CLS}>
-          <EnemyInputs
-            enemyLevel={ctx.enemyLevel ?? ""}
-            enemyRes={
-              ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
-            }
-            onEnemyLevelChange={(raw) => {
-              const num = Number(raw);
-              if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
-            }}
-            onEnemyResChange={(raw) => {
-              const num = Number(raw);
-              if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
-            }}
-            t={t}
-          />
-          <RollQualityInputs
-            rollMultiplier={
-              ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
-            }
-            substatBudget={
-              ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
-            }
-            onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
-            onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
-            t={t}
-          />
-          {hasStellarConduct && (
-            <StellarDirectCoeffInput
-              stellarAttachHits={ctx.stellarAttachHits}
-              stellarDirectCoeff={ctx.stellarDirectCoeff}
-              onStellarAttachHitsChange={(hits) =>
-                patchCtx({
-                  stellarAttachHits: hits,
-                  stellarDirectCoeff: undefined,
-                })
+        <details className="group rounded-lg border border-border bg-background/30">
+          <summary className="flex cursor-pointer list-none items-center gap-2 p-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
+            <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+            {t.ui("teamComp.analysisAssumptions")}
+            <span className="hidden sm:inline text-xs font-normal text-muted-foreground">
+              {t.ui("teamComp.analysisAssumptionsDesc")}
+            </span>
+          </summary>
+          <div className="px-2 pb-2 space-y-2">
+            {/* Per-character CR/ER settings */}
+            <CharCrErSettings
+              characters={characters}
+              charConfigs={setupConfig.charConfigs}
+              onCharConfigsChange={(charConfigs) =>
+                onSetupConfigChange({ charConfigs })
               }
               t={t}
             />
-          )}
 
-          <Button
-            onClick={isComputing ? onStop : onRun}
-            variant={isComputing ? "destructive" : "default"}
-            size="sm"
-            className="shrink-0"
-          >
-            {isComputing ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                {t.ui("common.stop")}
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 mr-1" />
-                {t.ui("teamComp.runAnalysis")}
-              </>
-            )}
-          </Button>
-        </div>
+            {/* Settings row */}
+            <div className={CONTROLS_CLS}>
+              <EnemyInputs
+                enemyLevel={ctx.enemyLevel ?? ""}
+                enemyRes={
+                  ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
+                }
+                onEnemyLevelChange={(raw) => {
+                  const num = Number(raw);
+                  if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
+                }}
+                onEnemyResChange={(raw) => {
+                  const num = Number(raw);
+                  if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
+                }}
+                t={t}
+              />
+              <RollQualityInputs
+                rollMultiplier={
+                  ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
+                }
+                substatBudget={
+                  ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
+                }
+                onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
+                onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
+                t={t}
+              />
+              {hasStellarConduct && (
+                <StellarDirectCoeffInput
+                  stellarAttachHits={ctx.stellarAttachHits}
+                  stellarDirectCoeff={ctx.stellarDirectCoeff}
+                  onStellarAttachHitsChange={(hits) =>
+                    patchCtx({
+                      stellarAttachHits: hits,
+                      stellarDirectCoeff: undefined,
+                    })
+                  }
+                  t={t}
+                />
+              )}
+            </div>
+          </div>
+        </details>
 
         {/* Progress chips with ring spinners */}
         {isComputing && (
@@ -883,7 +895,12 @@ export function WeaponChoiceResultCard({
                   return (
                     <span
                       key={cp.charId}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs ${isDone ? "border-border text-muted-foreground" : "border-primary/30 text-foreground"}`}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs",
+                        isDone
+                          ? "border-border text-muted-foreground"
+                          : "border-primary/30 text-foreground"
+                      )}
                     >
                       <svg
                         width="16"
