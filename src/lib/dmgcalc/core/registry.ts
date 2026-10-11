@@ -27,6 +27,9 @@ type CharacterCtor = new (
   talentLevels?: TalentLevels
 ) => CharacterBase;
 const characterRegistry = new Map<string, CharacterCtor>();
+export function hasCharacterImplementation(charId: string): boolean {
+  return characterRegistry.has(charId);
+}
 /** @RegisterCharacter("hu_tao") or @RegisterCharacter("durin", durinOption) */
 export function RegisterCharacter(charId: string, optionDef?: OptionDef) {
   return (target: CharacterCtor, _context: ClassDecoratorContext) => {
@@ -69,6 +72,9 @@ type WeaponCtor = new (
   combatOpts?: OptionMap
 ) => WeaponBase;
 const weaponRegistry = new Map<string, WeaponCtor>();
+export function hasWeaponImplementation(weaponId: string): boolean {
+  return weaponRegistry.has(weaponId);
+}
 /** @RegisterWeapon("staff_of_homa") or @RegisterWeapon("the_widsith", widsithOption) */
 export function RegisterWeapon(weaponId: string, optionDef?: OptionDef) {
   return (target: WeaponCtor, _context: ClassDecoratorContext) => {

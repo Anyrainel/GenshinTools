@@ -1,4 +1,7 @@
 import type { Element, StatKey } from "@/data/enums";
+// Every team calculation needs the full entity registry, including worker and
+// direct engine callers that do not load the Team Comp page first.
+import "../index";
 import { getNextLevelTier } from "@/data/gameStatsLoader";
 import type { StatEntry } from "@/data/types";
 import type {

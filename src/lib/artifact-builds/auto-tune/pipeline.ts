@@ -13,9 +13,6 @@
  * 6. Derive main stat weights from damage ratios
  */
 
-// Ensure all character/weapon/artifact implementations are registered
-import "@/lib/dmgcalc";
-
 import { getGobletPool, statPools } from "@/data/constants";
 import type { Element, MainStat, Slot, StatKey, SubStat } from "@/data/enums";
 import type { WeightedMainStat, WeightedSubStat } from "@/data/types";

@@ -1,16 +1,15 @@
-import { getTabsForRoute } from "@/components/layout/appNavigation";
-import { PageLayout } from "@/components/layout/PageLayout";
-import { useLanguage } from "@/contexts/LanguageContext";
-import "@/lib/dmgcalc";
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { getTabsForRoute } from "@/components/layout/appNavigation";
+import { PageLayout } from "@/components/layout/PageLayout";
 import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
 import { useTour } from "@/components/ui/tour";
+import { useLanguage } from "@/contexts/LanguageContext";
 import type { PresetOption } from "@/data/types";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {

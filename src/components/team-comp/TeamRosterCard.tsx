@@ -39,8 +39,12 @@ import {
 import {
   getDefaultOptionValue,
   getOptionDef,
+  hasCharacterImplementation,
+  hasWeaponImplementation,
   isChoiceEnabled,
 } from "@/lib/dmgcalc/core/registry";
+// Pickers query readiness before constructing a team calculation.
+import "@/lib/dmgcalc";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import {
@@ -366,8 +370,11 @@ export function TeamRosterCard({
                     triggerSize={charIconSize}
                     filter={(item) => {
                       const c = item as { id: string };
-                      return !characters.some(
-                        (otherId, j) => j !== i && otherId === c.id
+                      return (
+                        hasCharacterImplementation(c.id) &&
+                        !characters.some(
+                          (otherId, j) => j !== i && otherId === c.id
+                        )
                       );
                     }}
                     onChange={(newCharId) => {
@@ -383,7 +390,8 @@ export function TeamRosterCard({
                       if (acctChar) {
                         if (
                           acctChar.weapon?.key &&
-                          weaponsById[acctChar.weapon.key]
+                          weaponsById[acctChar.weapon.key] &&
+                          hasWeaponImplementation(acctChar.weapon.key)
                         ) {
                           newWeapons[i] = acctChar.weapon.key;
                         }
@@ -498,8 +506,11 @@ export function TeamRosterCard({
                     triggerSize={charIconSize}
                     filter={(item) => {
                       const c = item as { id: string };
-                      return !characters.some(
-                        (otherId, j) => j !== i && otherId === c.id
+                      return (
+                        hasCharacterImplementation(c.id) &&
+                        !characters.some(
+                          (otherId, j) => j !== i && otherId === c.id
+                        )
                       );
                     }}
                     onChange={(newCharId) => {
@@ -517,7 +528,8 @@ export function TeamRosterCard({
                         // Always prefill weapon from equipped data
                         if (
                           acctChar.weapon?.key &&
-                          weaponsById[acctChar.weapon.key]
+                          weaponsById[acctChar.weapon.key] &&
+                          hasWeaponImplementation(acctChar.weapon.key)
                         ) {
                           newWeapons[i] = acctChar.weapon.key;
                         }
@@ -585,19 +597,25 @@ export function TeamRosterCard({
                     triggerSize={subIconSize}
                     disabled={!charId}
                     filter={(() => {
-                      if (!char) return undefined;
+                      if (!char)
+                        return (w: WeaponResource) =>
+                          hasWeaponImplementation(w.id);
                       const meta = getCharacterDisplayMeta(
                         char,
                         characterStats?.[charId]
                       );
-                      if (!meta.weaponType) return undefined;
+                      if (!meta.weaponType)
+                        return (w: WeaponResource) =>
+                          hasWeaponImplementation(w.id);
                       const wType = meta.weaponType;
                       return (w: WeaponResource) => {
                         const wMeta = getWeaponDisplayMeta(
                           w,
                           weaponStats?.[w.id]
                         );
-                        return wMeta.type === wType;
+                        return (
+                          hasWeaponImplementation(w.id) && wMeta.type === wType
+                        );
                       };
                     })()}
                     onChange={(newWeaponId) => {

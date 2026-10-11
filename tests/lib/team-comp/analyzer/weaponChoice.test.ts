@@ -104,3 +104,40 @@ describe("runWeaponChoice artifact mode", () => {
     ]);
   });
 });
+
+describe("runWeaponChoice entity readiness", () => {
+  it("excludes weapons without a calculator implementation before evaluating choices", async () => {
+    const configs = [SUBOPTIMAL_ARTIFACT_CONFIGS[0]];
+    const teamBuild = new TeamBuild(configs);
+    const formulaId = Object.keys(
+      teamBuild.catalog.getFormulaIds().hu_tao ?? {}
+    )[0];
+    const weaponStats = weaponStatsResource.peek();
+    if (!weaponStats) throw new Error("Weapon stats are not loaded");
+
+    const gen = runWeaponChoice({
+      baseConfigs: configs,
+      charConfigs: toWeaponChoiceCharConfigs(configs),
+      combo: singleFormulaCombo("hu_tao", formulaId),
+      calcContext: CTX,
+      weaponStats: {
+        staff_of_homa: weaponStats.staff_of_homa,
+        unimplemented_polearm: weaponStats.staff_of_homa,
+      },
+      opts: {},
+    });
+
+    let completed = false;
+    for await (const result of gen) {
+      if (!result.done) continue;
+      completed = true;
+      expect(result.perCharacter.hu_tao).toHaveLength(2);
+      expect(
+        result.perCharacter.hu_tao.map((choice) =>
+          choice.type !== "artifact" ? choice.weaponId : null
+        )
+      ).toEqual(["staff_of_homa", "staff_of_homa"]);
+    }
+    expect(completed).toBe(true);
+  });
+});

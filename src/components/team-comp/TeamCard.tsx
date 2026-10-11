@@ -40,6 +40,12 @@ import {
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { AccountData, WeaponResource } from "@/data/types";
+// Pickers query readiness before constructing a team calculation.
+import "@/lib/dmgcalc";
+import {
+  hasCharacterImplementation,
+  hasWeaponImplementation,
+} from "@/lib/dmgcalc/core/registry";
 import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
 import {
   teamCompInputToComp,
@@ -300,8 +306,11 @@ export const TeamCard = memo(
                   frozen={!!(charId && frozenCharIds?.has(charId))}
                   filter={(item) => {
                     const c = item as { id: string };
-                    return !characters.some(
-                      (otherId, j) => j !== idx && otherId === c.id
+                    return (
+                      hasCharacterImplementation(c.id) &&
+                      !characters.some(
+                        (otherId, j) => j !== idx && otherId === c.id
+                      )
                     );
                   }}
                   onChange={(val) => {
@@ -319,7 +328,8 @@ export const TeamCard = memo(
                       // Always prefill weapon from equipped data
                       if (
                         acctChar.weapon?.key &&
-                        weaponsById[acctChar.weapon.key]
+                        weaponsById[acctChar.weapon.key] &&
+                        hasWeaponImplementation(acctChar.weapon.key)
                       ) {
                         newWeapons[idx] = acctChar.weapon.key;
                       }
@@ -406,6 +416,7 @@ export const TeamCard = memo(
                   }}
                   disabled={!characters[idx]}
                   filter={(item) => {
+                    if (!hasWeaponImplementation(item.id)) return false;
                     const char = characters[idx]
                       ? charactersById[characters[idx]!]
                       : null;

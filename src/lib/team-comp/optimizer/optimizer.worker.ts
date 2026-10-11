@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Element } from "@/data/enums";
+import type { Element, StatKey } from "@/data/enums";
 /**
  * Web Worker for Phase 1 per-character B&B.
  * Each worker handles one character's B&B search independently.
@@ -9,9 +9,6 @@ import {
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { ArtifactData } from "@/data/types";
-// Side-effect: register all character/weapon/artifact implementations
-import "../../dmgcalc/index";
-import type { StatKey } from "@/data/enums";
 import type {
   BuffActivationMap,
   CalcContext,
