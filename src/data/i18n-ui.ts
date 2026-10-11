@@ -540,11 +540,7 @@ export const i18nUiData = {
       en: "No presets found. Add preset JSON files to the presets folder.",
       zh: "未找到预设。请在 presets 文件夹中添加预设 JSON 文件。",
     },
-    goodSplitFileHint: {
-      en: "Now supports separate character, weapon, and artifact files!",
-      zh: "现支持分别导入角色、武器和圣遗物文件！",
-    },
-    goodFileButton: { en: "Import .json file", zh: "导入 .json 文件" },
+    goodFileButton: { en: "Choose JSON file", zh: "选择 JSON 文件" },
     goodTitle: { en: "JSON File Import", zh: "JSON 文件导入" },
     fileScope: {
       en: "Coverage depends on the exported file",
@@ -560,8 +556,8 @@ export const i18nUiData = {
     },
     recommended: { en: "Recommended", zh: "推荐" },
     goodPcHint: {
-      en: "Use a PC scanner tool to export your account data as a GOOD format .json file",
-      zh: "需要在电脑上运行扫描工具，将账号数据导出为 GOOD 格式 .json 文件",
+      en: "Run GGScanner on Windows to export your account as a .json file.",
+      zh: "在 Windows 电脑上运行 GGScanner，将账号数据导出为 .json 文件。",
     },
     wrongFormat: {
       en: "This file is not in GOOD format. Please export using a supported scanner tool.",
@@ -569,8 +565,8 @@ export const i18nUiData = {
     },
     uidTitle: { en: "Quick UID Import", zh: "UID 快捷导入" },
     uidDescription: {
-      en: "Fetch from Enka Network. Limited to 12 showcase characters and their equipments. Make sure you allowed character details!",
-      zh: "通过 Enka Network 获取。仅限 12 个展示角色及其装备。确保你打开了角色详情！（不支持B服）",
+      en: "Enable character details in your in-game showcase. Bilibili server unsupported.",
+      zh: "请在游戏展柜中开启「显示角色详情」；不支持 B 服。",
     },
     uidPlaceholder: {
       en: "UID (required)",
@@ -586,8 +582,8 @@ export const i18nUiData = {
       zh: "UID 须为 9–10 位数字",
     },
     enkaStatusHint: {
-      en: "Problems with import? Check {link}Enka status{/link}.",
-      zh: "导入遇到问题？查看 {link}Enka 状态{/link}。",
+      en: "Enka service status",
+      zh: "Enka 服务状态",
     },
     hoyolabTitle: {
       en: "HoYoLAB / 米游社 Import",

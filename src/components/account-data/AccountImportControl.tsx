@@ -1,20 +1,13 @@
 import {
   AlertCircle,
   Download,
+  FileJson,
   Info,
   KeyRound,
   Loader2,
-  Monitor,
   Smartphone,
-  Upload,
 } from "lucide-react";
-import {
-  Fragment,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
+import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ImportMethodItem } from "@/components/shared/ImportMethodItem";
@@ -249,71 +242,52 @@ export const AccountImportControl = forwardRef<
           <ImportMethodItem
             value="json"
             title={t.ui("import.goodTitle")}
-            icon={Monitor}
+            icon={FileJson}
             summary={t.ui("import.fileScope")}
             badge={t.ui("import.recommended")}
           >
-            {/* PC requirement banner + tool links */}
-            <div className="mt-3 p-3 rounded-md bg-secondary border border-border">
-              <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-foreground shrink-0" />
-                <span className="text-sm text-foreground">
-                  {t.ui("import.goodPcHint")}
-                </span>
-              </div>
+            <p className="text-sm leading-5">{t.ui("import.goodPcHint")}</p>
+            <div className="space-y-1.5">
+              <input
+                type="text"
+                aria-label={t.ui("import.optionalUid")}
+                placeholder={t.ui("import.optionalUid")}
+                value={localUidInput}
+                onChange={(e) => setLocalUidInput(e.target.value)}
+                className="flex h-9 w-32 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:w-36"
+                disabled={isBusy}
+              />
+              {localUidInput.trim() && !isValidUid(localUidInput) && (
+                <p className="text-xs text-destructive">
+                  {t.ui("import.uidInvalid")}
+                </p>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
               <Button
                 asChild
-                variant="secondary"
-                size="sm"
-                className="mt-3 gap-2 lg:ml-6"
+                variant="outline"
+                className="gap-2 border-primary/40 bg-primary/10 hover:bg-primary/20"
               >
                 <a href={SCANNER_DOWNLOAD_PAGE}>
                   <Download className="size-4" />
                   {t.ui("scannerDownload.menu")}
                 </a>
               </Button>
-            </div>
-
-            <div className="mt-3 flex flex-col gap-1.5">
-              <div className="flex flex-wrap items-center gap-2">
+              <label className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50">
+                <FileJson className="size-4" aria-hidden />
+                {t.ui("import.goodFileButton")}
                 <input
-                  type="text"
-                  placeholder={t.ui("import.optionalUid") || "Optional UID"}
-                  value={localUidInput}
-                  onChange={(e) => setLocalUidInput(e.target.value)}
-                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  disabled={isBusy}
-                />
-                <Button
-                  size="sm"
-                  className="gap-2 shrink-0 flex-grow sm:flex-1 relative overflow-hidden"
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={handleLocalImport}
+                  className="sr-only"
                   disabled={
                     isBusy ||
                     (!!localUidInput.trim() && !isValidUid(localUidInput))
                   }
-                >
-                  <Upload className="w-4 h-4" />
-                  {t.ui("import.goodFileButton")}
-                  <input
-                    type="file"
-                    accept=".json"
-                    onChange={handleLocalImport}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                    disabled={
-                      isBusy ||
-                      (!!localUidInput.trim() && !isValidUid(localUidInput))
-                    }
-                  />
-                </Button>
-              </div>
-              {localUidInput.trim() && !isValidUid(localUidInput) && (
-                <p className="text-xs text-destructive">
-                  {t.ui("import.uidInvalid")}
-                </p>
-              )}
-              <p className="text-xs text-muted-foreground text-right">
-                {t.ui("import.goodSplitFileHint")}
-              </p>
+                />
+              </label>
             </div>
           </ImportMethodItem>
           <ImportMethodItem
@@ -370,26 +344,14 @@ export const AccountImportControl = forwardRef<
                   {t.ui("import.uidInvalid")}
                 </p>
               )}
-              <p className="text-xs text-muted-foreground text-right">
-                {t
-                  .ui("import.enkaStatusHint")
-                  .split(/\{link\}|\{\/link\}/)
-                  .map((part, i) =>
-                    i === 1 ? (
-                      <a
-                        key={i}
-                        href="https://status.enka.network/"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="underline text-primary hover:text-primary/80"
-                      >
-                        {part}
-                      </a>
-                    ) : (
-                      <Fragment key={i}>{part}</Fragment>
-                    )
-                  )}
-              </p>
+              <a
+                href="https://status.enka.network/"
+                target="_blank"
+                rel="noreferrer"
+                className="self-start text-xs text-primary underline underline-offset-4"
+              >
+                {t.ui("import.enkaStatusHint")}
+              </a>
             </div>
           </ImportMethodItem>
           <ImportMethodItem
