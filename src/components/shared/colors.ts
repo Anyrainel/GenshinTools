@@ -1,10 +1,17 @@
-import type { Element, Rarity, ReactionType, Tier } from "@/data/enums";
+import type { Element, Rarity, Tier } from "@/data/enums";
 import type { BuffReceiverType } from "@/lib/dmgcalc/types";
 
 // ============================================================
 // DYNAMIC COLOR HELPERS
 // ============================================================
 const RARITY_COLORS = {
+  gradient: {
+    1: "bg-rarity-gradient-1",
+    2: "bg-rarity-gradient-2",
+    3: "bg-rarity-gradient-3",
+    4: "bg-rarity-gradient-4",
+    5: "bg-rarity-gradient-5",
+  },
   bg: {
     1: "bg-rarity-1",
     2: "bg-rarity-2",
@@ -26,13 +33,13 @@ const RARITY_COLORS = {
     4: "border-rarity-4",
     5: "border-rarity-5",
   },
-} as const;
+} as const satisfies Record<string, Record<Rarity, string>>;
 
 export function getRarityColor(
   rarity: Rarity,
-  type: "bg" | "text" | "border"
+  type: "bg" | "text" | "border" | "gradient"
 ): string {
-  return RARITY_COLORS[type][rarity as 1 | 2 | 3 | 4 | 5] || "";
+  return RARITY_COLORS[type][rarity] || "";
 }
 const ELEMENT_COLORS = {
   bg: {
@@ -71,7 +78,7 @@ const ELEMENT_COLORS = {
     Geo: "bg-element-geo/20",
     Dendro: "bg-element-dendro/20",
   },
-} as const;
+} as const satisfies Record<string, Record<Element, string>>;
 
 export function getElementColor(
   element: Element,
@@ -81,41 +88,26 @@ export function getElementColor(
 }
 const TIER_COLORS = {
   bg: {
-    s: "bg-tier-bg-s/40",
-    a: "bg-tier-bg-a/40",
-    b: "bg-tier-bg-b/40",
-    c: "bg-tier-bg-c/40",
-    d: "bg-tier-bg-d/40",
-    pool: "bg-tier-bg-pool/40",
+    S: "bg-tier-bg-s/40",
+    A: "bg-tier-bg-a/40",
+    B: "bg-tier-bg-b/40",
+    C: "bg-tier-bg-c/40",
+    D: "bg-tier-bg-d/40",
+    Pool: "bg-tier-bg-pool/40",
   },
   header: {
-    s: "bg-tier-s/70",
-    a: "bg-tier-a/70",
-    b: "bg-tier-b/70",
-    c: "bg-tier-c/70",
-    d: "bg-tier-d/70",
-    pool: "bg-tier-pool/70",
+    S: "bg-tier-s/70",
+    A: "bg-tier-a/70",
+    B: "bg-tier-b/70",
+    C: "bg-tier-c/70",
+    D: "bg-tier-d/70",
+    Pool: "bg-tier-pool/70",
   },
-} as const;
+} as const satisfies Record<"bg" | "header", Record<Tier, string>>;
 
-export function getTierColor(
-  tier: Tier,
-  type: "bg" | "header" // header corresponds to the old 'color' key (stronger opacity)
-): string {
-  const key = tier.toLowerCase() as keyof typeof TIER_COLORS.bg;
-  return TIER_COLORS[type][key] || TIER_COLORS[type].pool;
+export function getTierColor(tier: Tier, type: "bg" | "header"): string {
+  return TIER_COLORS[type][tier];
 }
-// ── Element hex (for canvas/chart rendering) ──
-
-export const ELEMENT_HEX: Record<string, string> = {
-  Pyro: "#b8483f",
-  Hydro: "#22728f",
-  Electro: "#8f70aa",
-  Cryo: "#7aa8b8",
-  Anemo: "#3d9b6a",
-  Geo: "#b58f35",
-  Dendro: "#669423",
-};
 // ── Stat value colors (positive / negative / cap) ──
 
 export const VALUE_COLORS = {
@@ -229,25 +221,4 @@ export const CHIP_COLORS = {
   },
 } as const;
 
-export type ChipColor =
-  keyof typeof CHIP_COLORS; /** Unique weapon secondary stats from weapon_stats (L90), sorted. */
-export const REACTION_COLORS: Partial<Record<ReactionType, string>> = {
-  melt: "#E57373", // Pyro + Cryo (coral red)
-  vaporize: "#81D4FA", // Pyro + Hydro (steam blue)
-  spread: "#A8E063", // Dendro green
-  aggravate: "#BB86FC", // Electro purple
-  overloaded: "#FF6347", // Pyro-Electro explosion (tomato red-orange)
-  electroCharged: "#9370DB", // Electro-Hydro (purple-blue)
-  superconduct: "#B8C4FF", // Cryo-Electro (icy blue-purple)
-  swirl: "#64FFDA", // Anemo teal
-  frozen: "#B8C4FF", // Cryo-Hydro (icy blue-purple)
-  bloom: "#7CB342", // Dendro core green
-  hyperbloom: "#7C4DFF", // Electro purple (hitting core)
-  burgeon: "#FF7043", // Pyro orange-red (hitting core)
-  burning: "#FF9800", // Pyro flame orange
-  lunarCharged: "#B8A5E3", // Lighter electro-charged purple
-  lunarBloom: "#A5D86E", // Lighter bloom green
-  lunarCrystallize: "#FFE082", // Lighter Geo golden
-  stellarConduct: "#9AD4FF", // Cryo-Electro stellar (bright icy blue)
-  stellarSwirl: "#8FFFD4", // Cryo-Anemo stellar (bright icy teal)
-};
+export type ChipColor = keyof typeof CHIP_COLORS;

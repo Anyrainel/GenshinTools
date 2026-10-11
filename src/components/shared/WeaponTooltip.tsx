@@ -53,7 +53,7 @@ export function WeaponTooltip({
       <div
         className={cn(
           "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
-          getRarityColor(meta.rarity, "bg")
+          getRarityColor(meta.rarity, "gradient")
         )}
       >
         {/* Background gradient overlay */}

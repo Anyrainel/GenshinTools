@@ -68,7 +68,7 @@ export function MixedSetTooltip(props: MixedSetTooltipProps) {
       <div
         className={cn(
           "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
-          "bg-rarity-5" // Hardcoded for 2pc+2pc which is always considered max rarity
+          "bg-rarity-gradient-5" // Hardcoded for 2pc+2pc which is always considered max rarity
         )}
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />

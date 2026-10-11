@@ -1,13 +1,15 @@
 import { Check } from "lucide-react";
 import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { NEUTRAL_GAME_COLOR } from "@/config/gameColors";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
 import type { AccountData, Build } from "@/data/types";
+import { getElementHex } from "@/lib/gameColors";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
-import { ELEMENT_HEX, getElementColor } from "../shared/colors";
+import { getElementColor } from "../shared/colors";
 
 type SelectionEntry = {
   buildId: string;
@@ -76,7 +78,7 @@ export function AutoTuneSelectionCard({
 }) {
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
-  const elHex = ELEMENT_HEX[element] || "#888";
+  const elHex = getElementHex(element) ?? NEUTRAL_GAME_COLOR;
   const elColor = getElementColor(parseElement(element), "text");
   const noTeams = entry.teamComps.length === 0;
 

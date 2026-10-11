@@ -79,6 +79,22 @@ Use this as the first routing hint when the user refers to a page or tab in natu
 
 ## UI Rules
 
+### Shared UI Entry Points
+
+| Need | Source of truth |
+| --- | --- |
+| Theme colors and surfaces | `tailwind.config.ts`, `src/lib/themeGenerator.ts`: use `bg-background`, `text-foreground`, `bg-primary`, `bg-gradient-card`, `bg-gradient-select` |
+| Dynamic element, rarity, Tier and status classes | `src/components/shared/colors.ts`: `getElementColor(element, "text")`, `getRarityColor(rarity, "gradient")`, `getTierColor(tier, "header")`; compose with `cn()` |
+| Raw colors for charts/canvas and game palettes | `src/config/gameColors.ts`, `src/lib/gameColors.ts`; edit color values in the palette, not in callers or Tailwind config |
+| Item identity and filter controls | `src/components/shared/ItemIcon.tsx`, `CharAvatar.tsx`, `FilterChip.tsx`, `FilterChipGroup.tsx` |
+| Page structure | `src/components/layout/{PageLayout,SidebarLayout,WideLayout,ScrollLayout,SidebarDetailLayout}.tsx`; inspect a sibling page before creating a scroll shell |
+| Responsive dialogs | `src/components/ui/responsive-dialog.tsx`; inspect its callers and `src/components/shared/ItemPicker.tsx` |
+
+- Use complete literal Tailwind classes or the typed helpers; never interpolate color class names (such as `text-element-${element}`).
+- `getRarityColor(rarity, "bg")` is a solid background; `"gradient"` is the item portrait/tooltip gradient. Keep these separate.
+- `bg-item-badge`, `text-item-badge-foreground`, `bg-item-level` and `text-item-level-foreground` are item chrome tokens; use `ItemIcon` to compose them.
+- UI invariant tests reject new literal colors, interpolated color utilities, and opacity on `text-muted-foreground` / `border-border` in components and pages (including adjacent CSS). Existing debt is capped by exact file/rule/fragment counts in `tests/fixtures/ui-invariants-baseline.json`; remove entries when fixing debt, never expand it to make a new violation pass. Dedicated chart palettes belong in the color definition module.
+
 - Use `cn()` from `src/lib/utils.ts` to merge Tailwind classes.
 - Do not concatenate class strings manually when conditional classes are involved.
 - Never use opacity on `text-muted-foreground` or `border-border`; use `text-muted-foreground`, `border-border` directly. Use them only when avoiding user attention (they are unnoticeable in current themes).

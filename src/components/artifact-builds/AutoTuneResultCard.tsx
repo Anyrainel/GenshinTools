@@ -8,6 +8,7 @@ import {
 import { AutoTuneTeamRow } from "@/components/artifact-builds/AutoTuneTeamRow";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
+import { NEUTRAL_GAME_COLOR } from "@/config/gameColors";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
 import type { AccountData, Build } from "@/data/types";
@@ -15,10 +16,11 @@ import type {
   AutoTuneOutput,
   TeamBreakdown,
 } from "@/lib/artifact-builds/auto-tune/pipeline";
+import { getElementHex } from "@/lib/gameColors";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { parseElement } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
-import { ELEMENT_HEX, getElementColor } from "../shared/colors";
+import { getElementColor } from "../shared/colors";
 
 type EntryStatus = "idle" | "computing" | "done" | "applied";
 
@@ -128,7 +130,7 @@ export function AutoTuneResultCard({
   const { t } = useLanguage();
   const char = charactersById[entry.characterId];
   const elColor = getElementColor(parseElement(element), "text");
-  const elHex = ELEMENT_HEX[element] || "#888";
+  const elHex = getElementHex(element) ?? NEUTRAL_GAME_COLOR;
   const result = entry.result;
 
   // Computing — spinner placeholder card

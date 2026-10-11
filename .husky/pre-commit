@@ -22,5 +22,5 @@ if [ ! -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
   fi
 
   echo "Running file convention and i18n tests..."
-  npx vitest run tests/fileConventions.test.ts tests/i18n.test.ts || exit 1
+  npx vitest run tests/fileConventions.test.ts tests/i18n.test.ts tests/ui-invariants.test.ts || exit 1
 fi

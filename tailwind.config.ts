@@ -1,6 +1,14 @@
 import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 import tailwindcssAnimate from "tailwindcss-animate";
+import {
+  ELEMENT_BACKGROUND,
+  ELEMENT_HEX,
+  ITEM_TOKENS,
+  RARITY_GRADIENTS,
+  RARITY_TOKENS,
+  TIER_TOKENS,
+} from "./src/config/gameColors";
 
 const wideContainerPlugin = plugin(({ addComponents }) => {
   addComponents({
@@ -74,6 +82,7 @@ export default {
         "16": "repeat(16, minmax(0, 1fr))",
       },
       colors: {
+        item: ITEM_TOKENS,
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -108,29 +117,16 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         element: {
-          pyro: "#b8483f",
-          hydro: "#22728f",
-          electro: "#8f70aa",
-          cryo: "#7aa8b8",
-          anemo: "#3d9b6a",
-          geo: "#b58f35",
-          dendro: "#669423",
-          bg: "#f5f3e6",
+          pyro: ELEMENT_HEX.Pyro,
+          hydro: ELEMENT_HEX.Hydro,
+          electro: ELEMENT_HEX.Electro,
+          cryo: ELEMENT_HEX.Cryo,
+          anemo: ELEMENT_HEX.Anemo,
+          geo: ELEMENT_HEX.Geo,
+          dendro: ELEMENT_HEX.Dendro,
+          bg: ELEMENT_BACKGROUND,
         },
-        tier: {
-          s: "#b92f3a",
-          a: "#dd8559",
-          b: "#e6b44d",
-          c: "#43ad8b",
-          d: "#4a85cd",
-          pool: "#757575",
-          "bg-s": "#2e0c0f",
-          "bg-a": "#372116",
-          "bg-b": "#3a2d13",
-          "bg-c": "#112b23",
-          "bg-d": "#132133",
-          "bg-pool": "#1d1d1d",
-        },
+        tier: TIER_TOKENS,
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",
@@ -138,23 +134,13 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
-        rarity: {
-          "1": "#868586",
-          "2": "#519072",
-          "3": "#5392b8",
-          "4": "#9c75b7",
-          "5": "#b27330",
-        },
+        rarity: RARITY_TOKENS,
       },
       backgroundImage: {
+        ...RARITY_GRADIENTS,
         "gradient-page": "var(--gradient-page)",
         "gradient-card": "var(--gradient-card)",
         "gradient-select": "var(--gradient-select)",
-        "rarity-1": "linear-gradient(180deg, #6a6d74, #868586)",
-        "rarity-2": "linear-gradient(180deg, #4b6c67, #519072)",
-        "rarity-3": "linear-gradient(180deg, #567496, #5392b8)",
-        "rarity-4": "linear-gradient(180deg, #5e5789, #9c75b7)",
-        "rarity-5": "linear-gradient(180deg, #945c2c, #b27330)",
       },
       transitionTimingFunction: {
         smooth: "var(--transition-smooth)",

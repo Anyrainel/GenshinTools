@@ -16,7 +16,7 @@ describe("ItemIcon", () => {
   it("applies rarity background class", () => {
     const { container } = render(<ItemIcon {...defaultProps} rarity={5} />);
 
-    const iconDiv = container.querySelector(".bg-rarity-5");
+    const iconDiv = container.querySelector(".bg-rarity-gradient-5");
     expect(iconDiv).toBeInTheDocument();
   });
 

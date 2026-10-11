@@ -1,11 +1,19 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+import { RARITY_GRADIENTS } from "@/config/gameColors";
 import { statPools } from "@/data/constants";
 import type { MainStat, Slot } from "@/data/enums";
 import type { WeaponStatsMap } from "@/data/gameStatsLoader";
 
+// Custom images must not be merged away as if they were background colors.
+const mergeClasses = extendTailwindMerge({
+  extend: {
+    classGroups: { "bg-image": [{ bg: Object.keys(RARITY_GRADIENTS) }] },
+  },
+});
+
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return mergeClasses(clsx(inputs));
 }
 
 export function cloneData<T>(value: T): T {

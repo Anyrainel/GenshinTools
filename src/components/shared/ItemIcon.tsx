@@ -242,7 +242,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         <div
           ref={ref}
           className={cn(
-            "overflow-hidden relative flex-shrink-0 border-2 border-[#b27330] bg-[#3a2d13]",
+            "overflow-hidden relative flex-shrink-0 border-2 border-rarity-5 bg-item-mixed",
             frozen && "ring-2 ring-cyan-400/60",
             className
           )}
@@ -254,7 +254,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           }}
           {...props}
         >
-          <div className="absolute inset-0 bg-[#b27330]" />
+          <div className="absolute inset-0 bg-rarity-5" />
           <div className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] z-10">
             <img
               src={getAssetUrl(imagePath)}
@@ -315,7 +315,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       <div
         className={cn(
           "relative overflow-hidden flex-shrink-0 select-none",
-          getRarityColor(rarity, "bg"),
+          getRarityColor(rarity, "gradient"),
           frozen && "ring-2 ring-cyan-400/60"
         )}
         style={{
@@ -365,7 +365,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         {/* Badge - top left */}
         {showBadge && (
           <div
-            className="absolute bg-[#4a3b2a] text-[#eccf83] font-semibold text-center leading-none flex items-center justify-center"
+            className="absolute bg-item-badge text-item-badge-foreground font-semibold text-center leading-none flex items-center justify-center"
             style={{
               width: corner.size,
               height: corner.size,
@@ -468,7 +468,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           <div className="relative z-10">{iconElement}</div>
           {/* Level bar - overlaps behind icon's rounded corners */}
           <div
-            className="flex items-end justify-center bg-[#f5f0e6] font-bold text-[#3d3d3d] leading-none select-none"
+            className="flex items-end justify-center bg-item-level font-bold text-item-level-foreground leading-none select-none"
             style={{
               width: iconSize,
               height: levelConfig.height + levelConfig.cornerFill,

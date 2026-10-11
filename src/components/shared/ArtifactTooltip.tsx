@@ -26,7 +26,7 @@ export function ArtifactTooltip({
       <div
         className={cn(
           "p-3 border-b border-white/10 flex items-start gap-3 relative overflow-hidden",
-          getRarityColor(artifact.rarity, "bg")
+          getRarityColor(artifact.rarity, "gradient")
         )}
       >
         {/* Background gradient overlay */}

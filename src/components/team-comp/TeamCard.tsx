@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { LightweightMultiSelect } from "@/components/ui/lightweight-multiselect";
+import { REACTION_COLORS } from "@/config/gameColors";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TEAM_REACTION_OPTIONS } from "@/data/constants";
 import type { ReactionType } from "@/data/enums";
@@ -46,7 +47,6 @@ import {
 } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp } from "@/lib/team-comp/types";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { REACTION_COLORS } from "../shared/colors";
 
 interface TeamCardProps {
   teamComp: TeamComp;
