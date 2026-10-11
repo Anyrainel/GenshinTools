@@ -1,5 +1,12 @@
 import { ArrowLeft, Loader2 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,6 +14,7 @@ import {
   OptionButtonCell,
   OptionButtonRow,
 } from "@/components/ui/option-button";
+import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   characterStatsResource,
@@ -32,6 +40,10 @@ import type {
 } from "@/lib/dmgcalc/types";
 import { resolveCalcContext } from "@/lib/dmgcalc/utils";
 import type { WeaponChoiceOptions } from "@/lib/team-comp/analyzer/weaponChoice";
+import {
+  collectOwnedWeaponChoices,
+  getCompatibleOwnedWeaponChoices,
+} from "@/lib/team-comp/analyzer/weaponChoiceCandidates";
 import {
   buildTeamSlotConfigs,
   buildWeaponChoiceCharConfigs,
@@ -132,6 +144,12 @@ export function WeaponChoiceDetail({
   const gameStatsReady = characterStats !== null && weaponStats !== null;
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const [choiceMode, setChoiceMode] = useState<"weapon" | "artifact">("weapon");
+  const [ownedWeaponsOnly, setOwnedWeaponsOnly] = useState(false);
+  const ownedWeaponsControlId = useId();
+  const ownedWeaponChoices = useMemo(
+    () => (accountData ? collectOwnedWeaponChoices(accountData) : []),
+    [accountData]
+  );
   const { characters, weapons, artifacts } = useMemo(
     () => teamCompToArrays(teamComp),
     [teamComp]
@@ -379,6 +397,8 @@ export function WeaponChoiceDetail({
   );
   const displayResultsRef = useRef(displayResults);
   const handledComputeResultKeyRef = useRef<string | null>(null);
+  const activeRunMode = useRef<"weapon" | "artifact" | null>(null);
+  const runWeaponScope = useRef<string | null>(null);
   const activeDisplayResult = displayResults[choiceMode] ?? null;
   const persistChoiceResult = useCallback(
     (mode: "weapon" | "artifact", result: WeaponChoiceResult | null) => {
@@ -387,9 +407,11 @@ export function WeaponChoiceDetail({
         displayResultsRef.current = next;
         return next;
       });
-      setChoiceResult(teamComp.id, mode, result);
+      if (mode !== "weapon" || !ownedWeaponsOnly) {
+        setChoiceResult(teamComp.id, mode, result);
+      }
     },
-    [setChoiceResult, teamComp.id]
+    [setChoiceResult, teamComp.id, ownedWeaponsOnly]
   );
 
   // Clear stale results when team composition changes
@@ -406,13 +428,53 @@ export function WeaponChoiceDetail({
 
   useEffect(() => {
     const cached = choiceResultsFromTeamResultCache(resultCache);
+    if (ownedWeaponsOnly) {
+      cached.weapon = displayResultsRef.current.weapon;
+    }
     displayResultsRef.current = cached;
     setDisplayResults(cached);
-  }, [resultCache]);
+  }, [resultCache, ownedWeaponsOnly]);
+
+  // Owned results are local: the persisted catalog cache has no account scope.
+  const weaponScopeKey = ownedWeaponsOnly
+    ? `owned:${JSON.stringify(ownedWeaponChoices)}`
+    : "catalog";
+  const previousWeaponScope = useRef(weaponScopeKey);
+  const previousAccountData = useRef(accountData);
+  useEffect(() => {
+    const accountChanged = previousAccountData.current !== accountData;
+    previousAccountData.current = accountData;
+    if (
+      previousWeaponScope.current === weaponScopeKey &&
+      !(ownedWeaponsOnly && accountChanged)
+    )
+      return;
+    previousWeaponScope.current = weaponScopeKey;
+    if (activeRunMode.current === "weapon") {
+      stop();
+      activeRunMode.current = null;
+    }
+    runWeaponScope.current = null;
+    setDisplayResults((prev) => {
+      const next = {
+        ...prev,
+        weapon: ownedWeaponsOnly
+          ? null
+          : choiceResultsFromTeamResultCache(resultCache).weapon,
+      };
+      displayResultsRef.current = next;
+      return next;
+    });
+  }, [weaponScopeKey, stop, accountData, ownedWeaponsOnly, resultCache]);
 
   // Update displayResult when computation yields
   useEffect(() => {
-    if (!computeResult) return;
+    if (
+      !computeResult ||
+      (computeResult.mode === "weapon" &&
+        runWeaponScope.current !== weaponScopeKey)
+    )
+      return;
     const resultKey = [
       computeResult.mode,
       computeResult.timestamp,
@@ -437,10 +499,17 @@ export function WeaponChoiceDetail({
       return next;
     });
     // Persist when done
-    if (computeResult.done) {
+    if (computeResult.done && (mode !== "weapon" || !ownedWeaponsOnly)) {
       setChoiceResult(teamComp.id, mode, storeResult);
     }
-  }, [computeResult, setChoiceResult, teamComp.id]);
+    if (computeResult.done) activeRunMode.current = null;
+  }, [
+    computeResult,
+    setChoiceResult,
+    teamComp.id,
+    ownedWeaponsOnly,
+    weaponScopeKey,
+  ]);
 
   // Stop computation on unmount
   useEffect(() => {
@@ -466,7 +535,13 @@ export function WeaponChoiceDetail({
       opts: combatOptions,
       enemyAura: localEnemyAura,
       extraBuffs: localExtraBuffs.length > 0 ? localExtraBuffs : undefined,
+      ownedWeaponChoices:
+        choiceMode === "weapon" && ownedWeaponsOnly
+          ? ownedWeaponChoices
+          : undefined,
     };
+    activeRunMode.current = choiceMode;
+    runWeaponScope.current = weaponScopeKey;
     start(opts);
   }, [
     teamBuild,
@@ -477,6 +552,9 @@ export function WeaponChoiceDetail({
     accountData,
     displayCombo,
     choiceMode,
+    ownedWeaponsOnly,
+    ownedWeaponChoices,
+    weaponScopeKey,
     damageConfig.calcContext,
     combatOptions,
     localEnemyAura,
@@ -605,6 +683,40 @@ export function WeaponChoiceDetail({
               />
             </OptionButtonCell>
           </OptionButtonRow>
+          {choiceMode === "weapon" && (
+            <div className="mt-3 space-y-1">
+              <label
+                htmlFor={ownedWeaponsControlId}
+                className="flex items-center gap-2 text-sm font-medium"
+              >
+                <Switch
+                  id={ownedWeaponsControlId}
+                  checked={ownedWeaponsOnly}
+                  disabled={isComputing || (!accountData && !ownedWeaponsOnly)}
+                  onCheckedChange={setOwnedWeaponsOnly}
+                />
+                {t.ui("teamComp.ownedWeaponComparison")}
+              </label>
+              <p className="text-xs text-muted-foreground">
+                {accountData
+                  ? t.ui("teamComp.ownedWeaponComparisonDesc")
+                  : t.ui("teamComp.ownedWeaponComparisonNeedsAccount")}
+              </p>
+              {ownedWeaponsOnly &&
+                !configs.some(
+                  (config) =>
+                    getCompatibleOwnedWeaponChoices(
+                      ownedWeaponChoices,
+                      weaponStats[config.weaponId]?.type ?? "",
+                      weaponStats
+                    ).length > 0
+                ) && (
+                  <p className="text-sm text-muted-foreground">
+                    {t.ui("teamComp.noOwnedCompatibleWeapons")}
+                  </p>
+                )}
+            </div>
+          )}
         </section>
 
         {/* 1. Team Roster (refinement hidden — weapons are the test variable) */}
@@ -666,6 +778,10 @@ export function WeaponChoiceDetail({
           charIds={charIds}
           isComputing={isComputing}
           choiceMode={choiceMode}
+          ownedWeaponsOnly={ownedWeaponsOnly}
+          runDisabled={
+            choiceMode === "weapon" && ownedWeaponsOnly && !accountData
+          }
           result={activeDisplayResult}
           progress={computeResult?.progress}
           error={error}

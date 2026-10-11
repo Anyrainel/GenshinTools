@@ -38,6 +38,7 @@ import { TeamBuild } from "../../dmgcalc/core/teamBuild";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { deriveSetKeysFromConfigs } from "../teamConfigUtils";
+import { getCompatibleOwnedWeaponChoices } from "./weaponChoiceCandidates";
 
 export interface CharProgress {
   charId: string;
@@ -77,6 +78,8 @@ export interface WeaponChoiceOptions {
   opts: Record<string, string>;
   enemyAura?: Element;
   extraBuffs?: ExtraBuff[];
+  /** Undefined compares the full catalog; an empty array means no owned candidates. */
+  ownedWeaponChoices?: readonly { weaponId: string; refinement: number }[];
 }
 
 type WeaponCandidate = { type: "weapon"; weaponId: string; refinement: number };
@@ -806,7 +809,13 @@ export async function* runWeaponChoice(
   for (const config of configs) {
     const ws = weaponStats[config.weaponId];
     if (!ws) continue;
-    const candidates = getWeaponCandidates(ws.type, weaponStats);
+    const candidates: WeaponCandidate[] = options.ownedWeaponChoices
+      ? getCompatibleOwnedWeaponChoices(
+          options.ownedWeaponChoices,
+          ws.type,
+          weaponStats
+        ).map((choice) => ({ type: "weapon", ...choice }))
+      : getWeaponCandidates(ws.type, weaponStats);
     candidatesPerChar[config.charId] = candidates;
   }
 
@@ -904,7 +913,12 @@ export async function* runWeaponChoice(
         hasPendingProgress = true;
       }
     ).then((rankings) => {
-      normalizeRankings(mode, rankings, weaponStats);
+      if (mode === "weapon" && options.ownedWeaponChoices) {
+        // The best owned copy is 100%, including intermediate refinements.
+        normalizeArtifactRankings(rankings);
+      } else {
+        normalizeRankings(mode, rankings, weaponStats);
+      }
       perCharacter[targetCharId] = rankings;
     });
   });

@@ -150,3 +150,51 @@ describe("runWeaponChoice beta weapons", () => {
     expect(completed).toBe(true);
   });
 });
+
+describe("runWeaponChoice owned weapons", () => {
+  const configs = SUBOPTIMAL_ARTIFACT_CONFIGS.slice(0, 1);
+
+  async function compareOwned(
+    ownedWeaponChoices: { weaponId: string; refinement: number }[]
+  ) {
+    const teamBuild = new TeamBuild(configs);
+    const formulaId = Object.keys(teamBuild.catalog.getFormulaIds().hu_tao)[0];
+    const generator = runWeaponChoice({
+      baseConfigs: configs,
+      charConfigs: toWeaponChoiceCharConfigs(configs),
+      combo: singleFormulaCombo("hu_tao", formulaId),
+      calcContext: CTX,
+      weaponStats: weaponStatsResource.peek()!,
+      opts: {},
+      ownedWeaponChoices,
+    });
+    for await (const result of generator) {
+      if (result.done) return result.perCharacter.hu_tao;
+    }
+    throw new Error("Comparison did not complete");
+  }
+
+  it("evaluates actual intermediate refinements and ignores incompatible and unowned weapons", async () => {
+    const rankings = await compareOwned([
+      { weaponId: "staff_of_homa", refinement: 2 },
+      { weaponId: "staff_of_homa", refinement: 3 },
+      { weaponId: "staff_of_homa", refinement: 4 },
+      { weaponId: "sacrificial_sword", refinement: 5 },
+    ]);
+    expect(rankings).toHaveLength(3);
+    expect(rankings.map((r) => r.type === "weapon" && r.weaponId)).toEqual([
+      "staff_of_homa",
+      "staff_of_homa",
+      "staff_of_homa",
+    ]);
+    expect(
+      rankings.map((r) => r.type === "weapon" && r.refinement).sort()
+    ).toEqual([2, 3, 4]);
+    expect(rankings[0].percentOfBest).toBe(100);
+    expect(rankings.every((r) => r.percentOfBest <= 100)).toBe(true);
+  });
+
+  it("returns an empty ranking instead of falling back to the full catalog", async () => {
+    expect(await compareOwned([])).toEqual([]);
+  });
+});

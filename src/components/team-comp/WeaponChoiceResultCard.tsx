@@ -191,6 +191,8 @@ interface WeaponChoiceResultCardProps {
   progress?: WeaponChoiceProgress;
   error: Error | null;
   onRun: () => void;
+  runDisabled?: boolean;
+  ownedWeaponsOnly?: boolean;
   onStop: () => void;
   t: ReturnType<typeof useLanguage>["t"];
 }
@@ -745,6 +747,8 @@ export function WeaponChoiceResultCard({
   progress,
   error,
   onRun,
+  runDisabled = false,
+  ownedWeaponsOnly = false,
   onStop,
   t,
 }: WeaponChoiceResultCardProps) {
@@ -792,6 +796,7 @@ export function WeaponChoiceResultCard({
         </span>
         <Button
           onClick={isComputing ? onStop : onRun}
+          disabled={!isComputing && runDisabled}
           variant={isComputing ? "destructive" : "default"}
           size="sm"
           className="shrink-0"
@@ -947,6 +952,11 @@ export function WeaponChoiceResultCard({
         )}
 
         {error && <p className="text-sm text-destructive">{error.message}</p>}
+        {choiceMode === "weapon" && ownedWeaponsOnly && (
+          <p className="text-xs text-muted-foreground">
+            {t.ui("teamComp.ownedWeaponBaseline")}
+          </p>
+        )}
 
         {choiceMode === "artifact" &&
           result?.artifactAssignmentSuggestion &&
