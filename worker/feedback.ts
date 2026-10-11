@@ -1,4 +1,5 @@
 import { type AppEnv, isAuthFailure, requireUser } from "./auth";
+import { communityPage, parseCommunityPage } from "./community";
 
 const FEEDBACK_API_PREFIX = "/api/feedback/v1";
 const FEEDBACK_COOLDOWN_MS = 5 * 60 * 1000;
@@ -8,7 +9,7 @@ const MAX_FEEDBACK_REQUEST_BYTES = 4096;
 
 const FEEDBACK_CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
   "Access-Control-Max-Age": "86400",
 };
@@ -16,6 +17,7 @@ const FEEDBACK_CORS_HEADERS = {
 export type FeedbackEnv = AppEnv;
 
 type FeedbackSubmissionRequest = {
+  public?: unknown;
   game?: unknown;
   rating?: unknown;
   suggestion?: unknown;
@@ -24,6 +26,7 @@ type FeedbackSubmissionRequest = {
 };
 
 type NormalizedFeedbackSubmission = {
+  public: boolean;
   game: "GI" | "HSR";
   rating: number;
   suggestion: string | null;
@@ -48,12 +51,31 @@ export async function handleFeedbackRequest(
     return feedbackJson({ error: "feedback_not_configured" }, 503);
   }
 
+  const path = stripFeedbackPrefix(url.pathname);
+  if (path === "/submissions" && request.method === "GET") {
+    const page = parseCommunityPage(url);
+    if (page instanceof Response) return page;
+    const result =
+      await env.BACKUP_DB.prepare(`SELECT id, rating, suggestion, bug_report AS bugReport, created_at AS createdAt
+      FROM feedback_submissions WHERE game = ? AND is_public = 1
+      AND (created_at < ? OR (created_at = ? AND id < ?))
+      ORDER BY created_at DESC, id DESC LIMIT 21`)
+        .bind(page.game, page.before, page.before, page.beforeId)
+        .all<{
+          id: string;
+          rating: number;
+          suggestion: string | null;
+          bugReport: string | null;
+          createdAt: number;
+        }>();
+    return feedbackJson(communityPage(result.results));
+  }
+
   const user = await requireUser(request, env);
   if (isAuthFailure(user)) {
     return feedbackJson(user.payload, user.status);
   }
 
-  const path = stripFeedbackPrefix(url.pathname);
   if (path === "/submissions") {
     if (request.method !== "POST") {
       return feedbackJson({ error: "method_not_allowed" }, 405);
@@ -89,9 +111,9 @@ async function handleFeedbackSubmission(
   const result = await db
     .prepare(
       `INSERT INTO feedback_submissions (
-        id, user_id, rating, suggestion, bug_report, metadata_json, created_at, game
+        id, user_id, rating, suggestion, bug_report, metadata_json, created_at, game, is_public
       )
-      SELECT ?, ?, ?, ?, ?, ?, ?, ?
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?
       WHERE NOT EXISTS (
         SELECT 1
         FROM feedback_submissions
@@ -108,6 +130,7 @@ async function handleFeedbackSubmission(
       JSON.stringify(metadata),
       now,
       normalized.game,
+      normalized.public ? 1 : 0,
       userId,
       now - FEEDBACK_COOLDOWN_MS
     )
@@ -174,6 +197,9 @@ function normalizeFeedbackSubmission(
   }
 
   // Before game was introduced, all clients and submissions belonged to GI.
+  if (body.public !== undefined && typeof body.public !== "boolean") {
+    return feedbackJson({ error: "invalid_payload", field: "public" }, 422);
+  }
   const game = body.game === undefined ? "GI" : body.game;
   if (game !== "GI" && game !== "HSR") {
     return feedbackJson({ error: "invalid_payload", field: "game" }, 422);
@@ -225,6 +251,7 @@ function normalizeFeedbackSubmission(
   }
 
   return {
+    public: body.public === true,
     game,
     rating,
     suggestion,
@@ -296,6 +323,7 @@ function feedbackJson(
       ...FEEDBACK_CORS_HEADERS,
       ...headers,
       "Content-Type": "application/json",
+      "Cache-Control": "no-store",
     },
   });
 }

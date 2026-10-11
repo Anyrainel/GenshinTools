@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from "vitest";
 import authSchema from "../../migrations/0002_auth.sql?raw";
 import oldSchema from "../../migrations/0005_feedback.sql?raw";
 import gameMigration from "../../migrations/0006_feedback_game.sql?raw";
+import publicMigration from "../../migrations/0008_public_feedback.sql?raw";
 import { type FeedbackEnv, handleFeedbackRequest } from "../../worker/feedback";
 import { createTestJwt } from "./jwtTestUtils";
 
@@ -26,6 +27,9 @@ it("preserves pre-game feedback as GI and accepts only supported game sites", as
     )
     .run();
   await db.prepare(gameMigration).run();
+  for (const sql of publicMigration.split(";").filter((sql) => sql.trim())) {
+    await db.prepare(sql).run();
+  }
   expect(
     await db
       .prepare(

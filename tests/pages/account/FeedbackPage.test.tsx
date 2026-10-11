@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import FeedbackPage from "@/pages/account/FeedbackPage";
 
@@ -38,29 +38,37 @@ vi.mock("@/components/layout/AccountFeedbackDialog", () => ({
     ),
 }));
 
-describe("Feedback deep link", () => {
-  it("opens feedback immediately and keeps the feedback route after login", async () => {
+describe("Public feedback route", () => {
+  it("opens the dialog on request and returns to feedback after login", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => Response.json({ items: [], nextCursor: null }))
+    );
     render(
       <MemoryRouter>
         <FeedbackPage />
       </MemoryRouter>
     );
+    fireEvent.click(screen.getByRole("button", { name: "feedback.title" }));
     fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
-    await waitFor(() =>
-      expect(signIn).toHaveBeenCalledWith("/account/feedback")
-    );
+    await waitFor(() => expect(signIn).toHaveBeenCalledWith("/feedback"));
   });
 
-  it("returns home when feedback is closed", () => {
+  it("renders while feedback is loading and stays when the dialog closes", () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(() => new Promise(() => {}))
+    );
     render(
-      <MemoryRouter initialEntries={["/account/feedback"]}>
-        <Routes>
-          <Route path="/account/feedback" element={<FeedbackPage />} />
-          <Route path="/" element={<p>Home</p>} />
-        </Routes>
+      <MemoryRouter>
+        <FeedbackPage />
       </MemoryRouter>
     );
+    expect(screen.getByRole("status")).toHaveTextContent("community.loading");
+    fireEvent.click(screen.getByRole("button", { name: "feedback.title" }));
     fireEvent.click(screen.getByRole("button", { name: "Close feedback" }));
-    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "accountSystem.feedback" })
+    ).toBeInTheDocument();
   });
 });

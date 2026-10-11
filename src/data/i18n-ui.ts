@@ -483,13 +483,36 @@ export const i18nUiData = {
       },
     },
   },
+  community: {
+    loading: { en: "Loading posts…", zh: "正在加载…" },
+    loadFailed: { en: "Couldn't load posts.", zh: "加载失败。" },
+    retry: { en: "Retry", zh: "重试" },
+    empty: { en: "No posts yet.", zh: "暂无留言。" },
+    pagination: { en: "Post pages", zh: "留言分页" },
+    previous: { en: "Previous", zh: "上一页" },
+    next: { en: "Next", zh: "下一页" },
+    comments: { en: "Comments", zh: "角色讨论" },
+    post: { en: "Post comment", zh: "发表评论" },
+    rateLimited: {
+      en: "Please wait a minute before posting again.",
+      zh: "请稍等一分钟再发表评论。",
+    },
+    postFailed: {
+      en: "Couldn't post your comment. Please try again.",
+      zh: "评论提交失败，请重试。",
+    },
+    publicCommentNotice: {
+      en: "Comments are public. Don't include personal information.",
+      zh: "评论会公开展示，请勿填写个人隐私信息。",
+    },
+    publicFeedbackNotice: {
+      en: "Feedback is public. Your contact method stays private.",
+      zh: "反馈内容会公开展示，联系方式仅站长可见。",
+    },
+  },
   feedback: {
     gameSite: { en: "Game site", zh: "游戏站点" },
     title: { en: "Send feedback", zh: "提交反馈" },
-    description: {
-      en: "Thanks for your time.",
-      zh: "感谢您的宝贵时间。",
-    },
     ratingLabel: {
       en: "How satisfied are you with ggartifact.com?",
       zh: "你对 ggartifact.com 的使用体验满意吗？",

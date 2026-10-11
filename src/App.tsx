@@ -38,6 +38,7 @@ const SITE_NAME = "GGArtifact";
 const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
   "/account-data": { en: "Account Data", zh: "账号数据" },
   "/account/feedback": { en: "Feedback", zh: "反馈" },
+  "/feedback": { en: "Feedback", zh: "反馈" },
   "/artifact-filter": { en: "Builds", zh: "配装" },
   "/tier-list": { en: "Tier List", zh: "榜单" },
   "/archive": { en: "Archive", zh: "图鉴" },
@@ -129,6 +130,7 @@ function App() {
                 />
                 <Route path="/account/support" element={<SupportMePage />} />
                 <Route path="/account/feedback" element={<FeedbackPage />} />
+                <Route path="/feedback" element={<FeedbackPage />} />
                 <Route
                   path={SCANNER_DOWNLOAD_PAGE}
                   element={<ScannerDownloadPage />}

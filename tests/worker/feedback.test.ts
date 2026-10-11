@@ -301,6 +301,7 @@ class FakeFeedbackD1Statement {
         metadataJson,
         createdAt,
         game,
+        _isPublic,
         rateUserId,
         cutoff,
       ] = this.args;

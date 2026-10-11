@@ -25,6 +25,7 @@ import {
   useBuildsStore,
 } from "@/stores/useBuildsStore";
 import { BaseStatsTable } from "./BaseStatsTable";
+import { CharacterComments } from "./CharacterComments";
 import { EffectCard } from "./EffectCard";
 import { SkillCard } from "./SkillCard";
 
@@ -285,6 +286,9 @@ export function CharacterDetailPanel({
         {/* Linked: Account Data */}
         <SectionErrorBoundary>
           <LinkedAccountSection character={character} />
+        </SectionErrorBoundary>
+        <SectionErrorBoundary>
+          <CharacterComments key={characterId} characterId={characterId} />
         </SectionErrorBoundary>
       </CardContent>
     </Card>

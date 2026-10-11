@@ -7,6 +7,31 @@ not a security boundary. The API validates the value. Historical rows and older
 clients that omit it default to GI. The five-minute cooldown remains per user
 across both sites. User identities remain normalized in the existing auth tables.
 
+## Public feeds and character discussions
+
+Both sites provide `/feedback`, retaining `/account/feedback` as a legacy link.
+The submission dialog explicitly announces that feedback is public. Updated
+clients send `public: true`; historical submissions and older clients remain
+private through the `is_public` default in migration `0008_public_feedback.sql`.
+Public GET `/api/feedback/v1/submissions?game=GI|HSR` returns only post ID,
+timestamp, rating, suggestion, and bug report. Contact metadata and account
+identifiers are never selected for public responses.
+
+Archive character details use GET/POST
+`/api/community/v1/characters/:characterId/comments?game=GI|HSR`, backed by
+`0007_character_comments.sql` in the same database. Reads are anonymous; writes
+use the existing cookie/Bearer authentication. Comments are plain text, limited
+to 1000 characters, with an atomic one-minute per-user cooldown across threads
+and games. Public posts omit author identity.
+
+Both feeds show newest posts first, 20 per page, with an opaque `(time, ID)`
+cursor to preserve ordering when timestamps coincide. Browser requests start
+after rendering, have local loading/error/retry states, and abort on navigation.
+Feed failures cannot hold up archive data or the feedback submission dialog.
+The production build applies both migrations before deployment; publish the
+Genshin API first, then the Star Rail client. Local validation does not migrate
+production data.
+
 Genshin uses its existing same-origin app-session cookie. Star Rail sends its
 shared-Logto ID token as a Bearer header to the GGArtifact feedback endpoint,
 with cookies omitted. The same existing JWT issuer/audience validation verifies

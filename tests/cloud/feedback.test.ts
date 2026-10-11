@@ -35,6 +35,7 @@ describe("feedback client", () => {
       credentials: "same-origin",
       body: JSON.stringify({
         game: "GI",
+        public: true,
         rating: 5,
         suggestion: "Add notes.",
         bugReport: undefined,

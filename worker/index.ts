@@ -4,6 +4,7 @@ import {
   handleBackupRequest,
   runBackupCleanup,
 } from "./backup";
+import { handleCommunityRequest } from "./community";
 import { type FeedbackEnv, handleFeedbackRequest } from "./feedback";
 
 const ENKA_BASE_URL = "https://enka.network/api";
@@ -83,6 +84,9 @@ export default {
     }
     if (url.pathname.startsWith("/api/feedback/v1")) {
       return handleFeedbackRequest(request, url, env as FeedbackEnv);
+    }
+    if (url.pathname.startsWith("/api/community/v1")) {
+      return handleCommunityRequest(request, url, env as AppEnv);
     }
     if (url.pathname.startsWith("/api/enka/")) {
       return handleEnkaProxy(request, url);

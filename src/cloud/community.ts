@@ -1,0 +1,55 @@
+export interface PublicFeedback {
+  id: string;
+  rating: number;
+  suggestion: string | null;
+  bugReport: string | null;
+  createdAt: number;
+}
+
+export interface CharacterComment {
+  id: string;
+  body: string;
+  createdAt: number;
+}
+
+export interface CommunityPage<T> {
+  items: T[];
+  nextCursor: string | null;
+}
+
+export class CommunityApiError extends Error {
+  constructor(readonly status: number) {
+    super(`Community request failed: ${status}`);
+  }
+}
+
+export async function loadCommunityPage<T>(
+  path: string,
+  cursor: string | null,
+  signal: AbortSignal
+): Promise<CommunityPage<T>> {
+  const params = new URLSearchParams({ game: "GI" });
+  if (cursor) params.set("cursor", cursor);
+  const response = await fetch(`${path}?${params}`, {
+    signal,
+    credentials: "omit",
+  });
+  if (!response.ok) throw new CommunityApiError(response.status);
+  return response.json();
+}
+
+export async function postCharacterComment(
+  characterId: string,
+  body: string
+): Promise<void> {
+  const response = await fetch(
+    `/api/community/v1/characters/${encodeURIComponent(characterId)}/comments?game=GI`,
+    {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ body }),
+    }
+  );
+  if (!response.ok) throw new CommunityApiError(response.status);
+}

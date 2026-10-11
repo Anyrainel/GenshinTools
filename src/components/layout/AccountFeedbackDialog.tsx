@@ -30,6 +30,7 @@ type AccountFeedbackDialogProps = {
   isAccountLoading: boolean;
   accountId: string | null;
   onSignIn: () => Promise<void>;
+  onSubmitted?: () => void;
 };
 
 type FeedbackFormState = {
@@ -56,6 +57,7 @@ export function AccountFeedbackDialog({
   isAccountLoading,
   accountId,
   onSignIn,
+  onSubmitted,
 }: AccountFeedbackDialogProps) {
   const { t } = useLanguage();
   const [form, setForm] = useState<FeedbackFormState>(EMPTY_FORM);
@@ -155,6 +157,7 @@ export function AccountFeedbackDialog({
       clearFeedbackDraft();
       setForm(EMPTY_FORM);
       toast.success(t.ui("feedback.submitSuccess"));
+      onSubmitted?.();
       handleFeedbackOpenChange(false);
     } catch (error) {
       if (isFeedbackRateLimitedError(error)) {
@@ -227,7 +230,7 @@ export function AccountFeedbackDialog({
             {t.ui("feedback.title")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
-            {t.ui("feedback.description")}
+            {t.ui("community.publicFeedbackNotice")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>

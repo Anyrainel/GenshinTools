@@ -20,7 +20,6 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { getLogtoAccountCenterSecurityUrl } from "@/cloud/authConfig";
-import { AccountFeedbackDialog } from "@/components/layout/AccountFeedbackDialog";
 import {
   getNavigationConfig,
   type TabConfig,
@@ -142,7 +141,6 @@ export function AppBar({
   const navigate = useNavigate();
   const [_isPending, startTransition] = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const lastScrollY = useRef(0);
   const isExpandedActionBar = useMediaQuery("(min-width: 640px)");
@@ -396,7 +394,7 @@ export function AppBar({
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setIsFeedbackOpen(true)}
+              onClick={() => navigate("/feedback")}
               className="gap-2"
             >
               <MessageSquare className="w-4 h-4" />
@@ -420,7 +418,7 @@ export function AppBar({
               {t.ui("accountSystem.signIn")}
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => setIsFeedbackOpen(true)}
+              onClick={() => navigate("/feedback")}
               className="gap-2"
             >
               <MessageSquare className="w-4 h-4" />
@@ -790,14 +788,6 @@ export function AppBar({
           </div>
         </div>
       )}
-      <AccountFeedbackDialog
-        open={isFeedbackOpen}
-        onOpenChange={setIsFeedbackOpen}
-        isAuthenticated={isAuthenticated}
-        isAccountLoading={isAccountLoading}
-        accountId={account?.id ?? null}
-        onSignIn={handleSignIn}
-      />
     </>
   );
 }

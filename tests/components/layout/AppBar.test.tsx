@@ -358,7 +358,7 @@ describe("AppBar", () => {
     });
   });
 
-  it("opens the feedback sign-in prompt from the signed-out account menu", async () => {
+  it("opens the public feedback route from the signed-out account menu", async () => {
     renderAppBar(<AppBar />);
 
     await userEvent.click(
@@ -368,9 +368,7 @@ describe("AppBar", () => {
       screen.getByRole("menuitem", { name: "accountSystem.feedback" })
     );
 
-    expect(
-      screen.getByText("feedback.signInRequiredTitle")
-    ).toBeInTheDocument();
+    expect(window.location.pathname).toBe("/feedback");
   });
 
   it("can split account, theme, and language into standalone controls", async () => {
