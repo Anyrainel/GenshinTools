@@ -7,8 +7,8 @@ export const i18nUiData = {
     removeMember: { en: "Remove fixed character", zh: "移除固定角色" },
     title: { en: "Find teammates", zh: "寻找队友" },
     description: {
-      en: "Keep 1–3 characters and find teammates from your account.",
-      zh: "固定1至3名角色，从账号中寻找合适的队友。",
+      en: "Keep 1–3 characters and rank teammates from your account by damage.",
+      zh: "固定1至3名角色，从账号中寻找队友并按伤害排序。",
     },
     fixedMembers: { en: "Characters to keep", zh: "固定角色" },
     anchor: { en: "Damage target", zh: "伤害目标角色" },
@@ -54,6 +54,11 @@ export const i18nUiData = {
       zh: "队伍已保存，可前往伤害优化确认配置。",
     },
     damage: { en: "Anchor combo damage", zh: "目标角色组合伤害" },
+    highestDamage: { en: "Highest damage found", zh: "搜索结果中伤害最高" },
+    damageTradeoff: {
+      en: "{0}% less damage than the top result",
+      zh: "伤害比第一名低 {0}%",
+    },
     partialSearch: {
       en: "Approximate results from a limited search",
       zh: "有限搜索得到的近似结果",
@@ -1574,6 +1579,25 @@ export const i18nUiData = {
     nodkrai: { en: "Nod-Krai", zh: "挪德卡莱" },
   },
   teamComp: {
+    investmentNextTitle: { en: "Next 3 investments", zh: "下一金怎么抽" },
+    investmentNextDesc: {
+      en: "Compare one additional 5★ copy from your account’s equipped builds. Uses the selected 5★ weapons and this rotation; artifacts stay equipped.",
+      zh: "从账号当前配装出发，比较再抽一金的伤害提升。使用所选五星武器和当前输出循环，保持已装备圣遗物。",
+    },
+    investmentNextRun: { en: "Rank next investments", zh: "计算下一金" },
+    investmentNextNeedsAccount: {
+      en: "Import account data and equip a weapon for every team member to rank your next investments.",
+      zh: "请导入账号数据，并为队伍中的每位角色装备武器后再计算。",
+    },
+    investmentNextEmpty: {
+      en: "No further upgrades are available with the selected weapons.",
+      zh: "当前所选武器下已无可追加的命座或精炼。",
+    },
+    investmentNextBaseline: {
+      en: "Current account damage",
+      zh: "账号当前伤害",
+    },
+    investmentNextGain: { en: "Damage gain", zh: "伤害提升" },
     investmentBudget: { en: "Additional 5★ copies", zh: "新增金数" },
     investmentGain: {
       en: "Gain from your starting point",
@@ -1591,6 +1615,26 @@ export const i18nUiData = {
     comparisonGoal: {
       en: "What would you like to compare?",
       zh: "想比较什么？",
+    },
+    ownedWeaponComparison: {
+      en: "Owned weapons only",
+      zh: "仅比较已拥有武器",
+    },
+    ownedWeaponComparisonDesc: {
+      en: "Use equipped and inventory weapons at their account refinements. Weapon levels are normalized to Lv. 90.",
+      zh: "按账号中的精炼等级比较已装备和背包中的武器，武器等级统一按90级计算。",
+    },
+    ownedWeaponComparisonNeedsAccount: {
+      en: "Import account data to compare owned weapons.",
+      zh: "导入账号数据后可比较已拥有武器。",
+    },
+    noOwnedCompatibleWeapons: {
+      en: "No owned weapons match this team’s weapon types.",
+      zh: "账号中没有适用于本队角色的武器。",
+    },
+    ownedWeaponBaseline: {
+      en: "Best owned weapon = 100%.",
+      zh: "最佳已拥有武器为100%。",
     },
     comparisonGuide: {
       en: "Choose a comparison, check your team and damage target, then compare the results.",

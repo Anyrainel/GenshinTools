@@ -345,6 +345,21 @@ export function TeammateSearchView() {
               <h3 className="font-semibold">
                 #{rank + 1} · {Math.round(result.damage).toLocaleString()}{" "}
                 {t.ui("teammateSearch.damage")}
+                <span className="mt-1 block text-sm font-normal text-muted-foreground">
+                  {rank === 0
+                    ? t.ui("teammateSearch.highestDamage")
+                    : t.format(
+                        "teammateSearch.damageTradeoff",
+                        (outcome.results[0].damage > 0
+                          ? Math.max(
+                              0,
+                              (1 - result.damage / outcome.results[0].damage) *
+                                100
+                            )
+                          : 0
+                        ).toFixed(1)
+                      )}
+                </span>
               </h3>
               <Button variant="outline" size="sm" onClick={() => save(result)}>
                 {t.ui("teammateSearch.saveTeam")}
