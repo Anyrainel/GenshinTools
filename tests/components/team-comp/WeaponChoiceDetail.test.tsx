@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { WeaponChoiceDetail } from "@/components/team-comp/WeaponChoiceDetail";
@@ -39,18 +40,27 @@ vi.mock("@/components/team-comp/FormulaSelectorCard", () => ({
 vi.mock("@/components/team-comp/TeamDetailAspectLinks", () => ({
   TeamDetailAspectLinks: () => null,
 }));
-vi.mock("@/components/team-comp/WeaponChoiceResultCard", () => ({
-  WeaponChoiceResultCard: (
-    props: ComponentProps<typeof WeaponChoiceResultCard>
-  ) => (
-    <div>
-      <button type="button" onClick={props.onRun} disabled={props.runDisabled}>
-        Run comparison
-      </button>
-      <output data-testid="result">{props.result?.timestamp ?? "empty"}</output>
-    </div>
-  ),
-}));
+vi.mock(
+  "@/components/team-comp/WeaponChoiceResultCard",
+  async (importOriginal) => {
+    const actual =
+      await importOriginal<
+        typeof import("@/components/team-comp/WeaponChoiceResultCard")
+      >();
+    return {
+      WeaponChoiceResultCard: (
+        props: ComponentProps<typeof WeaponChoiceResultCard>
+      ) => (
+        <>
+          <actual.WeaponChoiceResultCard {...props} />
+          <output data-testid="result">
+            {props.result?.timestamp ?? "empty"}
+          </output>
+        </>
+      ),
+    };
+  }
+);
 
 await Promise.all([
   characterStatsResource.preload(),
@@ -90,10 +100,10 @@ describe("owned comparison scope", () => {
     vi.clearAllMocks();
   });
 
-  it("clears account-scoped rankings after inventory changes and can leave owned mode after account removal", () => {
+  it("clears account-scoped rankings after inventory changes and can leave owned mode after account removal", async () => {
     const view = render(<WeaponChoiceDetail {...props} />);
-    fireEvent.click(screen.getByRole("switch", { name: "Owned weapons only" }));
-    fireEvent.click(screen.getByText("Run comparison"));
+    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     expect(state.start.mock.calls[0][0].ownedWeaponChoices).toEqual([
       { weaponId: "staff_of_homa", refinement: 3 },
     ]);
@@ -105,17 +115,19 @@ describe("owned comparison scope", () => {
     expect(screen.getByTestId("result")).toHaveTextContent("empty");
     state.account = null;
     view.rerender(<WeaponChoiceDetail {...props} />);
-    expect(screen.getByText("Run comparison")).toBeDisabled();
-    expect(screen.getByRole("switch")).not.toBeDisabled();
-    fireEvent.click(screen.getByRole("switch"));
-    expect(screen.getByText("Run comparison")).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: "Run Analysis" })).toBeDisabled();
+    expect(screen.getByRole("tab", { name: "All weapons" })).not.toBeDisabled();
+    await userEvent.click(screen.getByRole("tab", { name: "All weapons" }));
+    expect(
+      screen.getByRole("button", { name: "Run Analysis" })
+    ).not.toBeDisabled();
   });
 
-  it("keeps an artifact comparison running when owned inventory changes", () => {
+  it("keeps an artifact comparison running when owned inventory changes", async () => {
     const view = render(<WeaponChoiceDetail {...props} />);
-    fireEvent.click(screen.getByRole("switch"));
-    fireEvent.click(screen.getByRole("button", { name: /Artifact Choice/i }));
-    fireEvent.click(screen.getByText("Run comparison"));
+    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
+    await userEvent.click(screen.getByRole("tab", { name: "Artifact sets" }));
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     state.stop.mockClear();
     state.account = { ...account, extraWeapons: [] };
     view.rerender(<WeaponChoiceDetail {...props} />);
@@ -125,19 +137,21 @@ describe("owned comparison scope", () => {
     expect(screen.getByTestId("result")).toHaveTextContent("33");
   });
 
-  it("restores the catalog cache when leaving owned mode", () => {
+  it("restores the catalog cache when leaving owned mode", async () => {
     const resultCache = { weaponChoiceResult: result("weapon", 11) };
     const view = render(
       <WeaponChoiceDetail {...props} resultCache={resultCache} />
     );
     expect(screen.getByTestId("result")).toHaveTextContent("11");
-    fireEvent.click(screen.getByRole("switch"));
+    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
     expect(screen.getByTestId("result")).toHaveTextContent("empty");
-    fireEvent.click(screen.getByText("Run comparison"));
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     state.result = result("weapon", 22);
     view.rerender(<WeaponChoiceDetail {...props} resultCache={resultCache} />);
     expect(screen.getByTestId("result")).toHaveTextContent("22");
-    fireEvent.click(screen.getByRole("switch"));
+    await userEvent.click(screen.getByRole("tab", { name: "All weapons" }));
     expect(screen.getByTestId("result")).toHaveTextContent("11");
+    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
+    expect(screen.getByTestId("result")).toHaveTextContent("22");
   });
 });

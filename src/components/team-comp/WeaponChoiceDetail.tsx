@@ -1,20 +1,7 @@
 import { ArrowLeft, Loader2 } from "lucide-react";
-import {
-  useCallback,
-  useEffect,
-  useId,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
-import {
-  OptionButton,
-  OptionButtonCell,
-  OptionButtonRow,
-} from "@/components/ui/option-button";
-import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   characterStatsResource,
@@ -145,7 +132,6 @@ export function WeaponChoiceDetail({
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const [choiceMode, setChoiceMode] = useState<"weapon" | "artifact">("weapon");
   const [ownedWeaponsOnly, setOwnedWeaponsOnly] = useState(false);
-  const ownedWeaponsControlId = useId();
   const ownedWeaponChoices = useMemo(
     () => (accountData ? collectOwnedWeaponChoices(accountData) : []),
     [accountData]
@@ -396,12 +382,16 @@ export function WeaponChoiceDetail({
     choiceResultsFromTeamResultCache(resultCache)
   );
   const displayResultsRef = useRef(displayResults);
+  const ownedResult = useRef<WeaponChoiceResult | null>(null);
   const handledComputeResultKeyRef = useRef<string | null>(null);
   const activeRunMode = useRef<"weapon" | "artifact" | null>(null);
   const runWeaponScope = useRef<string | null>(null);
   const activeDisplayResult = displayResults[choiceMode] ?? null;
   const persistChoiceResult = useCallback(
     (mode: "weapon" | "artifact", result: WeaponChoiceResult | null) => {
+      if (mode === "weapon" && ownedWeaponsOnly) {
+        ownedResult.current = result;
+      }
       setDisplayResults((prev) => {
         const next = { ...prev, [mode]: result };
         displayResultsRef.current = next;
@@ -422,6 +412,7 @@ export function WeaponChoiceDetail({
       prevCompositionKey.current = compositionKey;
       clearChoiceResults(teamComp.id);
       displayResultsRef.current = {};
+      ownedResult.current = null;
       setDisplayResults({});
     }
   }, [clearChoiceResults, compositionKey, teamComp.id]);
@@ -444,6 +435,9 @@ export function WeaponChoiceDetail({
   useEffect(() => {
     const accountChanged = previousAccountData.current !== accountData;
     previousAccountData.current = accountData;
+    if (accountChanged) {
+      ownedResult.current = null;
+    }
     if (
       previousWeaponScope.current === weaponScopeKey &&
       !(ownedWeaponsOnly && accountChanged)
@@ -459,7 +453,7 @@ export function WeaponChoiceDetail({
       const next = {
         ...prev,
         weapon: ownedWeaponsOnly
-          ? null
+          ? ownedResult.current
           : choiceResultsFromTeamResultCache(resultCache).weapon,
       };
       displayResultsRef.current = next;
@@ -493,6 +487,9 @@ export function WeaponChoiceDetail({
       perCharacter: computeResult.perCharacter,
       artifactAssignmentSuggestion: computeResult.artifactAssignmentSuggestion,
     };
+    if (mode === "weapon" && ownedWeaponsOnly) {
+      ownedResult.current = storeResult;
+    }
     setDisplayResults((prev) => {
       const next = { ...prev, [mode]: storeResult };
       displayResultsRef.current = next;
@@ -650,75 +647,6 @@ export function WeaponChoiceDetail({
       >
         {headerContent}
 
-        <section className="rounded-lg border border-border bg-gradient-card p-3">
-          <h3 className="font-semibold">{t.ui("teamComp.comparisonGoal")}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.ui("teamComp.comparisonGuide")}
-          </p>
-          <OptionButtonRow className="px-0 pb-0 flex-col sm:flex-row">
-            <OptionButtonCell>
-              <OptionButton
-                selected={choiceMode === "weapon"}
-                onClick={() => {
-                  if (choiceMode !== "weapon") {
-                    stop();
-                    setChoiceMode("weapon");
-                  }
-                }}
-                title={t.ui("teamComp.choiceModeWeapon")}
-                subtitle={t.ui("teamComp.choiceModeWeaponDesc")}
-              />
-            </OptionButtonCell>
-            <OptionButtonCell>
-              <OptionButton
-                selected={choiceMode === "artifact"}
-                onClick={() => {
-                  if (choiceMode !== "artifact") {
-                    stop();
-                    setChoiceMode("artifact");
-                  }
-                }}
-                title={t.ui("teamComp.choiceModeArtifact")}
-                subtitle={t.ui("teamComp.choiceModeArtifactDesc")}
-              />
-            </OptionButtonCell>
-          </OptionButtonRow>
-          {choiceMode === "weapon" && (
-            <div className="mt-3 space-y-1">
-              <label
-                htmlFor={ownedWeaponsControlId}
-                className="flex items-center gap-2 text-sm font-medium"
-              >
-                <Switch
-                  id={ownedWeaponsControlId}
-                  checked={ownedWeaponsOnly}
-                  disabled={isComputing || (!accountData && !ownedWeaponsOnly)}
-                  onCheckedChange={setOwnedWeaponsOnly}
-                />
-                {t.ui("teamComp.ownedWeaponComparison")}
-              </label>
-              <p className="text-xs text-muted-foreground">
-                {accountData
-                  ? t.ui("teamComp.ownedWeaponComparisonDesc")
-                  : t.ui("teamComp.ownedWeaponComparisonNeedsAccount")}
-              </p>
-              {ownedWeaponsOnly &&
-                !configs.some(
-                  (config) =>
-                    getCompatibleOwnedWeaponChoices(
-                      ownedWeaponChoices,
-                      weaponStats[config.weaponId]?.type ?? "",
-                      weaponStats
-                    ).length > 0
-                ) && (
-                  <p className="text-sm text-muted-foreground">
-                    {t.ui("teamComp.noOwnedCompatibleWeapons")}
-                  </p>
-                )}
-            </div>
-          )}
-        </section>
-
         {/* 1. Team Roster (refinement hidden — weapons are the test variable) */}
         <TeamRosterCard
           teamComp={teamComp}
@@ -779,6 +707,20 @@ export function WeaponChoiceDetail({
           isComputing={isComputing}
           choiceMode={choiceMode}
           ownedWeaponsOnly={ownedWeaponsOnly}
+          onComparisonChange={(tab) => {
+            stop();
+            setChoiceMode(tab === "artifact" ? "artifact" : "weapon");
+            setOwnedWeaponsOnly(tab === "owned");
+          }}
+          hasAccount={accountData !== null}
+          hasOwnedCompatibleWeapons={configs.some(
+            (config) =>
+              getCompatibleOwnedWeaponChoices(
+                ownedWeaponChoices,
+                weaponStats[config.weaponId]?.type ?? "",
+                weaponStats
+              ).length > 0
+          )}
           runDisabled={
             choiceMode === "weapon" && ownedWeaponsOnly && !accountData
           }

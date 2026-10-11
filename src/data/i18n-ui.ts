@@ -1617,8 +1617,8 @@ export const i18nUiData = {
       zh: "想比较什么？",
     },
     ownedWeaponComparison: {
-      en: "Owned weapons only",
-      zh: "仅比较已拥有武器",
+      en: "Owned weapons",
+      zh: "已拥有武器",
     },
     ownedWeaponComparisonDesc: {
       en: "Use equipped and inventory weapons at their account refinements. Weapon levels are normalized to Lv. 90.",
@@ -1635,10 +1635,6 @@ export const i18nUiData = {
     ownedWeaponBaseline: {
       en: "Best owned weapon = 100%.",
       zh: "最佳已拥有武器为100%。",
-    },
-    comparisonGuide: {
-      en: "Choose a comparison, check your team and damage target, then compare the results.",
-      zh: "选择比较项目，确认队伍与伤害目标，再查看比较结果。",
     },
     percentOfBest: { en: "% of best", zh: "最优方案占比" },
     showAllChoices: { en: "Show all choices", zh: "查看全部方案" },
@@ -2154,12 +2150,12 @@ export const i18nUiData = {
     weaponChoiceConfig: { en: "Character Config", zh: "角色配置" },
     weaponChoiceBest: { en: "Best", zh: "最佳" },
     weaponChoiceResults: { en: "Choice Results", zh: "选择结果" },
-    choiceModeWeapon: { en: "Weapon Choice", zh: "武器选择" },
+    choiceModeWeapon: { en: "All weapons", zh: "全部武器" },
     choiceModeWeaponDesc: {
       en: "Compare compatible weapons with generated artifacts",
       zh: "用生成圣遗物比较可用武器",
     },
-    choiceModeArtifact: { en: "Artifact Choice", zh: "圣遗物选择" },
+    choiceModeArtifact: { en: "Artifact sets", zh: "圣遗物套装" },
     choiceModeArtifactDesc: {
       en: "Compare 4-piece artifact sets with the current weapon",
       zh: "用当前武器比较四件套",
