@@ -1,5 +1,11 @@
-import { Bookmark, ChevronRight, Info, Plus } from "lucide-react";
-import { useMemo } from "react";
+import {
+  Bookmark,
+  ChevronRight,
+  Info,
+  MessageSquare,
+  Plus,
+} from "lucide-react";
+import { useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import { CharacterCard } from "@/components/account-data/CharacterCard";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
@@ -152,6 +158,7 @@ export function CharacterDetailPanel({
   characterStats: CharacterStatsMap | null;
 }) {
   const { t, language } = useLanguage();
+  const discussionRef = useRef<HTMLDivElement>(null);
   // Tier C: subscribe so load fires on Archive mount and the t.* peeks
   // below see populated data after re-render.
   characterKitsResource.use(language);
@@ -197,27 +204,53 @@ export function CharacterDetailPanel({
               rarity={meta?.rarity ?? character.rarity}
               size="xl"
             />
-            <CharacterInfo character={character} showDate>
-              <div className="flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-1.5 shrink-0 rounded-full h-8 px-3",
-                    effectiveOwned ? "text-amber-400" : "text-muted-foreground"
-                  )}
-                >
-                  <Bookmark
-                    className={cn("h-4 w-4", effectiveOwned && "fill-current")}
-                  />
-                  <span className="text-xs font-medium">
-                    {effectiveOwned
-                      ? constellation > 0
-                        ? `${t.ui("archive.owned")} (${t.format("common.constellationFormat", constellation)})`
-                        : t.ui("archive.owned")
-                      : t.ui("archive.notOwned")}
+            <div className="min-w-0 space-y-2">
+              <CharacterInfo character={character} showDate>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 shrink-0 rounded-full h-8 px-3",
+                      effectiveOwned
+                        ? "text-amber-400"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    <Bookmark
+                      className={cn(
+                        "h-4 w-4",
+                        effectiveOwned && "fill-current"
+                      )}
+                    />
+                    <span className="text-xs font-medium">
+                      {effectiveOwned
+                        ? constellation > 0
+                          ? `${t.ui("archive.owned")} (${t.format("common.constellationFormat", constellation)})`
+                          : t.ui("archive.owned")
+                        : t.ui("archive.notOwned")}
+                    </span>
                   </span>
-                </span>
-              </div>
-            </CharacterInfo>
+                </div>
+              </CharacterInfo>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => {
+                  discussionRef.current?.focus({ preventScroll: true });
+                  discussionRef.current?.scrollIntoView({
+                    behavior: window.matchMedia(
+                      "(prefers-reduced-motion: reduce)"
+                    ).matches
+                      ? "auto"
+                      : "smooth",
+                    block: "start",
+                  });
+                }}
+              >
+                <MessageSquare className="h-4 w-4" />
+                {t.ui("community.discussion")}
+              </Button>
+            </div>
           </div>
           {/* Base Stats — top-right on wide screens */}
           {!unreleased && <BaseStatsTable characterId={characterId} />}
@@ -287,9 +320,11 @@ export function CharacterDetailPanel({
         <SectionErrorBoundary>
           <LinkedAccountSection character={character} />
         </SectionErrorBoundary>
-        <SectionErrorBoundary>
-          <CharacterComments key={characterId} characterId={characterId} />
-        </SectionErrorBoundary>
+        <div ref={discussionRef} tabIndex={-1} className="scroll-mt-4">
+          <SectionErrorBoundary>
+            <CharacterComments key={characterId} characterId={characterId} />
+          </SectionErrorBoundary>
+        </div>
       </CardContent>
     </Card>
   );

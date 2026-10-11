@@ -484,6 +484,7 @@ export const i18nUiData = {
     },
   },
   community: {
+    discussion: { en: "Discussion", zh: "角色讨论" },
     loading: { en: "Loading posts…", zh: "正在加载…" },
     loadFailed: { en: "Couldn't load posts.", zh: "加载失败。" },
     retry: { en: "Retry", zh: "重试" },
