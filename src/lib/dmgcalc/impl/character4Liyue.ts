@@ -832,7 +832,7 @@ const beidouOption = {
     {
       value: "on",
       label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,

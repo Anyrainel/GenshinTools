@@ -96,6 +96,17 @@ export class TeamMeta {
     return Object.values(this.isShielder).some(Boolean);
   }
 
+  /**
+   * Peak combat availability of a Polestar Field. Mitya's burst creates
+   * carried Prisms that create the field even without a Cryo teammate.
+   * Stellar Swirl grants its own Radiance state, rather than this field.
+   */
+  hasPolestarField(): boolean {
+    return (
+      this.characters.includes("mitya") || this.hasReaction("stellarConduct")
+    );
+  }
+
   countByElement(element: Element): number {
     return Object.values(this.elements).filter(
       (e): e is Element => e === element

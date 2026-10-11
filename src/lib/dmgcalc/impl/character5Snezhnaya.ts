@@ -56,16 +56,14 @@ class Mitya extends CharacterBase {
         0.00028,
         0.14
       ),
+      // Q creates three Prisms without a reaction; carried Prisms create a
+      // Polestar Field according to the ZH glossary.
+      new StatBuff(
+        cbs(this, "Q/P3", ["Q"]),
+        { receiver: "team", filter: { elements: ["Cryo", "Electro"] } },
+        [{ key: "polestarField", value: 1 }]
+      ),
     ];
-    if (this.teamMeta.hasReaction("stellarConduct")) {
-      buffs.push(
-        new StatBuff(
-          cbs(this, "P3", ["stellarConduct"]),
-          { receiver: "team", filter: { elements: ["Cryo", "Electro"] } },
-          [{ key: "polestarField", value: 1 }]
-        )
-      );
-    }
     if (this.stable) {
       buffs.push(
         new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
@@ -111,7 +109,9 @@ class Mitya extends CharacterBase {
   protected override get comboDescriptor(): ComboTemplate {
     // Collapse starter: Q supplies three Prisms and E supplies one at C1.
     // Stable mode uses the option's full-Prism assumption for its single
-    // expiration explosion. Reaction-generated Prisms and C6 random refunds
+    // device replacement explosion. Recasting E consumes the carried Prisms
+    // while a device exists, satisfying C4's device-presence condition.
+    // Reaction-generated Prisms and C6 random refunds
     // depend on the team's rotation; users can edit the per-hit counts.
     return this.stable
       ? [
@@ -119,6 +119,8 @@ class Mitya extends CharacterBase {
           { id: "mitya-burst", count: 1 },
           { id: "mitya-stable-pulse", count: 1 },
           { id: "mitya-prism-shatter", count: 1 },
+          // At C4 the capped shatter consumes five Prisms, triggering C4 once.
+          { id: "mitya-c4", count: 0, bonus: [{ minC: 4, delta: 1 }] },
         ]
       : [
           { id: "mitya-e-hold", count: 1 },
@@ -752,7 +754,7 @@ const sandroneOption = {
         zh: "辉映·星超导 (极星辉域)",
         en: "Radiance: Stellar-Conduct (Polestar Field)",
       },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "stellarSwirl",
@@ -781,7 +783,7 @@ class Sandrone extends CharacterBase {
       // Polestar Field: recorded applications grant 29%-40% ordinary
       // Cryo/Electro DMG Bonus. The marker lets Direct/Catalyze formulas resolve
       // the selected attach count from CalcContext; Stellar Direct ignores dmg%.
-      ...(this.teamMeta.hasReaction("stellarConduct")
+      ...(this.teamMeta.hasPolestarField()
         ? [
             new StatBuff(
               cbs(this, "P3", ["stellarConduct"]),
@@ -1132,7 +1134,7 @@ const odetteOption = {
         zh: "辉映·星超导 (极星辉域)",
         en: "Radiance: Stellar-Conduct (Polestar Field)",
       },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "stellarSwirl",
@@ -1154,7 +1156,7 @@ class Odette extends CharacterBase {
   readonly buffs = (() => {
     const maxSplendorStacks = this.constellation >= 1 ? 6 : 4;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      ...(this.teamMeta.hasReaction("stellarConduct")
+      ...(this.teamMeta.hasPolestarField()
         ? [
             new StatBuff(
               cbs(this, "P3", ["stellarConduct"]),

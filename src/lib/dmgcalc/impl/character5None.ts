@@ -1135,7 +1135,7 @@ const travelerCryoOption = {
         zh: "辉映·星超导 (极星辉域)",
         en: "Radiance: Stellar-Conduct (Polestar Field)",
       },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "stellarSwirl",
@@ -1191,7 +1191,7 @@ class TravelerCryo extends CharacterBase {
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      ...(this.teamMeta.hasReaction("stellarConduct")
+      ...(this.teamMeta.hasPolestarField()
         ? [
             new StatBuff(
               cbs(this, "P3", ["stellarConduct"]),

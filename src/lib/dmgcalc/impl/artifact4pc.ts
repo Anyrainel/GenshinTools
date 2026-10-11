@@ -3,7 +3,11 @@ import { elements as ALL_ELEMENTS, type Element } from "@/data/enums";
 import type { StatEntry } from "@/data/types";
 import { PHEC_ELEMENTS } from "../constants";
 import { ArtifactSetBase } from "../core/implModel";
-import { RegisterArtifactSet, resolveOption } from "../core/registry";
+import {
+  createCharacter,
+  RegisterArtifactSet,
+  resolveOption,
+} from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { TeamMeta } from "../core/teamMeta";
 import type { OptionDef, OptionMap } from "../types";
@@ -1523,9 +1527,38 @@ class HeartOfTheFurnace4pc extends ArtifactSetBase {
   //      "同名圣遗物套装产生的伤害加成效果无法叠加" → noStackId on the team DMG buff.
   readonly halfSetId = "atk%-18";
   readonly stats: StatEntry[] = [];
-  readonly buffs: StatBuff[] =
-    this.teamMeta.hasReaction("stellarConduct") ||
-    this.teamMeta.hasReaction("stellarSwirl")
+  readonly buffs: StatBuff[];
+
+  constructor(
+    artifactSetId: string,
+    charId: string,
+    teamMeta: TeamMeta,
+    combatOpts: OptionMap = {}
+  ) {
+    super(artifactSetId, charId, teamMeta, combatOpts);
+    let canActivate =
+      teamMeta.hasReaction("stellarConduct", charId) ||
+      (teamMeta.elements[charId] === "Anemo" &&
+        teamMeta.hasReaction("stellarSwirl", charId));
+    if (!canActivate) {
+      // Intrinsic Stellar hits (including Mitya's reaction-independent Prisms)
+      // can activate this set. A field alone does not give every wearer such hits.
+      const character = createCharacter(
+        charId,
+        teamMeta.charLevels[charId] ?? 90,
+        teamMeta.constellations[charId] ?? 0,
+        teamMeta,
+        combatOpts
+      );
+      canActivate = Object.keys(character.formulaIds).some((id) =>
+        character
+          .getFormulaEntry(id)
+          ?.parts.some(({ formula }) =>
+            ["stellarConduct", "stellarSwirl"].includes(formula.tag.reaction)
+          )
+      );
+    }
+    this.buffs = canActivate
       ? [
           new StatBuff(
             {
@@ -1551,6 +1584,7 @@ class HeartOfTheFurnace4pc extends ArtifactSetBase {
           ),
         ]
       : [];
+  }
 }
 
 @RegisterArtifactSet("scarlet_proof")

@@ -6,10 +6,21 @@
 has_ts=false
 has_py=false
 has_worker=false
+has_updates=false
+validated_head=""
 while read -r local_ref local_sha remote_ref remote_sha; do
   # Skip delete pushes
   if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
     continue
+  fi
+  has_updates=true
+  if [ -z "$validated_head" ]; then
+    validated_head=$(git rev-parse --verify HEAD) || exit 1
+  fi
+  # Checks run in this checkout, so only its exact commit can be validated.
+  if [ "$local_sha" != "$validated_head" ]; then
+    echo "Push blocked: $local_ref is not the checked-out HEAD. Check out the commit being pushed and run the checks there."
+    exit 1
   fi
   # If remote sha is all zeros, this is a new branch — compare against merge-base with origin/main
   if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
@@ -33,6 +44,21 @@ while read -r local_ref local_sha remote_ref remote_sha; do
     has_worker=true
   fi
 done
+
+if [ "$has_updates" = false ]; then
+  exit 0
+fi
+
+require_clean_head() {
+  current_head=$(git rev-parse --verify HEAD) || return 1
+  checkout_status=$(git status --porcelain --untracked-files=normal) || return 1
+  if [ "$current_head" != "$validated_head" ] || [ -n "$checkout_status" ]; then
+    echo "Push blocked: commit or remove pending changes before validating the pushed HEAD."
+    return 1
+  fi
+}
+
+require_clean_head || exit 1
 
 echo "Checking released and beta calculator readiness..."
 npm run check:calculator-readiness || exit 1
@@ -71,3 +97,6 @@ if [ "$has_py" = true ]; then
   uv run ty check . || exit 1
   cd .. || exit 1
 fi
+
+# Refuse if checks or concurrent edits changed the checkout being validated.
+require_clean_head || exit 1

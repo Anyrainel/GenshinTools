@@ -16,7 +16,7 @@ const valeriyOption = {
         zh: "辉映·星超导 / 100点",
         en: "Radiance: Stellar-Conduct / 100",
       },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "stellar-130",
@@ -24,12 +24,12 @@ const valeriyOption = {
         zh: "辉映·星超导 / 130点（C4）",
         en: "Radiance: Stellar-Conduct / 130 (C4)",
       },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "stellar-40",
       label: { zh: "辉映·星超导 / 40点", en: "Radiance: Stellar-Conduct / 40" },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "normal-100",
@@ -231,7 +231,7 @@ const alyoshaOption = {
     {
       value: "on",
       label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,

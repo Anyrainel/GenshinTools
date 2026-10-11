@@ -342,7 +342,7 @@ Radiance (辉映) has two variants — **辉映·星超导** (Stellar-Conduct) a
 
 Radiance arrived in 6.7 (**Witch's Revelation**), which added Stellar-Conduct clauses to six existing characters — **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou** — via an **Additional Talent** (A4 slot) and enhanced constellations. 7.0 added the Stellar Swirl variant and native Snezhnaya carriers. Reference implementations: `character5Snezhnaya.ts` (both variants), `character5None.ts` (Cryo Traveler).
 
-**Do not assume a character carries only one variant.** Several 6.7 kits enter *either* state depending on the team: Diona's and Qiqi's P4 grant 辉映·星超导 inside a Polestar Field **or** 辉映·星扩散 for 8s after a nearby ally triggers a Stellar Swirl. Their options must offer both, gated on the matching `hasReaction`, or the whole Radiance branch becomes unreachable on a Swirl-only team (Vesna enables `stellarSwirl` only). **Yumemizuki Mizuki is a Stellar Swirl carrier** — her P4 and C1 carry 辉映·星扩散 clauses, entered via a party Swirl trigger rather than the Polestar Field wording.
+**Do not assume a character carries only one variant.** Several 6.7 kits enter *either* state depending on the team: Diona's and Qiqi's P4 grant 辉映·星超导 inside a Polestar Field **or** 辉映·星扩散 for 8s after a nearby ally triggers a Stellar Swirl. Their options must offer both: gate the field choice on `hasPolestarField()` and the Swirl choice on `hasReaction("stellarSwirl")`. Otherwise a branch becomes unreachable on a field-only or Swirl-only team. **Yumemizuki Mizuki is a Stellar Swirl carrier** — her P4 and C1 carry 辉映·星扩散 clauses, entered via a party Swirl trigger rather than the Polestar Field wording.
 
 Characters who merely *enable* a Stellar reaction for the party are a different set from those who *enter* Radiance — see `STELLAR_ENABLERS` for the former.
 
@@ -357,7 +357,7 @@ const radianceOption = {
     {
       value: "on",
       label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,
@@ -369,7 +369,7 @@ private readonly radianceOn =
 ```
 
 - **[BUG]** if Radiance-gated buffs or SC formulas are active when `radianceOn` is false.
-- **[BUG]** if the "on" choice is not gated on `teamMeta.hasReaction("stellarConduct")`.
+- **[BUG]** if a Polestar Field choice is not gated on `teamMeta.hasPolestarField()`. Field availability and reaction availability are distinct: Mitya's burst creates Prisms that create a field even without a Cryo teammate. Keep actual reaction-triggered effects gated on `hasReaction("stellarConduct")`, and Stellar Swirl choices gated on `hasReaction("stellarSwirl")`.
 
 **Radiance replaces, not stacks:** Game text under `辉映·星超导` **changes** the base mechanic (e.g., Rebuke → Luster, Judication bolts → Starsame). Implement as `if (this.radianceOn) { … } else { … }` for buffs and formula variants — not additive overlays on the pre-6.7 path. When a constellation scales differently in vs out of Radiance (Wriothesley C2), implement **both** branches; do not assume Radiance is always on for the non-Radiance branch.
 
@@ -380,6 +380,7 @@ private readonly radianceOn =
 **Cast-triggered vs tick-triggered procs:** Procs keyed to **skill cast** ("施放…时", "unleashing E/Q", "when there are ≥N Sakura nearby" on E press) are **not** the same as periodic tick damage. Do **not** bundle cast procs into per-tick formula parts (e.g., Yae P1 extra lightning on E cast vs Sakura lightning ticks). Use a **separate `formulaMap` entry** and `comboDescriptor` count for casts per rotation. ICD-gated follow-up procs (e.g., P4 "每2.5秒至多触发一次") may be modeled as a separate formula with a best-estimate count; if bundled into always-on ticks, **[TRACK]** with category `approximation`.
 
 **Peak-model simplifications (acceptable wont-do):**
+- **Guaranteed procs:** Reconcile default combo counts with their own peak assumptions. If a modeled hit consumes enough resources to trigger a constellation proc, include that proc at the required constellation; an editable rotation does not justify omitting a guaranteed consequence of the modeled hit.
 - **Field / summon uptime:** Radiance effects scoped to a deployable (Qiqi Herald of Frost during E, Diona inside Q Drunken Mist) — peak model assumes deployable is active when the combo uses that ability; no runtime field-presence flag.
 - **Swap-order inheritance:** Cyno **Together We Rise** (C1 EM on swap, C2 SC stacks on TWR characters only) — `receiver: "team"` for SC buffs is an acceptable peak approximation when rotation assumes SC dealers are TWR-affected.
 - **Utility Radiance branches:** DR, energy restore, heal-on-proc — skip per U9 even when Radiance text replaces a combat-adjacent effect (e.g., Wriothesley C4 DR instead of heal-overflow ATK SPD).

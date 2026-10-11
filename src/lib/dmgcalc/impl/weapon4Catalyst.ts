@@ -489,7 +489,7 @@ class ClashOfKings extends WeaponBase {
 // cannot read, and it REPLACES the base bonus instead of adding to it, so it
 // must be an explicit user toggle: the base branch is what every wielder gets,
 // and the Radiance branch is opt-in. The "on" choice is only offered when the
-// team can produce a Stellar reaction at all. Mirrors New Bough.
+// team can create a Polestar Field or trigger Stellar Swirl. Mirrors New Bough.
 const wintersHeavyHeartOption = {
   label: { zh: "辉映状态", en: "Radiance State" },
   choices: [
@@ -497,8 +497,7 @@ const wintersHeavyHeartOption = {
     {
       value: "on",
       label: { zh: "开启", en: "On" },
-      when: (tm) =>
-        tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl"),
+      when: (tm) => tm.hasPolestarField() || tm.hasReaction("stellarSwirl"),
     },
   ] as const,
 } satisfies OptionDef;

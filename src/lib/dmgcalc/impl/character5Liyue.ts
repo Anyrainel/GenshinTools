@@ -1549,7 +1549,7 @@ const qiqiOption = {
         zh: "辉映·星超导 (极星辉域)",
         en: "Radiance: Stellar-Conduct (Polestar Field)",
       },
-      when: (tm) => tm.hasReaction("stellarConduct"),
+      when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "stellarSwirl",

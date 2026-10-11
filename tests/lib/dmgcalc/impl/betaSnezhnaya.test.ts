@@ -1,13 +1,18 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import { characterStatsResource, getTalentParam } from "@/data/gameStatsLoader";
 import { getCrBudget } from "@/lib/account-data/maxCrBuff";
+import { resolveComboDescriptor } from "@/lib/dmgcalc/core/combo";
 import {
   DirectFormula,
   StellarDirectFormula,
 } from "@/lib/dmgcalc/core/damageFormula";
 import { compileExpr } from "@/lib/dmgcalc/core/expr";
 import { ExprStatSheet, VarMapping } from "@/lib/dmgcalc/core/exprStatSheet";
-import { createCharacter } from "@/lib/dmgcalc/core/registry";
+import {
+  createCharacter,
+  getOptionDef,
+  isChoiceEnabled,
+} from "@/lib/dmgcalc/core/registry";
 import { ScalingBuff } from "@/lib/dmgcalc/core/statBuff";
 import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
@@ -59,6 +64,81 @@ describe("Mitya", () => {
     expect(
       new TeamMeta(["mitya", "valeriy"]).hasReaction("stellarConduct")
     ).toBe(false);
+  });
+
+  it("burst-created Prisms grant ordinary Electro field damage without Cryo", () => {
+    const ids = ["mitya", "valeriy", "bennett"];
+    expect(new TeamMeta(ids).hasReaction("stellarConduct")).toBe(false);
+    const char = character("mitya", 0, "collapse", ids);
+    const field = char.buffs.find((buff) =>
+      buff.staticBuffs.some((entry) => entry.key === "polestarField")
+    )!;
+    expect(field.isApplicable("mitya", "valeriy", true)).toBe(true);
+    const marker = StatSheet.fromEntries(
+      field.staticBuffs,
+      field.target.filter
+    );
+    const base = new StatSheet([{ key: "atk", value: 1000 }]);
+    const ctx = {
+      enemyLevel: 90,
+      enemyRes: 0.1,
+      rollMultiplier: 1,
+      substatBudget: "8_6" as const,
+      stellarAttachHits: 12,
+    };
+    const electro = character("valeriy", 0, "stellar-100", ids).getFormulaEntry(
+      "valeriy-skill"
+    )!.parts[0].formula;
+    expect(electro.calc(base.merge(marker), 90, ctx)).toBeCloseTo(
+      electro.calc(base, 90, ctx) * 1.4
+    );
+    const pyro = new DirectFormula(1, {
+      element: "Pyro",
+      ability: "skill",
+      reaction: "none",
+    });
+    expect(pyro.calc(base.merge(marker), 90, ctx)).toBe(
+      pyro.calc(base, 90, ctx)
+    );
+  });
+
+  it("includes one 400% EM C4 proc after the stable capped shatter", () => {
+    expect(character("mitya", 3, "stable").combo).not.toHaveProperty(
+      "mitya-c4"
+    );
+    // The team catalog resolves the raw descriptor at each constellation,
+    // before filtering formula availability. C4 must also be gated here.
+    const descriptor = character("mitya", 0, "stable").rawComboDescriptor;
+    expect(resolveComboDescriptor(descriptor, 0)["mitya-c4"]).toBe(0);
+    expect(resolveComboDescriptor(descriptor, 3)["mitya-c4"]).toBe(0);
+    expect(resolveComboDescriptor(descriptor, 4)["mitya-c4"]).toBe(1);
+    const char = character("mitya", 4, "stable");
+    expect(char.combo["mitya-prism-shatter"]).toBe(1);
+    expect(char.combo["mitya-c4"]).toBe(1);
+    expect(character("mitya", 4, "collapse").combo).not.toHaveProperty(
+      "mitya-c4"
+    );
+    const proc = char.getFormulaEntry("mitya-c4")!.parts[0];
+    expect(proc.offField).toBe(true);
+    const stats = new StatSheet([{ key: "em", value: 500 }]);
+    const ctx = {
+      enemyLevel: 90,
+      enemyRes: 0.1,
+      rollMultiplier: 1,
+      substatBudget: "8_6" as const,
+      stellarAttachHits: 12,
+    };
+    // 400% EM, 2.0 field coefficient, 120% EM reaction bonus, 90% RES.
+    const expected = 4 * 500 * 2 * (1 + (6 * 500) / 2500) * 0.9;
+    expect(
+      char.combo["mitya-c4"] * proc.formula.calc(stats, 90, ctx)
+    ).toBeCloseTo(expected);
+    const expr = proc.formula.buildExpr(
+      new ExprStatSheet(stats, 0, new VarMapping(), new Set()),
+      90,
+      ctx
+    );
+    expect(compileExpr(expr)(new Float64Array())).toBeCloseTo(expected);
   });
 
   it("separates the ATK-scaled detonation from EM-scaled Stellar hits", () => {
@@ -237,6 +317,27 @@ describe("Valeriy", () => {
     expect(noStellar.target.filter?.reactions).toBeUndefined();
   });
 
+  it("enables every Radiance charge tier with Mitya's field without Cryo", () => {
+    const ids = ["mitya", "valeriy", "bennett"];
+    const tm = new TeamMeta(ids);
+    expect(tm.hasPolestarField()).toBe(true);
+    expect(tm.hasReaction("stellarConduct")).toBe(false);
+    const option = getOptionDef("valeriy")!;
+    for (const choice of option.choices.filter((entry) =>
+      entry.value.startsWith("stellar-")
+    )) {
+      expect(isChoiceEnabled(choice, tm)).toBe(true);
+      const buff = character("valeriy", 4, choice.value, ids)
+        .buffs[0] as ScalingBuff;
+      expect(buff.target.filter?.reactions).toEqual(["stellarConduct"]);
+      expect(buff.scale).toBeCloseTo(
+        getTalentParam("valeriy", "A", 12, 6) +
+          Number(choice.value.split("-")[1]) * 0.009
+      );
+    }
+    expect(new TeamMeta(["valeriy", "bennett"]).hasPolestarField()).toBe(false);
+  });
+
   it("keeps C6 bonus off the Q cast and ordinary physical charge", () => {
     const char = character("valeriy", 6);
     expect(
@@ -299,5 +400,37 @@ describe("Valeriy", () => {
     expect(
       char.getFormulaEntry("valeriy-burst")?.parts[0].formula.talentMultiplier
     ).toBe(getTalentParam("valeriy", "Q", 9, 0));
+  });
+});
+
+describe("Polestar Field consumers", () => {
+  it("enables Alyosha's field-only Radiance alongside Mitya without Cryo", () => {
+    const ids = ["mitya", "alyosha", "bennett"];
+    const tm = new TeamMeta(ids);
+    const on = getOptionDef("alyosha")!.choices.find((c) => c.value === "on")!;
+    expect(tm.hasReaction("stellarConduct")).toBe(false);
+    expect(isChoiceEnabled(on, tm)).toBe(true);
+    const buff = character("alyosha", 0, "on", ids).buffs.find(
+      (entry) => entry.source.origin === "P3"
+    )!;
+    expect(buff.target.receiver).toBe("teamOnField");
+    expect(buff.staticBuffs).toEqual([{ key: "reactionDmg%", value: 0.2 }]);
+  });
+
+  it.each([
+    "sandrone",
+    "odette",
+  ])("%s distinguishes a Polestar Field from Stellar Swirl Radiance", (id) => {
+    const tm = new TeamMeta([id, "mitya", "bennett"]);
+    const def = getOptionDef(id)!;
+    const conduct = def.choices.find((c) => c.value === "stellarConduct")!;
+    const swirl = def.choices.find((c) => c.value === "stellarSwirl")!;
+    expect(isChoiceEnabled(conduct, tm)).toBe(true);
+    expect(isChoiceEnabled(swirl, tm)).toBe(false);
+    const swirlOnly = new TeamMeta([id, "sucrose"]);
+    expect(swirlOnly.hasReaction("stellarSwirl")).toBe(true);
+    expect(swirlOnly.hasPolestarField()).toBe(false);
+    expect(isChoiceEnabled(conduct, swirlOnly)).toBe(false);
+    expect(isChoiceEnabled(swirl, swirlOnly)).toBe(true);
   });
 });
