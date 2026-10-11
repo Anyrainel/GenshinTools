@@ -1,37 +1,12 @@
+"use client"
+
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-/**
- * Generic Select wrapper — narrows `onValueChange` to `T` so call sites
- * don't need `v as SomeType` casts.  When no type parameter is given it
- * falls back to `string` for backward-compatibility.
- */
-function Select<T extends string = string>({
-  onValueChange,
-  value,
-  defaultValue,
-  ...props
-}: Omit<
-  React.ComponentProps<typeof SelectPrimitive.Root>,
-  "onValueChange" | "value" | "defaultValue"
-> & {
-  value?: T
-  defaultValue?: T
-  onValueChange?: (value: T) => void
-}) {
-  return (
-    <SelectPrimitive.Root
-      {...props}
-      value={value}
-      defaultValue={defaultValue}
-      onValueChange={onValueChange as ((value: string) => void) | undefined}
-    />
-  )
-}
-Select.displayName = "Select"
+const Select = SelectPrimitive.Root
 
 const SelectGroup = SelectPrimitive.Group
 

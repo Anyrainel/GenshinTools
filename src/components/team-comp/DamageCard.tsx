@@ -1312,7 +1312,7 @@ function CritModeDropdown({
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
-    <Select<CritMode> value={critMode} onValueChange={(v) => setCritMode(v)}>
+    <Select value={critMode} onValueChange={(v) => setCritMode(v as CritMode)}>
       <SelectTrigger
         className={cn(
           "w-auto font-semibold border-none bg-transparent shadow-none focus:ring-0 text-amber-400 px-1 py-0 gap-0.5 shrink-0 [&>svg:last-child]:hidden",

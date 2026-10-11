@@ -5,12 +5,12 @@ import type {
   ManualBackupChoice,
 } from "@/cloud/manualBackupFlow";
 import type { CloudPartitionId } from "@/cloud/types";
+import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
@@ -270,8 +270,8 @@ function ManualBackupRow({
         <Checkbox
           id={checkboxId}
           checked={checked}
-          onBooleanChange={(next) =>
-            selectable && onToggleChoice(item.id, next)
+          onCheckedChange={(next) =>
+            selectable && onToggleChoice(item.id, next === true)
           }
           disabled={busy || !selectable}
         />

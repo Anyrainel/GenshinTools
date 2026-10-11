@@ -226,7 +226,10 @@ export function ArtifactFreezeDialog({
         )}
 
         {/* 5 slot tabs */}
-        <Tabs value={activeSlot} onValueChange={(v) => handleSlotChange(v)}>
+        <Tabs
+          value={activeSlot}
+          onValueChange={(v) => handleSlotChange(v as typeof activeSlot)}
+        >
           <TabsList className="w-full">
             {allSlots.map((slot) => (
               <TabsTrigger key={slot} value={slot} className="flex-1 text-xs">

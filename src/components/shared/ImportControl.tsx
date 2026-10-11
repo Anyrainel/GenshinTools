@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +22,6 @@ import {
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,

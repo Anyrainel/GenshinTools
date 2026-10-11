@@ -824,7 +824,12 @@ export function WeaponChoiceResultCard({
         </Button>
       </CardHeader>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-        <Tabs value={comparisonTab} onValueChange={onComparisonChange}>
+        <Tabs
+          value={comparisonTab}
+          onValueChange={(value) =>
+            onComparisonChange?.(value as "all" | "artifact" | "owned")
+          }
+        >
           <TabsList
             aria-label={t.ui("teamComp.comparisonGoal")}
             className="grid h-auto w-full grid-cols-3"

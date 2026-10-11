@@ -116,7 +116,11 @@ function ResponsiveDialogContent({
   const { isDesktop } = React.useContext(ResponsiveDialogContext);
 
   if (isDesktop) {
-    return <DialogContent className={className}>{children}</DialogContent>;
+    return (
+      <DialogContent className={cn("max-h-[90dvh] overflow-y-auto", className)}>
+        {children}
+      </DialogContent>
+    );
   }
 
   return (

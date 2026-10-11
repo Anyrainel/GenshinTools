@@ -1,6 +1,7 @@
 import { ArrowUpRight, CircleAlert, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { PortalHoverCardContent as HoverCardContent } from "@/components/shared/PortalHoverCardContent";
 import {
   Drawer,
   DrawerContent,
@@ -8,11 +9,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
+import { HoverCard, HoverCardTrigger } from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";

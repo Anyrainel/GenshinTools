@@ -2,10 +2,10 @@ import { Upload } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
 
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,

@@ -378,7 +378,7 @@ export function AccountManagerDialog({
 
           {!isImportMode && onOpenImportControl && (
             <Button
-              variant="soft"
+              variant="secondary"
               className="mt-2 h-12 w-full gap-2"
               onClick={() => {
                 onClose();

@@ -752,7 +752,7 @@ export function FormulaSelectorCard({
                       >
                         <Checkbox
                           checked={isCharIgnored}
-                          onBooleanChange={() => onToggleIgnoreChar(cid)}
+                          onCheckedChange={() => onToggleIgnoreChar(cid)}
                           className="rounded-full pointer-events-none"
                         />
                         <span className="text-xs md:text-sm lg:text-xs xl:text-sm text-muted-foreground truncate">

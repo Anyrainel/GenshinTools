@@ -833,7 +833,9 @@ function ArtifactEditor({
           ) : (
             <Select
               value={art.mainStatKey}
-              onValueChange={(v) => onUpdate({ mainStatKey: v })}
+              onValueChange={(v) =>
+                onUpdate({ mainStatKey: v as typeof art.mainStatKey })
+              }
             >
               <SelectTrigger className="h-9 lg:h-10 font-medium text-xs lg:text-sm px-2.5 bg-background/50">
                 <SelectValue />
@@ -1366,11 +1368,7 @@ function ArtifactPickPanel({
             <Package className="w-4 h-4 mr-2" />
             {t.ui("charEdit.stash")}
           </Button>
-          <Button
-            variant="destructive-outline"
-            className="flex-1"
-            onClick={onDelete}
-          >
+          <Button variant="destructive" className="flex-1" onClick={onDelete}>
             <Trash2 className="w-4 h-4 mr-2" />
             {t.ui("common.delete")}
           </Button>
@@ -1378,7 +1376,13 @@ function ArtifactPickPanel({
       )}
 
       {mode === "equip" && currentSetKey && (
-        <Tabs value={tab} onValueChange={(v) => setTab(v)} className="w-full">
+        <Tabs
+          value={tab}
+          onValueChange={(v) => {
+            if (v === "same" || v === "other") setTab(v);
+          }}
+          className="w-full"
+        >
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="same">
               {t.ui("accountData.sameSet")}

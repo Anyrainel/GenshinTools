@@ -1,10 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { FocusSafeAccordionContent as AccordionContent } from "@/components/shared/FocusSafeAccordionContent";
+import { AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 interface ImportMethodItemProps {
   value: string;

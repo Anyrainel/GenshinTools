@@ -1,11 +1,11 @@
 import { CheckCircle2, Info, Loader2, XCircle } from "lucide-react";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
-  DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,

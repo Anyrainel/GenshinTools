@@ -598,7 +598,10 @@ function CustomBuffDialog({
             <Label className="text-sm font-semibold">
               {t.ui("teamComp.extraBuffsStat")}
             </Label>
-            <Select value={statKey} onValueChange={(v) => setStatKey(v)}>
+            <Select
+              value={statKey}
+              onValueChange={(v) => setStatKey(v as StatKey)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

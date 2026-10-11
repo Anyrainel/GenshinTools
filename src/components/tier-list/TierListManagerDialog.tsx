@@ -251,7 +251,7 @@ export function TierListManagerDialog({
           {/* Create new tier list action */}
           <Button
             type="button"
-            variant="soft"
+            variant="secondary"
             className="mt-2 h-auto w-full justify-start gap-3 rounded-lg p-3"
             onClick={handleCreate}
           >

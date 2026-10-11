@@ -498,7 +498,7 @@ function CustomFlexAddForm({
           <Checkbox
             id="customFlexAnySubstats"
             checked={anySubstats}
-            onBooleanChange={setAnySubstats}
+            onCheckedChange={(checked) => setAnySubstats(checked === true)}
           />
           <span>{t.ui("triage.anySubstats")}</span>
         </label>
@@ -520,7 +520,9 @@ function CustomFlexAddForm({
           <Checkbox
             id="customFlexRequiresFourInitialSubstats"
             checked={requiresFourInitialSubstats}
-            onBooleanChange={setRequiresFourInitialSubstats}
+            onCheckedChange={(checked) =>
+              setRequiresFourInitialSubstats(checked === true)
+            }
           />
           <span>{t.ui("triage.requiresFourInitialSubstats")}</span>
         </label>
