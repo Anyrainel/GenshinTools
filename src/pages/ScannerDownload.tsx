@@ -171,9 +171,6 @@ export default function ScannerDownload() {
           </section>
 
           <div className="flex flex-col items-center gap-3 text-center text-sm">
-            <p className="text-foreground/80">
-              {t.ui("scannerDownload.choiceNote")}
-            </p>
             <a
               href={SCANNER_RELEASES_URL}
               target="_blank"

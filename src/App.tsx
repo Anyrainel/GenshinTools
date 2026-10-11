@@ -28,6 +28,7 @@ const ArchivePage = lazy(() => import("./pages/Archive"));
 const AccountPage = lazy(() => import("./pages/account/AccountPage"));
 const CloudBackupPage = lazy(() => import("./pages/account/CloudBackupPage"));
 const SupportMePage = lazy(() => import("./pages/account/SupportMePage"));
+const FeedbackPage = lazy(() => import("./pages/account/FeedbackPage"));
 const ScannerDownloadPage = lazy(() => import("./pages/ScannerDownload"));
 const AuthCallbackPage = lazy(() => import("./pages/account/AuthCallbackPage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
@@ -36,6 +37,7 @@ const SITE_NAME = "GGArtifact";
 
 const PAGE_TITLES: Record<string, { en: string; zh: string }> = {
   "/account-data": { en: "Account Data", zh: "账号数据" },
+  "/account/feedback": { en: "Feedback", zh: "反馈" },
   "/artifact-filter": { en: "Builds", zh: "配装" },
   "/tier-list": { en: "Tier List", zh: "榜单" },
   "/archive": { en: "Archive", zh: "图鉴" },
@@ -59,7 +61,7 @@ function App() {
     : t.ui("seo.description");
   useEffect(() => {
     const base = `/${location.pathname.split("/")[1]}`;
-    const page = PAGE_TITLES[base];
+    const page = PAGE_TITLES[location.pathname] ?? PAGE_TITLES[base];
     document.title = isHomePage
       ? homeTitle
       : `${(page ?? NOT_FOUND_TITLE)[language]} — ${SITE_NAME}`;
@@ -126,6 +128,7 @@ function App() {
                   element={<CloudBackupPage />}
                 />
                 <Route path="/account/support" element={<SupportMePage />} />
+                <Route path="/account/feedback" element={<FeedbackPage />} />
                 <Route
                   path={SCANNER_DOWNLOAD_PAGE}
                   element={<ScannerDownloadPage />}

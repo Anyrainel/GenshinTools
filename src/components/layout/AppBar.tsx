@@ -487,19 +487,7 @@ export function AppBar({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {isAuthenticated ? (
-        renderAccountMenu()
-      ) : (
-        <Button
-          variant="outline"
-          className="h-9 gap-2 px-3 2xl:mr-4"
-          onClick={() => void handleSignIn()}
-          disabled={isAccountLoading}
-        >
-          <LogIn className="w-4 h-4" />
-          <span>{t.ui("accountSystem.signIn")}</span>
-        </Button>
-      )}
+      {renderAccountMenu()}
     </>
   );
 

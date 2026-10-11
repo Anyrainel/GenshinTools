@@ -2,8 +2,8 @@ export const i18nUiData = {
   scannerDownload: {
     menu: { en: "Download GGScanner", zh: "下载 GGScanner" },
     platform: {
-      en: "For Windows PCs · Genshin Impact & Star Rail",
-      zh: "Windows 电脑 · 原神与星穹铁道",
+      en: "Windows",
+      zh: "Windows",
     },
     tagline: {
       en: "Your collection, ready for GGArtifact.",
@@ -37,10 +37,6 @@ export const i18nUiData = {
       zh: "圣遗物锁定、解锁、装备",
     },
     downloadOcr: { en: "Download GGScannerOCR", zh: "下载 GGScannerOCR" },
-    choiceNote: {
-      en: "Capture starts only when you choose it.",
-      zh: "抓包由你手动启动。",
-    },
     included: { en: "Included", zh: "包含" },
     notIncluded: { en: "Not included", zh: "不包含" },
     allReleases: {

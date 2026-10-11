@@ -383,7 +383,7 @@ describe("AppBar", () => {
       name: "app.language",
     });
     const accountButton = screen.getByRole("button", {
-      name: "accountSystem.signIn",
+      name: "accountSystem.accountMenu",
     });
 
     expect(themeButton).toBeInTheDocument();
@@ -401,6 +401,19 @@ describe("AppBar", () => {
 
     await waitFor(() => expect(accountButton).toBeEnabled());
     await userEvent.click(accountButton);
+
+    expect(
+      screen.getByRole("menuitem", { name: "accountSystem.feedback" })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "accountSystem.supportMe" })
+    ).toHaveAttribute("href", "/account/support");
+    expect(
+      screen.getByRole("menuitem", { name: "scannerDownload.menu" })
+    ).toHaveAttribute("href", "/download-scanner");
+    await userEvent.click(
+      screen.getByRole("menuitem", { name: "accountSystem.signIn" })
+    );
 
     await waitFor(() => {
       expect(signIn).toHaveBeenCalledWith("/");
