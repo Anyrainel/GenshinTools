@@ -41,6 +41,7 @@ import {
   RollQualityInputs,
   StellarDirectCoeffInput,
 } from "./GeneratorControls";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 interface AnalyzerResultCardProps {
   calcContext: Partial<CalcContext>;
@@ -242,7 +243,7 @@ export function AnalyzerResultCard({
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                <TeamCharacterGrid className="gap-2">
                   {charIds.map((charId) => {
                     const allocation = selectedStep.allocation[charId];
                     if (!allocation) return null;
@@ -275,7 +276,7 @@ export function AnalyzerResultCard({
                       </div>
                     );
                   })}
-                </div>
+                </TeamCharacterGrid>
               </section>
             )}
             <AnalyzerChart result={result} charIds={charIds} />

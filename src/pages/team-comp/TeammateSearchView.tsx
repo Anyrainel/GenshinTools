@@ -6,6 +6,7 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import { TeamCharacterGrid } from "@/components/team-comp/TeamCharacterGrid";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type {
@@ -152,7 +153,7 @@ export function TeammateSearchView() {
 
   return (
     <ScrollLayout>
-      <div className="mx-auto max-w-5xl space-y-5 pt-3">
+      <div className="mx-auto max-w-6xl space-y-5 pt-3">
         <div>
           <h2 className="text-xl font-semibold">
             {t.ui("teammateSearch.title")}
@@ -349,7 +350,7 @@ export function TeammateSearchView() {
                 {t.ui("teammateSearch.saveTeam")}
               </Button>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <TeamCharacterGrid className="gap-2">
               {result.configs.map((config) => (
                 <div key={config.charId} className="space-y-2">
                   <div className="flex items-center gap-2">
@@ -396,7 +397,7 @@ export function TeammateSearchView() {
                   </div>
                 </div>
               ))}
-            </div>
+            </TeamCharacterGrid>
           </section>
         ))}
       </div>
