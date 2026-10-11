@@ -56,6 +56,7 @@ describe("Worker feedback API", () => {
       suggestion: "Add artifact set notes.",
       bug_report: null,
       created_at: Date.now(),
+      game: "GI",
     });
     expect(
       JSON.parse(db.feedbackSubmissions[0]?.metadata_json ?? "{}")
@@ -137,6 +138,74 @@ describe("Worker feedback API", () => {
       "Third",
     ]);
   });
+
+  it("stores HSR in the same table and shares the per-user cooldown across sites", async () => {
+    const { db, cookie } = await createFeedbackEnv();
+    const env = { BACKUP_DB: db as unknown as D1Database } as FeedbackEnv;
+    const url = new URL("https://example.com/api/feedback/v1/submissions");
+    const first = await handleFeedbackRequest(
+      feedbackRequest(
+        { game: "HSR", rating: 5, suggestion: "Star Rail feedback" },
+        cookie
+      ),
+      url,
+      env
+    );
+    expect(first.status).toBe(201);
+    expect(db.feedbackSubmissions[0]).toMatchObject({
+      game: "HSR",
+      suggestion: "Star Rail feedback",
+    });
+    const second = await handleFeedbackRequest(
+      feedbackRequest(
+        { game: "GI", rating: 5, suggestion: "Genshin feedback" },
+        cookie
+      ),
+      url,
+      env
+    );
+    expect(second.status).toBe(429);
+    expect(db.feedbackSubmissions).toHaveLength(1);
+  });
+
+  it.each([
+    "ZZZ",
+    "hsr",
+    null,
+    1,
+  ])("rejects unsupported game values: %s", async (game) => {
+    const { db, cookie } = await createFeedbackEnv();
+    const response = await handleFeedbackRequest(
+      feedbackRequest({ game, rating: 5, suggestion: "Feedback" }, cookie),
+      new URL("https://example.com/api/feedback/v1/submissions"),
+      { BACKUP_DB: db as unknown as D1Database } as FeedbackEnv
+    );
+    expect(response.status).toBe(422);
+    await expect(response.json()).resolves.toEqual({
+      error: "invalid_payload",
+      field: "game",
+    });
+    expect(db.feedbackSubmissions).toHaveLength(0);
+  });
+
+  it("allows bearer-authenticated cross-site requests to preflight without cookies", async () => {
+    const response = await handleFeedbackRequest(
+      new Request("https://ggartifact.com/api/feedback/v1/submissions", {
+        method: "OPTIONS",
+        headers: {
+          Origin: "https://hsr.ggartifact.com",
+          "Access-Control-Request-Headers": "authorization,content-type",
+        },
+      }),
+      new URL("https://ggartifact.com/api/feedback/v1/submissions"),
+      {} as FeedbackEnv
+    );
+    expect(response.status).toBe(204);
+    expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
+    expect(response.headers.get("Access-Control-Allow-Headers")).toContain(
+      "Authorization"
+    );
+  });
 });
 
 function feedbackRequest(body: unknown, cookie?: string): Request {
@@ -175,6 +244,7 @@ async function createFeedbackEnv(): Promise<{
 }
 
 type FeedbackRow = {
+  game: "GI" | "HSR";
   id: string;
   user_id: string;
   rating: number;
@@ -230,6 +300,7 @@ class FakeFeedbackD1Statement {
         bugReport,
         metadataJson,
         createdAt,
+        game,
         rateUserId,
         cutoff,
       ] = this.args;
@@ -246,6 +317,7 @@ class FakeFeedbackD1Statement {
         bug_report: bugReport === null ? null : String(bugReport),
         metadata_json: String(metadataJson),
         created_at: Number(createdAt),
+        game: game as "GI" | "HSR",
       });
       return d1Ok(1);
     }

@@ -34,6 +34,7 @@ describe("feedback client", () => {
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
       body: JSON.stringify({
+        game: "GI",
         rating: 5,
         suggestion: "Add notes.",
         bugReport: undefined,

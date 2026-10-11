@@ -420,6 +420,7 @@ export const i18nUiData = {
     },
   },
   feedback: {
+    gameSite: { en: "Game site", zh: "游戏站点" },
     title: { en: "Send feedback", zh: "提交反馈" },
     description: {
       en: "Thanks for your time.",

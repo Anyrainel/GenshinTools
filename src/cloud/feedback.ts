@@ -41,6 +41,7 @@ export async function submitFeedback(
     headers: { "Content-Type": "application/json" },
     credentials: "same-origin",
     body: JSON.stringify({
+      game: "GI",
       rating: input.rating,
       suggestion: input.suggestion?.trim() || undefined,
       bugReport: input.bugReport?.trim() || undefined,

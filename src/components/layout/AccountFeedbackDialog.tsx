@@ -231,6 +231,9 @@ export function AccountFeedbackDialog({
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="text-sm text-foreground">
+            {t.ui("feedback.gameSite")}: {t.ui("app.gameGenshin")}
+          </div>
           <RatingField
             label={t.ui("feedback.ratingLabel")}
             rating={form.rating}

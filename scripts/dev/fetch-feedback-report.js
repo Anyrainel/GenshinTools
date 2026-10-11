@@ -34,6 +34,7 @@ SELECT
   COALESCE(u.display_name, i.identity_display_name) AS display_name,
   i.email,
   f.rating,
+  f.game,
   f.suggestion,
   f.bug_report,
   f.metadata_json,
@@ -228,6 +229,7 @@ function normalizeRow(row) {
     email: row.email ?? null,
     contactMethod: metadata.contactMethod ?? null,
     rating: row.rating,
+    game: row.game ?? "GI",
     suggestion: row.suggestion ?? null,
     bugReport: row.bug_report ?? null,
     metadata,
@@ -306,6 +308,7 @@ function renderSubmission(row, index) {
 
 - Created: ${row.createdAtLocal} (${row.createdAtUtc})
 - Rating: ${row.rating}/5
+- Game: ${row.game ?? "GI"}
 - User: ${row.userId}
 - Contact: ${contactLine(row)}
 

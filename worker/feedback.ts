@@ -16,6 +16,7 @@ const FEEDBACK_CORS_HEADERS = {
 export type FeedbackEnv = AppEnv;
 
 type FeedbackSubmissionRequest = {
+  game?: unknown;
   rating?: unknown;
   suggestion?: unknown;
   bugReport?: unknown;
@@ -23,6 +24,7 @@ type FeedbackSubmissionRequest = {
 };
 
 type NormalizedFeedbackSubmission = {
+  game: "GI" | "HSR";
   rating: number;
   suggestion: string | null;
   bugReport: string | null;
@@ -87,9 +89,9 @@ async function handleFeedbackSubmission(
   const result = await db
     .prepare(
       `INSERT INTO feedback_submissions (
-        id, user_id, rating, suggestion, bug_report, metadata_json, created_at
+        id, user_id, rating, suggestion, bug_report, metadata_json, created_at, game
       )
-      SELECT ?, ?, ?, ?, ?, ?, ?
+      SELECT ?, ?, ?, ?, ?, ?, ?, ?
       WHERE NOT EXISTS (
         SELECT 1
         FROM feedback_submissions
@@ -105,6 +107,7 @@ async function handleFeedbackSubmission(
       normalized.bugReport,
       JSON.stringify(metadata),
       now,
+      normalized.game,
       userId,
       now - FEEDBACK_COOLDOWN_MS
     )
@@ -170,6 +173,11 @@ function normalizeFeedbackSubmission(
     return feedbackJson({ error: "invalid_payload", field: "body" }, 422);
   }
 
+  // Before game was introduced, all clients and submissions belonged to GI.
+  const game = body.game === undefined ? "GI" : body.game;
+  if (game !== "GI" && game !== "HSR") {
+    return feedbackJson({ error: "invalid_payload", field: "game" }, 422);
+  }
   const rating = normalizeRating(body.rating);
   if (rating instanceof Response) return rating;
   const suggestion = normalizeOptionalString(body.suggestion, "suggestion");
@@ -217,6 +225,7 @@ function normalizeFeedbackSubmission(
   }
 
   return {
+    game,
     rating,
     suggestion,
     bugReport,
