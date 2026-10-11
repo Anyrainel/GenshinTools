@@ -78,6 +78,12 @@ uv run --project scripts/pyproject.toml scripts/impl_audit.py show C <entity> --
 
 Use the Edit tool for all code changes. Make the minimal change needed — don't refactor surrounding code.
 
+**d1) Revisit dependent effects when a modeling assumption changes.** When a correction changes a count, cap, mode, or resource assumption, search the entity's source and implementation for effects depending on that quantity. Recompute dependent combo counts and buffs under the new assumption before reporting completion.
+
+In the handoff, state: `Changed assumption: …; dependent effects reconsidered: …; unresolved estimate: …`.
+
+Gate constellation-dependent default counts in `comboDescriptor` itself using `count: 0` plus a constellation bonus; a formula's `minC` alone does not gate the raw descriptor.
+
 **e) Run type-check** after each item:
 ```bash
 npm run type-check
@@ -114,8 +120,8 @@ Type-check: PASS
 ## Important Notes
 
 - **One item at a time.** Implement, type-check, update tracker, then move to the next. This prevents cascading failures.
-- **Trust the triage agent's guidance.** The `detail` field was specifically written to give you enough information. If it's insufficient (missing multiplier, unclear file location), note this in the summary and skip the item — do not guess.
-- **Follow existing patterns.** Before adding code to a file, read the existing implementations in that file to match naming conventions, import style, and code structure.
+- **Validate semantic changes against the source.** Before changing activation, recipients, damage classification, hit grouping, or resource consumption, read the relevant source clause and any glossary it references—even when implementation guidance already supplies the code change. If they disagree, report the conflicting clause and implement according to the applicable source-priority rule.
+- **Reuse code structure, not mechanic assumptions.** Copy constructors, naming, and stat/formula patterns from existing implementations. Re-derive conditions, recipients, counts, and classifications for the current entity.
 - **Constellation gating.** When adding a C6-only formula or constellation-gated buff, gate with `this.constellation >= N`. C3/C5 talent level bonuses are handled automatically by `this.param()` — no manual gating needed for talent multipliers.
 - **Conditional formulas.** When a tracker item specifies a condition, implement it using `FormulaEntry.when` or `FormulaEntry.minC`. Common patterns:
   - Team element/reaction dependency → `when: teamMeta.hasReaction(...)` or element presence check

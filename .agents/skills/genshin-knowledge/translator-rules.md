@@ -267,12 +267,13 @@ Buffs that ramp up or down over time (not instant) should be implemented as `Opt
 - **Stellar superseding:** when a Stellar reaction is possible — a `STELLAR_ENABLERS` member is in the party — the base reaction's `hasReaction()` returns **false** (see `STELLAR_SUPERSEDES` in constants.ts). This covers **both** mappings: `superconduct → stellarConduct`, and `swirl → stellarSwirl` for Cryo swirl only (`survivalElements: ["Pyro", "Hydro", "Electro"]` keeps those swirls alive). Enablers are per reaction — enabling one does not imply the other — so read `STELLAR_ENABLERS` rather than assuming a character list. **[BUG]** if a gate checks only `superconduct` without `stellarConduct`, or only `swirl` without `stellarSwirl`.
 - **Trigger subject — the `charId` argument.** `hasReaction(reaction, charId?)` asserts that **this** character participates in the reaction. Pass it when the game text makes the buff-holder the trigger subject; omit it when any party member can trigger:
 
-  | Game text | Call |
+  | Game text | Gate |
   |---|---|
   | 「触发…反应」/「装备者触发…」 with no other subject named | `hasReaction(r, this.charId)` |
   | 「队伍中的角色触发」/「附近的队伍角色触发」 | `hasReaction(r)` |
-  | 「造成…反应伤害」(deals, not triggers) | `hasReaction(r)` |
-  | wearer triggers **or** deals reaction DMG | `hasReaction(r)` — the second clause widens it |
+  | 「造成…反应伤害」(deals, not triggers) | Check whether the named damage dealer has an enabled formula classified as that reaction. Respect its option, `when`, and constellation gate. Team reaction availability alone is insufficient: a character may deal reaction-classified damage without triggering that reaction. |
+  | wearer triggers **or** deals reaction DMG | Activate when either the specified character can trigger the reaction or has an enabled matching damage formula. |
+  | while in a state/field | Derive availability from the source-described ways to enter or create that state. Use `hasReaction()` only when a reaction is the required activation path. |
 
   **[BUG]** if a 触发-worded weapon/artifact clause omits `charId` — it grants the buff to wielders who can never trigger it, e.g. a Pyro wielder on a Cryo/Electro team. Contrast `earth_shaker` (「队伍中的角色触发」), which correctly omits it. Note `OptionDef.when` predicates receive only `TeamMeta` and cannot scope to `charId`; use the team-wide form there and apply the `charId` gate inside `get buffs()`.
 - **Enemy element affection** ("对处于X元素影响下的敌人"): active if any team character applies element X. Check `Object.values(this.teamMeta.elements).includes("X")`.
@@ -401,6 +402,12 @@ private readonly radianceOn =
 
 **`hits` and combo `count` are separate multiplicative axes.** `FormulaPart.hits` is the number of damage instances inside **one** evaluation of a formula entry. Combo `count` repeats the **whole** formula entry in the rotation. A part therefore contributes `(hits ?? 1) × count` damage instances. For one N-tick source, choose exactly one representation: a per-tick entry with `hits: 1` and combo count N, or a rotation-total entry with `hits: N` and combo count 1.
 
+**Resource count is not hit count.** "Consume N resources and deal damage based on the number consumed" describes one damage instance unless the source separately specifies repeated hits. Scale the multiplier by N; do not set `hits` or combo `count` to N.
+
+"For each resource consumed, deal damage" describes repeated instances. Represent those repetitions using `hits` or combo `count`.
+
+Read the full ability description and referenced glossary before choosing between these representations.
+
 - **[BUG]** if the same physical repetitions are encoded in both `hits` and combo `count`, unless combat genuinely repeats an N-hit action multiple times.
 - **Persisted-ID rule:** formula IDs, combo counts, and the set of default combo lines are saved user data. Keeping an ID while changing its unit (per-hit versus whole sequence, splitting/merging entries, moving repetitions between `hits` and combo `count`, or removing one of two mutually exclusive/shared-resource branches) is a store-schema change. Updating `comboDescriptor` fixes only newly generated combos. Before landing, either use a new ID with deliberate legacy handling or bump the team-store version and migrate both `damage.combo.lines` and `investment.comboOverrides`; apply the same transform to cloud/import boundaries, invalidate incompatible derived caches, and add old-version migration coverage using realistic persisted fixtures.
 
@@ -486,8 +493,10 @@ The 下落期间 (during fall) and 低空坠地冲击 (low impact) rows are **in
 
 **When to add a formula entry:**
 - **Follow-up hit on the same trigger as an existing skill**: add as an extra `part` inside the existing formula, not a new entry.
-- **Periodic or proc-based damage** ("once per 5s", coordinated attacks): always add. Timing and frequency are irrelevant — model per-hit damage with a reasonable hit count. If the exact hit count needs gameplay research, use a best-estimate and note it in a code comment.
-- **Per-rotation counters** ("every 3rd hit", "once per duration"): model as one formula for the proc hit; ignore frequency.
+- **Periodic damage**: Implement a per-hit formula. Derive the default count from stated duration and interval when both are available. Otherwise use a documented beta estimate.
+- **Counter-triggered damage**: Implement the proc formula and derive its default count from the triggering events already included in `comboDescriptor`. Apply the source's threshold, reset conditions, cooldown, and constellation requirement. Do not omit a proc merely because its count is rotation-dependent when the modeled rotation already supplies its triggering events.
+
+If those conditions leave the count undetermined, document the chosen estimate and the missing information.
 
 **Unified reaction selection (amplifying/catalyze only):** Do NOT create separate formula entries for the same attack with different amplifying or catalyze reaction variants (e.g., "vaporize version", "aggravate version"). Reaction selection for these is handled by the UI's ReactionSelector. Register only the base `DirectFormula` entry. For multi-hit formulas with partial reaction eligibility (ICD), note which hits get `eligibleReactions` in a code comment. Eligible reactions are derived from the character's element via `ELEMENT_ELIGIBLE_REACTIONS`.
 
