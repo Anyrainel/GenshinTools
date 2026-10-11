@@ -35,6 +35,7 @@ import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import { cn } from "@/lib/utils";
 import { useTeamStore } from "@/stores/useTeamStore";
+import { AccountInvestmentCard } from "./AccountInvestmentCard";
 import { AnalyzerComboCard } from "./AnalyzerComboCard";
 import { AnalyzerConfigCard } from "./AnalyzerConfigCard";
 import { AnalyzerResultCard } from "./AnalyzerResultCard";
@@ -513,6 +514,17 @@ export function InvestmentDetail({
           localEnemyAura={localEnemyAura}
           onEnemyAuraChange={setLocalEnemyAura}
           t={t}
+        />
+
+        <AccountInvestmentCard
+          account={accountData}
+          charConfigs={charConfigs}
+          options={{
+            teamBuild,
+            templateCombo: effectiveCombo,
+            comboOverrides,
+            calcContext: resolveCalcContext(damageConfig.calcContext),
+          }}
         />
 
         {/* 3. Results: settings + run button + chart + table/sequence */}
