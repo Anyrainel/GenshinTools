@@ -505,13 +505,13 @@ export function AppBar({
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="h-10 w-36 gap-2 rounded-md px-2 hover:bg-accent/50 focus-visible:ring-2 data-[state=open]:bg-accent/50 sm:w-auto sm:min-w-56"
+            className="h-10 w-auto gap-2 rounded-md px-2 hover:bg-accent/50 focus-visible:ring-2 data-[state=open]:bg-accent/50"
             aria-label={t.ui("app.siteSwitcherLabel")}
           >
             <span className="hidden text-lg font-semibold sm:inline">
               {t.ui("app.brand")}
             </span>
-            <span className="ml-auto whitespace-nowrap rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
+            <span className="whitespace-nowrap rounded-md border border-primary/35 bg-primary/10 px-2 py-1 text-xs font-semibold text-primary">
               {t.ui("app.gameGenshinShort")}
             </span>
             <ChevronDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -519,7 +519,7 @@ export function AppBar({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="start"
-          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-0"
+          className="w-[var(--radix-dropdown-menu-trigger-width)] min-w-56"
         >
           <DropdownMenuItem asChild>
             <Link to="/" className="gap-2" aria-current="true">
