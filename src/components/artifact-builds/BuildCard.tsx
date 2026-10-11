@@ -81,6 +81,7 @@ import { parseBuildConstellation } from "@/lib/typeValidation";
 import { cn } from "@/lib/utils";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { WeightedStatSelect } from "./WeightedStatSelect";
+import "./BuildCard.css";
 
 const AutoTuneDialog = lazy(() =>
   import("./AutoTuneDialog").then((m) => ({ default: m.AutoTuneDialog }))
@@ -377,7 +378,13 @@ function BuildCardComponent({
 
   return (
     <>
-      <div className="border border-border/50 rounded-lg bg-muted/30">
+      <div
+        className="border border-border/50 rounded-lg bg-muted/30"
+        style={{
+          containerType: "inline-size",
+          containerName: "artifact-build",
+        }}
+      >
         <div className="px-2 md:px-3 pt-2 space-y-1.5 md:space-y-0">
           <div className="flex items-center gap-1 md:gap-2">
             <Switch
@@ -492,7 +499,9 @@ function BuildCardComponent({
         <div className={cn("px-2 py-1.5 md:py-2")}>
           <div className="pt-1 border-t border-border/30">
             <div
-              className={cn("flex items-center justify-center gap-2 md:gap-3")}
+              className={cn(
+                "artifact-build-details flex items-center justify-center gap-2 md:gap-3"
+              )}
             >
               <div className={cn("flex-shrink-0 md:pl-1")}>
                 <div className="h-full flex items-center justify-center">
@@ -507,7 +516,11 @@ function BuildCardComponent({
                 </div>
               </div>
               <div className={cn("flex-1 min-w-0", "space-y-0.5 md:space-y-1")}>
-                <div className={cn("grid grid-cols-3 gap-1")}>
+                <div
+                  className={cn(
+                    "artifact-build-main-stats grid grid-cols-3 gap-1"
+                  )}
+                >
                   {mainStatSlots.map((slot) => {
                     const weightsKey = `${slot}Weights` as const;
                     return (

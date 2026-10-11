@@ -7,7 +7,6 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
-import { AnimatedTabPreview, type TabDef } from "./AnimatedTabPreview";
 import {
   PREVIEW_ARTIFACT_LOOKUP,
   PREVIEW_EVALUATION,
@@ -15,42 +14,53 @@ import {
   PREVIEW_TRIAGE_LOCK,
   PREVIEW_TRIAGE_UNLOCK,
 } from "./previewData";
+import { TabPreview } from "./TabPreview";
 
 type PreviewProps = { t: ReturnType<typeof useLanguage>["t"] };
 
-const tabs: TabDef[] = [
-  { icon: Users, labelKey: "accountData.characters" },
-  { icon: Box, labelKey: "accountData.inventory" },
-  { icon: Lightbulb, labelKey: "accountData.recommendations" },
-  { icon: BarChart3, labelKey: "evaluation.tabLabel" },
-  { icon: Lock, labelKey: "triage.tabLabel" },
-];
-
 export default function AccountDataPreview({ t }: PreviewProps) {
   return (
-    <AnimatedTabPreview
-      tabs={tabs}
+    <TabPreview
+      tabs={[
+        {
+          id: "characters",
+          icon: Users,
+          label: t.ui("accountData.characters"),
+        },
+        { id: "inventory", icon: Box, label: t.ui("accountData.inventory") },
+        {
+          id: "recommendations",
+          icon: Lightbulb,
+          label: t.ui("accountData.recommendations"),
+        },
+        {
+          id: "evaluation",
+          icon: BarChart3,
+          label: t.ui("evaluation.tabLabel"),
+        },
+        { id: "triage", icon: Lock, label: t.ui("triage.tabLabel") },
+      ]}
       t={t}
       panels={[
         {
           content: <CharactersContent t={t} />,
-          descKey: "greeting.previewCharacters",
+          description: t.ui("greeting.previewCharacters"),
         },
         {
           content: <InventoryContent t={t} />,
-          descKey: "greeting.previewInventory",
+          description: t.ui("greeting.previewInventory"),
         },
         {
           content: <ScoreUpContent t={t} />,
-          descKey: "greeting.previewRecommendations",
+          description: t.ui("greeting.previewRecommendations"),
         },
         {
           content: <EvaluationContent t={t} />,
-          descKey: "greeting.previewEvaluation",
+          description: t.ui("greeting.previewEvaluation"),
         },
         {
           content: <TriageContent t={t} />,
-          descKey: "greeting.previewTriage",
+          description: t.ui("greeting.previewTriage"),
         },
       ]}
     />
@@ -107,7 +117,7 @@ function InventoryContent({ t }: PreviewProps) {
         <span className="text-xs font-semibold text-foreground mb-1 block">
           {t.ui("accountData.weapons")}
         </span>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           <ItemIcon weaponId="absolution" size="md" badge={1} />
           <ItemIcon weaponId="the_black_sword" size="md" badge={5} lock />
           <ItemIcon weaponId="favonius_sword" size="md" badge={3} />
@@ -119,7 +129,7 @@ function InventoryContent({ t }: PreviewProps) {
         <span className="text-xs font-semibold text-foreground mb-1 block">
           {t.ui("accountData.artifacts")}
         </span>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           <ItemIcon
             artifactSetId="obsidian_codex"
             slot="flower"

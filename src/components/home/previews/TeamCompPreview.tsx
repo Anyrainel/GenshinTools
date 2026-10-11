@@ -13,23 +13,17 @@ import { CharacterWeaponPanel } from "@/components/team-comp/WeaponChoiceResultC
 import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById } from "@/data/gameResources";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn, getAssetUrl } from "@/lib/utils";
-import { AnimatedTabPreview, type TabDef } from "./AnimatedTabPreview";
 import {
   PREVIEW_FORMULA_LABEL,
   PREVIEW_FROZEN_ARTIFACTS,
   PREVIEW_INVESTMENT_CHAR_IDS,
   PREVIEW_WEAPON_RANKINGS,
 } from "./previewData";
+import { TabPreview } from "./TabPreview";
 
 type PreviewProps = { t: ReturnType<typeof useLanguage>["t"] };
-
-const tabs: TabDef[] = [
-  { icon: Crosshair, labelKey: "teamComp.tabDamage" },
-  { icon: Snowflake, labelKey: "teamComp.tabFrozen" },
-  { icon: TrendingUp, labelKey: "teamComp.tabInvestment" },
-  { icon: Medal, labelKey: "teamComp.tabWeaponChoice" },
-];
 
 /* Edges: [fromId, toId, isBest] — gold only when both endpoints are optimal */
 const INVESTMENT_EDGES: [string, string, boolean][] = [
@@ -41,25 +35,34 @@ const INVESTMENT_EDGES: [string, string, boolean][] = [
 
 export default function TeamCompPreview({ t }: PreviewProps) {
   return (
-    <AnimatedTabPreview
-      tabs={tabs}
+    <TabPreview
+      tabs={[
+        { id: "damage", icon: Crosshair, label: t.ui("teamComp.tabDamage") },
+        { id: "frozen", icon: Snowflake, label: t.ui("teamComp.tabFrozen") },
+        {
+          id: "investment",
+          icon: TrendingUp,
+          label: t.ui("teamComp.tabInvestment"),
+        },
+        { id: "weapon", icon: Medal, label: t.ui("teamComp.tabWeaponChoice") },
+      ]}
       t={t}
       panels={[
         {
           content: <DamageContent t={t} />,
-          descKey: "greeting.previewDamage",
+          description: t.ui("greeting.previewDamage"),
         },
         {
           content: <FrozenContent t={t} />,
-          descKey: "greeting.previewFrozen",
+          description: t.ui("greeting.previewFrozen"),
         },
         {
           content: <InvestmentContent t={t} />,
-          descKey: "greeting.previewInvestment",
+          description: t.ui("greeting.previewInvestment"),
         },
         {
           content: <WeaponContent t={t} />,
-          descKey: "greeting.previewWeapon",
+          description: t.ui("greeting.previewWeapon"),
         },
       ]}
     />
@@ -91,7 +94,7 @@ function DamageContent({ t }: PreviewProps) {
       </div>
       <div
         className={cn(
-          "flex items-center justify-center rounded-xl select-none",
+          "flex max-w-full flex-wrap items-center justify-center rounded-xl select-none",
           "gap-1.5 px-3 py-1.5",
           "bg-card/70 border border-primary/30 ring-1 ring-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.12)]"
         )}
@@ -115,6 +118,7 @@ function DamageContent({ t }: PreviewProps) {
 
 /** Frozen — character card matching StatSheetPanel's frozen visual */
 function FrozenContent({ t }: PreviewProps) {
+  const isMobile = !useMediaQuery("(min-width: 768px)");
   const charId = "furina";
   const char = charactersById[charId];
   const slots = ["flower", "plume", "sands", "goblet", "circlet"] as const;
@@ -155,14 +159,14 @@ function FrozenContent({ t }: PreviewProps) {
                 badge={
                   PREVIEW_FROZEN_ARTIFACTS[slot].astralMark ? "⭐" : undefined
                 }
-                size="md"
+                size={isMobile ? "sm" : "md"}
                 frozen
               />
             ))}
           </div>
         </div>
       </div>
-      <div className="flex justify-center gap-2">
+      <div className="flex flex-wrap justify-center gap-2">
         <Button
           size="sm"
           className="gap-1.5 text-xs pointer-events-none bg-black text-white"
@@ -342,12 +346,13 @@ function InvestmentContent({ t }: PreviewProps) {
 
 /** Weapon — real CharacterWeaponPanel */
 function WeaponContent({ t }: PreviewProps) {
+  const isMobile = !useMediaQuery("(min-width: 768px)");
   return (
     <div className="pointer-events-none">
       <CharacterWeaponPanel
         charId="skirk"
         rankings={PREVIEW_WEAPON_RANKINGS}
-        isMobile={false}
+        isMobile={isMobile}
         t={t}
       />
     </div>

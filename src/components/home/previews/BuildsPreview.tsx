@@ -1,67 +1,68 @@
-import { ArrowLeft, BarChart3, Lightbulb, Lock } from "lucide-react";
+import { ArrowDown, BarChart3, Lightbulb, Lock } from "lucide-react";
 import { BuildCard } from "@/components/artifact-builds/BuildCard";
-import { Button } from "@/components/ui/button";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { PREVIEW_BUILD } from "./previewData";
 
 type PreviewProps = { t: ReturnType<typeof useLanguage>["t"] };
 
-/** Step 2 benefits: tab icon+label → left arrow → benefit description */
-const benefits = [
-  {
-    tabIcon: BarChart3,
-    tabLabelKey: "evaluation.tabLabel",
-    benefitKey: "greeting.customizeBenefitScoring",
-  },
-  {
-    tabIcon: Lightbulb,
-    tabLabelKey: "accountData.recommendations",
-    benefitKey: "greeting.customizeBenefitRecommendations",
-  },
-  {
-    tabIcon: Lock,
-    tabLabelKey: "triage.tabLabel",
-    benefitKey: "greeting.customizeBenefitLock",
-  },
-] as const;
-
 export default function BuildsPreview({ t }: PreviewProps) {
+  const benefits = [
+    {
+      icon: BarChart3,
+      label: t.ui("evaluation.tabLabel"),
+      description: t.ui("greeting.customizeBenefitScoring"),
+    },
+    {
+      icon: Lightbulb,
+      label: t.ui("accountData.recommendations"),
+      description: t.ui("greeting.customizeBenefitRecommendations"),
+    },
+    {
+      icon: Lock,
+      label: t.ui("triage.tabLabel"),
+      description: t.ui("greeting.customizeBenefitLock"),
+    },
+  ];
   return (
-    <>
-      {/* Real BuildCard — pointer-events-none to disable all interactions */}
-      <div className="pointer-events-none select-none mb-3 mx-auto w-[80%] rounded-lg border-2 border-amber-500/50 p-1">
-        <BuildCard
-          build={PREVIEW_BUILD}
-          buildId="preview-zibai"
-          onDuplicate={() => {}}
-          element="Geo"
-        />
-      </div>
-
-      <p className="text-sm text-foreground mb-3">
-        {t.ui("greeting.step2BuildHint")}
-      </p>
-
-      {/* Benefits: tab button → arrow → description */}
-      <div className="space-y-2">
-        {benefits.map(({ tabIcon: Icon, tabLabelKey, benefitKey }) => (
-          <div
-            key={benefitKey}
-            className="flex items-center gap-3 p-2.5 rounded-lg bg-muted/50 border border-border"
-          >
-            {/* Tab button replica (matches AppBar tab style) */}
-            <Button
-              variant="default"
-              className="bg-primary/60 text-primary-foreground gap-1.5 h-7 px-2.5 text-xs pointer-events-none shrink-0"
+    <div className="grid min-w-0 items-start gap-5 md:grid-cols-[1.3fr_1fr]">
+      <figure className="min-w-0 overflow-hidden rounded-xl border border-border bg-gradient-card">
+        <figcaption className="border-b border-border px-4 py-3 text-xs font-semibold">
+          {t.ui("greeting.examplePreview")}
+        </figcaption>
+        <div
+          className="pointer-events-none select-none p-3"
+          ref={(element) => {
+            if (element) element.inert = true;
+          }}
+        >
+          <BuildCard
+            build={PREVIEW_BUILD}
+            buildId="preview-zibai"
+            onDuplicate={() => {}}
+            element="Geo"
+          />
+        </div>
+      </figure>
+      <div className="min-w-0 space-y-4">
+        <p className="text-sm leading-6">{t.ui("greeting.step2BuildHint")}</p>
+        <div className="flex justify-center">
+          <ArrowDown className="size-5 text-primary" aria-hidden />
+        </div>
+        <div className="space-y-2">
+          {benefits.map(({ icon: Icon, label, description }) => (
+            <div
+              key={label}
+              className="rounded-lg border border-border bg-gradient-card p-3"
             >
-              <Icon className="size-3.5" />
-              {t.ui(tabLabelKey)}
-            </Button>
-            <ArrowLeft className="size-4 text-muted-foreground shrink-0" />
-            <span className="text-sm font-medium">{t.ui(benefitKey)}</span>
-          </div>
-        ))}
+              <p className="flex items-center gap-2 text-sm font-semibold">
+                <Icon className="size-4 shrink-0 text-primary" aria-hidden />
+                {label}
+              </p>
+              <p className="mt-1 text-sm leading-6">{description}</p>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
+    </div>
   );
 }

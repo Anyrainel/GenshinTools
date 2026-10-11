@@ -1,0 +1,15 @@
+@container artifact-build (max-width: 430px) {
+  .artifact-build-details {
+    flex-direction: column;
+  }
+
+  .artifact-build-details > :last-child {
+    width: 100%;
+  }
+}
+
+@container artifact-build (max-width: 300px) {
+  .artifact-build-main-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

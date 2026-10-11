@@ -2636,11 +2636,22 @@ export const i18nUiData = {
     fixes: { en: "Fixes", zh: "修复" },
   },
   greeting: {
+    guideContents: { en: "Guide chapters", zh: "教程目录" },
+    examplePreview: { en: "Example preview", zh: "示例预览" },
+    previewTabs: { en: "Preview features", zh: "预览功能" },
+    importCoverage: {
+      en: "UID import includes showcase Characters and their equipped gear. Use a scanner export to include unequipped Artifacts.",
+      zh: "UID 仅导入展柜角色及其装备；未装备的圣遗物需要扫描文件。",
+    },
+    teamWorkflow: {
+      en: "After importing account Artifacts, use Damage to optimize gear, then freeze your selections to plan equipment across teams.",
+      zh: "导入账号圣遗物后，可在「伤害」中优化装备，再冻结结果，安排多队装备。",
+    },
     getStarted: { en: "Get Started", zh: "使用教程" },
     // Step 1: Account Data
     step1ActionHint: {
-      en: "Import data via Account Management on the Account Data page. Recommended: GGScanner. Also supports other tools or UID import.",
-      zh: "在「账号数据」页面通过“账号管理”导入数据。推荐使用网站配套的 GGScanner，也可以使用其他工具或 UID 导入。",
+      en: "Open Account Data → Accounts → Import. GGScanner exports include your inventory; UID import is a quick showcase option.",
+      zh: "在「账号数据」的「账号管理」中导入；整理背包推荐使用 GGScanner，快速查看展柜可用 UID。",
     },
     previewCharacters: {
       en: "View character progression and scores",
@@ -2664,25 +2675,25 @@ export const i18nUiData = {
     },
     // Step 2: Builds
     step2BuildHint: {
-      en: "Customize artifact builds on the Builds page. The system auto-applies them to:",
-      zh: "在「配装」页面自定义圣遗物方案，系统自动应用到其他场景：",
+      en: "Set Artifact sets, main stats, and substat weights in Configure. The same build preferences are used by:",
+      zh: "在「配置」中设定套装、主词条和副词条权重；修改后会一起影响：",
     },
     customizeBenefitScoring: {
-      en: "Personalized artifact scoring",
-      zh: "个性化圣遗物评分",
+      en: "Scores follow the selected build’s stat weights.",
+      zh: "按配装权重重新评分。",
     },
     customizeBenefitRecommendations: {
-      en: "Personalized upgrade suggestions",
-      zh: "个性化升级建议",
+      en: "Find upgrade candidates for your configured builds.",
+      zh: "为已配置配装寻找值得强化的胚子。",
     },
     customizeBenefitLock: {
-      en: "Personalized artifact lock management",
-      zh: "个性化圣遗物锁定管理",
+      en: "Keep Artifacts needed by your configured builds.",
+      zh: "保留已配置角色可能需要的圣遗物。",
     },
     // Step 3: Teams
     step3ActionHint: {
-      en: "Import or add teams on the Team DMG page, then simulate real team damage.",
-      zh: "在「队伍伤害」页面导入或添加队伍，然后模拟真实的队伍伤害。",
+      en: "Import a team or create one, then select its Characters, weapons, and Artifact sets.",
+      zh: "导入队伍或新建队伍，设置角色、武器与圣遗物套装。",
     },
     previewDamage: {
       en: "View and optimize team damage (using account artifacts)",
@@ -2700,11 +2711,10 @@ export const i18nUiData = {
       en: "Best weapon for your team comp",
       zh: "符合配队的最佳武器",
     },
-    // Step 4: Help
-    helpTitle: { en: "Need Help?", zh: "需要帮助？" },
+    // Help footer
     helpDesc: {
-      en: "Use each page's help option to learn its features.",
-      zh: "使用每个页面的帮助选项以了解其功能。",
+      en: "For detailed rules, open Help from each page’s menu.",
+      zh: "详细规则可在各页面菜单的「帮助」中查看。",
     },
     letsGo: { en: "Let's Go!", zh: "出发！" },
     // News dialog
