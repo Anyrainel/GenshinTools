@@ -1,0 +1,256 @@
+import { Check, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { useState } from "react";
+import {
+  ComboTable,
+  MainStatColumn,
+  SubstatPills,
+} from "@/components/shared/build-editor/AutoTuneResults";
+import { AutoTuneTeamRow } from "@/components/shared/build-editor/AutoTuneTeamRow";
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { Button } from "@/components/ui/button";
+import { NEUTRAL_GAME_COLOR } from "@/config/gameColors";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { AccountData, Build } from "@/domain/models";
+import { charactersById } from "@/domain/reference/catalog";
+import type { TeamComp, TeamSetupConfig } from "@/domain/team/types";
+import { parseElement } from "@/domain/validation";
+import { getElementHex } from "@/lib/game/colors";
+import { cn } from "@/lib/utils";
+import type {
+  AutoTuneOutput,
+  TeamBreakdown,
+} from "@/services/builds/auto-tune/pipeline";
+import { getElementColor } from "../shared/colors";
+
+type EntryStatus = "idle" | "computing" | "done" | "applied";
+
+type ResultEntry = {
+  buildId: string;
+  characterId: string;
+  build: Build;
+  status: EntryStatus;
+  result: AutoTuneOutput | null;
+  teamComps: TeamComp[];
+};
+
+function TeamResultRow({
+  teamComp,
+  characterId,
+  breakdown,
+  getTeamSetupConfigById,
+  accountData,
+}: {
+  teamComp: TeamComp | null;
+  characterId: string;
+  breakdown: TeamBreakdown;
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
+  accountData: AccountData | null;
+}) {
+  const { t } = useLanguage();
+  const [expanded, setExpanded] = useState(false);
+  const qualifying = breakdown.combos.filter((c) => c.damageRatio >= 0.96);
+
+  return (
+    <div className="border border-border/30 rounded-lg overflow-hidden">
+      <button
+        type="button"
+        className="flex items-center gap-3 w-full px-2.5 py-2 text-left hover:bg-muted/20 transition-colors"
+        onClick={() => setExpanded(!expanded)}
+      >
+        {teamComp ? (
+          <div className="flex-1 min-w-0 pointer-events-none">
+            <AutoTuneTeamRow
+              teamComp={teamComp}
+              setupConfig={getTeamSetupConfigById(teamComp.id)}
+              characterId={characterId}
+              enabled={true}
+              onToggle={() => {}}
+              accountData={accountData}
+            />
+          </div>
+        ) : (
+          <span className="text-xs text-muted-foreground truncate flex-1">
+            {breakdown.label}
+          </span>
+        )}
+
+        <div className="shrink-0 text-right space-y-0.5">
+          {breakdown.formulas
+            ?.filter((f) => f.count > 0)
+            .map((f) => (
+              <div key={f.formulaId} className="text-xs">
+                <span className="font-medium text-foreground md:text-sm">
+                  {f.label ? t.resolveLabel(f.label) : f.formulaId}
+                </span>{" "}
+                <span className="text-sm font-mono font-semibold text-foreground/70">
+                  ×{f.count}
+                </span>
+              </div>
+            ))}
+          <div className="text-xs text-muted-foreground">
+            {t.format(
+              "batchAutoTune.mainStatCombos",
+              qualifying.length,
+              qualifying.length !== 1 ? "s" : ""
+            )}
+          </div>
+        </div>
+
+        {expanded ? (
+          <ChevronUp className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+        )}
+      </button>
+
+      {expanded && qualifying.length > 0 && (
+        <div className="px-2.5 pb-2">
+          <ComboTable combos={qualifying} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AutoTuneResultCard({
+  entry,
+  onApply,
+  onDismiss,
+  element,
+  getTeamSetupConfigById,
+  accountData,
+}: {
+  entry: ResultEntry;
+  onApply: () => void;
+  onDismiss: () => void;
+  element: string;
+  getTeamSetupConfigById: (teamId: string) => TeamSetupConfig;
+  accountData: AccountData | null;
+}) {
+  const { t } = useLanguage();
+  const char = charactersById[entry.characterId];
+  const elColor = getElementColor(parseElement(element), "text");
+  const elHex = getElementHex(element) ?? NEUTRAL_GAME_COLOR;
+  const result = entry.result;
+
+  // Computing — spinner placeholder card
+  if (entry.status === "computing") {
+    return (
+      <div className="bg-gradient-card border border-border/50 rounded-lg overflow-hidden">
+        <div
+          className="h-1"
+          style={{
+            background: `linear-gradient(90deg, ${elHex}, transparent)`,
+          }}
+        />
+        <div className="p-3 flex items-center gap-2">
+          {char && <ItemIcon characterId={entry.characterId} size="sm" />}
+          <div className="min-w-0 flex-1">
+            <div className={cn("font-bold text-base truncate", elColor)}>
+              {t.character(entry.characterId)}
+            </div>
+            {entry.build.name && (
+              <div className="text-sm text-foreground/70">
+                {entry.build.name}
+              </div>
+            )}
+          </div>
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  if (!result) return null;
+
+  const applied = entry.status === "applied";
+
+  return (
+    <div
+      className={cn(
+        "bg-gradient-card border rounded-lg overflow-hidden",
+        applied ? "border-green-500/40" : "border-border/50"
+      )}
+    >
+      {/* Element accent */}
+      <div
+        className="h-1"
+        style={{
+          background: `linear-gradient(90deg, ${elHex}, transparent)`,
+        }}
+      />
+
+      <div className="p-3 space-y-3">
+        {/* Header */}
+        <div className="flex items-center gap-2">
+          {char && <ItemIcon characterId={entry.characterId} size="sm" />}
+          <div className="min-w-0 flex-1">
+            <div className={cn("font-bold text-base truncate", elColor)}>
+              {t.character(entry.characterId)}
+            </div>
+            {entry.build.name && (
+              <div className="text-sm text-foreground/70">
+                {entry.build.name}
+              </div>
+            )}
+          </div>
+          {applied ? (
+            <span className="flex items-center gap-1 text-xs text-green-400 font-medium">
+              <Check className="w-3.5 h-3.5" />
+              {t.ui("batchAutoTune.applied")}
+            </span>
+          ) : (
+            <div className="flex items-center gap-1.5">
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs"
+                onClick={onDismiss}
+              >
+                {t.ui("batchAutoTune.dismiss")}
+              </Button>
+              <Button size="sm" className="h-7 text-xs" onClick={onApply}>
+                {t.ui("batchAutoTune.apply")}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Main stat weights (3-col grid) */}
+        <div className="grid grid-cols-3 gap-2">
+          <MainStatColumn
+            label={t.slot("sands")}
+            weights={result.sandsWeights}
+          />
+          <MainStatColumn
+            label={t.slot("goblet")}
+            weights={result.gobletWeights}
+          />
+          <MainStatColumn
+            label={t.slot("circlet")}
+            weights={result.circletWeights}
+          />
+        </div>
+
+        {/* Substat pills */}
+        <SubstatPills substats={result.substats} />
+
+        {/* Per-team breakdowns */}
+        {result.teamBreakdowns.length > 0 && (
+          <div className="border-t border-white/10 pt-2 space-y-2">
+            {result.teamBreakdowns.map((tb) => (
+              <TeamResultRow
+                key={tb.teamIndex}
+                teamComp={entry.teamComps[tb.teamIndex] ?? null}
+                characterId={entry.characterId}
+                breakdown={tb}
+                getTeamSetupConfigById={getTeamSetupConfigById}
+                accountData={accountData}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

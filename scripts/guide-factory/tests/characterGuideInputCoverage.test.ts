@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { characters } from "@/data/resources";
@@ -864,7 +865,7 @@ async function loadFixture(): Promise<Fixture> {
     Promise.all(
       CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS.map(async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
       })),
     ),
     Promise.all(

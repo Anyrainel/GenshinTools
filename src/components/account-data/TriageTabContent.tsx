@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageDecision } from "@/lib/account-data/triage/types";
+import type { TriageDecision } from "@/domain/account/triage/types";
 import { cn } from "@/lib/utils";
 
 type Translator = ReturnType<typeof useLanguage>["t"];

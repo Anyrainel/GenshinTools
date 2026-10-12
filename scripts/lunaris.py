@@ -145,7 +145,7 @@ SKIP_DERIVED_IDS: set[str] = {"traveler"}
 # assign regions to beta characters whose associationType isn't set yet.
 
 # Fallback region used when associationType is missing or unrecognized. Must
-# be a valid Region value (src/data/types.ts). "Snezhnaya" mirrors where most
+# be a valid Region value (src/domain/models.ts). "Snezhnaya" mirrors where most
 # current-version beta characters land; edit REGION_OVERRIDES to correct
 # exceptions like Mondstadt-affiliated beta characters.
 DEFAULT_UNKNOWN_REGION = "Snezhnaya"
@@ -328,7 +328,7 @@ def find_unreleased_artifacts(
 def detect_region(meta: dict) -> str:
     """Try to detect region from charlist metadata.
 
-    Always returns a valid Region value (see src/data/types.ts). When the
+    Always returns a valid Region value (see src/domain/models.ts). When the
     metadata has no association/region info, falls back to
     DEFAULT_UNKNOWN_REGION so downstream consumers never see an illegal
     placeholder like "Unknown". Add the character to REGION_OVERRIDES in

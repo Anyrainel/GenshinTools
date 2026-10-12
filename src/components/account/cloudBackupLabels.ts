@@ -1,6 +1,6 @@
-import type { BackupMetadataRow } from "@/cloud/backupMetadata";
-import type { CloudBackupRecordKind } from "@/cloud/types";
 import type { useLanguage } from "@/contexts/LanguageContext";
+import type { CloudBackupRecordKind } from "@/domain/backup/types";
+import type { BackupMetadataRow } from "@/services/backup/backupMetadata";
 
 type Translator = ReturnType<typeof useLanguage>["t"];
 type BackupMetadataSide = BackupMetadataRow["local"];

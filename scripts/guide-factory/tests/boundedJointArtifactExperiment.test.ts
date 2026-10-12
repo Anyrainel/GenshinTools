@@ -1,4 +1,4 @@
-import { runGenerator as runRuntimeGenerator } from "@/lib/team-comp/generator/generator";
+import { runGenerator as runRuntimeGenerator } from "@/domain/combat/generator/generator";
 import { describe, expect, it } from "vitest";
 import {
   runBoundedJointArtifactExperiment,

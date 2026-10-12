@@ -1,17 +1,17 @@
 import { useCallback, useState } from "react";
-import type { Tier } from "@/data/enums";
-import type {
-  AccountData,
-  TierAssignment,
-  TierCustomization,
-} from "@/data/types";
 import {
   type AllActions,
   generateScoreActionsByTier,
   type ScoreUpTierUpdate,
-} from "@/lib/account-data/scoreUpEngine";
-import type { AllocationOptions } from "@/lib/account-data/tierWaterfall";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+} from "@/domain/account/scoreUpEngine";
+import type { AllocationOptions } from "@/domain/account/tierWaterfall";
+import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
+import type { Tier } from "@/domain/enums";
+import type {
+  AccountData,
+  TierAssignment,
+  TierCustomization,
+} from "@/domain/models";
 import { useAsyncComputation } from "./useAsyncComputation";
 
 export interface ScoreUpOptions {

@@ -1,9 +1,10 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import {
   runGenerator as runRuntimeGenerator,
   type GeneratorOptions,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import { describe, expect, it } from "vitest";
 import { replayTeamDamage as replayRuntimeTeamDamage } from "../src/computationReplay";
 import { readJson, sha256File, stableJson } from "../src/io";
@@ -321,7 +322,7 @@ async function buildRealReport() {
     KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
       }),
     ),
   );

@@ -7,7 +7,7 @@ the correct `character{rarity}{Region}.ts` file from the start.
 The release pipeline also uses these pins when Fandom reports "None", so a
 new release cannot overwrite the known region with incomplete metadata.
 
-Region values must match the `Region` union in `src/data/types.ts`:
+Region values must match the `Region` union in `src/domain/models.ts`:
   Mondstadt | Liyue | Inazuma | Sumeru | Fontaine | Natlan
   | Snezhnaya | Nod-Krai | None
 """

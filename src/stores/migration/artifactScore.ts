@@ -1,4 +1,4 @@
-import type { GlobalStatWeights } from "@/data/types";
+import type { GlobalStatWeights } from "@/domain/models";
 import {
   DEFAULT_GLOBAL_STAT_WEIGHTS,
   PersistedArtifactScoreStoreSchema,

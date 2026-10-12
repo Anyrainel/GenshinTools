@@ -14,14 +14,14 @@
  * Indices are 1-based into the resource arrays.
  */
 
+import type { ArtifactSetConfig } from "@/domain/models";
 import {
   allArtifacts,
   allCharacters,
   allHalfSets,
   allWeapons,
-} from "@/data/gameResources";
-import { characterStatsResource } from "@/data/gameStatsLoader";
-import type { ArtifactSetConfig } from "@/data/types";
+} from "@/domain/reference/catalog";
+import { characterStatsResource } from "@/domain/reference/stats";
 import { toBase64 } from "@/lib/base64";
 
 // ── Index maps (built once at module load) ──

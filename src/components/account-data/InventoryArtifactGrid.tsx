@@ -1,6 +1,6 @@
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData } from "@/domain/models";
 import { cn } from "@/lib/utils";
 
 export type TaggedArtifact = ArtifactData & { equipped: boolean };

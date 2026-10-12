@@ -1,0 +1,52 @@
+import { CharacterBuildCard } from "@/components/builds/CharacterBuildCard";
+import type { CharacterResource } from "@/domain/models";
+import { useBuildsStore } from "@/stores/useBuildsStore";
+import { render, screen } from "../../utils/render";
+
+const mockCharacter: CharacterResource = {
+  id: "hu_tao",
+  rarity: 5,
+  imagePath: "characters/hu_tao.png",
+};
+
+describe("CharacterBuildCard", () => {
+  beforeEach(() => {
+    useBuildsStore.getState().clearAll();
+  });
+
+  it("renders character card", () => {
+    const { container } = render(
+      <CharacterBuildCard character={mockCharacter} />
+    );
+
+    // Should have an img for the character
+    const img = container.querySelector("img");
+    expect(img).toBeInTheDocument();
+  });
+
+  it("shows add first build button when no builds", () => {
+    render(<CharacterBuildCard character={mockCharacter} />);
+
+    // Should have an add build button ("Add First Build")
+    expect(screen.getByText(/Add First Build/i)).toBeInTheDocument();
+
+    // Should NOT have restore button
+    expect(screen.queryByText(/Restore/i)).not.toBeInTheDocument();
+  });
+
+  it("shows add build button and restore button when builds exist", () => {
+    // Add a build first
+    useBuildsStore.getState().newBuild("hu_tao");
+
+    render(<CharacterBuildCard character={mockCharacter} />);
+
+    // Should have add build button ("Add Build" - simpler text when builds exist)
+    expect(screen.getByText(/Add Build/i)).toBeInTheDocument();
+
+    // Should HAVE restore button because local builds represent customization
+    const restoreButtons = screen.getAllByText(/Restore/i);
+    // Usually one button, or button + dialog trigger?
+    // The button has text "Restore".
+    expect(restoreButtons.length).toBeGreaterThan(0);
+  });
+});

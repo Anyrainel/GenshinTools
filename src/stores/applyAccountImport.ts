@@ -1,5 +1,5 @@
-import type { AccountData } from "@/data/types";
-import type { AccountProfileId } from "@/lib/account-data/types";
+import type { AccountProfileId } from "@/domain/account/types";
+import type { AccountData } from "@/domain/models";
 import { useAccountStore } from "./useAccountStore";
 import { useAchievementStore } from "./useAchievementStore";
 import {

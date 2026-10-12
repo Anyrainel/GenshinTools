@@ -47,34 +47,34 @@ import { availableParallelism } from "node:os";
 import { basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { stripVTControlCharacters } from "node:util";
-import type { Element, MainStat, Slot, StatKey, SubStat } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import type { AccountData, ArtifactData } from "@/data/types";
 import {
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
-} from "@/lib/artifact/scoring/artifactScore";
-import { buildSheetFromMainAndSubs } from "@/lib/artifact/scoring/sheetBuilder";
-import { getRollValues } from "@/lib/artifact/scoring/utils";
-import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
+} from "@/domain/build/artifact/scoring/artifactScore";
+import { buildSheetFromMainAndSubs } from "@/domain/build/artifact/scoring/sheetBuilder";
+import { getRollValues } from "@/domain/build/artifact/scoring/utils";
+import { singleFormulaCombo } from "@/domain/combat/damage/core/combo";
 import {
   type CompiledTeamDamage,
   compileComboTeamDamage,
   fillVarsFromArtifacts,
   fillVarsFromSheet,
-} from "@/lib/dmgcalc/core/formulaCompiler";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+} from "@/domain/combat/damage/core/formulaCompiler";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
-import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
-import { runCharacterBnB } from "@/lib/team-comp/optimizer/characterBnB";
-import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
-import type { CharOptConfig } from "@/lib/team-comp/types";
+} from "@/domain/combat/damage/types";
+import { getHalfSetIds, getSetId } from "@/domain/combat/damage/utils";
+import { runCharacterBnB } from "@/domain/combat/optimizer/characterBnB";
+import type { Element, MainStat, Slot, StatKey, SubStat } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { AccountData, ArtifactData } from "@/domain/models";
+import { detectEquippedSets } from "@/domain/team/teamConfigUtils";
+import type { CharOptConfig } from "@/domain/team/types";
 
 import {
   buildPerChar,

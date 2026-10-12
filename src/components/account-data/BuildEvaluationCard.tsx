@@ -9,8 +9,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
 import {
   type BuildEvaluation,
   type EvalBuild,
@@ -18,8 +16,11 @@ import {
   getBarColor,
   getTier,
   type SlotEvaluation,
-} from "@/lib/account-data/buildEvaluation";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/account/buildEvaluation";
+import { allSlots } from "@/domain/enums";
+import { charactersById } from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 
 // Slot label icons for sands/goblet/circlet (compact alternative to text)
 const slotIcons = {

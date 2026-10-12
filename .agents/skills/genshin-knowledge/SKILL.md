@@ -1,7 +1,7 @@
 ---
 name: genshin-knowledge
 description: >
-  Verify concrete Genshin mechanics and support implementation or review in `src/lib/dmgcalc/`.
+  Verify concrete Genshin mechanics and support implementation or review in `src/domain/combat/damage/`.
   Use only when the task requires exact game text, values, or activation conditions; implements or audits a specific
   character, weapon, artifact, reaction, buff, or damage formula; or investigates a concrete calculator correctness or
   coverage issue. Do not use for product strategy, guide-source collection, data/schema design, team/build recommendation
@@ -11,7 +11,7 @@ description: >
 # Genshin Knowledge Base
 
 Reference material for verifying concrete game mechanics and implementing, reviewing, or tracking damage calculator
-extensions in `src/lib/dmgcalc/`. This is not a general team-building, guide-research, or optimization-design skill.
+extensions in `src/domain/combat/damage/`. This is not a general team-building, guide-research, or optimization-design skill.
 
 ## Activation Boundary
 

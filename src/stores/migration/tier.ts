@@ -1,7 +1,7 @@
-import type { LuckExpectation } from "@/data/enums";
-import type { TierAssignment, TierCustomization } from "@/data/types";
-import { legacyAccountProfileIdToNumber } from "@/lib/account-data/accountProfile";
-import type { AccountProfileId } from "@/lib/account-data/types";
+import { legacyAccountProfileIdToNumber } from "@/domain/account/accountProfile";
+import type { AccountProfileId } from "@/domain/account/types";
+import type { LuckExpectation } from "@/domain/enums";
+import type { TierAssignment, TierCustomization } from "@/domain/models";
 
 interface TierListInstanceMigration {
   id: number;

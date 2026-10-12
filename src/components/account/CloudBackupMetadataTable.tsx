@@ -1,8 +1,8 @@
 import { RefreshCw } from "lucide-react";
-import type { BackupMetadataRow } from "@/cloud/backupMetadata";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import type { BackupMetadataRow } from "@/services/backup/backupMetadata";
 import {
   formatBackupCount,
   formatBackupDateTime,

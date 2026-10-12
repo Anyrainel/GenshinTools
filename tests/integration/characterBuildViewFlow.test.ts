@@ -1,3 +1,4 @@
+import "@/providers/reference/statLoaders";
 /**
  * Integration Tests: Artifact Filter Character Build View Flow
  *
@@ -8,18 +9,17 @@
  */
 
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-
-import type { Tier } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
-import type { CharacterStatsMap } from "@/data/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import { characters } from "@/data/resources";
-import type { CharacterFilters } from "@/data/types";
+import type { Tier } from "@/domain/enums";
+import type { CharacterFilters } from "@/domain/models";
+import { charactersById } from "@/domain/reference/catalog";
+import type { CharacterStatsMap } from "@/domain/reference/stats";
+import { getCharacterDisplayMeta } from "@/domain/reference/stats";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
   hasActiveFilters,
-} from "@/lib/characterFilters";
+} from "@/services/catalog/characterFilters";
 import { useTierStore } from "@/stores/useTierStore";
 
 describe("Integration: Character Build View Filter Flow", () => {

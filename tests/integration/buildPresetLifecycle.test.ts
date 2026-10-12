@@ -10,8 +10,8 @@
 
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Build, BuildPayloadV5 } from "@/data/types";
-import { getCachedBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
+import { getCachedBuildPreset } from "@/domain/build/buildPresetRegistry";
+import type { Build, BuildPayloadV5 } from "@/domain/models";
 import {
   selectBuildsForCharacter,
   useBuildsStore,
@@ -20,7 +20,7 @@ import {
 const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
 
 // ── Mock the preset registry ────────────────────────────────────
-vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
+vi.mock("@/domain/build/buildPresetRegistry", () => ({
   cacheBuildPreset: vi.fn((id: string, payload: BuildPayloadV5) => {
     presetCache.set(id, payload);
     if (payload.id) presetCache.set(payload.id, payload);

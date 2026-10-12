@@ -1,13 +1,13 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadTeamPreset } from "@/domain/team/teamPresetRegistry";
+import type { TeamCompData } from "@/domain/team/types";
 import { useHydrateTeamPreset } from "@/hooks/useHydrateTeamPreset";
-import { loadTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
-import type { TeamCompData } from "@/lib/team-comp/types";
 import { useTeamStore } from "@/stores/useTeamStore";
 
 const presetCache = vi.hoisted(() => new Map<string, TeamCompData>());
 
-vi.mock("@/lib/team-comp/teamPresetRegistry", () => ({
+vi.mock("@/domain/team/teamPresetRegistry", () => ({
   cacheTeamPreset: vi.fn((id: string, payload: TeamCompData) => {
     presetCache.set(id, payload);
   }),

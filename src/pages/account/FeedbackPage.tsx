@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { toast } from "sonner";
-import type { PublicFeedback } from "@/cloud/community";
 import { AccountFeedbackDialog } from "@/components/layout/AccountFeedbackDialog";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
@@ -8,6 +7,7 @@ import { CommunityFeed } from "@/components/shared/CommunityFeed";
 import { Button } from "@/components/ui/button";
 import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { PublicFeedback } from "@/providers/community/community";
 
 export default function FeedbackPage() {
   const { t, language } = useLanguage();

@@ -1,17 +1,17 @@
-import "@/lib/dmgcalc";
+import "@/domain/combat/damage/index";
 
-import type { StatKey } from "@/data/enums";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { StatKey } from "@/domain/enums";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import type {
   BuffActivationMap,
   ComboFormula,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 import {
   runGenerator as runRuntimeGenerator,
   type GeneratorResult,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import {
   bootstrapGuideFactoryComputation,
   replayTeamDamage,

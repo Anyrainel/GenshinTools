@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { Tier } from "@/data/enums";
-import type { TierAssignment } from "@/data/types";
+import type { Tier } from "@/domain/enums";
+import type { TierAssignment } from "@/domain/models";
 import {
   selectActiveTierAssignments,
   selectActiveTierAuthor,

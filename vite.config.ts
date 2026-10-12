@@ -32,11 +32,11 @@ const chunkAssignments: Array<[(id: string) => boolean, string]> = [
 
   // App source — more specific patterns first
   [
-    (id) => /[\\/]src[\\/]lib[\\/]team-comp[\\/]impl[\\/]/.test(id),
+    (id) => /[\\/]src[\\/]domain[\\/]combat[\\/]damage[\\/]impl[\\/]/.test(id),
     "team-comp-impl",
   ],
-  [(id) => /[\\/]src[\\/]lib[\\/]team-comp[\\/]/.test(id), "team-comp-engine"],
-  [(id) => /[\\/]src[\\/]data[\\/]i18n-/.test(id), "i18n-data"],
+  [(id) => /[\\/]src[\\/]domain[\\/]combat[\\/]/.test(id), "team-comp-engine"],
+  [(id) => /[\\/]src[\\/]generated[\\/]i18n-/.test(id), "i18n-data"],
   // Skip raw JSON assets here so Vite's json-plugin handles them via its own
   // rules (glob-lazy imports stay as standalone chunks; static imports stay
   // with their importer). Only intercept ``*.ts`` source files under data/.
@@ -87,6 +87,22 @@ export default defineConfig(({ command }) => {
   return {
     plugins: [
       react({ tsDecorators: true }),
+      {
+        name: "e2e-browser-harness",
+        transformIndexHtml: () =>
+          fakeLogtoForE2e
+            ? [
+                {
+                  tag: "script",
+                  attrs: {
+                    type: "module",
+                    src: "/tests/e2e/browserHarness.ts",
+                  },
+                  injectTo: "body",
+                },
+              ]
+            : [],
+      },
       {
         name: "spa-route-fallback-before-cloudflare-assets",
         enforce: "pre",
@@ -197,7 +213,7 @@ export default defineConfig(({ command }) => {
           ? {
               "@logto/react": path.resolve(
                 __dirname,
-                "./src/testing/e2e/fakeLogto.tsx"
+                "./tests/e2e/fakeLogto.tsx"
               ),
             }
           : {}),

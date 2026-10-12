@@ -1,7 +1,10 @@
+import { installNodeReferenceFetch } from "../../lib/nodeReferenceFetch.mjs";
+installNodeReferenceFetch();
+import "@/providers/reference/statLoaders";
 import { createHash } from "node:crypto";
-import type { ReactionType } from "@/data/enums";
-import { characterStatsResource } from "@/data/gameStatsLoader";
-import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
+import type { ReactionType } from "@/domain/enums";
+import { characterStatsResource } from "@/domain/reference/stats";
+import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
 import { GUIDE_FACTORY_TEAM_REACTION_IDS } from "./catalogs";
 import type { KnowledgeRecord } from "./schemas";
 
@@ -189,18 +192,18 @@ export interface TeamRosterHoldoutOutcome {
 /** Files whose behavior or data directly affects the default runtime gate. */
 export const TEAM_ROSTER_CANDIDATE_DOMAIN_STATIC_DEPENDENCY_PATHS = [
   "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
-  "src/data/betaState.ts",
-  "src/data/charInfo.ts",
+  "src/stores/betaState.ts",
+  "src/data/characterInfo.ts",
   "src/data/game/character_beta_stats.json.gz",
   "src/data/game/character_stats.json",
-  "src/data/gameDataUtil.ts",
-  "src/data/gameResources.ts",
-  "src/data/gameStatsLoader.ts",
+  "src/lib/resources/cache.ts",
+  "src/domain/reference/catalog.ts",
+  "src/providers/reference/statLoaders.ts",
   "src/data/resources.ts",
   "src/data/resources_beta.ts",
-  "src/data/utils.ts",
-  "src/lib/dmgcalc/constants.ts",
-  "src/lib/dmgcalc/core/teamMeta.ts",
+  "src/domain/build/statUtils.ts",
+  "src/domain/combat/damage/constants.ts",
+  "src/domain/combat/damage/core/teamMeta.ts",
 ] as const;
 
 export interface TeamRosterCandidateDomainReport {

@@ -27,7 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { PresetOption } from "@/data/types";
+import type { PresetOption } from "@/domain/models";
 
 type ImportVariant = "default" | "tier-list" | "team-comp";
 

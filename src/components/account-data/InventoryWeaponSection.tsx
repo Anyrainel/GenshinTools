@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { MainStat, Rarity } from "@/data/enums";
-import { weaponsById } from "@/data/gameResources";
+import type { MainStat, Rarity } from "@/domain/enums";
+import type { AccountData, WeaponData } from "@/domain/models";
+import { weaponsById } from "@/domain/reference/catalog";
 import {
   getWeaponDisplayMeta,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { AccountData, WeaponData } from "@/data/types";
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
 import { useToggleSet } from "@/hooks/useToggleSet";
 import { type InventoryChipOption, InventoryChipRow } from "./InventoryChipRow";
 import {
@@ -35,7 +36,7 @@ export function InventoryWeaponSection({
   onWeaponClick,
 }: InventoryWeaponSectionProps) {
   const { t } = useLanguage();
-  const weaponStats = weaponStatsResource.use();
+  const weaponStats = useResource(weaponStatsResource);
   const [showEquipped, setShowEquipped] = useState(false);
   const [showUnequipped, setShowUnequipped] = useState(true);
   const [showMaxLevel, setShowMaxLevel] = useState(true);

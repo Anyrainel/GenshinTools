@@ -408,7 +408,7 @@
     Standing record of an accepted approximation — do not re-file.
 
     The Hyperbloom/Burgeon half of this item is DONE and verified: they are gone
-    from the accepted set in src/lib/dmgcalc/impl/weapon4Polearm.ts class
+    from the accepted set in src/domain/combat/damage/impl/weapon4Polearm.ts class
     Frostbreath, and the relatedness reasoning is recorded in a code comment.
     The current set (melt, vaporize, frozen, superconduct, stellarConduct,
     stellarSwirl, electroCharged, lunarCharged, bloom, lunarBloom,

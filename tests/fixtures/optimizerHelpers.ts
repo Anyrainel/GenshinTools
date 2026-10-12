@@ -5,11 +5,12 @@
  * getFirstFormulaId so they are defined once instead of copy-pasted
  * across every test file.
  */
-import type { ArtifactData, ArtifactSetConfig } from "@/data/types";
-import type { BuildMatchResult } from "@/lib/artifact/scoring/artifactScore";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+
+import type { BuildMatchResult } from "@/domain/build/artifact/scoring/artifactScore";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { TeamSlotConfig } from "@/domain/combat/damage/types";
+import type { ArtifactData, ArtifactSetConfig } from "@/domain/models";
 
 // ── Artifact factory ────────────────────────────────────────────────────────
 

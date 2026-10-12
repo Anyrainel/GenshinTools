@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Rarity } from "@/data/enums";
-import { allHalfSetIds, artifactIdToHalfSetId } from "@/data/gameResources";
-import type { AccountData, ArtifactData } from "@/data/types";
+import type { Rarity } from "@/domain/enums";
+import type { AccountData, ArtifactData } from "@/domain/models";
+import {
+  allHalfSetIds,
+  artifactIdToHalfSetId,
+} from "@/domain/reference/catalog";
 import { useToggleSet } from "@/hooks/useToggleSet";
 import {
   InventoryArtifactGrid,

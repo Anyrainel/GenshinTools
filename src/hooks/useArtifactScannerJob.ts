@@ -3,7 +3,7 @@ import type {
   IGOODArtifact,
   IGOODCharacter,
   IGOODWeapon,
-} from "@/lib/account-data/import/goodConversion";
+} from "@/providers/scanner/goodConversion";
 import {
   ArtifactManagerError,
   fetchArtifacts,
@@ -12,12 +12,12 @@ import {
   getResult,
   pollStatus,
   submitScanJob,
-} from "@/lib/account-data/manager/client";
+} from "@/providers/scanner-manager/client";
 import type {
   ScanProgress,
   ScanRequest,
   ScanSubmitResponse,
-} from "@/lib/account-data/manager/types";
+} from "@/providers/scanner-manager/types";
 
 export type CategoryOutcome<T> =
   | { status: "success"; data: T[] }

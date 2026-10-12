@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { isArchiveSearchActive } from "@/lib/archiveFilters";
+import { isArchiveSearchActive } from "@/lib/search/archiveFilters";
 
 interface ArchiveToolbarProps {
   searchQuery: string;

@@ -1,4 +1,4 @@
-import { ARTIFACT_SET_ROLE_IDS } from "../../src/data/constants";
+import { ARTIFACT_SET_ROLE_IDS } from "../../src/config/gameConstants";
 import { artifacts } from "../../src/data/resources";
 
 const releasedIds = new Set(artifacts.map((artifact) => artifact.id));

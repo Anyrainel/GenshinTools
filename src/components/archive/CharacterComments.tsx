@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import {
-  type CharacterComment,
-  CommunityApiError,
-  postCharacterComment,
-} from "@/cloud/community";
 import { CommunityFeed } from "@/components/shared/CommunityFeed";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  type CharacterComment,
+  CommunityApiError,
+  postCharacterComment,
+} from "@/providers/community/community";
 
 export function CharacterComments({ characterId }: { characterId: string }) {
   const { t, language } = useLanguage();

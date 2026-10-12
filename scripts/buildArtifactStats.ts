@@ -6,13 +6,13 @@
  * data-driven artifact stats without hand-authoring main/sub-stat values.
  */
 
-import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { MAIN_STAT_VALUES_5STAR } from "@/config/gameConstants";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import {
   toInternal,
-} from "@/lib/artifact/scoring/utils";
-import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
-import type { StatKey } from "@/data/enums";
+} from "@/domain/build/artifact/scoring/utils";
+import { AVG_SUBSTAT_ROLL } from "@/domain/build/artifact/scoring/constants";
+import type { StatKey } from "@/domain/enums";
 
 
 export interface PresetSubstat {

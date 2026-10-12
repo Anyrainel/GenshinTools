@@ -3,11 +3,11 @@ import type {
   TierGroupConfig,
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
-import type { Tier } from "@/data/enums";
+import type { Tier } from "@/domain/enums";
 import { render } from "../../utils/render";
 
 // Mock useMediaQuery to always return true for desktop mode
-vi.mock("@/hooks/useMediaQuery", () => ({
+vi.mock("@/components/ui/useMediaQuery", () => ({
   useMediaQuery: (query: string) => {
     // Return true for desktop breakpoints to ensure TierTable renders in desktop mode
     if (

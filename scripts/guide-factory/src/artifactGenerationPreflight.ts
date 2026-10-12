@@ -1,6 +1,6 @@
 import characterStatsInput from "@/data/game/character_stats.json";
-import { betaArtifactIds } from "@/data/gameResources";
-import { buildArtifactSetChoiceCandidates } from "@/lib/team-comp/analyzer/weaponChoice";
+import { betaArtifactIds } from "@/domain/reference/catalog";
+import { buildArtifactSetChoiceCandidates } from "@/domain/combat/analyzer/weaponChoice";
 import type {
   FormulaPlanReadinessAssessment,
   FormulaPlanReadinessBlocker,
@@ -29,13 +29,13 @@ export const ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS = [
   "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
   "scripts/guide-factory/src/schemas.ts",
-  "src/data/betaState.ts",
+  "src/stores/betaState.ts",
   "src/data/game/character_stats.json",
   "src/data/game/weapon_stats.json",
-  "src/data/gameResources.ts",
+  "src/domain/reference/catalog.ts",
   "src/data/resources.ts",
   "src/data/resources_beta.ts",
-  "src/lib/team-comp/analyzer/weaponChoice.ts",
+  "src/domain/combat/analyzer/weaponChoice.ts",
 ] as const;
 
 export const COMPARISON_BASELINE_REFINEMENT_POLICY = {

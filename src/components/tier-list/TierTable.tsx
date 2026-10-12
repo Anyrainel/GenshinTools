@@ -15,11 +15,11 @@ import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Tier } from "@/data/enums";
-import { tiers } from "@/data/enums";
-import type { TierAssignment } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { Tier } from "@/domain/enums";
+import { tiers } from "@/domain/enums";
+import type { TierAssignment } from "@/domain/models";
 import { type LayoutMode, TierLayout } from "./TierLayout";
 import type { TierGroupConfig, TierItemData } from "./tierTableTypes";
 

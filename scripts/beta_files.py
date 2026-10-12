@@ -8,7 +8,7 @@ This module owns everything related to the beta data surface:
 
   Beta TypeScript (visibility + i18n):
     src/data/resources_beta.ts   — flagged-on entities visible in beta UI
-    src/data/i18n-beta.ts        — display names for beta entities
+    src/generated/i18n-beta.ts        — display names for beta entities
 
 The "beta" surface contains every unreleased entity (i.e. anything not in
 ``resources.ts``), regardless of where its data lives:
@@ -40,8 +40,8 @@ GAME_DIR = DATA_DIR / "game"
 
 RESOURCES_PATH = DATA_DIR / "resources.ts"
 RESOURCES_BETA_PATH = DATA_DIR / "resources_beta.ts"
-I18N_GAME_PATH = DATA_DIR / "i18n-game.ts"
-I18N_BETA_PATH = DATA_DIR / "i18n-beta.ts"
+I18N_GAME_PATH = PROJECT_ROOT / "src" / "generated" / "i18n-game.ts"
+I18N_BETA_PATH = PROJECT_ROOT / "src" / "generated" / "i18n-beta.ts"
 
 # Official (released) game-data JSON, used as the safety oracle for cleanup.
 CHARACTER_4_EN_PATH = GAME_DIR / "character_4_en.json"
@@ -133,7 +133,7 @@ def generate_resources_beta_ts(
         "  ArtifactSetResource,",
         "  CharacterResource,",
         "  WeaponResource,",
-        '} from "./types";',
+        '} from "../domain/models";',
         "",
     ]
 

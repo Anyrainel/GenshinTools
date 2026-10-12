@@ -9,31 +9,32 @@ import {
   useState,
 } from "react";
 import { ArtifactScoreGlobalSettings } from "@/components/account-data/ArtifactScoreGlobalSettings";
+import { CharacterEditDialog } from "@/components/account-data/CharacterEditDialog";
+import { SidebarLayout } from "@/components/layout/SidebarLayout";
 import {
   type CardLayout,
   CharacterCard,
-} from "@/components/account-data/CharacterCard";
-import { CharacterEditDialog } from "@/components/account-data/CharacterEditDialog";
-import { SidebarLayout } from "@/components/layout/SidebarLayout";
+} from "@/components/shared/CharacterCard";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
 import { ExportBranding } from "@/components/shared/ExportBranding";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/gameResources";
+import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
+import type { AccountData, CharacterData } from "@/domain/models";
+import { charactersById } from "@/domain/reference/catalog";
 import {
   characterStatsResource,
   getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import type { AccountData, CharacterData } from "@/data/types";
+} from "@/domain/reference/stats";
 import {
   useActiveAccountData,
   useActiveAccountScores,
 } from "@/hooks/useActiveAccount";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useIsOwned } from "@/hooks/useOwnership";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
-import { filterAndSortCharacterData } from "@/lib/characterFilters";
+import { useResource } from "@/hooks/useResource";
 import { downloadElementAsImage } from "@/lib/downloadImage";
+import { filterAndSortCharacterData } from "@/services/catalog/characterFilters";
 import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
@@ -50,7 +51,7 @@ export const CharacterView = forwardRef<
   CharacterViewProps
 >(function CharacterView({ isEditMode = false }, ref) {
   const { t } = useLanguage();
-  const characterStats = characterStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
   const accountData = useActiveAccountData();
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const addOrUpdateAccount = useAccountStore((s) => s.addOrUpdateAccount);

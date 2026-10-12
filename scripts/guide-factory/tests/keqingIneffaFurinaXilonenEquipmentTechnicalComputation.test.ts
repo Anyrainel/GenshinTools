@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
@@ -30,7 +31,7 @@ beforeAll(async () => {
     KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
       }),
     ),
   );

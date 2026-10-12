@@ -68,7 +68,7 @@ const EXPECTED_INPUT_PATH_COUNT = 116;
 const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 80;
 const EXPECTED_JSON_INPUT_COUNT = 14;
 const EXPECTED_BINARY_RUNTIME_INPUT_COUNT = 2;
-const HUSK_RUNTIME_RELATIVE_PATH = "src/lib/dmgcalc/impl/artifact4pc.ts";
+const HUSK_RUNTIME_RELATIVE_PATH = "src/domain/combat/damage/impl/artifact4pc.ts";
 const ABSOLUTE_TOLERANCE = 1e-9;
 const RELATIVE_TOLERANCE = 1e-12;
 

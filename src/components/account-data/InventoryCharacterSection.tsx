@@ -9,15 +9,20 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { type Element, elements, type Rarity } from "@/data/enums";
-import { charactersById, elementResourcesByName } from "@/data/gameResources";
+import { type Element, elements, type Rarity } from "@/domain/enums";
+import type { CharacterData } from "@/domain/models";
+import {
+  charactersById,
+  elementResourcesByName,
+} from "@/domain/reference/catalog";
 import {
   characterStatsResource,
   getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import type { CharacterData } from "@/data/types";
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
 import { useToggleSet } from "@/hooks/useToggleSet";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { type InventoryChipOption, InventoryChipRow } from "./InventoryChipRow";
 import { rarityColor } from "./InventoryWeaponGrid";
 
@@ -35,7 +40,7 @@ export function InventoryCharacterSection({
   iconSize,
 }: InventoryCharacterSectionProps) {
   const { t } = useLanguage();
-  const characterStats = characterStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
   const [showMaxLevel, setShowMaxLevel] = useState(true);
   const [showOther, setShowOther] = useState(false);
   const [rarities, toggleRarity] = useToggleSet<Rarity>(CHARACTER_RARITIES);

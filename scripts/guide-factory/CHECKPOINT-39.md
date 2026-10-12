@@ -36,7 +36,7 @@ non-replayable attestation that every consumer invocation executed the runtime.
 The checked-in CLI and global validator use the default real runner.
 
 After the intervening calculator correction, checkpoint 38 was resealed against
-the committed `src/lib/dmgcalc/utils.ts` bytes. Its output facts and result
+the committed `src/domain/combat/damage/utils.ts` bytes. Its output facts and result
 fingerprint remain unchanged. The current checkpoint 38 report SHA-256 is
 `c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063`.
 

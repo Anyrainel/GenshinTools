@@ -6,7 +6,7 @@ import path from "node:path";
 import * as ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
 
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import {
   buildNoelleNormalPrefixFormulaProjectionFromWorkspace,
   loadNoelleNormalPrefixFormulaProjectionInputFromWorkspace,
@@ -112,13 +112,13 @@ describe("Noelle exact Normal-prefix formula projection", () => {
     ).toEqual(XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS);
     expect(
       NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_RUNTIME_INPUT_PATHS,
-    ).toContain("src/lib/dmgcalc/core/formulaCompiler.ts");
+    ).toContain("src/domain/combat/damage/core/formulaCompiler.ts");
     expect(
       NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_RUNTIME_INPUT_PATHS,
-    ).toContain("src/lib/dmgcalc/core/teamBuild.ts");
+    ).toContain("src/domain/combat/damage/core/teamBuild.ts");
     expect(
       NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_RUNTIME_INPUT_PATHS,
-    ).toContain("src/lib/dmgcalc/impl/character4Mondstadt.ts");
+    ).toContain("src/domain/combat/damage/impl/character4Mondstadt.ts");
   });
 
   it("independently derives the exact reachable first-party runtime closure", async () => {
@@ -203,7 +203,7 @@ describe("Noelle exact Normal-prefix formula projection", () => {
     }
     expect([...reachable].sort()).toEqual([...runtimePaths].sort());
 
-    expect(await importsFor("src/data/gameStatsLoader.ts")).toEqual(
+    expect(await importsFor("src/providers/reference/statLoaders.ts")).toEqual(
       expect.arrayContaining([
         "src/data/game/character_stats.json",
         "src/data/game/character_beta_stats.json.gz",

@@ -2,21 +2,17 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { LogtoProvider } from "@logto/react";
 import { BrowserRouter } from "react-router-dom";
-import App from "./App.tsx";
-import { logtoConfig } from "./cloud/authConfig";
+import App from "./app/App.tsx";
 import { ErrorBoundary } from "./components/shared/ErrorBoundary";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { AppSessionProvider } from "./contexts/AppSessionContext";
+import { logtoConfig } from "./contexts/authConfig";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { handleVitePreloadError } from "./lib/staleDeploymentRecovery";
 
 // Side-effect module: registers cross-store subscriptions at startup.
 import "./stores/storeEffects.ts";
-
-if (import.meta.env.VITE_E2E_FAKE_LOGTO === "1") {
-  void import("./testing/e2e/browserHarness");
-}
 
 // Clean up cache-busting query param after error recovery reload
 if (new URLSearchParams(window.location.search).has("_r")) {

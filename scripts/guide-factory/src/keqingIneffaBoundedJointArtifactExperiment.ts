@@ -30,8 +30,8 @@ export const KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_INPUT_PATHS = [
     "scripts/guide-factory/src/io.ts",
     "scripts/guide-factory/src/keqingIneffaBoundedJointArtifactExperiment.ts",
     ...KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_INPUT_PATHS,
-    "src/data/enums.ts",
-    "src/data/types.ts",
+    "src/domain/enums.ts",
+    "src/domain/models.ts",
   ]),
 ] as const;
 

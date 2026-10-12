@@ -1,6 +1,6 @@
 import { RotateCcw, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { StatSelect } from "@/components/artifact-builds/StatSelect";
+import { StatSelect } from "@/components/shared/StatSelect";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -19,22 +19,23 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { Switch } from "@/components/ui/switch";
+import { statPools } from "@/config/gameConstants";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { statPools } from "@/data/constants";
-import type { MainStat, Slot, SubStat } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
 import {
   buildCustomFlexPattern,
   makeFlexPatternKey,
   sortSubs,
-} from "@/lib/account-data/triage/flexRegistry";
+} from "@/domain/account/triage/flexRegistry";
 import type {
   CustomFlexInput,
   FlexPattern,
   TriageSettings,
-} from "@/lib/account-data/triage/types";
-import { cloneData, cn } from "@/lib/utils";
+} from "@/domain/account/triage/types";
+import type { MainStat, Slot, SubStat } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import { cloneData } from "@/lib/cloneData.ts";
+import { cn } from "@/lib/utils";
 
 function stringArraysEqual(first: string[], second: string[]) {
   return (

@@ -1,12 +1,12 @@
-import type { Element, StatKey, SubStat } from "@/data/enums";
-import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import type { Element, StatKey, SubStat } from "@/domain/enums";
+import { AVG_SUBSTAT_ROLL } from "@/domain/build/artifact/scoring/constants";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import type {
   BuffActivationMap,
   CalcContext,
   ExtraBuff,
   OptionMap,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 import {
   replayTeamDamage,
   type DamageReplayInput,

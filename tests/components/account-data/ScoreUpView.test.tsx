@@ -1,11 +1,11 @@
-import type { SubStat } from "@/data/enums";
-import type { Build } from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
   NormalizedScoreInfo,
   StatScoreBreakdown,
-} from "@/lib/artifact/scoring/artifactScore";
+} from "@/domain/build/artifact/scoring/artifactScore";
+import type { SubStat } from "@/domain/enums";
+import type { Build } from "@/domain/models";
 import { ScoreUpView } from "@/pages/account-data/ScoreUpView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
@@ -22,18 +22,18 @@ const recommendationSpies = vi.hoisted(() => ({
   stop: vi.fn(),
 }));
 
-vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+    await importOriginal<typeof import("@/domain/reference/stats")>();
   return {
     ...actual,
     characterStatsResource: {
       ...actual.characterStatsResource,
-      use: () => (gameStatReadiness.character ? {} : null),
+      peek: () => (gameStatReadiness.character ? {} : null),
     },
     weaponStatsResource: {
       ...actual.weaponStatsResource,
-      use: () => (gameStatReadiness.weapon ? {} : null),
+      peek: () => (gameStatReadiness.weapon ? {} : null),
     },
   };
 });

@@ -7,24 +7,25 @@ import {
 } from "lucide-react";
 import { useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
-import { CharacterCard } from "@/components/account-data/CharacterCard";
-import { BuildCard } from "@/components/artifact-builds/BuildCard";
+import { BuildCard } from "@/components/shared/BuildCard";
+import { CharacterCard } from "@/components/shared/CharacterCard";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { SectionErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { characterKitsResource } from "@/data/gameDataLoader";
-import { charactersById } from "@/data/gameResources";
+import type { CharacterResource } from "@/domain/models";
+import { charactersById } from "@/domain/reference/catalog";
 import {
   type CharacterStatsMap,
   getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import type { CharacterResource } from "@/data/types";
+} from "@/domain/reference/stats";
 import { useActiveAccountScores } from "@/hooks/useActiveAccount";
 import { useConstellation, useIsOwned } from "@/hooks/useOwnership";
+import { useResource } from "@/hooks/useResource";
 import { cn } from "@/lib/utils";
+import { characterKitsResource } from "@/providers/reference/gameDataLoader";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import {
   selectBuildsForCharacter,
@@ -161,7 +162,7 @@ export function CharacterDetailPanel({
   const discussionRef = useRef<HTMLDivElement>(null);
   // Tier C: subscribe so load fires on Archive mount and the t.* peeks
   // below see populated data after re-render.
-  characterKitsResource.use(language);
+  useResource(characterKitsResource, language);
   const character = charactersById[characterId];
   const meta = character
     ? getCharacterDisplayMeta(character, characterStats?.[characterId])

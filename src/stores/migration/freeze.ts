@@ -1,6 +1,6 @@
-import { allSlots, type Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
+import { allSlots, type Slot } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 
 type ArtifactReuseMode = "none" | "sameChar" | "forceReuse";
 

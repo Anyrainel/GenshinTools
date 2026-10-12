@@ -1,5 +1,8 @@
-import type { BuffActivationMap, ComboLine } from "@/lib/dmgcalc/types";
-import type { TeamSetupConfig } from "@/lib/team-comp/types";
+import type {
+  BuffActivationMap,
+  ComboLine,
+} from "@/domain/combat/damage/types";
+import type { TeamSetupConfig } from "@/domain/team/types";
 
 type LegacyFormulaUnit = {
   formulaId: string;

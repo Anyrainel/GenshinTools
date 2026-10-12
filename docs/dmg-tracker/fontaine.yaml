@@ -102,7 +102,7 @@
     Rejected 2026-08-13: the claim conflates two different stats. Q param6 is
     「气氛值转化受治疗加成比例」 — Incoming Healing Bonus (受治疗加成), the
     amount of healing a character receives. The engine's heal% key is Healing
-    Bonus (治疗加成), the outgoing stat: src/data/i18n-app.ts L53 labels it
+    Bonus (治疗加成), the outgoing stat: src/i18n/gameTerms.ts L53 labels it
     "Healing Bonus"/"治疗加成", it is the circlet main stat in
     src/data/constants.ts L94, and every existing user models outgoing healing
     (Kuki P1, Kaveh C1, Kokomi P4, Ocean-Hued Clam). There is no StatKey for

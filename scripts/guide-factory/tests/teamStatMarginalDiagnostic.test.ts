@@ -1,6 +1,6 @@
-import type { StatKey } from "@/data/enums";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+import type { StatKey } from "@/domain/enums";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { TeamSlotConfig } from "@/domain/combat/damage/types";
 import { describe, expect, it } from "vitest";
 import type {
   DamageReplayInput,

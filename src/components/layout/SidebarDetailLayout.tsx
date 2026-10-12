@@ -1,8 +1,8 @@
 import { ArrowLeft } from "lucide-react";
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useGlobalScroll } from "@/hooks/useGlobalScroll";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 
 interface SidebarDetailLayoutProps {

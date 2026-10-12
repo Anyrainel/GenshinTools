@@ -1,11 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Rarity, SubStat } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
 import {
   getMainStatValueAtLevel,
   getSubstatAvgRoll,
-} from "@/lib/artifact/scoring/utils";
-import { fmtStat } from "@/lib/team-comp/displayFormatter";
+} from "@/domain/build/artifact/scoring/utils";
+import type { Rarity, SubStat } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { fmtStat } from "@/domain/team/displayFormatter";
 import { cn } from "@/lib/utils";
 import { getRarityColor } from "./colors";
 

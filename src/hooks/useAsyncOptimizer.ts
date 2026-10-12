@@ -1,11 +1,11 @@
 import { useCallback, useState } from "react";
-import { runTeamOptimization } from "@/lib/team-comp/optimizer/teamOptimization";
 import type {
   TeamOptimizationProgress,
   TeamOptimizationResult,
   TeamOptimizerOptions,
   TeamOptYield,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
+import { runTeamOptimization } from "@/services/combat/optimizer/teamOptimization";
 import { useAsyncComputation } from "./useAsyncComputation";
 
 export interface AsyncOptimizerState {

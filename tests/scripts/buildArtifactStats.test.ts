@@ -1,5 +1,5 @@
-import { MAIN_STAT_VALUES_5STAR } from "@/data/constants";
-import { toInternal } from "@/lib/artifact/scoring/utils";
+import { MAIN_STAT_VALUES_5STAR } from "@/config/gameConstants";
+import { toInternal } from "@/domain/build/artifact/scoring/utils";
 import type { PresetBuildEntry } from "../../scripts/buildArtifactStats";
 import {
   TOTAL_SUB_ROLLS,

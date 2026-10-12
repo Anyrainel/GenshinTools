@@ -1,5 +1,5 @@
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
-import type { CharacterResource } from "@/data/types";
+import type { CharacterResource } from "@/domain/models";
 import { render, screen } from "../../utils/render";
 
 const mockCharacterStats = {
@@ -13,14 +13,13 @@ const mockCharacterStats = {
   },
 };
 
-vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+    await importOriginal<typeof import("@/domain/reference/stats")>();
   return {
     ...actual,
     characterStatsResource: {
       preload: () => Promise.resolve(mockCharacterStats),
-      use: () => mockCharacterStats,
       peek: () => mockCharacterStats,
     },
   };

@@ -3,7 +3,7 @@ import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
+import { AVG_SUBSTAT_ROLL } from "@/domain/build/artifact/scoring/constants";
 import * as ts from "typescript";
 import { beforeAll, describe, expect, it } from "vitest";
 

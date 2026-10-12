@@ -1,5 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { artifactsById } from "@/data/gameResources";
+import { artifactsById } from "@/domain/reference/catalog";
 import { cn } from "@/lib/utils";
 import { getRarityColor } from "./colors";
 

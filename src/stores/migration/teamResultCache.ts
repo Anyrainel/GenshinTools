@@ -1,4 +1,4 @@
-import type { ChoiceResultCache } from "@/lib/team-comp/types";
+import type { ChoiceResultCache } from "@/domain/team/types";
 
 type TeamResultCacheMigrationEntry = Record<string, unknown> & {
   choiceResults?: ChoiceResultCache;

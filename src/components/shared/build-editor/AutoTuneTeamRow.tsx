@@ -1,0 +1,127 @@
+import { ItemIcon } from "@/components/shared/ItemIcon";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { buildTeamLabel } from "@/domain/build/teamLabel";
+import type { AccountData } from "@/domain/models";
+import { charactersById, weaponsById } from "@/domain/reference/catalog";
+import { teamCompToArrays } from "@/domain/team/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/domain/team/types";
+import { resolveRosterWeaponCopies } from "@/domain/team/weaponCopies";
+
+interface AutoTuneTeamRowProps {
+  teamComp: TeamComp;
+  setupConfig: TeamSetupConfig;
+  characterId: string;
+  enabled: boolean;
+  onToggle: (enabled: boolean) => void;
+  accountData: AccountData | null;
+  hideCheckbox?: boolean;
+}
+
+export function AutoTuneTeamRow({
+  teamComp,
+  setupConfig,
+  characterId,
+  enabled,
+  onToggle,
+  accountData,
+  hideCheckbox,
+}: AutoTuneTeamRowProps) {
+  const { t } = useLanguage();
+  const { characters, weapons, artifacts } = teamCompToArrays(teamComp);
+  const weaponCopies = resolveRosterWeaponCopies(
+    teamComp,
+    setupConfig,
+    accountData
+  );
+
+  return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is a controlled component inside the label
+    <label className="flex items-start gap-2 px-1.5 py-1.5 rounded border border-border/30 hover:bg-muted/20 cursor-pointer w-fit">
+      {!hideCheckbox && (
+        <Checkbox
+          checked={enabled}
+          onCheckedChange={(checked) => onToggle(!!checked)}
+          className="mt-0.5 flex-shrink-0"
+        />
+      )}
+      <div className="flex-1 min-w-0">
+        <div className="text-xs font-medium mb-1 truncate text-muted-foreground">
+          {teamComp.name || buildTeamLabel({ characters }, t)}
+        </div>
+        {/* 4×3 grid: row 1 = characters, row 2 = weapons, row 3 = artifacts */}
+        <div className="grid grid-cols-4 gap-x-1.5 gap-y-1 justify-items-center">
+          {[0, 1, 2, 3].map((idx) => {
+            const charId = characters[idx];
+            const charRes = charId ? charactersById[charId] : null;
+            const isTarget = charId === characterId;
+            const constellation = charId
+              ? resolveConstellation(charId, setupConfig, accountData)
+              : undefined;
+            return (
+              <div
+                key={`c${idx}`}
+                className={isTarget ? "ring-1 ring-primary/50 rounded" : ""}
+              >
+                {charRes ? (
+                  <ItemIcon
+                    size="xs"
+                    characterId={charId!}
+                    badge={constellation}
+                  />
+                ) : (
+                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
+                )}
+              </div>
+            );
+          })}
+          {[0, 1, 2, 3].map((idx) => {
+            const charId = characters[idx];
+            const weaponId = weapons[idx];
+            const wpnRes = weaponId ? weaponsById[weaponId] : null;
+            const refinement =
+              weaponId && charId ? weaponCopies[idx].refinement : undefined;
+            return (
+              <div key={`w${idx}`} className="flex justify-center">
+                {wpnRes ? (
+                  <ItemIcon weaponId={weaponId!} size="xs" badge={refinement} />
+                ) : (
+                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
+                )}
+              </div>
+            );
+          })}
+          {[0, 1, 2, 3].map((idx) => {
+            const artConfig = artifacts[idx];
+            return (
+              <div key={`a${idx}`} className="flex justify-center">
+                {artConfig?.type === "4pc" ? (
+                  <ItemIcon artifactSetId={artConfig.setId} size="xs" />
+                ) : artConfig?.type === "2pc+2pc" ? (
+                  <ItemIcon halfSetIds={artConfig.halfSetIds} size="xs" />
+                ) : (
+                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </label>
+  );
+}
+
+/** Resolve constellation using the same logic as buildTeamSlotConfigs. */
+function resolveConstellation(
+  charId: string,
+  setupConfig: TeamSetupConfig,
+  accountData: AccountData | null
+): number {
+  const authored = setupConfig.charConfigs?.[charId]?.constellation;
+  if (authored !== undefined) return authored;
+  const combatOverride =
+    setupConfig.combatOptions?.[`${charId}.overrideConstellation`];
+  if (combatOverride !== undefined) return Number(combatOverride);
+  const acctChar = accountData?.characters.find((c) => c.key === charId);
+  return acctChar ? acctChar.constellation : 0;
+}

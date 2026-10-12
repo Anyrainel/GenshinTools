@@ -9,8 +9,8 @@ import {
   useState,
 } from "react";
 
-import type { ThemeId } from "@/data/enums";
-import { applyThemeVars } from "@/lib/themeGenerator";
+import type { ThemeId } from "@/domain/enums";
+import { applyThemeVars } from "@/lib/theme/generator";
 
 export const THEME_IDS: ThemeId[] = [
   "abyss",

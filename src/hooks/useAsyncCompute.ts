@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import type { MergeAlgorithm } from "@/data/enums";
+import {
+  buildRawConfigs,
+  DEFAULT_COMPUTE_OPTIONS,
+  mergeConfigsAsync,
+} from "@/domain/build/computeFilters";
+import type { MergeAlgorithm } from "@/domain/enums";
 import type {
   ArtifactBuildConfigs,
   BuildConfig,
   BuildGroup,
   ComputeOptions,
-} from "@/data/types";
-import {
-  buildRawConfigs,
-  DEFAULT_COMPUTE_OPTIONS,
-  mergeConfigsAsync,
-} from "@/lib/artifact-builds/computeFilters";
+} from "@/domain/models";
 
 interface AsyncComputeState {
   /** Cached results — always available (may be stale while recomputing) */

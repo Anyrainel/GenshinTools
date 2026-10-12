@@ -6,7 +6,7 @@ import type {
   CloudPartitionId,
   CloudPartitionKey,
   LocalCloudPartitionMeta,
-} from "@/cloud/types";
+} from "@/domain/backup/types";
 import { PersistedCloudSyncMetadataStoreSchema } from "./schemas";
 
 export type CloudSyncPartitionMeta = LocalCloudPartitionMeta & {

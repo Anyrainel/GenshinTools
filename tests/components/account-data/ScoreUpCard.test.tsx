@@ -1,8 +1,8 @@
 import { ScoreUpCard } from "@/components/account-data/ScoreUpCard";
-import { allSlots, type MainStat, type Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
-import type { CandidateArtifact } from "@/lib/account-data/candidatePool";
+import type { OptimizedBuild } from "@/domain/account/buildOptimizer";
+import type { CandidateArtifact } from "@/domain/account/candidatePool";
+import { allSlots, type MainStat, type Slot } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 import {
   createArtifactData,
   createArtifactScoreResult,

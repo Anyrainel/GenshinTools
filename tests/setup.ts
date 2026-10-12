@@ -1,3 +1,5 @@
+import { installNodeReferenceFetch } from "../scripts/lib/nodeReferenceFetch.mjs";
+import "@/providers/reference/statLoaders";
 process.env.__BETA_ENABLED_OVERRIDE__ = "true";
 
 import "@testing-library/jest-dom/vitest";
@@ -106,3 +108,5 @@ globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
   }
   return realFetch(input, init);
 }) as typeof fetch;
+
+installNodeReferenceFetch();

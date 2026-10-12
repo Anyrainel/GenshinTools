@@ -11,8 +11,8 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import type { Tier } from "@/data/enums";
-import type { TierAssignment, TierCustomization } from "@/data/types";
+import type { Tier } from "@/domain/enums";
+import type { TierAssignment, TierCustomization } from "@/domain/models";
 import {
   selectActiveTierAssignments,
   selectActiveTierAuthor,

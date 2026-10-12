@@ -1,11 +1,11 @@
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { DebouncedNumberInput } from "@/components/shared/DebouncedInput";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Tier } from "@/data/enums";
 import type {
   ResourceKind,
   ResourceSuggestion,
-} from "@/lib/account-data/resourceTips";
+} from "@/domain/account/resourceTips";
+import type { Tier } from "@/domain/enums";
 import { cn } from "@/lib/utils";
 import { ResourceSuggestionCard } from "./ResourceSuggestionCard";
 

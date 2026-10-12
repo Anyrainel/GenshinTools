@@ -1,7 +1,7 @@
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getAssetUrl } from "@/lib/utils";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
 
 const SUPPORT_IMAGE_PATHS = ["/assets/imga.JPG", "/assets/imgv.JPG"] as const;
 

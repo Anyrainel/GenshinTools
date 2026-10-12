@@ -3,21 +3,21 @@
  * These fixtures are complete, type-safe representations of domain objects.
  */
 
-import type { Slot, SubStat } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import type {
-  AccountData,
-  ArtifactData,
-  CharacterData,
-  WeaponData,
-} from "@/data/types";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
   NormalizedScoreInfo,
   StatScoreBreakdown,
   SubstatScoreResult,
-} from "@/lib/artifact/scoring/artifactScore";
+} from "@/domain/build/artifact/scoring/artifactScore";
+import type { Slot, SubStat } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type {
+  AccountData,
+  ArtifactData,
+  CharacterData,
+  WeaponData,
+} from "@/domain/models";
 
 function emptySlotScores(): Record<Slot, number> {
   const out = {} as Record<Slot, number>;

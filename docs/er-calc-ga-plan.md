@@ -20,9 +20,9 @@ time-based one. Add a minimal ordinal-time *feasibility* layer on top of the eve
 The event model's physics is already right and matches gcsim's `energy.go`, the canonical
 Chinese community formula, and KQM's tables line for line: `SAME_ELEMENT_PARTICLE 3.0 /
 DIFF 1.0 / CLEAR 2.0`, `ORB_MULTIPLIER 3`, `OFF_FIELD_MULTIPLIER = 1 - 0.1 × partySize`
-([constants.ts:80](../src/lib/ercalc/constants.ts:80)), ER scaling particles and
+([constants.ts:80](../src/domain/combat/energy/constants.ts:80)), ER scaling particles and
 explicitly-scaling sources only, a 100% floor, and per-Q windows that correctly model the
-energy cap plus drain-to-zero ([erCalculator.ts:1178](../src/lib/ercalc/erCalculator.ts:1178)).
+energy cap plus drain-to-zero ([erCalculator.ts:1178](../src/domain/combat/energy/erCalculator.ts:1178)).
 Every defect found is in the layers *around* that core, not in the model.
 
 The time-based `redesignedCalculator.ts` is not a competing model, it is a worse one: it
@@ -32,8 +32,8 @@ character's particles** — precisely the cast-and-swap battery pattern the tool
 Fixing that means rewriting it into the event model. See §5.
 
 But the event engine has quietly grown a seconds clock anyway
-([erCalculator.ts:1185](../src/lib/ercalc/erCalculator.ts:1185), duplicated at `:1131`
-and [optimizer.ts:118](../src/lib/ercalc/optimizer.ts:118)) that gates weapon cooldowns
+([erCalculator.ts:1185](../src/domain/combat/energy/erCalculator.ts:1185), duplicated at `:1131`
+and [optimizer.ts:118](../src/domain/combat/energy/optimizer.ts:118)) that gates weapon cooldowns
 and Favonius procs, while design doc §3.1 declares time "permanently out of scope".
 Denying time while depending on it is the worst of both worlds. **Declare the clock,
 normalize it against an authored rotation duration, and use it only as a feasibility
@@ -44,22 +44,22 @@ constraint — never as a simulation clock.**
 ## 2. Fixes already applied
 
 All verified against official game data (`impl_audit.py`, `weapon_en.json`) and covered by
-new regression tests in `tests/lib/ercalc/energyDataIntegrity.test.ts`.
+new regression tests in `tests/domain/combat/energy/energyDataIntegrity.test.ts`.
 
 | # | Fix | File |
 |---|---|---|
-| F1 | **`erScale` paid nothing at 100% ER.** Formula used `(ER-100)/100`; kits worded "restore X Energy for every 100% Energy Recharge" pay the full X *at* 100%. Every Sara and Dori team overstated ER for the whole party. | [erCalculator.ts:318](../src/lib/ercalc/erCalculator.ts:318) |
+| F1 | **`erScale` paid nothing at 100% ER.** Formula used `(ER-100)/100`; kits worded "restore X Energy for every 100% Energy Recharge" pay the full X *at* 100%. Every Sara and Dori team overstated ER for the whole party. | [erCalculator.ts:318](../src/domain/combat/energy/erCalculator.ts:318) |
 | F2 | **Venti A4 encoded twice**, second entry `target: "party"` which includes Venti → 30 energy on a 60-cost burst, plus 15 spurious to each teammate. | [selfEnergy-mondstadt.json](../src/data/ercalc/selfEnergy-mondstadt.json) |
-| F3 | **Angelos' Heptades registered as `seven_edicts_of_dust_and_light`**, an id that does not exist → 14–18 energy silently never fired. | [weaponEnergy.ts:269](../src/lib/ercalc/weaponEnergy.ts:269) |
-| F4 | **Optimizer bailed out whenever any character was unsolvable** — exactly the zero-energy startup case where users need it. `scoreLess` already handles Infinity lexicographically. | [optimizer.ts:202](../src/lib/ercalc/optimizer.ts:202) |
-| F5 | **`partyPlunge` weapon cooldown charged to the plunger, not the wearer** → alternating plungers bypassed the CD entirely, and the plunger's own weapon timestamp was clobbered. | [erCalculator.ts:823](../src/lib/ercalc/erCalculator.ts:823) |
-| F6 | **Desert Sages / Rightful Reward refinement scaling wrong** — `[8,9,10,11,12]`, actual is `[8,10,12,14,16]`. | [weaponEnergy.ts:176](../src/lib/ercalc/weaponEnergy.ts:176) |
-| F7 | **ER team picker offered 14 Manekin ids with no particle data**, silently defaulting to Anemo (a 3× element-multiplier error) and then getting filtered out, shrinking party size. | [TeamSetup.tsx:14](../src/components/team-comp/TeamSetup.tsx:14) |
-| F9 | **Redesigned view recommended sub-100% ER** — the shipped default example recommends 85%, not a reachable stat. | [redesignedCalculator.ts:271](../src/lib/ercalc/redesignedCalculator.ts:271) |
-| F10 | **Two element-less characters compared equal** (`"None" === "None"`) and batteried each other at the same-element rate → ~1.8× understatement. | [redesignedCalculator.ts:220](../src/lib/ercalc/redesignedCalculator.ts:220) |
-| F11 | Easy Mode rendered raw `snake_case` ids instead of `t.character(...)` — unreadable in zh next to a localized timeline. | [ErCalcCard.tsx](../src/components/team-comp/ErCalcCard.tsx) |
-| F12 | Dead `qWindowCount`/`firstQSeen` pre-pass, computed and never read. | [erCalculator.ts:894](../src/lib/ercalc/erCalculator.ts:894) |
-| F13 | NA pity doc comment: polearm `~7.04` hits → `~6.95`. | [constants.ts:130](../src/lib/ercalc/constants.ts:130) |
+| F3 | **Angelos' Heptades registered as `seven_edicts_of_dust_and_light`**, an id that does not exist → 14–18 energy silently never fired. | [weaponEnergy.ts:269](../src/domain/combat/energy/weaponEnergy.ts:269) |
+| F4 | **Optimizer bailed out whenever any character was unsolvable** — exactly the zero-energy startup case where users need it. `scoreLess` already handles Infinity lexicographically. | [optimizer.ts:202](../src/domain/combat/energy/optimizer.ts:202) |
+| F5 | **`partyPlunge` weapon cooldown charged to the plunger, not the wearer** → alternating plungers bypassed the CD entirely, and the plunger's own weapon timestamp was clobbered. | [erCalculator.ts:823](../src/domain/combat/energy/erCalculator.ts:823) |
+| F6 | **Desert Sages / Rightful Reward refinement scaling wrong** — `[8,9,10,11,12]`, actual is `[8,10,12,14,16]`. | [weaponEnergy.ts:176](../src/domain/combat/energy/weaponEnergy.ts:176) |
+| F7 | **ER team picker offered 14 Manekin ids with no particle data**, silently defaulting to Anemo (a 3× element-multiplier error) and then getting filtered out, shrinking party size. | [TeamSetup.tsx:14](../src/components/team-analysis/TeamSetup.tsx:14) |
+| F9 | **Redesigned view recommended sub-100% ER** — the shipped default example recommends 85%, not a reachable stat. | [redesignedCalculator.ts:271](../src/domain/combat/energy/redesignedCalculator.ts:271) |
+| F10 | **Two element-less characters compared equal** (`"None" === "None"`) and batteried each other at the same-element rate → ~1.8× understatement. | [redesignedCalculator.ts:220](../src/domain/combat/energy/redesignedCalculator.ts:220) |
+| F11 | Easy Mode rendered raw `snake_case` ids instead of `t.character(...)` — unreadable in zh next to a localized timeline. | [ErCalcCard.tsx](../src/components/team-analysis/ErCalcCard.tsx) |
+| F12 | Dead `qWindowCount`/`firstQSeen` pre-pass, computed and never read. | [erCalculator.ts:894](../src/domain/combat/energy/erCalculator.ts:894) |
+| F13 | NA pity doc comment: polearm `~7.04` hits → `~6.95`. | [constants.ts:130](../src/domain/combat/energy/constants.ts:130) |
 
 **Not applied — F8** (Easy Mode wipes cast counts and driver on every timeline change,
 including its own compile, because the effect is keyed on a `useMemo` array identity). Real
@@ -76,7 +76,7 @@ edit. Folded into Phase 3.
 
 ### Phase 0/1 work landed
 
-- **Golden corpus** — `tests/lib/ercalc/erGoldens.test.ts`: 6 canonical teams × 3 scenarios × 2
+- **Golden corpus** — `tests/domain/combat/energy/erGoldens.test.ts`: 6 canonical teams × 3 scenarios × 2
   particle modes = 36 solved-ER snapshots, plus two invariants (never below the 100% floor;
   a repeating rotation is never *easier* than one pass). Timelines auto-place periodic procs
   via the same `autoPlacePeriodic` the UI calls, and preload character stats — without the
@@ -195,7 +195,7 @@ second half, still open, and it is why several sub-rotation-interval effects wer
 - **B18 — the scenario is persisted.** `TeamEnergyConfig` gained `mode` (the documented
   three-way `CalcMode`) and `particleMode`; the two independent booleans and the degenerate
   Full+RunOnce combination are gone. Team store bumped to **v19** with a v18 migration test.
-- **B20 — the data layer is validated.** `tests/lib/ercalc/data.test.ts` enforces a strict
+- **B20 — the data layer is validated.** `tests/domain/combat/energy/data.test.ts` enforces a strict
   zod schema over every selfEnergy entry, exactly-one-of amount/percentRefund/erScale/param,
   id existence for weapons and artifact sets, particle-element coverage, no duplicate charId
   across region files, and a `cooldown`-without-`procs` heuristic with an explicit allowlist
@@ -322,13 +322,13 @@ Ordered by numeric impact. `S/M/L` = effort.
 >   is still a setup document with no recorded runs. This is what turns "closer to
 >   community values" into a measurable gate, and it should block the GA label.
 >
-> The goldens in `tests/lib/ercalc/erGoldens.test.ts` currently sit close to community
+> The goldens in `tests/domain/combat/energy/erGoldens.test.ts` currently sit close to community
 > figures for drivers and batteries and somewhat high for off-field generators. That gap
 > is the honest remaining inaccuracy and is what Phase 6 would quantify.
 
 ### Phase 0 — Stop the bleeding
 Apply all `fixNow` items *(done)*. Retire the redesigned view (§5). Land
-`tests/lib/ercalc/data.test.ts` with id-existence, coverage and duplicate checks, plus the
+`tests/domain/combat/energy/data.test.ts` with id-existence, coverage and duplicate checks, plus the
 first **solved-ER goldens**.
 **Exit:** one ER surface in nav; goldens for 5 canonical teams; test/type-check/lint/depcheck green.
 
@@ -384,9 +384,9 @@ doc §13 with a reason.
 
 ## 5. Retiring the time-based calculator (B17)
 
-Delete `src/pages/team-comp/RedesignedErView.tsx`, `src/lib/ercalc/redesignedParser.ts`, the
-`Redesigned*` types, the nav entry ([appNavigation.tsx:131](../src/components/layout/appNavigation.tsx:131))
-and the route ([TeamComp.tsx:245](../src/pages/TeamComp.tsx:245)). Keep
+Delete `src/pages/team-analysis/RedesignedErView.tsx`, `src/domain/combat/energy/redesignedParser.ts`, the
+`Redesigned*` types, the nav entry ([appNavigation.tsx:131](../src/config/navigation.tsx:131))
+and the route ([TeamComp.tsx:245](../src/pages/team-analysis/TeamAnalysisPage.tsx:245)). Keep
 `redesignedCalculator.ts` + its test for at most one release as an offline cross-check of the
 NGA reference numbers, then delete.
 

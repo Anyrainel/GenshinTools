@@ -1,5 +1,5 @@
-import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
-import type { TeamComp } from "@/lib/team-comp/types";
+import { teamCompToArrays } from "@/domain/team/teamDeltas";
+import type { TeamComp } from "@/domain/team/types";
 
 /**
  * Find teams in the store that match the given character IDs.

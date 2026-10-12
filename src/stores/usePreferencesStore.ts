@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { SortDirection } from "@/data/enums";
+import type { SortDirection } from "@/domain/enums";
 import {
   DEFAULT_CHARACTER_SORT,
   PersistedPreferencesStoreSchema,

@@ -1,5 +1,5 @@
 import { EffectCard } from "@/components/archive/EffectCard";
-import type { CharacterEffect } from "@/data/types";
+import type { CharacterEffect } from "@/domain/models";
 import { fireEvent, render, screen } from "../../utils/render";
 
 const mockEffect: CharacterEffect = {

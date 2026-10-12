@@ -8,16 +8,16 @@
 import accountJson from "../tests/benchmark/data/account.json";
 import buildPreset from "../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 import tierListPreset from "../src/presets/tier-list/[GGArtifact] 培养优先级 Build Priority.json";
-import type { Build, TierAssignment } from "../src/data/types";
-import { convertGOODToAccountData } from "../src/lib/account-data/import/goodConversion";
+import type { Build, TierAssignment } from "../src/domain/models";
+import { convertGOODToAccountData } from "../src/providers/scanner/goodConversion";
 import {
   type ArtifactScoreResult,
   buildToWeightMap,
   type BuildMatchResult,
   type NormalizedScoreInfo,
   type SubstatScoreResult,
-} from "../src/lib/artifact/scoring/artifactScore";
-import { runTierWaterfall } from "../src/lib/account-data/tierWaterfall";
+} from "../src/domain/build/artifact/scoring/artifactScore";
+import { runTierWaterfall } from "../src/domain/account/tierWaterfall";
 
 const EMPTY_SLOT_SCORES = {
   flower: 0, plume: 0, sands: 0, goblet: 0, circlet: 0,

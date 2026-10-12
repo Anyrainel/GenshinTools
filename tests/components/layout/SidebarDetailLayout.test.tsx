@@ -3,7 +3,7 @@ import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 
 const mediaQueryState = vi.hoisted(() => ({ isDesktop: true }));
 
-vi.mock("@/hooks/useMediaQuery", () => ({
+vi.mock("@/components/ui/useMediaQuery", () => ({
   useMediaQuery: () => mediaQueryState.isDesktop,
 }));
 

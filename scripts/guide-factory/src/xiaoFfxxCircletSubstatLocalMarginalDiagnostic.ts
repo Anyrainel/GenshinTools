@@ -2,15 +2,15 @@ import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { StatKey } from "@/data/enums";
-import { AVG_SUBSTAT_ROLL } from "@/lib/artifact/scoring/constants";
+import type { StatKey } from "@/domain/enums";
+import { AVG_SUBSTAT_ROLL } from "@/domain/build/artifact/scoring/constants";
 import {
   getMainStatValueAtLevel,
   toInternal,
-} from "@/lib/artifact/scoring/utils";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type { BuffActivationMap, TeamSlotConfig } from "@/lib/dmgcalc/types";
+} from "@/domain/build/artifact/scoring/utils";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { BuffActivationMap, TeamSlotConfig } from "@/domain/combat/damage/types";
 import {
   replayTeamDamage,
   type DamageReplayInput,

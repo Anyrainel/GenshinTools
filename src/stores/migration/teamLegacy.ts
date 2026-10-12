@@ -1,24 +1,24 @@
-import type { Element, ReactionType } from "@/data/enums";
-import type { ArtifactSetConfig } from "@/data/types";
 import type {
   CalcContext,
   ComboFormula,
   ExtraBuff,
   OptionMap,
   ReactionOverride,
-} from "@/lib/dmgcalc/types";
-import type { ERTimeline } from "@/lib/ercalc/types";
+} from "@/domain/combat/damage/types";
+import type { ERTimeline } from "@/domain/combat/energy/types";
+import type { Element, ReactionType } from "@/domain/enums";
+import type { ArtifactSetConfig } from "@/domain/models";
 import {
   normalizeTeamSetupConfig,
   type TeamCompDelta,
   teamArraysToComp,
   upsertCustomTeamCompDelta,
-} from "@/lib/team-comp/teamDeltas";
+} from "@/domain/team/teamDeltas";
 import type {
   TeamCharConfig,
   TeamComp,
   TeamSetupConfig,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
 import type { LegacyAnalyzerConfig } from "./teamAnalysis";
 
 /**

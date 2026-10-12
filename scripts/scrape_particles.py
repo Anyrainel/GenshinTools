@@ -29,7 +29,7 @@ v2 schema per character (see docs/er-calc-particle.md):
 Particles = number | Array<[count, chance]>
 
 Classification (simple E / periodic / multi-hit) mirrors v1's
-src/lib/ercalc/particleConfig.ts. Keep the PERIODIC_GENERATORS /
+src/domain/combat/energy/particleConfig.ts. Keep the PERIODIC_GENERATORS /
 EXPECTED_PERIODIC_PROCS / MULTI_HIT_E_TOTAL dicts below in sync with that
 file until v1 is removed.
 
@@ -54,7 +54,7 @@ WIKI_API = (
     "?action=parse&page=Energy/Data&format=json&prop=wikitext"
 )
 
-# ── Classification (mirrors src/lib/ercalc/particleConfig.ts) ───────────────
+# ── Classification (mirrors src/domain/combat/energy/particleConfig.ts) ───────────────
 # Characters whose E deploys a periodic particle generator. For these, the
 # Fandom avgParticles is per-proc, not per-cast. Emit under periodic.E.
 PERIODIC_GENERATORS: set[str] = {
@@ -664,7 +664,7 @@ def main():
                 all_stats.update(json.load(f))
 
     # Validate against charInfo
-    char_info_path = ROOT / "src" / "data" / "charInfo.ts"
+    char_info_path = ROOT / "src" / "data" / "characterInfo.ts"
     # NPC template IDs to exclude from missing check
     npc_ids = {
         *[f"manekin_{e}" for e in ("anemo", "cryo", "dendro", "electro", "geo", "hydro", "pyro")],

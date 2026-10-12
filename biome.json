@@ -81,13 +81,13 @@
       "!**/*.min.js",
       "!**/*.d.ts",
       "!**/src/components/ui",
-      "!**/src/data/i18n-game.ts",
-      "!**/src/data/i18n-beta.ts",
+      "!**/src/generated/i18n-game.ts",
+      "!**/src/generated/i18n-beta.ts",
       "!**/src/data/resources.ts",
       "!**/src/data/resources_beta.ts",
       "!**/src/data/enkaIdMap.ts",
       "!**/src/data/game/**/*.json",
-      "!**/src/data/charInfo.ts",
+      "!**/src/data/characterInfo.ts",
       "!**/tests/**/__golden__",
       "!**/tests/**/data"
     ]
@@ -109,7 +109,7 @@
       }
     },
     {
-      "includes": ["src/lib/dmgcalc/impl/**"],
+      "includes": ["src/domain/combat/damage/impl/**"],
       "linter": {
         "enabled": true,
         "rules": {

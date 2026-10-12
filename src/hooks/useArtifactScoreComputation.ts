@@ -1,19 +1,20 @@
 import { useEffect, useMemo } from "react";
+import { getCrBudget } from "@/domain/account/maxCrBuff";
+import {
+  type ArtifactScoreResult,
+  scoreWithBuilds,
+} from "@/domain/build/artifact/scoring/artifactScore";
+import { areBuildsEqual } from "@/domain/build/buildUtils";
+import type { Build } from "@/domain/models";
 import {
   characterStatsResource,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { Build } from "@/data/types";
+} from "@/domain/reference/stats";
 import {
   useActiveAccountData,
   useActiveAccountScores,
 } from "@/hooks/useActiveAccount";
-import { getCrBudget } from "@/lib/account-data/maxCrBuff";
-import {
-  type ArtifactScoreResult,
-  scoreWithBuilds,
-} from "@/lib/artifact/scoring/artifactScore";
-import { areBuildsEqual } from "@/lib/artifact-builds/buildUtils";
+import { useResource } from "@/hooks/useResource";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
@@ -25,8 +26,8 @@ import {
 const EMPTY_STALE_SCORE_CHAR_IDS: string[] = [];
 
 export function useArtifactScoreComputation(): void {
-  const characterStats = characterStatsResource.use();
-  const weaponStats = weaponStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
+  const weaponStats = useResource(weaponStatsResource);
   const crBudgetDataReady = characterStats !== null && weaponStats !== null;
   const accountData = useActiveAccountData();
   const activeAccountId = useAccountStore((s) => s.activeAccountId);

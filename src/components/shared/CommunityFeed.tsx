@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
-import { type CommunityPage, loadCommunityPage } from "@/cloud/community";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  type CommunityPage,
+  loadCommunityPage,
+} from "@/providers/community/community";
 
 export function CommunityFeed<T extends { id: string }>({
   path,

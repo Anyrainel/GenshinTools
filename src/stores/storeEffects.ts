@@ -8,7 +8,7 @@
  * avoids the circular module dependency.
  */
 
-import type { AccountProfileId } from "@/lib/account-data/types";
+import type { AccountProfileId } from "@/domain/account/types";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useTierStore } from "@/stores/useTierStore";
 

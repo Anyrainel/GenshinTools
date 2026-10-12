@@ -1,11 +1,11 @@
-import type { SubStat } from "@/data/enums";
-import type { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+import type { SubStat } from "@/domain/enums";
+import type { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { TeamSlotConfig } from "@/domain/combat/damage/types";
 import {
   runGenerator,
   type GeneratorOptions,
   type GeneratorResult,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import { fingerprintGeneratedArtifacts } from "./artifactGenerationSensitivityProbe";
 import {
   ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT,
@@ -43,7 +43,7 @@ export const KEQING_INEFFA_TEAM_STAT_MARGINAL_DIAGNOSTIC_INPUT_PATHS = [
     "scripts/guide-factory/src/keqingIneffaTeamStatMarginalDiagnostic.ts",
     "scripts/guide-factory/src/teamStatMarginalDiagnostic.ts",
     ...KEQING_INEFFA_BOUNDED_JOINT_ARTIFACT_EXPERIMENT_INPUT_PATHS,
-    "src/lib/artifact/scoring/constants.ts",
+    "src/domain/build/artifact/scoring/constants.ts",
   ]),
 ] as const;
 

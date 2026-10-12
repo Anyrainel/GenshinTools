@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import type { AccountData } from "@/data/types";
+import type { AccountData } from "@/domain/models";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { getIsOwned } from "./ownershipUtils";
 

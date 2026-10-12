@@ -1,6 +1,6 @@
-import type { Element } from "@/data/enums";
-import type { ArtifactSetConfig } from "@/data/types";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { Element } from "@/domain/enums";
+import type { ArtifactSetConfig } from "@/domain/models";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   CalcContext,
   ExtraBuff,
@@ -8,7 +8,7 @@ import type {
   ReactionOverride,
   TalentLevels,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 import { bootstrapGuideFactoryComputation } from "./computationReplay";
 import { sha256Text, stableJson } from "./io";
 import {

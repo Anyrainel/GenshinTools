@@ -159,12 +159,35 @@ are removed, persistence/import regressions pass and affected routes work at
 desktop and narrow widths. Validate with each repository's own scripts and do
 not deploy or push without authorization.
 
-## Migration status
+## GenshinTools implementation
 
-This is the approved target. GenshinTools code migration is deferred until the
-user gives the go-ahead after Star Rail validation. Existing source paths in
-mechanic documents remain implementation references during that transition.
-In particular, dmgcalc/ercalc move to domain/combat; import/client adapters move
-to providers; orchestration/cloud workflows move to services; UI/app/game
-localization splits into i18n and generated reference inputs. Do not start this
-migration while the current feature work is in progress.
+The source follows this layout. Damage and Energy engines live in
+domain/combat/damage and domain/combat/energy; pure optimizer, generator and
+comparison logic also live in domain/combat. Browser jobs live in
+services/combat. Reference transports are in providers/reference; stat
+contracts and the injected reference cache live in domain/reference.
+Typed localization catalogs and contracts are in i18n, generated names are in
+generated, and contexts/LanguageContext adapts loaded text to React.
+Home previews compose multiple features in app/home. Reusable build editing
+controls live in components/shared/build-editor.
+
+Dependency rules enforce every layer for both runtime and type imports. The
+cycle gate rejects executable cycles everywhere, with no damage-engine folder
+exemption. Erased TypeScript references between an engine class and its method
+contracts may form type cycles; they cannot bypass layer ownership rules.
+The Cloudflare Worker test runtime supplies the virtual cloudflare:test module.
+
+npm run check runs the complete validation stack. Husky is installed by
+prepare; commits gate types, dependencies, negative rule fixtures and related
+tests, while pushes validate a clean, unchanged HEAD. The normal cloud build
+also repeats app tests, dependency checks and Worker validation before bundling.
+Local builds skip production D1 migrations unless Cloudflare's production build
+environment explicitly enables them.
+
+Historical guide-research checkpoints retain their authenticated source-path labels.
+Their capture tools resolve those labels to current source owners when hashing
+the live tree, and still reject changed bytes. The layout recapture of CP39 is
+accepted only by its exact checksum; all measurements and claim permissions
+match the preserved historical capture. The separate research suite has known
+stale report failures that also occur on the pre-migration commit; these are
+outside the app/Worker validation stack.

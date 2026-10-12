@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 import { SkillCard } from "@/components/archive/SkillCard";
-import type { CharacterSkill } from "@/data/types";
+import type { CharacterSkill } from "@/domain/models";
 import { fireEvent, render, screen } from "../../utils/render";
 
 // hu_tao: c3Talent "E", c5Talent "Q" — so index 0 (A) = 6 vs 10, index 1 (E) / 2 (Q) = 10 vs 13
@@ -29,14 +29,13 @@ const mockStats = {
     },
   },
 };
-vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+    await importOriginal<typeof import("@/domain/reference/stats")>();
   return {
     ...actual,
     characterStatsResource: {
       preload: () => Promise.resolve(mockStats),
-      use: () => mockStats,
       peek: () => mockStats,
     },
   };

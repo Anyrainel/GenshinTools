@@ -1,5 +1,5 @@
-import type { TeamFormulaCatalog } from "@/lib/dmgcalc/core/teamFormulaCatalog";
-import type { FormulaEntry } from "@/lib/dmgcalc/types";
+import type { TeamFormulaCatalog } from "@/domain/combat/damage/core/teamFormulaCatalog";
+import type { FormulaEntry } from "@/domain/combat/damage/types";
 
 export interface FormulaPartProjectionPart {
   sourcePartIndex: number;

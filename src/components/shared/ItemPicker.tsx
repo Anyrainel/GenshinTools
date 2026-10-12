@@ -31,8 +31,17 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { MainStat, Rarity } from "@/data/enums";
+import type { MainStat, Rarity } from "@/domain/enums";
+import type {
+  ArtifactHalfSet,
+  ArtifactSetConfig,
+  ArtifactSetResource,
+  CharacterResource,
+  TierAssignment,
+  WeaponResource,
+} from "@/domain/models";
 import {
   artifactHalfSetsById,
   artifactsById,
@@ -44,7 +53,7 @@ import {
   sortedWeapons,
   weaponResourcesByName,
   weaponsById,
-} from "@/data/gameResources";
+} from "@/domain/reference/catalog";
 import {
   type CharacterStatsMap,
   characterStatsResource,
@@ -52,18 +61,12 @@ import {
   getWeaponDisplayMeta,
   type WeaponStatsMap,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type {
-  ArtifactHalfSet,
-  ArtifactSetConfig,
-  ArtifactSetResource,
-  CharacterResource,
-  TierAssignment,
-  WeaponResource,
-} from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+} from "@/domain/reference/stats";
 import { useHasAccountData, useIsOwned } from "@/hooks/useOwnership";
-import { cn, getAssetUrl, getSortedWeaponSecondaryStats } from "@/lib/utils";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
+import { getSortedWeaponSecondaryStats } from "@/services/catalog/weaponFilters.ts";
 import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useTierStore } from "@/stores/useTierStore";
 
@@ -125,8 +128,8 @@ function ItemPickerComponent<T extends ItemPickerType>({
   onOpenChange: onOpenChangeProp,
   frozen = false,
 }: ItemPickerProps<T>) {
-  const characterStats = characterStatsResource.use();
-  const weaponStats = weaponStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
+  const weaponStats = useResource(weaponStatsResource);
   const tierAssignments = useTierStore(selectActiveTierAssignments);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [isOpen, setIsOpen] = useState(defaultOpen);

@@ -10,9 +10,9 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { WeaponData } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { WeaponData } from "@/domain/models";
 import { WeaponTooltip } from "./WeaponTooltip";
 
 interface WeaponDataHoverCardProps {

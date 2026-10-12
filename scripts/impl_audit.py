@@ -16,7 +16,7 @@ from ts_reader import load_ts_data
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
 DATA = SRC / "data"
-IMPL_DIR = SRC / "lib/dmgcalc/impl"
+IMPL_DIR = SRC / "domain/combat/damage/impl"
 
 GAME_DIR = DATA / "game"
 CHAR_EN_PATHS = [
@@ -994,7 +994,7 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
 
     if impl:
         n_lines = impl["end_line"] - impl["start_line"] + 1
-        impl_path = f"src/lib/dmgcalc/impl/{impl['filename']}"
+        impl_path = f"src/domain/combat/damage/impl/{impl['filename']}"
         print(f"{'─' * 50}")
         print(
             f"  IMPL found ({n_lines} lines): {impl_path} L{impl['start_line']}–L{impl['end_line']}"

@@ -10,11 +10,11 @@ import {
 } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
 import {
   ArtifactComparisonHoverCard,
   ArtifactDataHoverCard,
 } from "@/components/shared/ArtifactDataHoverCard";
+import { ArtifactScoreHoverCard } from "@/components/shared/ArtifactScoreHoverCard";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -26,21 +26,24 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots, type Slot, type StatKey, type Tier } from "@/data/enums";
-import { artifactIdToHalfSetId, charactersById } from "@/data/gameResources";
+import type { OptimizedBuild } from "@/domain/account/buildOptimizer";
+import type { ScoreUpAction } from "@/domain/account/scoreUpEngine";
+import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { HALF_SET_STATS } from "@/domain/combat/damage/impl/artifact2pc";
+import { allSlots, type Slot, type StatKey, type Tier } from "@/domain/enums";
+import type { ArtifactData, CharacterData, StatEntry } from "@/domain/models";
+import {
+  artifactIdToHalfSetId,
+  charactersById,
+} from "@/domain/reference/catalog";
 import {
   resolveCharacterStats,
   resolveWeaponStats,
-} from "@/data/gameStatsLoader";
-import type { ArtifactData, CharacterData, StatEntry } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { OptimizedBuild } from "@/lib/account-data/buildOptimizer";
-import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { HALF_SET_STATS } from "@/lib/dmgcalc/impl/artifact2pc";
-import { fmtStat } from "@/lib/team-comp/displayFormatter";
+} from "@/domain/reference/stats";
+import { fmtStat } from "@/domain/team/displayFormatter";
 import { cn } from "@/lib/utils";
 import { ScoreUpActionCard } from "./ScoreUpActionCard";
 

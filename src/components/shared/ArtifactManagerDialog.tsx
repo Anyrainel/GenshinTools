@@ -18,22 +18,22 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import type { JobInput } from "@/hooks/useArtifactManagerJob";
 import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
-import type { IGOODArtifact } from "@/lib/account-data/import/goodConversion";
-import { fetchArtifacts } from "@/lib/account-data/manager/client";
-import { filterUnchangedEquipInstructions } from "@/lib/account-data/manager/instructions";
+import type { IGOODArtifact } from "@/providers/scanner/goodConversion";
+import { fetchArtifacts } from "@/providers/scanner-manager/client";
+import { filterUnchangedEquipInstructions } from "@/providers/scanner-manager/instructions";
+import type {
+  EquipPayload,
+  InstructionStatus,
+  ManagePayload,
+  ResultResponse,
+} from "@/providers/scanner-manager/types";
 import {
   analyzeManageResults,
   computeSnapshotDiff,
   type JobAnalysis,
   rebuildAccountFromSnapshot,
   type SnapshotDiff,
-} from "@/lib/account-data/manager/storeSync";
-import type {
-  EquipPayload,
-  InstructionStatus,
-  ManagePayload,
-  ResultResponse,
-} from "@/lib/account-data/manager/types";
+} from "@/services/scanner-manager/storeSync";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { ConnectionStatus, SetupInstructions } from "./managerSharedUI";

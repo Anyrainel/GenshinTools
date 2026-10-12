@@ -1,8 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { BuildPayloadV5 } from "@/data/types";
+import type { BuildPayloadV5 } from "@/domain/models";
 import { useHydrateBuildPreset } from "@/hooks/useHydrateBuildPreset";
-import { loadBuildPreset } from "@/lib/artifact-builds/buildPresetRegistry";
+import { loadBuildPreset } from "@/services/builds/loadBuildPreset";
 import {
   selectBuildsForCharacter,
   selectEnabledBuildGroups,
@@ -12,7 +12,7 @@ import {
 
 const presetCache = vi.hoisted(() => new Map<string, BuildPayloadV5>());
 
-vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
+vi.mock("@/domain/build/buildPresetRegistry", () => ({
   cacheBuildPreset: vi.fn((id: string, payload: BuildPayloadV5) => {
     presetCache.set(id, payload);
     if (payload.id) presetCache.set(payload.id, payload);
@@ -26,6 +26,11 @@ vi.mock("@/lib/artifact-builds/buildPresetRegistry", () => ({
   ),
 }));
 
+vi.mock("@/services/builds/loadBuildPreset", () => ({
+  loadBuildPreset: vi.fn((id: string) =>
+    Promise.resolve(presetCache.get(id) ?? null)
+  ),
+}));
 const mockLoadBuildPreset = vi.mocked(loadBuildPreset);
 
 function useBuildsForCharacter(characterId: string) {

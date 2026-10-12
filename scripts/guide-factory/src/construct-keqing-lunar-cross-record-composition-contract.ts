@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "./sourceLocations";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { readJson, sha256File, writeJson } from "./io";
@@ -34,7 +35,7 @@ export async function runKeqingLunarCrossRecordCompositionContractCli(): Promise
         KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_INPUT_PATHS.map(
           async (relativePath) => ({
             path: relativePath,
-            sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+            sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
           }),
         ),
       ),

@@ -48,7 +48,7 @@ vi.mock("@/contexts/LanguageContext", () => ({
   }),
 }));
 
-vi.mock("@/data/gameResources", () => {
+vi.mock("@/domain/reference/catalog", () => {
   const resource = { imagePath: "/test.png" };
   return {
     allCharacters: [
@@ -75,8 +75,8 @@ vi.mock("@/data/gameResources", () => {
   };
 });
 
-vi.mock("@/data/gameStatsLoader", () => ({
-  characterStatsResource: { use: () => CHARACTER_STATS },
+vi.mock("@/domain/reference/stats", () => ({
+  characterStatsResource: { peek: () => CHARACTER_STATS },
   getCharacterDisplayMeta: (
     character: { rarity: number },
     stats:
@@ -101,7 +101,7 @@ vi.mock("@/components/archive/CharacterDetailPanel", () => ({
   CharacterDetailPanel: () => null,
 }));
 
-vi.mock("@/components/artifact-builds/BuildsDefaultPresetPrompt", () => ({
+vi.mock("@/components/builds/BuildsDefaultPresetPrompt", () => ({
   BuildsDefaultPresetPrompt: () => null,
 }));
 
@@ -124,7 +124,7 @@ vi.mock("@/components/shared/ItemIcon", () => ({
   ItemIcon: () => null,
 }));
 
-vi.mock("@/hooks/useMediaQuery", () => ({
+vi.mock("@/components/ui/useMediaQuery", () => ({
   useMediaQuery: () => false,
 }));
 

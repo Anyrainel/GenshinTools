@@ -13,28 +13,28 @@
  * and export `runTeamOptimization` by calling `createTeamOptimizer`.
  */
 
-import type { Slot, StatKey } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import { artifactIdToHalfSetId } from "@/data/gameResources";
-import type { ArtifactData } from "@/data/types";
-import { isPctStat } from "@/data/utils";
 import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,
   scoreMainStat,
   scoreSlot,
-} from "@/lib/artifact/scoring/artifactScore";
-import { getMainStatValueAtLevel } from "@/lib/artifact/scoring/utils";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+} from "@/domain/build/artifact/scoring/artifactScore";
+import { getMainStatValueAtLevel } from "@/domain/build/artifact/scoring/utils";
+import { isPctStat } from "@/domain/build/statUtils";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   CalcContext,
   ComboResult,
   DamageResult,
   ReactionOverride,
-} from "@/lib/dmgcalc/types";
-import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
-import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+} from "@/domain/combat/damage/types";
+import { getHalfSetIds, getSetId } from "@/domain/combat/damage/utils";
+import type { Slot, StatKey } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { artifactIdToHalfSetId } from "@/domain/reference/catalog";
+import { detectEquippedSets } from "@/domain/team/teamConfigUtils";
 import type {
   CharOptConfig,
   OptFailReason,
@@ -44,7 +44,7 @@ import type {
   TeamOptPassId,
   TeamOptPassResult,
   TeamOptYield,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
 
 export const TOP_K = 50;
 export const CARRY_TOP_K = 100;

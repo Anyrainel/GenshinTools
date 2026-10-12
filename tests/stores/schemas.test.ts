@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
-import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
+import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
+import { ArtifactSetConfigSchema } from "@/domain/team/schemas";
 import {
   AccountDataSchema,
   ArtifactDataSchema,

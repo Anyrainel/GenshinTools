@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import characterStatsInput from "@/data/game/character_stats.json";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -984,7 +985,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
       }),
     ),
   );

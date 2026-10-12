@@ -1,22 +1,22 @@
-import type { Slot } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,
   ComboFormula,
   ComboResult,
   ReactionOverride,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
+import type { Slot } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 /**
  * V1 Team Optimizer: Hill-Climbing with Greedy Allocation
  *
  * Backup algorithm for benchmark solution generation.
  * Moved from src/lib/team-comp/teamOptimizer.ts.
  */
-import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+import { detectEquippedSets } from "@/domain/team/teamConfigUtils";
 import type {
   CharOptConfig,
   TeamOptimizationProgress,
@@ -25,13 +25,13 @@ import type {
   TeamOptPassId,
   TeamOptPassResult,
   TeamOptYield,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
 import {
   type OptFailReason,
   type OptimizationResult,
   type OptimizerOptions,
   runOptimization,
-} from "../../lib/team-comp/optimizer/optimizerV1";
+} from "../../domain/combat/optimizer/optimizerV1";
 
 const warnedCalcErrors = new Set<string>();
 

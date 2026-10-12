@@ -1,8 +1,8 @@
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { achievementTextResource } from "@/data/gameDataLoader";
-import type { AchievementData } from "@/data/types";
+import type { AchievementData } from "@/domain/models";
 import { AchievementArchiveView } from "@/pages/archive/AchievementArchiveView";
+import { achievementTextResource } from "@/providers/reference/gameDataLoader";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useAchievementStore } from "@/stores/useAchievementStore";
 import { render, screen, waitFor } from "../../utils/render";
@@ -109,7 +109,7 @@ const FILTER_CHIP_LABELS = [
 
 describe("AchievementArchiveView search", () => {
   beforeEach(() => {
-    vi.spyOn(achievementTextResource, "use").mockReturnValue(ACHIEVEMENT_DATA);
+    vi.spyOn(achievementTextResource, "peek").mockReturnValue(ACHIEVEMENT_DATA);
     useAccountStore.setState({ accounts: {}, activeAccountId: null });
     useAchievementStore.setState({ earnedIdsByProfileId: {} });
   });

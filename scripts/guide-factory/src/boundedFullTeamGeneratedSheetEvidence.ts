@@ -1,22 +1,22 @@
-import "@/lib/dmgcalc";
+import "@/domain/combat/damage/index";
 
-import { statPools } from "@/data/constants";
+import { statPools } from "@/config/gameConstants";
 import {
   allSlots,
   type MainStat,
   type Slot,
   type StatKey,
   type SubStat,
-} from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { isFlatStat } from "@/data/utils";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type { ComboFormula, TeamSlotConfig } from "@/lib/dmgcalc/types";
+} from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { isFlatStat } from "@/domain/build/statUtils";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { ComboFormula, TeamSlotConfig } from "@/domain/combat/damage/types";
 import {
   runGenerator as runRuntimeGenerator,
   type GeneratorResult,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import {
   isCompleteBoundedFullTeamEquipmentTechnicalComputationReport,
   requireAuthenticatedBoundedFullTeamEquipmentTechnicalComputationReport,

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import type { GlobalStatWeights } from "@/data/types";
+import type { GlobalStatWeights } from "@/domain/models";
 import {
   type ArtifactScoreGlobalConfig,
   migrateArtifactScorePersisted,

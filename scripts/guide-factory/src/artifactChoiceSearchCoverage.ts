@@ -1,13 +1,13 @@
-import { statPools, TIER_LIST_OTHER_ARTIFACT_SETS } from "@/data/constants";
+import { statPools, TIER_LIST_OTHER_ARTIFACT_SETS } from "@/config/gameConstants";
 import {
   artifactHalfSetsById,
   artifactsById,
   betaArtifactIds,
-} from "@/data/gameResources";
+} from "@/domain/reference/catalog";
 import {
   buildArtifactSetChoiceCandidates,
   buildTwoPieceArtifactChoiceCandidates,
-} from "@/lib/team-comp/analyzer/weaponChoice";
+} from "@/domain/combat/analyzer/weaponChoice";
 import type {
   ArtifactChoice,
   KnowledgeRecord,
@@ -20,14 +20,14 @@ export const ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
-  "src/data/betaState.ts",
-  "src/data/constants.ts",
-  "src/data/enums.ts",
-  "src/data/gameResources.ts",
+  "src/stores/betaState.ts",
+  "src/config/gameConstants.ts",
+  "src/domain/enums.ts",
+  "src/domain/reference/catalog.ts",
   "src/data/resources.ts",
   "src/data/resources_beta.ts",
-  "src/data/types.ts",
-  "src/lib/team-comp/analyzer/weaponChoice.ts",
+  "src/domain/models.ts",
+  "src/domain/combat/analyzer/weaponChoice.ts",
 ] as const;
 
 type CharacterGuide = Extract<KnowledgeRecord, { kind: "character_guide" }>;

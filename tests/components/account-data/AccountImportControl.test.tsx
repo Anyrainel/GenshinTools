@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { AccountImportControl } from "@/components/account-data/AccountImportControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
-import type { GOODData } from "@/lib/account-data/import/goodConversion";
+import type { GOODData } from "@/providers/scanner/goodConversion";
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({
@@ -326,8 +326,32 @@ describe("AccountImportControl", () => {
       uploadFile(input, goodContent);
 
       await waitFor(() => {
-        expect(onLocalImport).toHaveBeenCalled();
+        expect(onLocalImport).toHaveBeenCalledWith(
+          expect.objectContaining({ format: "GOOD" }),
+          "",
+          { keepFourStarOfFiveStarSets: false }
+        );
       });
+    });
+    it("passes the opt-in to retain four-star copies", async () => {
+      const onLocalImport = vi.fn();
+      render(<TestWrapper onLocalImport={onLocalImport} />);
+      const option = screen.getByRole("checkbox", {
+        name: "import.keepFourStarOfFiveStarSets",
+      });
+      expect(option).not.toBeChecked();
+      fireEvent.click(option);
+      uploadFile(
+        getFileInput(),
+        JSON.stringify({ format: "GOOD", version: 3, source: "GGScanner" })
+      );
+      await waitFor(() =>
+        expect(onLocalImport).toHaveBeenCalledWith(
+          expect.objectContaining({ format: "GOOD" }),
+          "",
+          { keepFourStarOfFiveStarSets: true }
+        )
+      );
     });
   });
 });

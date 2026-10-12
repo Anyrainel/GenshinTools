@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { TeamSetupConfig } from "@/lib/team-comp/types";
+import type { TeamSetupConfig } from "@/domain/team/types";
 import { migrateTeamStore } from "@/stores/migration/team";
 
 /** v18 persisted shape: the ER scenario was React state in ErCalcCard, so

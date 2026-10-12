@@ -1,11 +1,11 @@
-import { ArtifactScoreHoverCard } from "@/components/account-data/ArtifactScoreHoverCard";
-import type { SubStat } from "@/data/enums";
+import { ArtifactScoreHoverCard } from "@/components/shared/ArtifactScoreHoverCard";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
   NormalizedScoreInfo,
   StatScoreBreakdown,
-} from "@/lib/artifact/scoring/artifactScore";
+} from "@/domain/build/artifact/scoring/artifactScore";
+import type { SubStat } from "@/domain/enums";
 import { render, screen } from "../../utils/render";
 
 const baseMockSubstatScore = {

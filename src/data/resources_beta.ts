@@ -4,7 +4,7 @@ import type {
   ArtifactSetResource,
   CharacterResource,
   WeaponResource,
-} from "./types";
+} from "../domain/models";
 
 export const betaCharacters: CharacterResource[] = [
   {"id":"mitya","rarity":5,"imagePath":"/character/mitya.webp"},

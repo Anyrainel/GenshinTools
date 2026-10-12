@@ -1,7 +1,7 @@
 import {
   normalizeScoreUpSettings,
   type ScoreUpSettings,
-} from "@/lib/account-data/scoreUpSettings";
+} from "@/domain/account/scoreUpSettings";
 
 type ScoreUpSettingsStoreMigration = {
   settingsByProfileId?: Record<string, Partial<ScoreUpSettings>>;

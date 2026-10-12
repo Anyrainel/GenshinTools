@@ -18,20 +18,16 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   TIER_LIST_OTHER_ARTIFACT_SETS,
   TIER_LIST_SUPPORT_ARTIFACT_SETS,
-} from "@/data/constants";
-import type { Tier } from "@/data/enums";
-import { tiers } from "@/data/enums";
-import { artifactsById } from "@/data/gameResources";
-import { useActiveAccount } from "@/hooks/useActiveAccount";
+} from "@/config/gameConstants";
+import { useLanguage } from "@/contexts/LanguageContext";
 import {
   evaluateAllBuilds,
   filterOwnedBuildGroups,
   selectActiveBuildsForAccount,
-} from "@/lib/account-data/buildEvaluation";
+} from "@/domain/account/buildEvaluation";
 import {
   computeSuggestionPUpgrade,
   generateResourceSuggestions,
@@ -40,8 +36,13 @@ import {
   type ResourceSuggestion,
   suggestionCacheKey,
   summarizeResourceSuggestionsBySet,
-} from "@/lib/account-data/resourceTips";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/account/resourceTips";
+import type { Tier } from "@/domain/enums";
+import { tiers } from "@/domain/enums";
+import { artifactsById } from "@/domain/reference/catalog";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   selectEnabledBuildGroups,

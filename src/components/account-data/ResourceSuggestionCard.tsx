@@ -13,10 +13,11 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charactersById } from "@/data/gameResources";
-import type { ResourceSuggestion } from "@/lib/account-data/resourceTips";
-import { suggestionCacheKey } from "@/lib/account-data/resourceTips";
-import { cn, getAssetUrl } from "@/lib/utils";
+import type { ResourceSuggestion } from "@/domain/account/resourceTips";
+import { suggestionCacheKey } from "@/domain/account/resourceTips";
+import { charactersById } from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { usePUpgradeCacheStore } from "@/stores/usePUpgradeCacheStore";
 
 const CRAFT_ICON = "/assets/craft.webp";

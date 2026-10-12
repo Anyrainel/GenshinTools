@@ -39,31 +39,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { useTour } from "@/components/ui/tour";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element, Rarity } from "@/data/enums";
-import { elements } from "@/data/enums";
-import {
-  charactersById,
-  elementResourcesByName,
-  getSortedCharacters,
-  weaponResourcesByName,
-} from "@/data/gameResources";
-import {
-  characterStatsResource,
-  getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
+import type { Element, Rarity } from "@/domain/enums";
+import { elements } from "@/domain/enums";
 import type {
   CharacterResource,
   PresetOption,
   TierAssignment,
   TierCustomization,
   TierListData,
-} from "@/data/types";
+} from "@/domain/models";
+import {
+  charactersById,
+  elementResourcesByName,
+  getSortedCharacters,
+  weaponResourcesByName,
+} from "@/domain/reference/catalog";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+} from "@/domain/reference/stats";
 import { useIsOwned } from "@/hooks/useOwnership";
+import { useResource } from "@/hooks/useResource";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
   loadPresetPayload,
-} from "@/lib/presetLoader";
+} from "@/lib/resources/presets";
 import {
   selectActiveTierAssignments,
   selectActiveTierAuthor,
@@ -109,7 +110,7 @@ export function CharacterTierListView({
   onActions,
 }: CharacterTierListViewProps) {
   const { t } = useLanguage();
-  const characterStats = characterStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
   const sortedCharacters = useMemo(
     () => getSortedCharacters(characterStats ?? null),
     [characterStats]

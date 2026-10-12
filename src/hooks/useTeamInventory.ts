@@ -3,13 +3,13 @@ import type {
   ArtifactData,
   ArtifactSetConfig,
   CharacterData,
-} from "@/data/types";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
+} from "@/domain/models";
 import {
   computeTeamInventory,
   type TeamInventory,
-} from "@/lib/team-comp/artifactInventory";
-import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
+} from "@/domain/team/artifactInventory";
+import { teamCompToArrays } from "@/domain/team/teamDeltas";
+import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useFreezeStore } from "@/stores/useFreezeStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 

@@ -15,7 +15,7 @@ import { readFileSync, globSync } from "fs";
 import { resolve, relative } from "path";
 
 const ROOT = resolve(import.meta.dirname, "../..");
-const implDir = resolve(ROOT, "src/lib/team-comp/impl");
+const implDir = resolve(ROOT, "src/domain/team/impl");
 
 const files = globSync("character*.ts", { cwd: implDir }).map((f) =>
   resolve(implDir, f)

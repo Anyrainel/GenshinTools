@@ -1,11 +1,11 @@
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ManualBackupChoiceDialog } from "@/components/account/ManualBackupChoiceDialog";
+import type { CloudPartitionId } from "@/domain/backup/types";
 import type {
   ManualBackupAutomaticItem,
   ManualBackupChoice,
-} from "@/cloud/manualBackupFlow";
-import type { CloudPartitionId } from "@/cloud/types";
-import { ManualBackupChoiceDialog } from "@/components/account/ManualBackupChoiceDialog";
+} from "@/services/backup/manualBackupFlow";
 import { render, screen } from "../../utils/render";
 
 describe("ManualBackupChoiceDialog", () => {

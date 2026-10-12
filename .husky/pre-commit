@@ -1,19 +1,18 @@
 #!/usr/bin/env sh
 
 # Per-file lint & format (Biome for TS, Ruff for Python)
-npx lint-staged --no-stash
+npx lint-staged --no-stash || exit 1
+
+echo "Checking types and dependency boundaries..."
+npm run type-check || exit 1
+npm run depcheck || exit 1
+npm run test:tooling || exit 1
 
 # Run tests related to staged TS/TSX files, plus global convention guards
 # Skip for merge commits — individual commits were already tested
 if [ ! -f "$(git rev-parse --git-dir)/MERGE_HEAD" ]; then
-  STAGED_TS_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
-  if [ -n "$STAGED_TS_FILES" ]; then
-    echo "Running related tests..."
-    npx vitest related --run $STAGED_TS_FILES || exit 1
-
-    echo "Running dependency-cruiser..."
-    npm run depcheck || exit 1
-  fi
+  echo "Running related tests (full suite for large commits)..."
+  node scripts/run-related-tests.mjs || exit 1
 
   WORKER_CHECK_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '^(worker/|wrangler\.jsonc|vite\.config\.ts|vitest\.worker\.config\.ts|tsconfig\.worker(-tests)?\.json|worker-configuration\.d\.ts|scripts/dev/(check-worker-|run-worker-dry-run)|package(-lock)?\.json$)' || true)
   if [ -n "$WORKER_CHECK_FILES" ]; then

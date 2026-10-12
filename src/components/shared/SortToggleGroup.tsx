@@ -7,7 +7,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SortDirection } from "@/data/enums";
+import type { SortDirection } from "@/domain/enums";
 import { cn } from "@/lib/utils";
 
 interface SortToggleGroupProps {

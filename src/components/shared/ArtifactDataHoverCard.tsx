@@ -10,10 +10,10 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { HoverCard, HoverCardTrigger } from "@/components/ui/hover-card";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { Slot } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 import { cn } from "@/lib/utils";
 import { getRarityColor } from "./colors";
 

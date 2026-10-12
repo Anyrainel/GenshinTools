@@ -32,21 +32,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { statPools } from "@/config/gameConstants";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { statPools } from "@/data/constants";
-import type { Slot, SubStat } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import {
-  artifactsById,
-  charactersById,
-  weaponsById,
-} from "@/data/gameResources";
-import {
-  characterStatsResource,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { AccountData, ArtifactData, CharacterData } from "@/data/types";
-import { isPctStat } from "@/data/utils";
 import {
   changeWeapon,
   createAndEquipArtifact,
@@ -60,9 +47,24 @@ import {
   updateArtifactStats,
   updateCharacterStats,
   updateWeaponStats,
-} from "@/lib/account-data/characterEditor";
-import { validateAndSolveArtifact } from "@/lib/artifact/validation";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/account/characterEditor";
+import { validateAndSolveArtifact } from "@/domain/build/artifact/validation";
+import { isPctStat } from "@/domain/build/statUtils";
+import type { Slot, SubStat } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { AccountData, ArtifactData, CharacterData } from "@/domain/models";
+import {
+  artifactsById,
+  charactersById,
+  weaponsById,
+} from "@/domain/reference/catalog";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { ArtifactDataHoverCard } from "../shared/ArtifactDataHoverCard";
 
 type DialogView =
@@ -1190,8 +1192,8 @@ function WeaponPickPanel({
   const [search, setSearch] = useState("");
   const q = search.toLowerCase();
 
-  const characterStats = characterStatsResource.use();
-  const weaponStats = weaponStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
+  const weaponStats = useResource(weaponStatsResource);
   const reqType = characterStats?.[char.key]?.weaponType;
 
   const inventory = data.extraWeapons.filter((w) => {

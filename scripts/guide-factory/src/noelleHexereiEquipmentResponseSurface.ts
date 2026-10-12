@@ -1,23 +1,24 @@
+import "@/providers/reference/statLoaders";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
-import { betaEnabled } from "@/data/betaState";
-import { charInfo } from "@/data/charInfo";
-import type { MainStat, StatKey } from "@/data/enums";
-import { getTalentParam } from "@/data/gameStatsLoader";
-import type { StatEntry } from "@/data/types";
+import { betaEnabled } from "@/config/beta";
+import { charInfo } from "@/data/characterInfo";
+import type { MainStat, StatKey } from "@/domain/enums";
+import { getTalentParam } from "@/domain/reference/stats";
+import type { StatEntry } from "@/domain/models";
 import {
   getMainStatValueAtLevel,
   toInternal,
-} from "@/lib/artifact/scoring/utils";
-import { buildBuffOverrides } from "@/lib/dmgcalc/core/comboBuffOverrides";
+} from "@/domain/build/artifact/scoring/utils";
+import { buildBuffOverrides } from "@/domain/combat/damage/core/comboBuffOverrides";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/dmgcalc/core/formulaCompiler";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+} from "@/domain/combat/damage/core/formulaCompiler";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -26,7 +27,7 @@ import type {
   FormulaEntry,
   OptionMap,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 import { bootstrapGuideFactoryComputation } from "./computationReplay";
 import {
   withScopedFormulaPartProjection,

@@ -31,28 +31,28 @@ The exact declared set is:
   - `scripts/guide-factory/src/computationReplay.ts`; and
   - `scripts/guide-factory/src/io.ts`.
 - Runtime data inputs (13):
-  - `src/data/betaState.ts`, `src/data/charInfo.ts`, `src/data/constants.ts`, and
-    `src/data/enums.ts`;
+  - `src/stores/betaState.ts`, `src/data/characterInfo.ts`, `src/config/gameConstants.ts`, and
+    `src/domain/enums.ts`;
   - `src/data/game/artifact_stat.json`,
     `src/data/game/character_stats.json`, and
     `src/data/game/weapon_stats.json`;
-  - `src/data/gameDataUtil.ts`, `src/data/gameResources.ts`, and
-    `src/data/gameStatsLoader.ts`; and
+  - `src/lib/resources/cache.ts`, `src/domain/reference/catalog.ts`, and
+    `src/providers/reference/statLoaders.ts`; and
   - `src/data/resources.ts`, `src/data/resources_beta.ts`, and
-    `src/data/utils.ts`.
+    `src/domain/build/statUtils.ts`.
 - Artifact-sheet and generator inputs (8):
-  - `src/lib/artifact/scoring/constants.ts`,
-    `src/lib/artifact/scoring/sheetBuilder.ts`, and
-    `src/lib/artifact/scoring/utils.ts`;
-  - `src/lib/team-comp/generator/constrainedGreedy.ts`,
-    `src/lib/team-comp/generator/generator.ts`, and
-    `src/lib/team-comp/generator/substatBudget.ts`;
-  - `src/lib/team-comp/optimizer/erCrConstraints.ts`; and
-  - `src/lib/team-comp/teamConfigUtils.ts`.
+  - `src/domain/build/artifact/scoring/constants.ts`,
+    `src/domain/build/artifact/scoring/sheetBuilder.ts`, and
+    `src/domain/build/artifact/scoring/utils.ts`;
+  - `src/domain/combat/generator/constrainedGreedy.ts`,
+    `src/domain/combat/generator/generator.ts`, and
+    `src/domain/combat/generator/substatBudget.ts`;
+  - `src/domain/combat/optimizer/erCrConstraints.ts`; and
+  - `src/domain/team/teamConfigUtils.ts`.
 - Selected damage-runtime and core inputs (27):
-  - `src/lib/dmgcalc/index.ts`, `src/lib/dmgcalc/constants.ts`, and
-    `src/lib/dmgcalc/utils.ts`; and
-  - `src/lib/dmgcalc/core/charBuild.ts`, `combo.ts`,
+  - `src/domain/combat/damage/index.ts`, `src/domain/combat/damage/constants.ts`, and
+    `src/domain/combat/damage/utils.ts`; and
+  - `src/domain/combat/damage/core/charBuild.ts`, `combo.ts`,
     `comboBuffOverrides.ts`, `damageFormula.ts`, `dynamicBuffEval.ts`,
     `expr.ts`, `exprStatSheet.ts`, `fieldState.ts`, `formulaCompiler.ts`,
     `formulaEval.ts`, `implModel.ts`, `marginalGain.ts`, `registry.ts`,
@@ -61,12 +61,12 @@ The exact declared set is:
     `teamMeta.ts`, `teamReaction.ts`, `teamResonance.ts`, and
     `teamStatSheet.ts`.
 - Roster- and equipment-relevant calculator implementations (10):
-  - `src/lib/dmgcalc/impl/artifact2pc.ts` and `artifact4pc.ts`;
-  - `src/lib/dmgcalc/impl/character5Fontaine.ts`,
+  - `src/domain/combat/damage/impl/artifact2pc.ts` and `artifact4pc.ts`;
+  - `src/domain/combat/damage/impl/character5Fontaine.ts`,
     `character5Liyue.ts`, `character5Natlan.ts`, and
     `character5NodKrai.ts`;
-  - `src/lib/dmgcalc/impl/helpers.ts`; and
-  - `src/lib/dmgcalc/impl/weapon4Sword.ts`, `weapon5Polearm.ts`, and
+  - `src/domain/combat/damage/impl/helpers.ts`; and
+  - `src/domain/combat/damage/impl/weapon4Sword.ts`, `weapon5Polearm.ts`, and
     `weapon5Sword.ts`.
 
 `artifact2pc.ts` is part of the selected boundary because a four-piece build
@@ -180,7 +180,7 @@ sequence check. An adversarial canonical-JSON test and direct authentication
 of the checked-in nested report cover the correction. The 36-node domain,
 objectives, provenance counts, and result fingerprint are unchanged; only the
 declared generic-core byte hash and dependent report seals were refreshed.
-The later calculator correction to `src/lib/dmgcalc/utils.ts` likewise changed
+The later calculator correction to `src/domain/combat/damage/utils.ts` likewise changed
 the selected input bytes without changing any checkpoint-38 output fact; the
 SHA-256 above is the report seal after that second provenance refresh.
 

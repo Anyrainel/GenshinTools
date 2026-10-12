@@ -1,10 +1,10 @@
-import type { Element } from "@/data/enums";
-import type { ExtraBuff, ReactionOverride } from "@/lib/dmgcalc/types";
 import type {
   ComboCountOverrides,
   MinErOverrides,
-} from "@/lib/team-comp/analyzer/types";
-import type { TeamSetupConfig } from "@/lib/team-comp/types";
+} from "@/domain/combat/analyzer/types";
+import type { ExtraBuff, ReactionOverride } from "@/domain/combat/damage/types";
+import type { Element } from "@/domain/enums";
+import type { TeamSetupConfig } from "@/domain/team/types";
 
 /** v22 shape: investment owned independent aura/buffs/reactions and exact
  * per-constellation counts; each config also stored a hypothetical C/R start.

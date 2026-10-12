@@ -33,19 +33,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   TIER_LIST_OTHER_ARTIFACT_SETS,
   TIER_LIST_SUPPORT_ARTIFACT_SETS,
-} from "@/data/constants";
-import type { Rarity } from "@/data/enums";
-import { artifactsById, sortedArtifacts } from "@/data/gameResources";
+} from "@/config/gameConstants";
+import { useLanguage } from "@/contexts/LanguageContext";
+import type { Rarity } from "@/domain/enums";
 import type {
   ArtifactSetResource,
   TierAssignment,
   TierCustomization,
   TierListData,
-} from "@/data/types";
+} from "@/domain/models";
+import { artifactsById, sortedArtifacts } from "@/domain/reference/catalog";
 import {
   selectActiveTierAssignments,
   selectActiveTierAuthor,

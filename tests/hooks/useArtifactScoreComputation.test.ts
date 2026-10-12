@@ -10,29 +10,32 @@ const gameStatReadiness = vi.hoisted(() => ({
 }));
 const scoreWithBuilds = vi.hoisted(() => vi.fn(() => null));
 
-vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+    await importOriginal<typeof import("@/domain/reference/stats")>();
   return {
     ...actual,
     characterStatsResource: {
       ...actual.characterStatsResource,
-      use: () => (gameStatReadiness.character ? {} : null),
+      peek: () => (gameStatReadiness.character ? {} : null),
     },
     weaponStatsResource: {
       ...actual.weaponStatsResource,
-      use: () => (gameStatReadiness.weapon ? {} : null),
+      peek: () => (gameStatReadiness.weapon ? {} : null),
     },
   };
 });
 
-vi.mock("@/lib/artifact/scoring/artifactScore", async (importOriginal) => {
-  const actual =
-    await importOriginal<
-      typeof import("@/lib/artifact/scoring/artifactScore")
-    >();
-  return { ...actual, scoreWithBuilds };
-});
+vi.mock(
+  "@/domain/build/artifact/scoring/artifactScore",
+  async (importOriginal) => {
+    const actual =
+      await importOriginal<
+        typeof import("@/domain/build/artifact/scoring/artifactScore")
+      >();
+    return { ...actual, scoreWithBuilds };
+  }
+);
 
 describe("useArtifactScoreComputation", () => {
   beforeEach(() => {

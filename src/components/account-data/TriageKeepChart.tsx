@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import type {
   TriageKeepReason,
   TriageStatistics,
-} from "@/lib/account-data/triage/types";
+} from "@/domain/account/triage/types";
 import { cn } from "@/lib/utils";
 
 export function TriageKeepChart({

@@ -1,7 +1,8 @@
+import "@/providers/reference/statLoaders";
 import { beforeEach, describe, expect, it } from "vitest";
-import type { CharacterStatsMap } from "@/data/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
-import type { CharacterResource } from "@/data/types";
+import type { CharacterResource } from "@/domain/models";
+import type { CharacterStatsMap } from "@/domain/reference/stats";
+import { getCharacterDisplayMeta } from "@/domain/reference/stats";
 import { useAccountStore } from "@/stores/useAccountStore";
 
 /**

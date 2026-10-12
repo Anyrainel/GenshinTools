@@ -11,10 +11,14 @@ import { Fragment, type ReactNode, useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { ELEMENT_KEYS, type ElementalOrPhysical } from "@/data/enums";
-import { computeStateRes, formatStat } from "@/data/gameDataLoader";
-import type { BossState, LeylineBossData } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { ELEMENT_KEYS, type ElementalOrPhysical } from "@/domain/enums";
+import type { BossState, LeylineBossData } from "@/domain/models";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
+import {
+  computeStateRes,
+  formatStat,
+} from "@/providers/reference/gameDataLoader";
 import { SENTIMENT_BADGE } from "../shared/colors";
 
 function useBossTranslations(bossData: LeylineBossData) {

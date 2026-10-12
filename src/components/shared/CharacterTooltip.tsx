@@ -1,14 +1,16 @@
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { BaseStat } from "@/data/enums";
-import { betaCharacterIds, charactersById } from "@/data/gameResources";
+import type { BaseStat } from "@/domain/enums";
+import { betaCharacterIds, charactersById } from "@/domain/reference/catalog";
 import {
   type CharacterLevelTier,
   characterStatsResource,
   getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { BetaBadge } from "./BetaBadge";
 import { getRarityColor } from "./colors";
 
@@ -21,7 +23,7 @@ interface CharacterTooltipProps {
 
 export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
   const { t } = useLanguage();
-  const characterStats = characterStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
   const character = charactersById[characterId];
 
   if (!character) return null;

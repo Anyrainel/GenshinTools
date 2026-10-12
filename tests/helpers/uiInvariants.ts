@@ -82,6 +82,7 @@ export function collectUiViolations(root: string): Record<string, number> {
   }
   walk(path.join(root, "src/components"));
   walk(path.join(root, "src/pages"));
+  walk(path.join(root, "src/app"));
   return Object.fromEntries(
     Object.entries(counts).sort(([a], [b]) => a.localeCompare(b))
   );

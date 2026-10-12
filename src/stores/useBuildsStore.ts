@@ -10,17 +10,17 @@ import {
   setBuildDeltaOrderForCharacter,
   upsertCustomBuildDelta,
   upsertPresetBuildDelta,
-} from "@/lib/artifact-builds/buildDeltas";
+} from "@/domain/build/buildDeltas";
 import {
   cacheBuildPreset,
   getCachedBuildPreset,
   getDefaultBuildPresetId,
-} from "@/lib/artifact-builds/buildPresetRegistry";
+} from "@/domain/build/buildPresetRegistry";
 import {
   filterValidBuildGroups,
   getBuildValidationErrors,
-} from "@/lib/artifact-builds/buildValidation";
-import { resolveReleasedWeaponId } from "@/lib/weaponIds";
+} from "@/domain/build/buildValidation";
+import { resolveReleasedWeaponId } from "@/domain/build/weaponIds";
 import { PersistedBuildsStoreSchema } from "@/stores/schemas";
 import { invalidateScores } from "@/stores/useAccountScoreCacheStore";
 
@@ -31,24 +31,21 @@ function nextBuildId(): string {
 
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { BuildSource } from "../data/enums";
+import { areBuildsEqual, BUILD_DATA_VERSION } from "../domain/build/buildUtils";
+import { DEFAULT_COMPUTE_OPTIONS } from "../domain/build/computeFilters";
+import type { BuildSource } from "../domain/enums";
 import type {
   Build,
   BuildGroup,
   BuildPayload,
   BuildPayloadV5,
   ComputeOptions,
-} from "../data/types";
+} from "../domain/models";
 import {
   executeImportBuilds,
   executeSubscribePreset,
-} from "../lib/artifact-builds/buildImportExport";
-import { migrateBuild } from "../lib/artifact-builds/buildMigration";
-import {
-  areBuildsEqual,
-  BUILD_DATA_VERSION,
-} from "../lib/artifact-builds/buildUtils";
-import { DEFAULT_COMPUTE_OPTIONS } from "../lib/artifact-builds/computeFilters";
+} from "./buildImportExport";
+import { migrateBuild } from "./migration/buildLegacy";
 import { migrateBuildsStore } from "./migration/builds";
 
 export type BuildsSourceState = {

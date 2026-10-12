@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { BackupMetadataRow } from "@/cloud/backupMetadata";
-import type { CloudBackupRecordKind } from "@/cloud/types";
 import { getMetadataDisplayRows } from "@/components/account/cloudBackupLabels";
+import type { CloudBackupRecordKind } from "@/domain/backup/types";
+import type { BackupMetadataRow } from "@/services/backup/backupMetadata";
 
 describe("cloud backup labels", () => {
   it("orders metadata rows by dialog groups without merging categories", () => {

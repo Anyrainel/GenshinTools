@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { AccountData, CharacterData } from "@/data/types";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
-} from "@/lib/account-data/resourceTips";
-import { DEFAULT_SCORE_UP_SETTINGS } from "@/lib/account-data/scoreUpSettings";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
+} from "@/domain/account/resourceTips";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/account/scoreUpSettings";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
+import type { AccountData, CharacterData } from "@/domain/models";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";

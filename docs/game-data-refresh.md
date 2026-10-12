@@ -59,7 +59,9 @@ npm run data:refresh -- --skip-pull
 npm run data:refresh -- --cached-sources
 ```
 
-From HoyoData, run `uv run hoyodata genshintools --pull` for the same full pipeline.
+Use this repository's `npm run data:refresh` entry point. It also normalizes
+upstream website exports into `src/generated/` and updates their canonical type
+imports; running the upstream target directly can recreate obsolete paths.
 The old `reference` target has been removed. `scripts/generate_website_data.py`
 is the internal website-generation stage called by HoyoData; it cannot refresh
 source data by itself. GenshinTools coverage excludes unrelated lore and engine

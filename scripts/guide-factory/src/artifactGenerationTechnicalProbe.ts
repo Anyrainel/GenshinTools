@@ -1,18 +1,18 @@
-import { statPools } from "@/data/constants";
-import { allSlots, type MainStat, type Slot, type SubStat } from "@/data/enums";
-import { artifactsById } from "@/data/gameResources";
-import type { ArtifactData } from "@/data/types";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import { statPools } from "@/config/gameConstants";
+import { allSlots, type MainStat, type Slot, type SubStat } from "@/domain/enums";
+import { artifactsById } from "@/domain/reference/catalog";
+import type { ArtifactData } from "@/domain/models";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 import {
   runGenerator,
   type GeneratorOptions,
   type GeneratorResult,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import type { ArtifactGenerationPreflightReport } from "./artifactGenerationPreflight";
 import { bootstrapGuideFactoryComputation } from "./computationReplay";
 import type { FormulaPlanDraftOutput } from "./formulaPlanDraft";

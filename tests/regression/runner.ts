@@ -1,3 +1,7 @@
+import { installNodeReferenceFetch } from "../../scripts/lib/nodeReferenceFetch.mjs";
+
+installNodeReferenceFetch();
+import "@/providers/reference/statLoaders";
 /**
  * Core runner for generator regression testing.
  *
@@ -6,22 +10,14 @@
  * and provides diffing utilities.
  */
 
-import "@/lib/dmgcalc";
+import "@/domain/combat/damage/index";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import type { Element, Slot, StatKey } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import { artifactHalfSetsById } from "@/data/gameResources";
-import {
-  characterStatsResource,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { ArtifactSetConfig } from "@/data/types";
-import type { StackLimitedBuffInfo } from "@/lib/dmgcalc/core/stackRank";
-import { buffSourceKey } from "@/lib/dmgcalc/core/statBuff";
-import type { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+import type { StackLimitedBuffInfo } from "@/domain/combat/damage/core/stackRank";
+import { buffSourceKey } from "@/domain/combat/damage/core/statBuff";
+import type { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -30,12 +26,20 @@ import type {
   DamageTag,
   DisplayResult,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 import {
   type GeneratorOptions,
   type GeneratorResult,
   runGenerator,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
+import type { Element, Slot, StatKey } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { ArtifactSetConfig } from "@/domain/models";
+import { artifactHalfSetsById } from "@/domain/reference/catalog";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
 
 // ─── Re-exports from benchmark runner ────────────────────────────────────────
 

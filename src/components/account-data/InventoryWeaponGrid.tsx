@@ -2,7 +2,7 @@ import { ItemIcon } from "@/components/shared/ItemIcon";
 import { WeaponDataHoverCard } from "@/components/shared/WeaponDataHoverCard";
 import { Card } from "@/components/ui/card";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import type { WeaponData } from "@/data/types";
+import type { WeaponData } from "@/domain/models";
 import { cn } from "@/lib/utils";
 import type { ChipColor } from "../shared/colors";
 

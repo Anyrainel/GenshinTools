@@ -87,13 +87,13 @@ def load_ts_data(project_root: str | Path, *, include_beta: bool = True) -> dict
                 a for a in beta_artifacts if a["id"] not in existing_ids
             )
 
-    i18n_path = data_dir / "i18n-game.ts"
+    i18n_path = root / "src" / "generated" / "i18n-game.ts"
     if i18n_path.exists():
         content = i18n_path.read_text("utf-8")
         result["i18nGameData"] = extract_json_from_ts(content, "i18nGameData")
 
     # Merge beta i18n names (official entries take priority)
-    i18n_beta_path = data_dir / "i18n-beta.ts"
+    i18n_beta_path = root / "src" / "generated" / "i18n-beta.ts"
     if include_beta and i18n_beta_path.exists():
         beta_content = i18n_beta_path.read_text("utf-8")
         beta_i18n = extract_json_from_ts(beta_content, "i18nBetaData")

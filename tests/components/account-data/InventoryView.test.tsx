@@ -1,4 +1,4 @@
-import type { AccountData } from "@/data/types";
+import type { AccountData } from "@/domain/models";
 import { InventoryView } from "@/pages/account-data/InventoryView";
 import { render, screen } from "../../utils/render";
 

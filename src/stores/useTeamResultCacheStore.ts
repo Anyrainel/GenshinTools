@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
+import type { AnalyzerResult } from "@/domain/combat/analyzer/types";
 import type {
   ChoiceResultCache,
   WeaponChoiceResult,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
 import { migrateTeamResultCacheStore } from "./migration/teamResultCache";
 import { PersistedTeamResultCacheStoreSchema } from "./schemas";
 

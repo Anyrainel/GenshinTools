@@ -41,7 +41,7 @@ Options:
 
   // Import our modules (tsx handles the @/ alias via tsconfig)
   const { calculateTeamER } = await import(
-    "../src/lib/ercalc/erCalculator.js"
+    "../src/domain/combat/energy/erCalculator.js"
   );
   const { TEAM_PRESETS: presetRotations } = await import(
     "../src/data/ercalc/presetRotations.js"

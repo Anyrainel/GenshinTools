@@ -1,31 +1,35 @@
 #!/usr/bin/env tsx
+import { installNodeReferenceFetch } from "../../scripts/lib/nodeReferenceFetch.mjs";
+
+installNodeReferenceFetch();
+import "@/providers/reference/statLoaders";
 /**
  * Diagnostic: Compare compiled ER check vs getTeamStats ER for a constraint-failing team.
  * Run: npx tsx --tsconfig tsconfig.test.json tests/benchmark/diag-er.ts
  */
 
-import "@/lib/dmgcalc";
+import "@/domain/combat/damage/index";
 
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import type { Element } from "@/data/enums";
-import {
-  characterStatsResource,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import { getDefaultOnFieldCharId } from "@/lib/dmgcalc/core/fieldState";
+import { getDefaultOnFieldCharId } from "@/domain/combat/damage/core/fieldState";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/dmgcalc/core/formulaCompiler";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+} from "@/domain/combat/damage/core/formulaCompiler";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
-import { ConstraintChecker } from "@/lib/team-comp/optimizer/constraintChecker";
+} from "@/domain/combat/damage/types";
+import { ConstraintChecker } from "@/domain/combat/optimizer/constraintChecker";
+import type { Element } from "@/domain/enums";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
 
 async function main() {
   await Promise.all([

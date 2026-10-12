@@ -4,7 +4,7 @@ import type {
   TierGroupConfig,
   TierItemData,
 } from "@/components/tier-list/tierTableTypes";
-import type { Tier } from "@/data/enums";
+import type { Tier } from "@/domain/enums";
 import { render, screen } from "../../utils/render";
 
 // Wrapper to provide dnd-kit context

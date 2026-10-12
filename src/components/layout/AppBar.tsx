@@ -19,11 +19,6 @@ import {
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { getLogtoAccountCenterSecurityUrl } from "@/cloud/authConfig";
-import {
-  getNavigationConfig,
-  type TabConfig,
-} from "@/components/layout/appNavigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -44,14 +39,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
+import { getNavigationConfig, type TabConfig } from "@/config/navigation";
+import { SCANNER_DOWNLOAD_PAGE } from "@/config/scannerDownloads";
 import { useAppSession } from "@/contexts/AppSessionContext";
+import { getLogtoAccountCenterSecurityUrl } from "@/contexts/authConfig";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { SELECTABLE_THEME_IDS, useTheme } from "@/contexts/ThemeContext";
-import type { ThemeId } from "@/data/enums";
-import { SCANNER_DOWNLOAD_PAGE } from "@/data/scannerDownloads";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { generateThemeVars } from "@/lib/themeGenerator";
-import { cn, getAssetUrl } from "@/lib/utils";
+import type { ThemeId } from "@/domain/enums";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { generateThemeVars } from "@/lib/theme/generator";
+import { cn } from "@/lib/utils";
 
 const STAR_RAIL_SITE_URL =
   import.meta.env.VITE_STAR_RAIL_SITE_URL ??

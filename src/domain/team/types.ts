@@ -1,0 +1,292 @@
+import type { BuildMatchResult } from "@/domain/build/artifact/scoring/artifactScore";
+import type {
+  CalcMode,
+  ERTimeline,
+  ParticleMode,
+} from "@/domain/combat/energy/types";
+import type {
+  Element,
+  MainStat,
+  ReactionType,
+  Slot,
+  SubStat,
+} from "@/domain/enums";
+import type { ArtifactData, ArtifactSetConfig } from "@/domain/models";
+import type {
+  ComboCountOverrides,
+  InvestmentCountChange,
+  MinErOverrides,
+  StoredAnalyzerCharConfig,
+} from "../combat/analyzer/types";
+import type { StatSheet } from "../combat/damage/core/statSheet";
+import type { TeamBuild } from "../combat/damage/core/teamBuild";
+import type {
+  CalcContext,
+  ComboFormula,
+  ExtraBuff,
+  OptionMap,
+  ReactionOverride,
+  TalentLevels,
+} from "../combat/damage/types";
+
+// ─── Optimizer Types (shared across V1, V2, Mona, benchmark) ───
+
+export type OptFailReason =
+  | { kind: "empty-pool"; emptySlots: Slot[] }
+  | { kind: "no-seeds"; artifactSet?: ArtifactSetConfig | null }
+  | { kind: "er-unmet"; minEr: number; bestEr: number }
+  | { kind: "cr-unmet"; minCr: number; bestCr: number }
+  | {
+      kind: "set-impossible";
+      artifactSet?: ArtifactSetConfig | null;
+      slotCounts: Record<string, number>;
+    }
+  | { kind: "all-filtered"; combinationsTotal: number }
+  | { kind: "timeout" }
+  | { kind: "worker-error"; message: string };
+
+export type TeamOptPassId = "carry-1" | "support" | "carry-2";
+
+export interface TeamOptPassResult {
+  passId: TeamOptPassId;
+  charId: string;
+  bestDamage: number;
+  bestArtifacts: Record<Slot, ArtifactData | null>;
+  failReason?: OptFailReason;
+  /** Per-substat weights used for artifact ranking (debug display). */
+  substatWeights?: Record<string, number>;
+}
+
+export type OptPhase = "init" | "phase1" | "phase2" | "phase3";
+
+export interface TeamOptimizationProgress {
+  currentPass: TeamOptPassId;
+  currentPassCharId: string;
+  passIndex: number;
+  totalPasses: number;
+  passPhase: "pruning" | "evaluating";
+  passProgress: number;
+  overallProgress: number;
+  /** Current optimizer phase for display. */
+  phase: OptPhase;
+  passResults: TeamOptPassResult[];
+  /** Live per-character best damage from in-progress Phase 1 workers. */
+  workerBestDamage?: Record<string, number>;
+  done: false;
+}
+
+interface TeamOptResultBase {
+  bestDamage: number;
+  bestArtifactsByChar: Record<string, Record<Slot, ArtifactData | null>>;
+  passResults: TeamOptPassResult[];
+  failReasons: Record<string, OptFailReason>;
+  teamBuild?: TeamBuild;
+  done: true;
+}
+
+export type TeamOptimizationResult = TeamOptResultBase;
+
+export type TeamOptYield = TeamOptimizationProgress | TeamOptimizationResult;
+
+export interface CharOptConfig {
+  minEr: number;
+  minCr: number;
+  buildMatch?: BuildMatchResult | null;
+  artifactSet?: ArtifactSetConfig | null;
+}
+
+export interface TeamOptimizerOptions {
+  teamBuild: TeamBuild;
+  carryCharId: string;
+  combo: ComboFormula;
+  inventory: ArtifactData[];
+  calcContext: CalcContext;
+  baseSheets: Record<string, StatSheet>;
+  perChar: Record<string, CharOptConfig>;
+  ignoreArtifactSets?: Record<string, boolean>;
+  perCharDeadlineMs?: number;
+  teamDeadlineMs?: number;
+  maxArtsPerSlot?: number;
+  /** Extra artifacts available only to specific characters (e.g. same-char frozen reuse) */
+  perCharExtraArtifacts?: Record<string, ArtifactData[]>;
+  /** Artifact IDs to exclude from the pool per character (e.g. tier-aware exclusion) */
+  perCharExcludedArtifactIds?: Record<string, string[]>;
+  /** Enable Lagrangian relaxation for shared-set artifact allocation (Phase 2.5). */
+  useLagrangianAlloc?: boolean;
+}
+
+// ─── Team comp state shape ──────────────────────────────────────────────
+
+// These describe the persisted / in-memory team state. The Zustand
+// store in src/stores/useTeamStore.ts holds instances of these, and
+// pure team logic across src/lib/ reads them as inputs.
+interface ChoiceRankingBase {
+  damage: number;
+  percentOfBest: number; // 0-100
+  /** Main stat choices for sands/goblet/circlet. */
+  mainStats?: { sands: MainStat; goblet: MainStat; circlet: MainStat };
+  /** Aggregated substat roll counts across all 5 artifact slots. */
+  substatRolls?: Partial<Record<SubStat, number>>;
+  /** Artifact set IDs used (first set from flower). */
+  artifactSetIds?: string[];
+}
+
+export interface WeaponRanking extends ChoiceRankingBase {
+  type?: "weapon";
+  weaponId: string;
+  refinement: number;
+}
+
+export interface ArtifactRanking extends ChoiceRankingBase {
+  type: "artifact";
+  artifactSet: ArtifactSetConfig;
+  artifactSetIds: string[];
+}
+
+export type ChoiceRanking = WeaponRanking | ArtifactRanking;
+
+export interface ArtifactAssignmentSuggestion {
+  currentDamage: number;
+  bestDamage: number;
+  percentImprovement: number;
+  assignments: {
+    charId: string;
+    artifactSet: ArtifactSetConfig | null;
+  }[];
+}
+
+export interface WeaponChoiceResult {
+  mode?: "weapon" | "artifact";
+  timestamp: number;
+  perCharacter: Record<string, ChoiceRanking[]>;
+  artifactAssignmentSuggestion?: ArtifactAssignmentSuggestion | null;
+}
+
+export type ChoiceResultCache = Partial<
+  Record<"weapon" | "artifact", WeaponChoiceResult | null>
+>;
+
+export interface WeaponChoiceCharConfig {
+  charId: string;
+  level: number;
+  constellation: number;
+  talentLevels: [number, number, number];
+  artifactConfig: ArtifactSetConfig | null;
+  minEr: number;
+  minCr: number;
+}
+
+export interface TeamInvestmentConfig {
+  configs?: StoredAnalyzerCharConfig[];
+  /** Exact older authored counts are retained until explicitly reset. */
+  legacyCountOverrides?: ComboCountOverrides;
+  futureCountChanges?: InvestmentCountChange[];
+  minErOverrides?: MinErOverrides;
+  /** Prior independent inputs retained for inspection/explicit reconciliation.
+   *  All new calculations use damage's shared inputs. */
+  legacyInputs?: {
+    reactionOverrides?: Record<string, ReactionOverride>;
+    enemyAura?: Element;
+    extraBuffs?: ExtraBuff[];
+    startingValues?: Record<
+      string,
+      { constellation: number; refinement: number }
+    >;
+  };
+}
+
+export interface TeamCompSlot {
+  charId: string | null;
+  weaponId: string | null;
+  artifactSet: ArtifactSetConfig | null;
+}
+
+export interface TeamComp {
+  id: string;
+  name: string;
+  slots: TeamCompSlot[];
+  reactions: ReactionType[];
+}
+
+export interface TeamCharConfig {
+  level?: number;
+  constellation?: number;
+  refinement?: number;
+  talentLevels?: Partial<TalentLevels>;
+  minEr?: number;
+  minCr?: number;
+  crMode?: "min" | "target";
+  tierAwarePool?: boolean;
+  fullSetOptional?: boolean;
+}
+
+export interface TeamDamageConfig {
+  calcContext?: Partial<CalcContext>;
+  enemyAura?: Element;
+  extraBuffs?: ExtraBuff[];
+  selectedFormula?: { charId: string; formulaId: string } | null;
+  singleReaction?: ReactionOverride;
+  singleForceOnField?: boolean;
+  formulaMode?: "single" | "combo";
+  combo?: ComboFormula | null;
+}
+
+export interface TeamEnergyConfig {
+  timelines?: ERTimeline[];
+  /** Which of the three documented scenarios the displayed ER answers.
+   *  Absent means the historical default, "full-energy-repeat". */
+  mode?: CalcMode;
+  /** How fractional particle data is resolved. Absent means "expected". */
+  particleMode?: ParticleMode;
+}
+
+export interface TeamSetupConfig {
+  combatOptions: OptionMap;
+  charConfigs?: Record<string, TeamCharConfig>;
+  damage?: TeamDamageConfig;
+  energy?: TeamEnergyConfig;
+  investment?: TeamInvestmentConfig;
+}
+
+export interface TeamCompInput {
+  id?: string;
+  name?: string;
+  slots?: TeamCompSlot[];
+  characters?: (string | null)[];
+  weapons?: (string | null)[];
+  artifacts?: (ArtifactSetConfig | null)[];
+  reactions?: ReactionType[];
+}
+
+export interface TeamAddInput extends TeamCompInput {
+  setupConfig?: Partial<TeamSetupConfig>;
+}
+
+/** Exported artifact — discriminator omitted since field names differ. */
+export type ExportedArtifact =
+  | { setId: string }
+  | { halfSetIds: [string, string] };
+
+/** Exported team shape — only composition metadata, no user/account state. */
+export interface ExportedTeam {
+  id: string;
+  name: string;
+  characters: (string | null)[];
+  weapons: (string | null)[];
+  artifacts: (ExportedArtifact | null)[];
+  reactions?: ReactionType[];
+  minEr?: Record<string, number>;
+  minCr?: Record<string, number>;
+}
+
+/** Importable/exportable team composition envelope. */
+export interface TeamCompData {
+  teams: ExportedTeam[];
+  author?: string;
+  description?: string;
+}
+export interface CharBaseConfig {
+  charLevel: number;
+  constellation: number;
+  acctTalent: TalentLevels | undefined;
+}

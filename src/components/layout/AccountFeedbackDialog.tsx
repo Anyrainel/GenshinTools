@@ -1,13 +1,6 @@
 import { Star } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import {
-  FEEDBACK_BODY_MAX_LENGTH,
-  FEEDBACK_CONTACT_METHOD_MAX_LENGTH,
-  FeedbackApiError,
-  isFeedbackRateLimitedError,
-  submitFeedback,
-} from "@/cloud/feedback";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,6 +15,13 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
+import {
+  FEEDBACK_BODY_MAX_LENGTH,
+  FEEDBACK_CONTACT_METHOD_MAX_LENGTH,
+  FeedbackApiError,
+  isFeedbackRateLimitedError,
+  submitFeedback,
+} from "@/providers/community/feedback";
 
 type AccountFeedbackDialogProps = {
   open: boolean;

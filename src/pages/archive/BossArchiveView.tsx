@@ -6,12 +6,13 @@ import { BossDetailPanel } from "@/components/archive/BossDetailPanel";
 import { BossGrid, BossListPanel } from "@/components/archive/BossListPanel";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { leylineBossResource } from "@/data/gameDataLoader";
+import { useResource } from "@/hooks/useResource";
+import { leylineBossResource } from "@/providers/reference/gameDataLoader";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 
 export function BossArchiveView() {
   const { t } = useLanguage();
-  const bossData = leylineBossResource.use();
+  const bossData = useResource(leylineBossResource);
   const searchQuery = useArchiveSessionStore((s) => s.bossSearch);
   const setSearchQuery = useArchiveSessionStore((s) => s.setBossSearch);
   const selectedBossId = useArchiveSessionStore((s) => s.selectedBossId);

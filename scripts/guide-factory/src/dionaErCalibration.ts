@@ -1,23 +1,23 @@
 import {
   actionDuration,
   calculateTeamER,
-} from "@/lib/ercalc/erCalculator";
+} from "@/domain/combat/energy/erCalculator";
 import type {
   ERTimeline,
   ParticleMode,
   TeamMember,
-} from "@/lib/ercalc/types";
+} from "@/domain/combat/energy/types";
 import type { KnowledgeRepository } from "./schemas";
 
 export const DIONA_ER_ENGINE_INPUT_PATHS = [
   "scripts/guide-factory/src/dionaErCalibration.ts",
   "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
-  "src/lib/ercalc/erCalculator.ts",
-  "src/lib/ercalc/artifactEnergy.ts",
-  "src/lib/ercalc/constants.ts",
-  "src/lib/ercalc/types.ts",
-  "src/lib/ercalc/utils.ts",
-  "src/lib/ercalc/weaponEnergy.ts",
+  "src/domain/combat/energy/erCalculator.ts",
+  "src/domain/combat/energy/artifactEnergy.ts",
+  "src/domain/combat/energy/constants.ts",
+  "src/domain/combat/energy/types.ts",
+  "src/domain/combat/energy/utils.ts",
+  "src/domain/combat/energy/weaponEnergy.ts",
   "src/data/ercalc/particles.json",
   "src/data/ercalc/selfEnergy-fontaine.json",
   "src/data/ercalc/selfEnergy-inazuma.json",

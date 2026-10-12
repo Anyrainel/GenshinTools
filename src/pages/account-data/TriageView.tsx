@@ -18,19 +18,19 @@ import {
 } from "@/components/account-data/TriageTabContent";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot } from "@/data/enums";
-import { useActiveAccount } from "@/hooks/useActiveAccount";
-import { buildTriageInstructions } from "@/lib/account-data/manager/instructions";
 import {
   QUALITY_TIER_RANK,
   QUALITY_TIERS,
-} from "@/lib/account-data/triage/constants";
-import { runTriage } from "@/lib/account-data/triage/triageEngine";
+} from "@/domain/account/triage/constants";
+import { runTriage } from "@/domain/account/triage/triageEngine";
 import type {
   FlexPattern,
   QualityTier,
   TriageDecision,
-} from "@/lib/account-data/triage/types";
+} from "@/domain/account/triage/types";
+import type { Slot } from "@/domain/enums";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
+import { buildTriageInstructions } from "@/providers/scanner-manager/instructions";
 import {
   selectEnabledBuildGroups,
   selectResolvedBuildGroups,

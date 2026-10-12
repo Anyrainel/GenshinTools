@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
-import type { TriageSettings } from "@/lib/account-data/triage/types";
-import type { AccountProfileId } from "@/lib/account-data/types";
-import { cloneData } from "@/lib/utils";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
+import type { TriageSettings } from "@/domain/account/triage/types";
+import type { AccountProfileId } from "@/domain/account/types";
+import { cloneData } from "@/lib/cloneData.ts";
 import { migrateTriageStore } from "./migration/triage";
 import { PersistedTriageStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";

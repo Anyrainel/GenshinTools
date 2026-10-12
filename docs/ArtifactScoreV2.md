@@ -186,7 +186,7 @@ For builds tagged as DPS with existing damage formula implementations, weights c
 
 ### Damage Calculator: Real Team-Comp Library
 
-Auto-tuning uses the full `TeamBuild` damage calculator from `src/lib/team-comp/`, not a simplified proxy. This ensures that all buff interactions — character passives, weapon passives, artifact set bonuses (e.g., Blizzard Strayer's +40% CR), elemental resonances, and cross-character scaling buffs — are properly accounted for when computing marginal gains.
+Auto-tuning uses the full `TeamBuild` damage calculator from `src/domain/team/`, not a simplified proxy. This ensures that all buff interactions — character passives, weapon passives, artifact set bonuses (e.g., Blizzard Strayer's +40% CR), elemental resonances, and cross-character scaling buffs — are properly accounted for when computing marginal gains.
 
 **Key APIs:**
 - `TeamBuild(configs: TeamSlotConfig[])` — Constructs a full team with all buff resolution

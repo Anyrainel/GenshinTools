@@ -6,18 +6,18 @@
  * instead of throwing — the app never crashes on corrupted localStorage.
  */
 import { z } from "zod";
-import type { SortDirection } from "@/data/enums";
-import type { GlobalStatWeights } from "@/data/types";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
-} from "@/lib/account-data/resourceTips";
-import { DEFAULT_SCORE_UP_SETTINGS } from "@/lib/account-data/scoreUpSettings";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/lib/account-data/triage/constants";
-import { inferTriageBackupAmountMode } from "@/lib/account-data/triage/settings";
-import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
-import { isCustomDelta, isPresetDelta } from "@/lib/presetDelta";
-import { ArtifactSetConfigSchema } from "@/lib/team-comp/schemas";
+} from "@/domain/account/resourceTips";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/account/scoreUpSettings";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
+import { inferTriageBackupAmountMode } from "@/domain/account/triage/settings";
+import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
+import { isCustomDelta, isPresetDelta } from "@/domain/build/presetDelta";
+import type { SortDirection } from "@/domain/enums";
+import type { GlobalStatWeights } from "@/domain/models";
+import { ArtifactSetConfigSchema } from "@/domain/team/schemas";
 
 export const DEFAULT_GLOBAL_STAT_WEIGHTS: GlobalStatWeights = {
   flatAtk: 30,

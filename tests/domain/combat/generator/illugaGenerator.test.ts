@@ -1,0 +1,128 @@
+import "@/providers/reference/statLoaders";
+/**
+ * Regression test for the "Illuga gets geo% goblet for Linnea's
+ * lunar-crystallize million-ton" bug from the dev server.
+ *
+ * Team: Linnea (carry) + Illuga + Columbina + Gorou.
+ * Combo: linnea-million-ton (lunar crystallize) with forceOnField = true.
+ * Expected: Illuga should pick goblet=em (her em scales linnea's baseDmg via
+ * a teamOnField ScalingBuff). Geo% goblet is wrong because Illuga has no
+ * buff that scales off her own geo%.
+ */
+
+import { describe, expect, it } from "vitest";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboLine,
+  TeamSlotConfig,
+} from "@/domain/combat/damage/types";
+import {
+  type GeneratorOptions,
+  runGenerator,
+} from "@/domain/combat/generator/generator";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
+import "@/domain/combat/damage/index";
+import { drain } from "../../../fixtures/optimizerHelpers";
+
+await Promise.all([
+  characterStatsResource.preload(),
+  weaponStatsResource.preload(),
+]);
+
+const CTX: CalcContext = {
+  enemyLevel: 100,
+  enemyRes: 0.1,
+  rollMultiplier: 0.85,
+  substatBudget: "8_6",
+};
+
+function configs(): TeamSlotConfig[] {
+  return [
+    {
+      charId: "linnea",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "prototype_amber",
+      refinement: 1,
+      artifactSet: null,
+    },
+    {
+      charId: "illuga",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "prototype_amber",
+      refinement: 1,
+      artifactSet: null,
+    },
+    {
+      charId: "columbina",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "prototype_amber",
+      refinement: 1,
+      artifactSet: null,
+    },
+    {
+      charId: "gorou",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "prototype_amber",
+      refinement: 1,
+      artifactSet: null,
+    },
+  ];
+}
+
+describe("illuga generator", () => {
+  it("picks em goblet for illuga when linnea's million-ton has forceOnField=true", async () => {
+    const tb = new TeamBuild(configs());
+
+    // Single combo line with forceOnField=true.
+    const lines: ComboLine[] = [
+      {
+        charId: "linnea",
+        formulaId: "linnea-million-ton",
+        count: 1,
+        reaction: { reaction: "lunarCrystallize" },
+        forceOnField: true,
+      },
+    ];
+    const combo: ComboFormula = {
+      id: "test-combo",
+      label: { en: "Test", zh: "Test" },
+      lines,
+    };
+
+    // Mimic the per-char ER/CR constraints handleGenerate builds.
+    const perChar: Record<string, { minEr: number; minCr: number }> = {
+      linnea: { minEr: 1.0, minCr: 0 },
+      illuga: { minEr: 1.0, minCr: 0 },
+      columbina: { minEr: 1.0, minCr: 0 },
+      gorou: { minEr: 1.0, minCr: 0 },
+    };
+
+    const opts: GeneratorOptions = {
+      teamBuild: tb,
+      carryCharId: "linnea",
+      combo,
+      calcContext: CTX,
+      perChar,
+    };
+
+    const results = await drain(runGenerator(opts));
+    const final = results[results.length - 1];
+    const illugaArts = final.artifactsByChar.illuga;
+    const mains = Object.fromEntries(
+      Object.entries(illugaArts ?? {}).map(([k, v]) => [k, v.mainStatKey])
+    );
+    // eslint-disable-next-line no-console
+    console.log("illuga main stats:", mains);
+
+    expect(mains.goblet).toBe("em");
+  });
+});

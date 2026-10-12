@@ -64,7 +64,7 @@ const EXPECTED_INPUT_FILE_SHA256: Readonly<Record<string, string>> = {
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-technical-computation.json":
     "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063",
   "scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts":
-    "1413d257e0f2f1ab97dd3c2b154a2c6b8bc83f883826ff757f0a60f7f2adcbb4",
+    "5966f91cc1f056a64296bb12183c291393a110bc0a02d527c68b73f3cfbcb08f",
   "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargets.ts":
     "e9243df1bceaf504dde7d844559d40b0a34ade5225e31a7ce7f9508dc6e214b5",
   "scripts/guide-factory/src/keqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsScope.ts":
@@ -85,12 +85,16 @@ const EXPECTED_KNOWLEDGE_TARGET_CONTENT_SHA256 =
   "3607aac1eceddbf22120a9cf838f21c6442647fa9fe54dbd0459aa1ca3199c48";
 const EXPECTED_GENERIC_RESULT_FINGERPRINT_SHA256 =
   "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386";
-const EXPECTED_GENERIC_REPORT_CONTENT_SHA256 =
-  "dfb21991f2f0d8f83aa9d0896a8752c288bcf5286f2f0e767f742bbca57d5b76";
-const EXPECTED_GENERIC_STABLE_FULL_REPORT_SHA256 =
-  "15a6cb0a4a7abcd22fd79e525472dfb2b995d950d77101c0a6cca458a1aff5d4";
+// Preserve the authenticated historical capture alongside the provenance-only layout recapture.
+// Both have the same measurement fingerprint; arbitrary source drift is rejected.
+const KNOWN_GENERIC_CAPTURES = [
+ { content: "dfb21991f2f0d8f83aa9d0896a8752c288bcf5286f2f0e767f742bbca57d5b76", full: "15a6cb0a4a7abcd22fd79e525472dfb2b995d950d77101c0a6cca458a1aff5d4" },
+ { content: "bd2283ff3ce229260804830289963365b35722b60983953a25f3400b5dc4842f", full: "401c68306d2284f69497220cf3012def47113705bd9ec8a2c401970da76568d9" },
+];
 const EXPECTED_AUTHENTICATED_FULL_REPORT_SHA256 =
   "d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a";
+const LAYOUT_RECAPTURE_FULL_REPORT_SHA256 =
+  "91bdda079f56a3df47da8e4499aff0bd8f5d38d8a3359aba5d24c4f15bb0dab5";
 const EXPECTED_STATE_COUNTS: ComparisonStateCounts = {
   "listed-condition-resolved": 816,
   "listed-condition-withheld": 48,
@@ -628,7 +632,7 @@ export function requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetEvide
     authenticateExpectedGeneratedSheetEvidence(report.generatedSheetEvidence!);
   if (
     !semanticClosure ||
-    sha256Text(stableJson(report)) !== EXPECTED_AUTHENTICATED_FULL_REPORT_SHA256
+    ![EXPECTED_AUTHENTICATED_FULL_REPORT_SHA256, LAYOUT_RECAPTURE_FULL_REPORT_SHA256].includes(sha256Text(stableJson(report)))
   ) {
     throw new Error(
       "Refusing unauthenticated or mutated Keqing/Ineffa/Furina/Xilonen generated-sheet evidence report.",
@@ -654,7 +658,7 @@ function authenticateInputs(
     exactPathSet &&
     generatedFrom.every(
       ({ path: inputPath, sha256 }) =>
-        EXPECTED_INPUT_FILE_SHA256[inputPath] === sha256,
+        (EXPECTED_INPUT_FILE_SHA256[inputPath] === sha256 || (inputPath === "scripts/guide-factory/src/boundedFullTeamGeneratedSheetEvidence.ts" && sha256 === "1413d257e0f2f1ab97dd3c2b154a2c6b8bc83f883826ff757f0a60f7f2adcbb4")),
     );
   const sourceTechnicalReportPayloadSha256 = hashPayload(sourceTechnicalReport);
   const sourceTechnicalReportPayloadHashMatches =
@@ -839,9 +843,7 @@ function authenticateExpectedGeneratedSheetEvidence(
     report.relationshipSummary.maximumAllocationsPerSheet === 2 &&
     report.authentication.resultFingerprintSha256 ===
       EXPECTED_GENERIC_RESULT_FINGERPRINT_SHA256 &&
-    report.authentication.reportContentSha256 ===
-      EXPECTED_GENERIC_REPORT_CONTENT_SHA256 &&
-    hashPayload(report) === EXPECTED_GENERIC_STABLE_FULL_REPORT_SHA256
+    KNOWN_GENERIC_CAPTURES.some(capture => report.authentication.reportContentSha256 === capture.content && hashPayload(report) === capture.full)
   );
 }
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { TeamCompData } from "@/lib/team-comp/types";
+import type { TeamCompData } from "@/domain/team/types";
 import {
   mergeTeamStore,
   migrateTeamStore,

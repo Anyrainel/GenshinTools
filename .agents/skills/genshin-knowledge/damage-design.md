@@ -1,6 +1,6 @@
 # Damage Design
 
-Engine for computing Genshin Impact character damage with team buffs, reactions, and rotation modeling. All code lives in `src/lib/team-comp/`.
+Engine for computing Genshin Impact character damage with team buffs, reactions, and rotation modeling. The damage engine lives in `src/domain/combat/damage/`; simulation jobs live in `src/services/combat/`.
 
 ## File Layout
 

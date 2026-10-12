@@ -1,4 +1,4 @@
-import type { MainStat, SubStat } from "@/data/enums";
+import type { MainStat, SubStat } from "@/domain/enums";
 import { buildArtifactGenerationPreflight } from "./artifactGenerationPreflight";
 import {
   runArtifactGenerationTechnicalProbe,
@@ -20,15 +20,15 @@ export const KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_INPUT_PATHS = [
   "scripts/guide-factory/src/keqingIneffaArtifactGenerationTechnicalProbe.ts",
   ...new Set([
     ...KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS,
-    "src/lib/artifact/scoring/sheetBuilder.ts",
-    "src/lib/artifact/scoring/utils.ts",
-    "src/lib/dmgcalc/core/formulaCompiler.ts",
-    "src/lib/dmgcalc/core/statSheet.ts",
-    "src/lib/team-comp/generator/constrainedGreedy.ts",
-    "src/lib/team-comp/generator/generator.ts",
-    "src/lib/team-comp/generator/substatBudget.ts",
-    "src/lib/team-comp/optimizer/erCrConstraints.ts",
-    "src/lib/team-comp/teamConfigUtils.ts",
+    "src/domain/build/artifact/scoring/sheetBuilder.ts",
+    "src/domain/build/artifact/scoring/utils.ts",
+    "src/domain/combat/damage/core/formulaCompiler.ts",
+    "src/domain/combat/damage/core/statSheet.ts",
+    "src/domain/combat/generator/constrainedGreedy.ts",
+    "src/domain/combat/generator/generator.ts",
+    "src/domain/combat/generator/substatBudget.ts",
+    "src/domain/combat/optimizer/erCrConstraints.ts",
+    "src/domain/team/teamConfigUtils.ts",
   ]),
 ] as const;
 

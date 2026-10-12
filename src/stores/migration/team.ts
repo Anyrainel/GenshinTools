@@ -1,17 +1,17 @@
-import type { ReactionType } from "@/data/enums";
 import type {
   ComboFormula,
   ComboLine,
   ReactionOverride,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
+import type { ReactionType } from "@/domain/enums";
 import {
   compactTeamSetupConfigs,
   dedupeTeamCompDeltasAgainstPreset,
   deriveTeamCompsFromDeltas,
   type TeamCompDelta,
-} from "@/lib/team-comp/teamDeltas";
-import { getCachedTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
-import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
+} from "@/domain/team/teamDeltas";
+import { getCachedTeamPreset } from "@/domain/team/teamPresetRegistry";
+import type { TeamComp, TeamSetupConfig } from "@/domain/team/types";
 import {
   createTeamPersistenceFromLegacyTeams,
   type LegacyCharSettings,

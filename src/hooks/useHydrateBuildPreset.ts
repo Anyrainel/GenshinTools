@@ -1,8 +1,6 @@
 import { useEffect } from "react";
-import {
-  getCachedBuildPreset,
-  loadBuildPreset,
-} from "@/lib/artifact-builds/buildPresetRegistry";
+import { getCachedBuildPreset } from "@/domain/build/buildPresetRegistry";
+import { loadBuildPreset } from "@/services/builds/loadBuildPreset";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 
 export function useHydrateBuildPreset(): void {

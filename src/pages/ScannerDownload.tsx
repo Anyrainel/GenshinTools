@@ -12,13 +12,14 @@ import {
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
 import {
   SCANNER_CAPTURE_URL,
   SCANNER_OCR_URL,
   SCANNER_RELEASES_URL,
-} from "@/data/scannerDownloads";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/config/scannerDownloads";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 
 export default function ScannerDownload() {
   const { t } = useLanguage();

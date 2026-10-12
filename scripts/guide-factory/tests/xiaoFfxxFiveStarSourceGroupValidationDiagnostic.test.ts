@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -827,7 +828,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxFiveStarSourceGroupValidation
       XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
         }),
       ),
     ),

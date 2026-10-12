@@ -36,31 +36,32 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { MainStat, Rarity, WeaponType } from "@/data/enums";
-import { weaponTypes } from "@/data/enums";
-import {
-  sortedWeapons,
-  weaponResourcesByName,
-  weaponsById,
-} from "@/data/gameResources";
-import {
-  getWeaponDisplayMeta,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
+import type { MainStat, Rarity, WeaponType } from "@/domain/enums";
+import { weaponTypes } from "@/domain/enums";
 import type {
   PresetOption,
   TierAssignment,
   TierCustomization,
   TierListData,
   WeaponResource,
-} from "@/data/types";
+} from "@/domain/models";
+import {
+  sortedWeapons,
+  weaponResourcesByName,
+  weaponsById,
+} from "@/domain/reference/catalog";
+import {
+  getWeaponDisplayMeta,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
 import { useIsOwned } from "@/hooks/useOwnership";
+import { useResource } from "@/hooks/useResource";
 import {
   getCachedPresetMetadata,
   loadPresetMetadata,
   loadPresetPayload,
-} from "@/lib/presetLoader";
-import { getSortedWeaponSecondaryStats } from "@/lib/utils";
+} from "@/lib/resources/presets";
+import { getSortedWeaponSecondaryStats } from "@/services/catalog/weaponFilters.ts";
 import {
   selectActiveTierAssignments,
   selectActiveTierAuthor,
@@ -140,7 +141,7 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
   const [isManagerDialogOpen, setIsManagerDialogOpen] = useState(false);
   const [pendingImportData, setPendingImportData] =
     useState<TierListData | null>(null);
-  const weaponStats = weaponStatsResource.use();
+  const weaponStats = useResource(weaponStatsResource);
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
     [weaponStats]

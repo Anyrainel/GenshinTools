@@ -1,7 +1,7 @@
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import type { Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
+import type { Slot } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 import { migrateFreezeStore } from "@/stores/migration/freeze";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useFreezeStore } from "@/stores/useFreezeStore";

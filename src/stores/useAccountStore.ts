@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AccountData } from "@/data/types";
-// AccountState shape lives in @/lib/account-data/types so pure account-data
+// AccountState shape lives in @/domain/account/types so pure account-data
 // logic across src/lib/ can depend on it without reaching into stores.
-import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
+import type { AccountProfileId, AccountState } from "@/domain/account/types";
+import type { AccountData } from "@/domain/models";
 import { migrateAccountStore } from "./migration/account";
 import { PersistedAccountStoreSchema } from "./schemas";
 import { useAccountScoreCacheStore } from "./useAccountScoreCacheStore";

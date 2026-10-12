@@ -1,11 +1,11 @@
-import { allSlots, type MainStat, type Slot, type SubStat } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import type { CalcContext } from "@/lib/dmgcalc/types";
+import { allSlots, type MainStat, type Slot, type SubStat } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import type { CalcContext } from "@/domain/combat/damage/types";
 import {
   runGenerator,
   type GeneratorOptions,
   type GeneratorResult,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import {
   ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT,
   runArtifactGenerationTechnicalProbe,

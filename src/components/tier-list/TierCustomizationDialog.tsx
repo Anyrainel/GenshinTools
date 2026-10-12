@@ -12,8 +12,8 @@ import {
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { tiers } from "@/data/enums";
-import type { TierCustomization } from "@/data/types";
+import { tiers } from "@/domain/enums";
+import type { TierCustomization } from "@/domain/models";
 import { cn } from "@/lib/utils";
 
 interface TierCustomizationDialogProps {

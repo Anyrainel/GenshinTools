@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Slot } from "@/data/enums";
+import type { Slot } from "@/domain/enums";
 /**
  * Comprehensive tests for frozen artifact inventory filtering.
  *
@@ -19,11 +19,11 @@ import type { Slot } from "@/data/enums";
  * 9. Partially frozen teams
  * 10. Edge cases: empty slots, null artifacts, missing characters
  */
-import type { ArtifactData } from "@/data/types";
+import type { ArtifactData } from "@/domain/models";
 import {
   type ComputeInventoryParams,
   computeTeamInventory,
-} from "@/lib/team-comp/artifactInventory";
+} from "@/domain/team/artifactInventory";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 
 let artCounter = 0;

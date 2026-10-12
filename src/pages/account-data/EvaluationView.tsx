@@ -21,17 +21,17 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SortDirection } from "@/data/enums";
-import { tiers } from "@/data/enums";
-import { useActiveAccount } from "@/hooks/useActiveAccount";
-import type { ArchetypeRole } from "@/lib/account-data/buildEvaluation";
+import type { ArchetypeRole } from "@/domain/account/buildEvaluation";
 import {
   COMPLETION_TIERS,
   evaluateAllBuilds,
   getTier,
   type SetGroup,
   selectActiveBuildsForAccount,
-} from "@/lib/account-data/buildEvaluation";
+} from "@/domain/account/buildEvaluation";
+import type { SortDirection } from "@/domain/enums";
+import { tiers } from "@/domain/enums";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { cn } from "@/lib/utils";
 import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";

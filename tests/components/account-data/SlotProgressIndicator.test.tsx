@@ -1,4 +1,4 @@
-import { SlotProgressIndicator } from "@/components/account-data/SlotProgressIndicator";
+import { SlotProgressIndicator } from "@/components/shared/SlotProgressIndicator";
 import { render } from "../../utils/render";
 
 describe("SlotProgressIndicator", () => {

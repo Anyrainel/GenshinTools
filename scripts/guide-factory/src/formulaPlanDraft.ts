@@ -1,6 +1,6 @@
-import type { ArtifactSetConfig } from "@/data/types";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type { TalentLevels, TeamSlotConfig } from "@/lib/dmgcalc/types";
+import type { ArtifactSetConfig } from "@/domain/models";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { TalentLevels, TeamSlotConfig } from "@/domain/combat/damage/types";
 import { bootstrapGuideFactoryComputation } from "./computationReplay";
 import { KnowledgeTeamSchema, type KnowledgeRecord } from "./schemas";
 import { investmentMatchesConcreteAssumption } from "./teamMemberInvestment";

@@ -8,8 +8,8 @@ current inputs are sufficient to produce guides.
 
 `src/computationReplay.ts` performs the smallest useful calculation:
 
-1. import `src/lib/dmgcalc/index.ts` to register calculator implementations;
-2. preload character and weapon stats from `src/data/gameStatsLoader.ts`;
+1. import `src/domain/combat/damage/index.ts` to register calculator implementations;
+2. preload character and weapon stats from `src/providers/reference/statLoaders.ts`;
 3. construct `TeamBuild` from four explicit `TeamSlotConfig` values;
 4. reject every combo line not present in `TeamFormulaCatalog.getFormulaIds()`;
 5. compute combo-wide stack-limited buff coverage with
@@ -1357,25 +1357,25 @@ should use the expanded repository for a second character/team slice.
 ## Callable modules for later experiments
 
 - Direct damage and formula catalog:
-  `src/lib/dmgcalc/core/teamBuild.ts`,
-  `src/lib/dmgcalc/core/teamFormulaCatalog.ts`, and
-  `src/lib/dmgcalc/core/comboBuffOverrides.ts`.
+  `src/domain/combat/damage/core/teamBuild.ts`,
+  `src/domain/combat/damage/core/teamFormulaCatalog.ts`, and
+  `src/domain/combat/damage/core/comboBuffOverrides.ts`.
 - Artifact sheets:
-  `src/lib/dmgcalc/core/statSheet.ts` and
-  `src/lib/artifact/scoring/sheetBuilder.ts`.
+  `src/domain/combat/damage/core/statSheet.ts` and
+  `src/domain/build/artifact/scoring/sheetBuilder.ts`.
 - Compiled evaluation:
-  `src/lib/dmgcalc/core/formulaCompiler.ts`.
+  `src/domain/combat/damage/core/formulaCompiler.ts`.
 - Ideal artifact-stat heuristic:
-  `src/lib/team-comp/generator/generator.ts::runGenerator`.
+  `src/domain/combat/generator/generator.ts::runGenerator`.
 - Per-character weapon or artifact-set comparison:
-  `src/lib/team-comp/analyzer/weaponChoice.ts::runWeaponChoice`.
+  `src/domain/combat/analyzer/weaponChoice.ts::runWeaponChoice`.
 - Joint assignment from a real owned-artifact inventory:
-  `src/lib/team-comp/optimizer/teamOptimization.ts::runTeamOptimization`.
+  `src/services/combat/optimizer/teamOptimization.ts::runTeamOptimization`.
 - Marginal stat weights:
-  `src/lib/artifact-builds/auto-tune/autoTune.ts` and
-  `src/lib/artifact-builds/auto-tune/pipeline.ts`.
+  `src/services/builds/auto-tune/autoTune.ts` and
+  `src/services/builds/auto-tune/pipeline.ts`.
 - Constellation/refinement investment analysis and allocation-specific formula
-  counts: `src/lib/team-comp/analyzer/analyzer.ts`.
+  counts: `src/domain/combat/analyzer/analyzer.ts`.
 - Node-local carry-sheet recombination and exhaustive replay:
   `scripts/guide-factory/src/boundedJointArtifactExperiment.ts`.
 - Cached finite-lattice reference, coordinate, and beam traces:

@@ -1,12 +1,12 @@
-import type { SubStat } from "@/data/enums";
-import type { Build, WeightedSubStat } from "@/data/types";
 import {
   type BuildDelta,
   createBuildDeltasFromLegacyState,
   disableBuildsForCharacters,
-} from "@/lib/artifact-builds/buildDeltas";
-import { migrateBuild } from "@/lib/artifact-builds/buildMigration";
-import { getBuildValidationErrors } from "@/lib/artifact-builds/buildValidation";
+} from "@/domain/build/buildDeltas";
+import { getBuildValidationErrors } from "@/domain/build/buildValidation";
+import type { SubStat } from "@/domain/enums";
+import type { Build, WeightedSubStat } from "@/domain/models";
+import { migrateBuild } from "@/stores/migration/buildLegacy";
 import { migrateReleasedCharacterWeapons } from "./releasedWeaponIds";
 
 // Migrates old SubStat[] to WeightedSubStat[]. Uses default weight 100 when no

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AnalysisMode } from "@/lib/team-comp/analysisTypes";
+import type { AnalysisMode } from "@/domain/team/analysisTypes";
 import { migrateSessionNavStorageValue } from "./migration/sessionNav";
 import {
   DEFAULT_VIEW_SETTINGS,

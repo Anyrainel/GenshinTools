@@ -1,12 +1,12 @@
-import { StatDisplay } from "@/components/account-data/StatDisplay";
-import type { SubStat } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
+import { StatDisplay } from "@/components/shared/StatDisplay";
 import type {
   ArtifactScoreResult,
   BuildMatchResult,
   NormalizedScoreInfo,
   StatScoreBreakdown,
-} from "@/lib/artifact/scoring/artifactScore";
+} from "@/domain/build/artifact/scoring/artifactScore";
+import type { SubStat } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 import { render, screen } from "../../utils/render";
 
 // Sample artifact for testing

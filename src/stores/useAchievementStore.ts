@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AccountProfileId } from "@/lib/account-data/types";
+import type { AccountProfileId } from "@/domain/account/types";
 import { PersistedAchievementStoreSchema } from "./schemas";
 
 interface AchievementStore {

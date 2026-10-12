@@ -1,17 +1,20 @@
-import "@/lib/dmgcalc";
+import { installNodeReferenceFetch } from "../../lib/nodeReferenceFetch.mjs";
+installNodeReferenceFetch();
+import "@/providers/reference/statLoaders";
+import "@/domain/combat/damage/index";
 
-import type { Element, StatKey } from "@/data/enums";
+import type { Element, StatKey } from "@/domain/enums";
 import {
   characterStatsResource,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import { buildBuffOverrides } from "@/lib/dmgcalc/core/comboBuffOverrides";
+} from "@/domain/reference/stats";
+import { buildBuffOverrides } from "@/domain/combat/damage/core/comboBuffOverrides";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
-} from "@/lib/dmgcalc/core/formulaCompiler";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
+} from "@/domain/combat/damage/core/formulaCompiler";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
   BuffActivationMap,
   CalcContext,
@@ -21,7 +24,7 @@ import type {
   OptionMap,
   ReactionOverride,
   TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
+} from "@/domain/combat/damage/types";
 
 const ABSOLUTE_TOLERANCE = 1e-9;
 const RELATIVE_TOLERANCE = 1e-12;

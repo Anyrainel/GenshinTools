@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {
   getCachedTeamPreset,
   loadTeamPreset,
-} from "@/lib/team-comp/teamPresetRegistry";
+} from "@/domain/team/teamPresetRegistry";
 import { useTeamStore } from "@/stores/useTeamStore";
 
 export function useHydrateTeamPreset(): void {

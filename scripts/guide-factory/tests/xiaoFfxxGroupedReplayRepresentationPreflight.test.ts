@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -127,8 +128,8 @@ describe("Xiao FFXX grouped replay representation preflight", () => {
       expect.arrayContaining([
         CHARACTER_BETA_STATS_PATH,
         WEAPON_BETA_STATS_PATH,
-        "src/lib/dmgcalc/impl/weapon4Polearm.ts",
-        "src/lib/dmgcalc/impl/weapon5Polearm.ts",
+        "src/domain/combat/damage/impl/weapon4Polearm.ts",
+        "src/domain/combat/damage/impl/weapon5Polearm.ts",
       ]),
     );
     expect(canonicalReport.rawInputBoundary).toEqual({
@@ -795,7 +796,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxGroupedReplayRepresentationPr
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
         }),
       ),
     ),

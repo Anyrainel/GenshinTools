@@ -1,11 +1,12 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { ArtifactHalfSet } from "@/domain/models";
 import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
   artifactsById,
-} from "@/data/gameResources";
-import type { ArtifactHalfSet } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 
 type MixedSetTooltipProps =
   | { id1: string | number; id2: string | number }

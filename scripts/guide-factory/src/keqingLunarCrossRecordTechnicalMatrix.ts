@@ -1,5 +1,5 @@
-import type { MainStat, SubStat } from "@/data/enums";
-import { runGenerator as runArtifactGenerator } from "@/lib/team-comp/generator/generator";
+import type { MainStat, SubStat } from "@/domain/enums";
+import { runGenerator as runArtifactGenerator } from "@/domain/combat/generator/generator";
 import {
   ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS,
   buildArtifactGenerationPreflight,
@@ -73,17 +73,17 @@ export const KEQING_LUNAR_CROSS_RECORD_TECHNICAL_MATRIX_INPUT_PATHS = [
     "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
     "scripts/guide-factory/src/io.ts",
     "scripts/guide-factory/src/paths.ts",
-    "src/data/constants.ts",
-    "src/data/enums.ts",
-    "src/lib/artifact/scoring/sheetBuilder.ts",
-    "src/lib/artifact/scoring/utils.ts",
-    "src/lib/dmgcalc/core/formulaCompiler.ts",
-    "src/lib/dmgcalc/core/statSheet.ts",
-    "src/lib/team-comp/generator/constrainedGreedy.ts",
-    "src/lib/team-comp/generator/generator.ts",
-    "src/lib/team-comp/generator/substatBudget.ts",
-    "src/lib/team-comp/optimizer/erCrConstraints.ts",
-    "src/lib/team-comp/teamConfigUtils.ts",
+    "src/config/gameConstants.ts",
+    "src/domain/enums.ts",
+    "src/domain/build/artifact/scoring/sheetBuilder.ts",
+    "src/domain/build/artifact/scoring/utils.ts",
+    "src/domain/combat/damage/core/formulaCompiler.ts",
+    "src/domain/combat/damage/core/statSheet.ts",
+    "src/domain/combat/generator/constrainedGreedy.ts",
+    "src/domain/combat/generator/generator.ts",
+    "src/domain/combat/generator/substatBudget.ts",
+    "src/domain/combat/optimizer/erCrConstraints.ts",
+    "src/domain/team/teamConfigUtils.ts",
   ]),
 ] as const;
 

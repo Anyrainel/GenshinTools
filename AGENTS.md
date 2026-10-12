@@ -7,10 +7,10 @@ React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tail
 ## Common Commands
 
 - `npm run dev` — Vite dev server
-- `npm run dev:vite` — Vite only
 - `npm run build` — production web build
 - `npm run lint` / `npm run lint:fix` — Biome check / auto-fix
 - `npm run type-check` — TypeScript check for app and tests
+- `npm run check` — complete app, regression, architecture and Worker validation
 - `npm run depcheck` — dependency boundary rules via dependency-cruiser
 - `npm run test` / `npm run test:watch` / `npm run test:coverage` — Vitest
 - `npm run regtest` — artifact generator golden-file regression test
@@ -36,21 +36,19 @@ Use this as the first routing hint when the user refers to a page or tab in natu
   - Triage (`/account-data/triage`) — `src/pages/account-data/TriageView.tsx`: artifact keep/lock/fodder triage using account data, build configs, and triage settings.
 
 - Artifact Filter (`/artifact-filter`) — `src/pages/ArtifactBuilds.tsx`: artifact build import/export shell and tab router.
-  - Configure (`/artifact-filter/configure`) — `src/pages/artifact-builds/CharacterBuildView.tsx`: per-character artifact build target configuration.
-  - Compute Filters (`/artifact-filter/filters`) — `src/pages/artifact-builds/ArtifactBuildsView.tsx`: computed artifact set/slot filters from configured character builds.
-  - AutoTune (`/artifact-filter/weights`) — `src/pages/artifact-builds/AutoTuneView.tsx`: team-aware AutoTune workflow for deriving weighted artifact formulas.
+  - Configure (`/artifact-filter/configure`) — `src/pages/builds/CharacterBuildView.tsx`: per-character artifact build target configuration.
+  - Compute Filters (`/artifact-filter/filters`) — `src/pages/builds/ArtifactBuildsView.tsx`: computed artifact set/slot filters from configured character builds.
+  - AutoTune (`/artifact-filter/weights`) — `src/pages/builds/AutoTuneView.tsx`: team-aware AutoTune workflow for deriving weighted artifact formulas.
 
 - Team Comp (`/team-comp`) — `src/pages/TeamComp.tsx`: team import/export shell and tab router.
-  - Damage (`/team-comp/damage`) — `src/pages/team-comp/DamageView.tsx`: team grid plus selected-team damage detail calculator.
-  - Frozen (`/team-comp/frozen`) — `src/pages/team-comp/FrozenView.tsx`: frozen artifacts/teams review and batch equip export.
-  - Investment (`/team-comp/investment`) — `src/pages/team-comp/InvestmentView.tsx`: selected-team investment comparison/detail workflow.
-  - Weapon Choice (`/team-comp/weapon`) — `src/pages/team-comp/WeaponChoiceView.tsx`: selected-team weapon comparison/detail workflow.
+  - Analysis (/team-comp/analysis) — src/pages/team-analysis/AnalysisView.tsx: damage, investment, weapon choice and optimization workspace.
+  - Loadouts (/team-comp/loadouts) — src/pages/team-analysis/FrozenView.tsx: saved artifact/team loadouts and batch equip export.
 
 - Tier List (`/tier-list`) — `src/pages/TierList.tsx`: tier list import/export shell and tab router.
   - Characters (`/tier-list/characters`) — `src/pages/tier-list/CharacterTierListView.tsx`: editable character tier table with filters, presets, export, and customization.
   - Weapons (`/tier-list/weapons`) — `src/pages/tier-list/WeaponTierListView.tsx`: editable weapon tier table with weapon filters, presets, export, and customization.
 
-- Archive (`/archive`) — `src/pages/Archive.tsx`: game data archive shell and tab router.
+- Archive (`/archive`) — `src/pages/archive/ArchivePage.tsx`: game data archive shell and tab router.
   - Characters (`/archive/characters`) — `src/pages/archive/CharacterArchiveView.tsx`: searchable character archive with filters and detail panel.
   - Weapons (`/archive/weapons`) — `src/pages/archive/WeaponArchiveView.tsx`: searchable weapon archive with type/rarity/stat filters.
   - Artifacts (`/archive/artifacts`) — `src/pages/archive/ArtifactArchiveView.tsx`: artifact set archive with half-set filtering and expandable rows.
@@ -66,7 +64,7 @@ general folder descriptions. Read it before reorganizing modules.
 
 - For Genshin game data, formulas, damage implementations, or calculator review, use the `genshin-knowledge` skill first.
 - For damage, energy, or gcsim batch work, use the dispatcher skills under `.agents/skills/`; they launch Codex `worker` subagents that read `.agents/agents/*.md`.
-- When a new or changed character, weapon, artifact, or resonance grants CRIT Rate, update `src/lib/account-data/maxCrBuff.ts` and its tests so score-up recommendations use the same CR budget.
+- When a new or changed character, weapon, artifact, or resonance grants CRIT Rate, update `src/domain/account/maxCrBuff.ts` and its tests so score-up recommendations use the same CR budget.
 - For persisted stores, imports, conversions, or artifact mutation flows, inspect the relevant store, migration code, and nearby tests before editing.
 
 ## UI Rules
@@ -75,9 +73,9 @@ general folder descriptions. Read it before reorganizing modules.
 
 | Need | Source of truth |
 | --- | --- |
-| Theme colors and surfaces | `tailwind.config.ts`, `src/lib/themeGenerator.ts`: use `bg-background`, `text-foreground`, `bg-primary`, `bg-gradient-card`, `bg-gradient-select` |
+| Theme colors and surfaces | `tailwind.config.ts`, `src/lib/theme/generator.ts`: use `bg-background`, `text-foreground`, `bg-primary`, `bg-gradient-card`, `bg-gradient-select` |
 | Dynamic element, rarity, Tier and status classes | `src/components/shared/colors.ts`: `getElementColor(element, "text")`, `getRarityColor(rarity, "gradient")`, `getTierColor(tier, "header")`; compose with `cn()` |
-| Raw colors for charts/canvas and game palettes | `src/config/gameColors.ts`, `src/lib/gameColors.ts`; edit color values in the palette, not in callers or Tailwind config |
+| Raw colors for charts/canvas and game palettes | `src/config/gameColors.ts`, `src/lib/game/colors.ts`; edit color values in the palette, not in callers or Tailwind config |
 | Item identity and filter controls | `src/components/shared/ItemIcon.tsx`, `CharAvatar.tsx`, `FilterChip.tsx`, `FilterChipGroup.tsx` |
 | Page structure | `src/components/layout/{PageLayout,SidebarLayout,WideLayout,ScrollLayout,SidebarDetailLayout}.tsx`; inspect a sibling page before creating a scroll shell |
 | Responsive dialogs | `src/components/ui/responsive-dialog.tsx`; inspect its callers and `src/components/shared/ItemPicker.tsx` |
@@ -103,9 +101,9 @@ general folder descriptions. Read it before reorganizing modules.
 
 ## i18n
 
-- `src/data/i18n-ui.ts`: static UI strings. `t.ui()` calls must use string literals, never constructed keys.
-- `src/data/i18n-app.ts`: dynamic app terms and enum labels.
-- `src/data/i18n-game.ts`: generated game entity names.
+- `src/i18n/messages.ts`: static UI strings. `t.ui()` calls must use string literals, never constructed keys.
+- `src/i18n/gameTerms.ts`: dynamic app terms and enum labels.
+- `src/generated/i18n-game.ts`: generated game entity names.
 - UI strings should read like player-facing product text, not developer notes.
 - Chinese text must use natural community wording and official/game-appropriate names. Do not translate game concepts literally from English.
 
@@ -156,3 +154,5 @@ Commit proactively without being asked: once a self-contained change scope is co
 - For bulk transformations, write to `.new` or `.tmp`, inspect the diff, then replace.
 - Before risky bulk edits, back up the target file.
 - Test regex transformations with a dry run before applying.
+
+Husky is installed by npm prepare. Commits gate types, architecture and relevant tests. Pushes run npm run check against a clean, unchanged HEAD; do not bypass failing hooks.

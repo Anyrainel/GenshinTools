@@ -20,18 +20,18 @@ import {
   teamCompToArrays,
   teamCompToExportedTeam,
   upsertCustomTeamCompDelta,
-} from "@/lib/team-comp/teamDeltas";
+} from "@/domain/team/teamDeltas";
 import {
   cacheTeamPreset,
   getCachedTeamPreset,
-} from "@/lib/team-comp/teamPresetRegistry";
+} from "@/domain/team/teamPresetRegistry";
 import type {
   ExportedTeam,
   TeamAddInput,
   TeamComp,
   TeamCompData,
   TeamSetupConfig,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
 import { mergeTeamStore, migrateTeamStore } from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 import { useTeamResultCacheStore } from "./useTeamResultCacheStore";

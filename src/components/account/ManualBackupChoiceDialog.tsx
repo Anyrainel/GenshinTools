@@ -1,10 +1,4 @@
 import { ArrowRight, CheckCircle2, CircleAlert } from "lucide-react";
-import type {
-  ManualBackupActionItemBase,
-  ManualBackupAutomaticItem,
-  ManualBackupChoice,
-} from "@/cloud/manualBackupFlow";
-import type { CloudPartitionId } from "@/cloud/types";
 import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +11,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { CloudPartitionId } from "@/domain/backup/types";
 import { cn } from "@/lib/utils";
+import type {
+  ManualBackupActionItemBase,
+  ManualBackupAutomaticItem,
+  ManualBackupChoice,
+} from "@/services/backup/manualBackupFlow";
 import {
   compareBackupRecordGroups,
   type MetadataLabelParts,

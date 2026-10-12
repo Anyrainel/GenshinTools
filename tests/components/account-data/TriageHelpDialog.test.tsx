@@ -1,8 +1,8 @@
 import { fireEvent, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TriageHelpDialog } from "@/components/account-data/TriageHelpDialog";
-import { allSlots } from "@/data/enums";
-import type { TriageStatistics } from "@/lib/account-data/triage/types";
+import type { TriageStatistics } from "@/domain/account/triage/types";
+import { allSlots } from "@/domain/enums";
 import { render } from "../../utils/render";
 
 const statistics: TriageStatistics = {

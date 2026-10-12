@@ -4,7 +4,7 @@ import { LanguageProvider, useLanguage } from "@/contexts/LanguageContext";
 import {
   artifactTextResource,
   weaponTextResource,
-} from "@/data/gameDataLoader";
+} from "@/providers/reference/gameDataLoader";
 
 beforeAll(async () => {
   // Match app boot and finish lazy imports before synchronous provider tests.

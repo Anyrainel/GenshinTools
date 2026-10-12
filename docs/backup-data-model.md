@@ -43,7 +43,7 @@ Do not collapse these fields.
 
 ## Browser Storage Scope
 
-Backup scope is defined by `src/cloud/registry.ts` plus the snapshots assembled in `src/cloud/storeAdapters.ts`.
+Backup scope is defined by `src/services/backup/registry.ts` plus the snapshots assembled in `src/contexts/backup/storeAdapters.ts`.
 
 ### Included Source Data
 
@@ -154,7 +154,7 @@ Restore verification:
 3. Verify app, namespace, partition key, schema version, and `contentHash`.
 4. Reject newer unsupported schemas.
 5. Build a `CloudRestorePlan`.
-6. Apply through `src/cloud/storeAdapters.ts`.
+6. Apply through `src/contexts/backup/storeAdapters.ts`.
 7. Mark local sync metadata only after local apply succeeds.
 
 ## Head Metadata
@@ -349,9 +349,9 @@ Fresh devices initialize local stores with defaults. Partitions can mark default
 
 To add a new backup domain:
 
-1. Add or update a descriptor in `src/cloud/registry.ts`.
-2. Add a cloud adapter in `src/cloud/adapters/**`.
-3. Include it in `src/cloud/storeAdapters.ts`.
+1. Add or update a descriptor in `src/services/backup/registry.ts`.
+2. Add a cloud adapter in `src/services/backup/adapters/**`.
+3. Include it in `src/contexts/backup/storeAdapters.ts`.
 4. Keep partition keys stable and path-safe.
 5. Add round-trip tests and sync-planner/restore tests for the new partition.
 6. Update this document with included/excluded storage scope.

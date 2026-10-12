@@ -8,7 +8,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Language } from "@/data/enums";
+import type { Language } from "@/domain/enums";
 import { cn } from "@/lib/utils";
 import newsEnRaw from "@/presets/updatelog/en.md?raw";
 import newsZhRaw from "@/presets/updatelog/zh.md?raw";

@@ -1,8 +1,8 @@
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
 import type {
   ResourceKind,
   TierCompletenessThresholds,
-} from "@/lib/account-data/resourceTips";
+} from "@/domain/account/resourceTips";
 
 type KindTierMinScore = Record<ResourceKind, TierCompletenessThresholds>;
 

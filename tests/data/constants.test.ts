@@ -5,7 +5,7 @@ import {
   TIER_LIST_OTHER_ARTIFACT_SETS,
   TIER_LIST_SUPPORT_ARTIFACT_SETS,
   TRIAGE_SUPPORT_ARTIFACT_SETS,
-} from "@/data/constants";
+} from "@/config/gameConstants";
 import { artifacts } from "@/data/resources";
 
 describe("artifact support set constants", () => {

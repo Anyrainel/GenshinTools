@@ -40,7 +40,7 @@ function runHook(input: string, readinessBody = "return 0") {
       "-c",
       `npm() {
         echo "CHECK:$*"
-        if [ "$2" = "check:calculator-readiness" ]; then
+        if [ "$2" = "check" ]; then
           ${readinessBody}
         fi
         return 0
@@ -73,11 +73,11 @@ afterEach(() => {
   rmSync(repo, { recursive: true, force: true });
 });
 
-describe("pre-push calculator readiness", () => {
+describe("pre-push full validation", () => {
   it("checks a clean pushed HEAD", () => {
     const result = runHook(ref(head));
     expect(result.status, result.stderr).toBe(0);
-    expect(result.stdout).toContain("CHECK:run check:calculator-readiness");
+    expect(result.stdout).toContain("CHECK:run check");
   });
 
   it("rejects an older pushed commit despite a fully implemented checkout", () => {
@@ -108,7 +108,7 @@ describe("pre-push calculator readiness", () => {
     }
   );
 
-  it("propagates readiness failures", () => {
+  it("propagates validation failures", () => {
     const result = runHook(ref(head), "return 1");
     expect(result.status).toBe(1);
     expect(result.stdout).not.toContain("Checking Ley Line");
@@ -129,7 +129,7 @@ describe("pre-push calculator readiness", () => {
   it("allows deletion alongside a checked HEAD", () => {
     const result = runHook(ref(zero, "obsolete") + ref(head));
     expect(result.status, result.stderr).toBe(0);
-    expect(result.stdout).toContain("CHECK:run check:calculator-readiness");
+    expect(result.stdout).toContain("CHECK:run check");
   });
 
   it("allows deletion-only pushes without checking unrelated local changes", () => {

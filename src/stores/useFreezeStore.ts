@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Slot } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import type { AccountData, ArtifactData } from "@/data/types";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
-import type { AccountProfileId } from "@/lib/account-data/types";
-import { cloneData } from "@/lib/utils";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
+import type { AccountProfileId } from "@/domain/account/types";
+import type { Slot } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { AccountData, ArtifactData } from "@/domain/models";
+import { cloneData } from "@/lib/cloneData.ts";
 import { migrateFreezeStore } from "./migration/freeze";
 import { PersistedFreezeStoreSchema } from "./schemas";
 import { getActiveAccount, useAccountStore } from "./useAccountStore";

@@ -538,7 +538,7 @@
     still scales exactly.
     To model this properly, the guard would have to accept the optimizer's
     existing estimateScalingBonus path in
-    src/lib/team-comp/optimizer/constraintChecker.ts, which already handles
+    src/domain/combat/optimizer/constraintChecker.ts, which already handles
     capped scaling cr buffs by using the cap as the estimate - precisely what
     the allowlisted nahida P2 (EM -> cr, self) relies on. Re-decide the
     allowlist policy before converting this back to a ScalingBuff.

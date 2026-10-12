@@ -8,7 +8,7 @@ import type {
   ElementResource,
   WeaponResource,
   WeaponTypeResource,
-} from './types';
+} from '../domain/models';
 
 export const characters: CharacterResource[] = [
   {"id": "vodyanitsa", "rarity": 5, "imagePath": "/character/vodyanitsa.webp"},

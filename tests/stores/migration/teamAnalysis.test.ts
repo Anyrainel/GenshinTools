@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { teamFromCloud, teamToCloud } from "@/cloud/adapters/teamAdapter";
+import {
+  teamFromCloud,
+  teamToCloud,
+} from "@/services/backup/adapters/teamAdapter";
 import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 

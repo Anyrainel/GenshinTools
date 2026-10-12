@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/responsive-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { TriageStatistics } from "@/lib/account-data/triage/types";
+import type { TriageStatistics } from "@/domain/account/triage/types";
 import { cn } from "@/lib/utils";
 import { SENTIMENT_BADGE, TRIAGE_TIER_COLORS } from "../shared/colors";
 import { TriageKeepChart } from "./TriageKeepChart";

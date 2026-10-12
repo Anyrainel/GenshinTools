@@ -14,22 +14,24 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { betaWeaponIds } from "@/data/gameResources";
+import type { WeaponResource } from "@/domain/models";
+import { betaWeaponIds } from "@/domain/reference/catalog";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { WeaponResource } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+} from "@/domain/reference/stats";
 import { useIsOwned, useRefinement } from "@/hooks/useOwnership";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { getRarityColor } from "../shared/colors";
 
 export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   const { t } = useLanguage();
-  const weaponStats = weaponStatsResource.use();
+  const weaponStats = useResource(weaponStatsResource);
   const meta = useMemo(
     () => getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]),
     [weapon, weaponStats]

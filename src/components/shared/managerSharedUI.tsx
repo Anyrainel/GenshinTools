@@ -1,5 +1,5 @@
+import { SCANNER_DOWNLOAD_PAGE } from "@/config/scannerDownloads";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { SCANNER_DOWNLOAD_PAGE } from "@/data/scannerDownloads";
 import type { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import { cn } from "@/lib/utils";
 

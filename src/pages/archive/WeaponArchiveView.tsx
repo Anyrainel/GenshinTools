@@ -5,20 +5,26 @@ import { WeaponCard } from "@/components/archive/WeaponCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { MainStat, Rarity, WeaponType } from "@/data/enums";
-import { weaponTypes } from "@/data/enums";
-import { sortedWeapons, weaponResourcesByName } from "@/data/gameResources";
+import type { MainStat, Rarity, WeaponType } from "@/domain/enums";
+import { weaponTypes } from "@/domain/enums";
+import type { WeaponResource } from "@/domain/models";
+import {
+  sortedWeapons,
+  weaponResourcesByName,
+} from "@/domain/reference/catalog";
 import {
   getWeaponDisplayMeta,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { WeaponResource } from "@/data/types";
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
 import {
   filterArchiveItems,
   isArchiveSearchActive,
-} from "@/lib/archiveFilters";
-import { fuzzyMatch } from "@/lib/search";
-import { cn, getAssetUrl, getSortedWeaponSecondaryStats } from "@/lib/utils";
+} from "@/lib/search/archiveFilters";
+import { fuzzyMatch } from "@/lib/search/predicates";
+import { cn } from "@/lib/utils";
+import { getSortedWeaponSecondaryStats } from "@/services/catalog/weaponFilters.ts";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 
 // ─── Filter Chips ─────────────────────────────────────────────────────────────
@@ -173,7 +179,7 @@ function WeaponTypeSection({
 
 export function WeaponArchiveView() {
   const { t } = useLanguage();
-  const weaponStats = weaponStatsResource.use();
+  const weaponStats = useResource(weaponStatsResource);
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),
     [weaponStats]

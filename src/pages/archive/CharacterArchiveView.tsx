@@ -3,32 +3,34 @@ import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { CharacterDetailPanel } from "@/components/archive/CharacterDetailPanel";
-import { BuildsDefaultPresetPrompt } from "@/components/artifact-builds/BuildsDefaultPresetPrompt";
+import { BuildsDefaultPresetPrompt } from "@/components/builds/BuildsDefaultPresetPrompt";
 import { SidebarDetailLayout } from "@/components/layout/SidebarDetailLayout";
 import { BetaBadge } from "@/components/shared/BetaBadge";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Label } from "@/components/ui/label";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Element, Rarity, WeaponType } from "@/data/enums";
-import { elements, weaponTypes } from "@/data/enums";
+import type { Element, Rarity, WeaponType } from "@/domain/enums";
+import { elements, weaponTypes } from "@/domain/enums";
+import type { CharacterResource } from "@/domain/models";
 import {
   allCharacters,
   betaCharacterIds,
   elementResourcesByName,
   weaponResourcesByName,
-} from "@/data/gameResources";
+} from "@/domain/reference/catalog";
 import {
   type CharacterStatsMap,
   characterStatsResource,
   getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import type { CharacterResource } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+} from "@/domain/reference/stats";
 import { useIsOwned } from "@/hooks/useOwnership";
-import { filterArchiveItems } from "@/lib/archiveFilters";
-import { characterMatchesSearch } from "@/lib/search";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { filterArchiveItems } from "@/lib/search/archiveFilters";
+import { characterMatchesSearch } from "@/lib/search/predicates";
+import { cn } from "@/lib/utils";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 
 interface CharacterListItemProps {
@@ -265,7 +267,7 @@ function CharacterFilterChips({
 
 export function CharacterArchiveView() {
   const { t } = useLanguage();
-  const characterStats = characterStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
   const sortedCharacters = useMemo(() => {
     const list = [...allCharacters];
     if (!characterStats) return list;

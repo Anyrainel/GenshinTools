@@ -10,7 +10,7 @@ import type {
   TriageDecision,
   TriageRuleId,
   TriageSpecialRule,
-} from "@/lib/account-data/triage/types";
+} from "@/domain/account/triage/types";
 import { cn } from "@/lib/utils";
 import { getRarityColor, getTriageTierColor } from "../shared/colors";
 

@@ -1,8 +1,8 @@
-import type { AccountData, TierAssignment } from "@/data/types";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
-import type { TeamCompDelta } from "@/lib/team-comp/teamDeltas";
-import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
-import { resolveReleasedWeaponId } from "@/lib/weaponIds";
+import { resolveReleasedWeaponId } from "@/domain/build/weaponIds";
+import type { BuffActivationMap } from "@/domain/combat/damage/types";
+import type { AccountData, TierAssignment } from "@/domain/models";
+import type { TeamCompDelta } from "@/domain/team/teamDeltas";
+import type { TeamComp, TeamSetupConfig } from "@/domain/team/types";
 import { migrateGenericTierStore } from "./tier";
 
 // Before 7.1, these released four-star weapons used temporary beta IDs in

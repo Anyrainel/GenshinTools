@@ -4,7 +4,7 @@ import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getAssetUrl } from "@/lib/utils";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
 
 export default function NotFoundPage() {
   const { t } = useLanguage();

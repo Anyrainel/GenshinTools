@@ -10,7 +10,7 @@
  */
 
 import { create } from "zustand";
-import type { BuffActivationMap } from "@/lib/dmgcalc/types";
+import type { BuffActivationMap } from "@/domain/combat/damage/types";
 
 interface BuffOverrideState {
   /**

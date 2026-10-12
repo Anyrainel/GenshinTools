@@ -1,7 +1,7 @@
 # Damage Calculator — Design Document
 
-> **Module**: `src/lib/team-comp/`  
-> **Depends on**: `src/data/types.ts`, `src/data/constants.ts`
+> **Module**: `src/domain/combat/damage/`
+> **Depends on**: `src/domain/models.ts`, `src/config/gameConstants.ts`
 > **Formula research**: [DmgResearch.md](./DmgResearch.md)
 
 ---
@@ -25,7 +25,7 @@ All types live in `types.ts`. The design separates **initialization parameters**
 
 ### 1.1 StatKey & StatEntry
 
-See `StatKey` and `StatEntry` in [`types.ts`](../src/lib/team-comp/types.ts). Beyond `BaseStat | MainStat | SubStat`, the engine adds damage modifier keys (`dmg%`, `baseDmg`, `baseDmg%`, `elevated%`, `reactionDmg%`, `reactionCr`, `reactionCd`) and enemy modifier keys (`dmgTaken%`, `defReduction%`, `defIgnore%`, `resReduction%`). All damage modifier keys are scoped by `DamageTagFilter` on the buff target.
+See `StatKey` and `StatEntry` in [`types.ts`](../src/domain/team/types.ts). Beyond `BaseStat | MainStat | SubStat`, the engine adds damage modifier keys (`dmg%`, `baseDmg`, `baseDmg%`, `elevated%`, `reactionDmg%`, `reactionCr`, `reactionCd`) and enemy modifier keys (`dmgTaken%`, `defReduction%`, `defIgnore%`, `resReduction%`). All damage modifier keys are scoped by `DamageTagFilter` on the buff target.
 
 **Aggregation rules** (handled by `StatSheet` internally):
 - **Scaled stats** (`atk`, `hp`, `def`): `base × (1 + Σ(%)) + Σ(flat)`
@@ -76,11 +76,11 @@ Each stat key feeds into exactly one zone of these formulas. The table below map
 
 ### 1.2 DamageTag & DamageTagFilter
 
-Every `DamageFormula` carries a `DamageTag` — the full context of a damage instance (`element`, `ability`, `reaction`). Buffs declare a `DamageTagFilter` to scope which formulas see their stat contributions — each dimension is optional (omitted = universal). See [`types.ts`](../src/lib/team-comp/types.ts) for definitions.
+Every `DamageFormula` carries a `DamageTag` — the full context of a damage instance (`element`, `ability`, `reaction`). Buffs declare a `DamageTagFilter` to scope which formulas see their stat contributions — each dimension is optional (omitted = universal). See [`types.ts`](../src/domain/team/types.ts) for definitions.
 
 ### 1.3 BuffSource & BuffTarget
 
-See [`types.ts`](../src/lib/team-comp/types.ts) for full definitions. Key design points:
+See [`types.ts`](../src/domain/team/types.ts) for full definitions. Key design points:
 
 - **BuffSource** is display-only provenance (type, id, origin, triggers, `noStackId`). It does not affect calculation.
 - **BuffTarget** combines a **receiver** with an optional **DamageTagFilter**:
@@ -96,18 +96,18 @@ See [`types.ts`](../src/lib/team-comp/types.ts) for full definitions. Key design
 
 ### 1.4 Reaction Types
 
-See `AbilityType`, `ReactionType`, and `LunarReactionType` in [`types.ts`](../src/lib/team-comp/types.ts). `AbilityType` includes `"special"` for character mechanics that don't fit standard categories. For example when a skill effect says "this DMG is not considered X Skill DMG" but didn't specify what it is considered as, we will use `"special"` as the `ability` type.
+See `AbilityType`, `ReactionType`, and `LunarReactionType` in [`types.ts`](../src/domain/team/types.ts). `AbilityType` includes `"special"` for character mechanics that don't fit standard categories. For example when a skill effect says "this DMG is not considered X Skill DMG" but didn't specify what it is considered as, we will use `"special"` as the `ability` type.
 
 ### 1.5 CalcContext & DamageResult
 
-See [`types.ts`](../src/lib/team-comp/types.ts) for definitions.
+See [`types.ts`](../src/domain/team/types.ts) for definitions.
 
 - **CalcContext**: Scenario-level parameters (`enemyLevel`, `enemyRes`, `assumeCrit`). Constant for the entire team, passed at `calc()` time.
 - **DamageResult**: Aggregated result for a formulaId — `parts: { damage: number; hits: number }[]` and `Σ(damage × hits)`. Each `damage` is the raw `number` returned by a single `DamageFormula.calc()` invocation. Intermediate component breakdowns are only available via the cold-path `display()` method.
 
 ### 1.6 OptionMap (Schema-Driven Options)
 
-User-selected combat options for providers that support multiple modes (e.g., Durin DPS/Support, The Widsith random buff). See `OptionDef`, `OptionMap`, and `InferOption` in [`types.ts`](../src/lib/team-comp/types.ts).
+User-selected combat options for providers that support multiple modes (e.g., Durin DPS/Support, The Widsith random buff). See `OptionDef`, `OptionMap`, and `InferOption` in [`types.ts`](../src/domain/team/types.ts).
 
 **Option schema** is declared per-provider alongside the class and registered via the decorator. Base classes expose `protected readonly option: string` (raw value from `OptionMap`); subclasses narrow it via `resolveOption()`:
 
@@ -156,7 +156,7 @@ The UI renders **all** choices but disables those where `when` returns false. If
 
 ### 1.7 StatSheet
 
-Immutable stat aggregation with tagged storage. See `StatSheet` in [`calc/statSheet.ts`](../src/lib/team-comp/calc/statSheet.ts).
+Immutable stat aggregation with tagged storage. See `StatSheet` in [`calc/statSheet.ts`](../src/domain/combat/damage/core/statSheet.ts).
 
 **Key behaviors**:
 - `get("atk")` → `baseAtk × (1 + atk%) + flatAtk`. Always universal.
@@ -171,7 +171,7 @@ Immutable stat aggregation with tagged storage. See `StatSheet` in [`calc/statSh
 
 ### 2.1 StatBuff
 
-The core buff abstraction. Each buff has **static** entries (known at build time) and optional **dynamic** entries (computed from resolved stats). Defined in [`calc/statBuff.ts`](../src/lib/team-comp/calc/statBuff.ts) — constructor takes `(source, target, staticBuffs)`, with an overridable `dynamicBuffs(selfStats, teamStats)` hook.
+The core buff abstraction. Each buff has **static** entries (known at build time) and optional **dynamic** entries (computed from resolved stats). Defined in [`calc/statBuff.ts`](../src/domain/combat/damage/core/statBuff.ts) — constructor takes `(source, target, staticBuffs)`, with an overridable `dynamicBuffs(selfStats, teamStats)` hook.
 
 **Static vs Dynamic**:
 - **Static**: Value is deterministic from build config alone. Examples: VV 2pc (+15% Anemo DMG), Staff of Homa (+20% HP at R1), Pyro Resonance (+25% ATK).
@@ -221,7 +221,7 @@ new (class extends StatBuff {
 
 ### 2.3 Helpers (`helpers.ts`)
 
-Utility functions shared across extension implementations. See [`helpers.ts`](../src/lib/team-comp/helpers.ts) for signatures.
+Utility functions shared across extension implementations. See [`helpers.ts`](../src/domain/team/helpers.ts) for signatures.
 
 - `r(refinement, values)` — Pick a refinement-scaled value (R1–R5).
 - `wbs(self, triggers?, noStackId?)` — Weapon buff source.
@@ -276,7 +276,7 @@ All formula classes live in `calc/damageFormula.ts`. Every formula takes a `Dama
 
 ### 4.1 DamageFormula (Abstract Base)
 
-See `DamageFormula` in [`calc/damageFormula.ts`](../src/lib/team-comp/calc/damageFormula.ts). Constructor: `(talentMultiplier, tag: DamageTag, scalingKey = "atk", extraTerm?)`. Abstract `calc(stats, charLevel, ctx)` returns `number` (the final damage). Intermediate breakdowns are provided by the separate `display()` method which returns a `DisplayPart`. Shared helpers: `getBaseDmg()`, `computeDmgBonusMult()`, `computeCritMult()`, `computeDefMult()`, `computeResMult()`.
+See `DamageFormula` in [`calc/damageFormula.ts`](../src/domain/combat/damage/core/damageFormula.ts). Constructor: `(talentMultiplier, tag: DamageTag, scalingKey = "atk", extraTerm?)`. Abstract `calc(stats, charLevel, ctx)` returns `number` (the final damage). Intermediate breakdowns are provided by the separate `display()` method which returns a `DisplayPart`. Shared helpers: `getBaseDmg()`, `computeDmgBonusMult()`, `computeCritMult()`, `computeDefMult()`, `computeResMult()`.
 
 **Dual-stat scaling**: Some talents scale off two stats (e.g., Nahida E: ATK + EM). Pass `extraTerm: { key, multiplier }` where `key` is `"atk" | "hp" | "def" | "em"`. The extra term is additive with the primary in base damage: `ScalingDmg = Stat × TalentMult + ExtraStat × ExtraMult`.
 
@@ -296,7 +296,7 @@ new DirectFormula(1.859, tag, "atk", { key: "em", multiplier: 3.717 })
 | `LunarFormula` | lunarCharged, lunarCrystallize | `LevelMult × Coeff × (1+baseDmg%) × (1+EMBonus+reactionDmg%) × (1+elevated%) × RESMult × CritMult` |
 | `LunarDirectFormula` | lunarCharged, lunarCrystallize | `(Stat × TalentMult × DirectCoeff × (1+baseDmg%) × (1+EMBonus+reactionDmg%) + baseDmg) × (1+elevated%) × CritMult × RESMult` |
 
-All formula implementations live in [`calc/damageFormula.ts`](../src/lib/team-comp/calc/damageFormula.ts). Key design notes per subclass:
+All formula implementations live in [`calc/damageFormula.ts`](../src/domain/combat/damage/core/damageFormula.ts). Key design notes per subclass:
 
 - **DirectFormula**: Straightforward product of all five multiplier zones.
 - **AmplifyFormula** (`extends DirectFormula`): Calls `super.calc()` then multiplies the result by `ReactionBase × (1 + EMBonus + reactionDmg%)`. EMBonus uses the standard EM formula `2.78×EM / (1400+EM)`.
@@ -309,11 +309,11 @@ All formula implementations live in [`calc/damageFormula.ts`](../src/lib/team-co
 
 ## 5. Extension System
 
-Each character, weapon, and artifact set is an extension class registered via decorators. All extensions live in `src/lib/team-comp/`.
+Each character, weapon, and artifact set is an extension class registered via decorators. All extensions live in `src/domain/team/`.
 
 ### 5.1 Base Classes & Registration
 
-Base classes live in [`calc/implModel.ts`](../src/lib/team-comp/calc/implModel.ts). Registration decorators live in [`calc/registry.ts`](../src/lib/team-comp/calc/registry.ts).
+Base classes live in [`calc/implModel.ts`](../src/domain/combat/damage/core/implModel.ts). Registration decorators live in [`calc/registry.ts`](../src/domain/combat/damage/core/registry.ts).
 
 | Base Class | Constructor Args | Provides |
 |---|---|---|
@@ -328,7 +328,7 @@ Registration: `@RegisterCharacter("hu_tao")`, `@RegisterWeapon("staff_of_homa")`
 
 ### 5.2 TeamMeta
 
-Constructed once per team configuration. Provides metadata lookups (`characters`, `elements`, `regions`, `rarities`, `weaponTypes`, `factions`, `energies`, `artifactSets`) and query helpers for conditional buff evaluation. See `TeamMeta` in [`calc/teamMeta.ts`](../src/lib/team-comp/calc/teamMeta.ts).
+Constructed once per team configuration. Provides metadata lookups (`characters`, `elements`, `regions`, `rarities`, `weaponTypes`, `factions`, `energies`, `artifactSets`) and query helpers for conditional buff evaluation. See `TeamMeta` in [`calc/teamMeta.ts`](../src/domain/combat/damage/core/teamMeta.ts).
 
 **Common patterns**:
 - **Element count**: `teamMeta.countByElement("Geo")` for "per Geo character" buffs.
@@ -486,7 +486,7 @@ Full reaction requirement table is codified in `constants.ts` → `REACTION_ELEM
 
 ### 6.1 CharBuild (`calc/charBuild.ts`)
 
-Composes a character's full build (character + weapon + artifacts) and owns the stat resolution pipeline. See `CharBuild` in [`calc/charBuild.ts`](../src/lib/team-comp/calc/charBuild.ts).
+Composes a character's full build (character + weapon + artifacts) and owns the stat resolution pipeline. See `CharBuild` in [`calc/charBuild.ts`](../src/domain/combat/damage/core/charBuild.ts).
 
 **Stat resolution phases**:
 
@@ -513,11 +513,11 @@ Phase 4 — Post-Stats (called per artifact roll):
 
 ### 6.2 TeamSlotConfig
 
-See `TeamSlotConfig` in [`types.ts`](../src/lib/team-comp/types.ts). Fields: `charId`, `charLevel` (90 or 100), `constellation` (0–6), `weaponId`, `refinement` (1–5), `artifactSetId` (null if 2+2), `artifactHalfSetIds` (1 entry for 4pc, 2 for 2+2).
+See `TeamSlotConfig` in [`types.ts`](../src/domain/team/types.ts). Fields: `charId`, `charLevel` (90 or 100), `constellation` (0–6), `weaponId`, `refinement` (1–5), `artifactSetId` (null if 2+2), `artifactHalfSetIds` (1 entry for 4pc, 2 for 2+2).
 
 ### 6.3 TeamBuild (`calc/teamBuild.ts`)
 
-Orchestrates the full team pipeline. Constructed once per team configuration. See `TeamBuild` in [`calc/teamBuild.ts`](../src/lib/team-comp/calc/teamBuild.ts). Key method: `getTeamStats(artifactStats, calcTargetId)` is the hot path during artifact optimization.
+Orchestrates the full team pipeline. Constructed once per team configuration. See `TeamBuild` in [`calc/teamBuild.ts`](../src/domain/combat/damage/core/teamBuild.ts). Key method: `getTeamStats(artifactStats, calcTargetId)` is the hot path during artifact optimization.
 
 ---
 

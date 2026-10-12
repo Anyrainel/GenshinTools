@@ -1,12 +1,13 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import { allSlots, type MainStat, type Slot } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
+import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import { allSlots, type MainStat, type Slot } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 import {
   runGenerator as runRuntimeGenerator,
   type GeneratorOptions,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import { describe, expect, it } from "vitest";
 import { fingerprintGeneratedArtifacts } from "../src/artifactGenerationSensitivityProbe";
 import { ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT } from "../src/artifactGenerationTechnicalProbe";
@@ -315,7 +316,7 @@ describe("Keqing-Ineffa artifact-generation sensitivity probe", () => {
       KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
         }),
       ),
     );

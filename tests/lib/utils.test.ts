@@ -4,7 +4,8 @@ import {
   getRarityColor,
   getTierColor,
 } from "@/components/shared/colors";
-import { cloneData, getAssetUrl } from "@/lib/utils";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cloneData } from "@/lib/cloneData.ts";
 
 describe("getAssetUrl", () => {
   it("prepends base URL to absolute paths", () => {

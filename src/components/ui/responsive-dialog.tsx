@@ -15,7 +15,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { cn } from "@/lib/utils";
 
 interface ResponsiveDialogProps {

@@ -1,11 +1,11 @@
-import type { StatKey } from "@/data/enums";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { CalcContext, TeamSlotConfig } from "@/lib/dmgcalc/types";
+import type { StatKey } from "@/domain/enums";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { CalcContext, TeamSlotConfig } from "@/domain/combat/damage/types";
 import {
   runGenerator,
   type GeneratorOptions,
   type GeneratorResult,
-} from "@/lib/team-comp/generator/generator";
+} from "@/domain/combat/generator/generator";
 import {
   ARTIFACT_GENERATION_TECHNICAL_PROBE_CONTEXT,
   runArtifactGenerationTechnicalProbe,

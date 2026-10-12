@@ -1,4 +1,4 @@
-import { allCharacters } from "@/data/gameResources";
+import { allCharacters } from "@/domain/reference/catalog";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 

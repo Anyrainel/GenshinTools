@@ -1,3 +1,7 @@
+import { installNodeReferenceFetch } from "../../scripts/lib/nodeReferenceFetch.mjs";
+
+installNodeReferenceFetch();
+import "@/providers/reference/statLoaders";
 /**
  * Shared runner utilities for the optimizer benchmark.
  *
@@ -10,14 +14,20 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Side-effect barrel: registers all character/weapon/artifact implementations.
-import "@/lib/dmgcalc";
+import "@/domain/combat/damage/index";
 
-import type { Element, Slot } from "@/data/enums";
-import { artifactsById } from "@/data/gameResources";
-import {
-  characterStatsResource,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
+import { matchBuild } from "@/domain/build/artifact/scoring/artifactScore";
+import { singleFormulaCombo } from "@/domain/combat/damage/core/combo";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type {
+  CalcContext,
+  ComboFormula,
+  ComboLine,
+  I18nLabel,
+  TeamSlotConfig,
+} from "@/domain/combat/damage/types";
+import type { Element, Slot } from "@/domain/enums";
 import type {
   AccountData,
   ArtifactData,
@@ -25,28 +35,22 @@ import type {
   Build,
   CharacterData,
   GlobalStatWeights,
-} from "@/data/types";
+} from "@/domain/models";
+import { artifactsById } from "@/domain/reference/catalog";
 import {
-  convertGOODToAccountData,
-  type GOODData,
-} from "@/lib/account-data/import/goodConversion";
-import { matchBuild } from "@/lib/artifact/scoring/artifactScore";
-import { singleFormulaCombo } from "@/lib/dmgcalc/core/combo";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type {
-  CalcContext,
-  ComboFormula,
-  ComboLine,
-  I18nLabel,
-  TeamSlotConfig,
-} from "@/lib/dmgcalc/types";
-import { runTeamOptimization as runV2 } from "@/lib/team-comp/optimizer/teamOptimization";
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
 import type {
   CharOptConfig,
   TeamOptimizationResult,
   TeamOptimizerOptions,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
+import {
+  convertGOODToAccountData,
+  type GOODData,
+} from "@/providers/scanner/goodConversion";
+import { runTeamOptimization as runV2 } from "@/services/combat/optimizer/teamOptimization";
 import { runTeamOptimization as runAStar } from "./gen/astar";
 import { runTeamOptimization as runMona } from "./gen/mona";
 import { runTeamOptimization as runMonaV2 } from "./gen/monaV2";

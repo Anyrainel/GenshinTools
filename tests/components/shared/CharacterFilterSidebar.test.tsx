@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { CharacterFilterSidebar } from "@/components/shared/CharacterFilterSidebar";
-import { defaultCharacterFilters } from "@/lib/characterFilters";
+import { defaultCharacterFilters } from "@/services/catalog/characterFilters";
 import { render, screen } from "../../utils/render";
 
 describe("CharacterFilterSidebar", () => {

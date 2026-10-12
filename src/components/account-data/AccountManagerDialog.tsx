@@ -23,10 +23,10 @@ import {
   DEFAULT_ACCOUNT_PROFILE_ID,
   isDefaultAccountProfile,
   uidToAccountProfileId,
-} from "@/lib/account-data/accountProfile";
-import type { PendingImport } from "@/lib/account-data/import/importRouting";
-import type { AccountProfileId } from "@/lib/account-data/types";
+} from "@/domain/account/accountProfile";
+import type { AccountProfileId } from "@/domain/account/types";
 import { cn } from "@/lib/utils";
+import type { PendingImport } from "@/services/account/importRouting";
 import { useAccountStore } from "@/stores/useAccountStore";
 
 interface AccountManagerDialogProps {

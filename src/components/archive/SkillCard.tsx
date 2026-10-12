@@ -7,12 +7,13 @@ import {
   LightweightSelectTrigger,
   LightweightSelectValue,
 } from "@/components/ui/lightweight-select";
-import { charInfo } from "@/data/charInfo";
-import type { SkillLevel } from "@/data/enums";
-import { SKILL_LEVELS } from "@/data/enums";
-import { characterStatsResource } from "@/data/gameStatsLoader";
-import type { CharacterSkill } from "@/data/types";
-import { renderTemplate } from "@/lib/talentRenderer";
+import { charInfo } from "@/data/characterInfo";
+import type { SkillLevel } from "@/domain/enums";
+import { SKILL_LEVELS } from "@/domain/enums";
+import type { CharacterSkill } from "@/domain/models";
+import { characterStatsResource } from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
+import { renderTemplate } from "@/lib/game/talentRenderer";
 import { cn } from "@/lib/utils";
 
 const TALENT_SLOTS = ["A", "E", "S", "Q"] as const;
@@ -49,7 +50,7 @@ export function SkillCard({ skill, characterId }: SkillCardProps) {
   );
   const [expanded, setExpanded] = useState(true);
   const [levels, setLevels] = useState<[SkillLevel, SkillLevel]>(defaultLevels);
-  const stats = characterStatsResource.use();
+  const stats = useResource(characterStatsResource);
   const talentParams = useMemo(
     () => stats?.[characterId]?.talent?.[talentSlot] ?? null,
     [stats, characterId, talentSlot]

@@ -1,15 +1,7 @@
 #!/usr/bin/env sh
-# Project-level checks before pushing
-
-# Read push info from stdin (format: <local ref> <local sha> <remote ref> <remote sha>)
-# Determine the range of commits being pushed.
-has_ts=false
-has_py=false
-has_worker=false
 has_updates=false
 validated_head=""
 while read -r local_ref local_sha remote_ref remote_sha; do
-  # Skip delete pushes
   if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
     continue
   fi
@@ -17,38 +9,12 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   if [ -z "$validated_head" ]; then
     validated_head=$(git rev-parse --verify HEAD) || exit 1
   fi
-  # Checks run in this checkout, so only its exact commit can be validated.
   if [ "$local_sha" != "$validated_head" ]; then
-    echo "Push blocked: $local_ref is not the checked-out HEAD. Check out the commit being pushed and run the checks there."
+    echo "Push blocked: $local_ref is not the checked-out HEAD."
     exit 1
   fi
-  # If remote sha is all zeros, this is a new branch — compare against merge-base with origin/main
-  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
-    merge_base=$(git merge-base origin/main "$local_sha" 2>/dev/null || echo "")
-    if [ -z "$merge_base" ]; then
-      # Can't determine base — run all checks to be safe
-      has_ts=true
-      has_py=true
-      continue
-    fi
-    remote_sha="$merge_base"
-  fi
-  changed_files=$(git diff --name-only "$remote_sha".."$local_sha" 2>/dev/null || echo "")
-  if echo "$changed_files" | grep -qE '\.(ts|tsx)$'; then
-    has_ts=true
-  fi
-  if echo "$changed_files" | grep -qE 'scripts/.*\.py$'; then
-    has_py=true
-  fi
-  if echo "$changed_files" | grep -qE '^(worker/|wrangler\.jsonc|vite\.config\.ts|vitest\.worker\.config\.ts|tsconfig\.worker(-tests)?\.json|worker-configuration\.d\.ts|scripts/dev/(check-worker-|run-worker-dry-run)|package(-lock)?\.json$)'; then
-    has_worker=true
-  fi
 done
-
-if [ "$has_updates" = false ]; then
-  exit 0
-fi
-
+if [ "$has_updates" = false ]; then exit 0; fi
 require_clean_head() {
   current_head=$(git rev-parse --verify HEAD) || return 1
   checkout_status=$(git status --porcelain --untracked-files=normal) || return 1
@@ -57,46 +23,9 @@ require_clean_head() {
     return 1
   fi
 }
-
 require_clean_head || exit 1
-
-echo "Checking released and beta calculator readiness..."
-npm run check:calculator-readiness || exit 1
-
-echo "Checking Ley Line boss icon coverage..."
-node scripts/dev/check-leyline-boss-icons.js || exit 1
-
-echo "Checking artifact set role coverage..."
-npm run check:artifact-set-roles || exit 1
-
-# TypeScript type check + tests (always run full type-check when any TS file changed)
-if [ "$has_ts" = true ]; then
-  echo "Running TypeScript type check..."
-  npm run type-check || exit 1
-
-  echo "Running tests..."
-  npm run test || exit 1
-
-  echo "Running regression tests..."
-  npm run regtest -- run --quiet || exit 1
-fi
-
-if [ "$has_worker" = true ]; then
-  echo "Running Worker deployment checks..."
-  npm run check:worker || exit 1
-fi
-
-# HoYoLAB / 米游社 API version check (non-blocking on network errors)
-echo "Checking HoYoLAB/米游社 API versions..."
-node scripts/dev/check-hoyolab-version.js || exit 1
-
-# Python checks
-if [ "$has_py" = true ]; then
-  echo "Running ty check..."
-  cd scripts || exit 1
-  uv run ty check . || exit 1
-  cd .. || exit 1
-fi
-
-# Refuse if checks or concurrent edits changed the checkout being validated.
+git diff --check || exit 1
+echo "Validating the complete application and Worker before push..."
+npm run check || exit 1
+npm run check:hoyolab || exit 1
 require_clean_head || exit 1

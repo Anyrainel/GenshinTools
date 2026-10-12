@@ -18,12 +18,12 @@ import {
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { tiers } from "@/data/enums";
+import { tiers } from "@/domain/enums";
 import type {
   TierAssignment,
   TierCustomization,
   TierListData,
-} from "@/data/types";
+} from "@/domain/models";
 import { useTierStore } from "@/stores/useTierStore";
 
 describe("Integration: Tier List Page Flow", () => {

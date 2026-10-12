@@ -1,10 +1,10 @@
-import type { AccountData } from "@/data/types";
 import {
   DEFAULT_ACCOUNT_PROFILE_ID,
   legacyAccountProfileIdToNumber,
   legacyAccountProfileIdToNumberOrDefault,
-} from "@/lib/account-data/accountProfile";
-import type { AccountProfileId, AccountState } from "@/lib/account-data/types";
+} from "@/domain/account/accountProfile";
+import type { AccountProfileId, AccountState } from "@/domain/account/types";
+import type { AccountData } from "@/domain/models";
 import { migrateReleasedAccountWeapons } from "./releasedWeaponIds";
 
 type PersistedAccountStore = {

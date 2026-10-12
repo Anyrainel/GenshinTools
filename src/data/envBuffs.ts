@@ -1,5 +1,5 @@
-import type { EnvBuffCategory } from "./enums";
-import type { EnvBuff } from "./types";
+import type { EnvBuffCategory } from "../domain/enums";
+import type { EnvBuff } from "../domain/models";
 
 /** Target mode per category: food/enemy are team-wide, status is per-character. */
 export const ENV_BUFF_TARGET_MODE: Record<EnvBuffCategory, "team" | "perChar"> =

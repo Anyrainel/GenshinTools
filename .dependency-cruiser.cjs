@@ -1,323 +1,185 @@
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [
-    // ── Baseline hygiene ────────────────────────────────────────────────
     {
-      name: "no-circular",
+      name: "leaf-code-is-framework-free",
       severity: "error",
-      comment:
-        "Circular dependencies between modules are forbidden, except for " +
-        "cycles entirely within src/lib/dmgcalc/ (allowed during the " +
-        "ongoing domain internal refactor). Cycles that cross the dmgcalc " +
-        "boundary are still flagged on their outbound edge.",
-      from: {},
-      to: { circular: true, pathNot: "^src/lib/dmgcalc/" },
-    },
-    {
-      name: "no-orphans",
-      severity: "error",
-      comment:
-        "Files that nothing imports. Entry points, configs, tests, and ETL " +
-        "scripts are exempt via pathNot below.",
-      from: {
-        orphan: true,
-        pathNot: [
-          "\\.d\\.ts$",
-          "(^|/)\\.[^/]+\\.(js|cjs|mjs|ts|json)$", // dotfiles
-          "(^|/)(vite|vitest|playwright|tailwind|postcss|biome)\\.config\\.(js|ts|mjs|cjs)$",
-          "(^|/)src/main\\.tsx$",
-          "(^|/)src/vite-env\\.d\\.ts$",
-          "(^|/)src/App\\.tsx$",
-          "(^|/)tests/setup\\.ts$",
-          "(^|/)tests/.*\\.test\\.(ts|tsx)$",
-          "(^|/)tests/regression/.*\\.ts$",
-          "(^|/)tests/benchmark/.*\\.ts$",
-          "(^|/)tests/fixtures/",
-          "(^|/)functions/",
-          "(^|/)scripts/",
-        ],
-      },
-      to: {},
-    },
-
-    // ── src must not leak into test-only deps ───────────────────────────
-    {
-      name: "src-no-test-deps",
-      severity: "error",
-      comment:
-        "src/ must not import vitest, @testing-library, or any test-only package. " +
-        "Those belong to tests/ only.",
-      from: { path: "^src/" },
+      from: { path: "^src/(lib|providers)/" },
       to: {
-        path: [
-          "^vitest(/|$)",
-          "^@vitest/",
-          "^@testing-library/",
-          "^@playwright/",
-          "^node:test(/|$)",
-        ],
+        path: "(^|node_modules/)(react|react-dom|react-router-dom|zustand)(/|$)",
       },
     },
     {
-      name: "src-no-tests-dir",
+      name: "composition-is-at-the-top",
       severity: "error",
-      comment:
-        "src/ must not import from tests/ — production code is tests-agnostic.",
-      from: { path: "^src/" },
-      to: { path: "^tests/" },
-    },
-
-    // ── Layering within src/ ────────────────────────────────────────────
-    // Layer order (low → high):
-    //   data / presets  <  lib  <  stores / contexts  <  hooks  <  components  <  pages
-    //
-    // A lower layer must never import from a higher layer. Lateral imports
-    // inside the same layer are allowed.
-    {
-      name: "data-is-foundation",
-      severity: "error",
-      comment:
-        "src/data/ is the foundation layer — types, constants, static JSON. " +
-        "It must not depend on any other src/ layer.",
-      from: { path: "^src/data/" },
-      to: {
-        path: [
-          "^src/lib/",
-          "^src/stores/",
-          "^src/contexts/",
-          "^src/hooks/",
-          "^src/components/",
-          "^src/pages/",
-          "^src/presets/",
-          "^src/config/",
-        ],
-      },
+      from: { path: "^src/", pathNot: "^src/(app/|pages/|main\\.tsx$)" },
+      to: { path: "^src/(app|pages)/" },
     },
     {
-      name: "presets-is-foundation",
+      name: "shared-ui-has-no-feature-or-layout-dependencies",
       severity: "error",
-      comment:
-        "src/presets/ are bundled JSONs / tables — no UI, lib, stores, or hooks.",
-      from: { path: "^src/presets/" },
-      to: {
-        path: [
-          "^src/lib/",
-          "^src/stores/",
-          "^src/contexts/",
-          "^src/hooks/",
-          "^src/components/",
-          "^src/pages/",
-          "^src/config/",
-        ],
-      },
-    },
-    {
-      name: "lib-is-pure",
-      severity: "error",
-      comment:
-        "src/lib/ is pure logic — no React UI, no Zustand stores, no hooks, no contexts.",
-      from: { path: "^src/lib/" },
-      to: {
-        path: [
-          "^src/components/",
-          "^src/pages/",
-          "^src/stores/",
-          "^src/hooks/",
-          "^src/contexts/",
-        ],
-      },
-    },
-    {
-      name: "lib-shared-no-domain",
-      severity: "error",
-      comment:
-        "Shared lib/ (core algorithms, generic utilities) must not depend on " +
-        "domain-specific lib/ folders. Domain folders are: account-data/, " +
-        "artifact-builds/, team-comp/. Logic flows domain → shared, never " +
-        "the reverse.",
-      from: {
-        path: "^src/lib/",
-        pathNot: "^src/lib/(account-data|artifact-builds|team-comp)/",
-      },
-      to: { path: "^src/lib/(account-data|artifact-builds|team-comp)/" },
-    },
-    {
-      name: "stores-no-ui",
-      severity: "error",
-      comment:
-        "src/stores/ are Zustand state only — they must not import UI " +
-        "(components, pages) nor hooks (which depend on stores).",
-      from: { path: "^src/stores/" },
-      to: {
-        path: ["^src/components/", "^src/pages/", "^src/hooks/"],
-      },
-    },
-    {
-      name: "contexts-no-pages",
-      severity: "error",
-      comment: "src/contexts/ provide state — they must not import pages.",
-      from: { path: "^src/contexts/" },
-      to: { path: "^src/pages/" },
-    },
-    {
-      name: "hooks-no-pages",
-      severity: "error",
-      comment: "src/hooks/ must not import pages.",
-      from: { path: "^src/hooks/" },
-      to: { path: "^src/pages/" },
-    },
-    {
-      name: "components-no-pages",
-      severity: "error",
-      comment: "Pages compose components — not the other way around.",
-      from: { path: "^src/components/" },
-      to: { path: "^src/pages/" },
-    },
-
-    // ── Layering inside src/components/ ─────────────────────────────────
-    // Order (low → high):
-    //   ui/ (shadcn primitives)  <  shared/  <  layout/  <  {domain}/
-    //
-    // Domains are isolated from each other — cross-domain sharing goes
-    // through shared/.
-    {
-      name: "ui-is-shadcn-primitive",
-      severity: "error",
-      comment:
-        "src/components/ui/ are primitive components (shadcn and small " +
-        "extensions). They must be self-contained: no other components, no " +
-        "stores, no contexts, no domain logic. Allowed src/ imports: the cn() " +
-        "helper from src/lib/utils, and the useMediaQuery hook (needed by " +
-        "responsive-dialog to pick Dialog vs Drawer).",
-      from: { path: "^src/components/ui/" },
-      to: {
-        path: "^src/",
-        pathNot: [
-          "^src/components/ui/",
-          "^src/lib/utils\\.(ts|tsx)$",
-          "^src/hooks/useMediaQuery\\.(ts|tsx)$",
-        ],
-      },
-    },
-    {
-      name: "shared-no-domain-no-layout",
-      severity: "error",
-      comment:
-        "src/components/shared/ are cross-domain building blocks. They may use " +
-        "ui/ primitives, but must not depend on layout/ (which composes shared) " +
-        "or on any domain-specific component.",
       from: { path: "^src/components/shared/" },
-      to: {
-        path: "^src/components/",
-        pathNot: ["^src/components/ui/", "^src/components/shared/"],
-      },
+      to: { path: "^src/components/", pathNot: "^src/components/(shared|ui)/" },
     },
     {
-      name: "layout-no-domain",
+      name: "layouts-have-no-feature-dependencies",
       severity: "error",
-      comment:
-        "src/components/layout/ (AppBar, PageLayout, SidebarLayout, …) are " +
-        "app-shell scaffolding. They may use ui/ and shared/, but must never " +
-        "import domain-specific components.",
       from: { path: "^src/components/layout/" },
       to: {
         path: "^src/components/",
-        pathNot: [
-          "^src/components/ui/",
-          "^src/components/shared/",
-          "^src/components/layout/",
-        ],
+        pathNot: "^src/components/(shared|ui|layout)/",
       },
     },
     {
-      name: "components-no-cross-domain",
+      name: "feature-components-are-isolated",
       severity: "error",
-      comment:
-        "Domain component folders (account-data, team-comp, tier-list, " +
-        "archive, artifact-builds, artifact-manager, home, …) must be " +
-        "isolated from each other. Cross-domain sharing goes through shared/. " +
-        "Exceptions: (1) src/components/home/previews/* compose snapshots " +
-        "of other domains — that's the feature, so they're exempt from the " +
-        "`from` side. (2) account-data/CharacterCard.tsx and " +
-        "account-data/BuildCard.tsx may be imported by other domains (archive " +
-        "borrows them); they're conceptually shared but kept in account-data/ " +
-        "for now.",
       from: {
         path: "^src/components/([^/]+)/",
-        pathNot: [
-          "^src/components/(ui|shared|layout)/",
-          "^src/components/home/previews/",
-        ],
+        pathNot: "^src/components/(shared|ui|layout)/",
       },
       to: {
         path: "^src/components/([^/]+)/",
-        pathNot: [
-          "^src/components/$1/",
-          "^src/components/(ui|shared|layout)/",
-          "^src/components/account-data/(CharacterCard|BuildCard)\\.tsx$",
+        pathNot: ["^src/components/$1/", "^src/components/(shared|ui|layout)/"],
+      },
+    },
+    {
+      name: "libraries-are-leaf-utilities",
+      severity: "error",
+      from: { path: "^src/lib/" },
+      to: {
+        path: "^src/(app|pages|components|hooks|contexts|providers|services|stores)/",
+      },
+    },
+    {
+      name: "libraries-use-domain-contracts-only",
+      severity: "error",
+      from: { path: "^src/lib/" },
+      to: { path: "^src/domain/", dependencyTypesNot: ["type-only"] },
+    },
+    {
+      name: "services-do-not-own-react-or-live-state",
+      severity: "error",
+      from: { path: "^src/services/" },
+      to: {
+        path: [
+          "^src/(app|pages|components|hooks|contexts)/",
+          "^src/stores/",
+          "(^|node_modules/)(react|react-dom|react-router-dom|zustand)(/|$)",
+        ],
+        pathNot:
+          "^src/stores/(schemas\\.ts|teamSchemas\\.ts|resourceSettingsSchemas\\.ts|migration/)",
+      },
+    },
+    {
+      name: "foundations-do-not-import-application-layers",
+      severity: "error",
+      from: { path: "^src/(config|data|generated|presets|i18n)/" },
+      to: {
+        path: "^src/(app|pages|components|hooks|contexts|providers|services|stores)/",
+      },
+    },
+    {
+      name: "ui-primitives-are-independent",
+      severity: "error",
+      from: { path: "^src/components/ui/" },
+      to: {
+        path: "^src/",
+        pathNot: ["^src/components/ui/", "^src/lib/utils\\.ts$"],
+      },
+    },
+    {
+      name: "stores-do-not-own-ui",
+      severity: "error",
+      from: { path: "^src/stores/" },
+      to: {
+        path: "^src/(components|pages|hooks|contexts|services|providers|app)/",
+      },
+    },
+    {
+      name: "no-circular",
+      severity: "error",
+      from: {},
+      to: {
+        circular: true,
+        dependencyTypesNot: ["type-only"],
+        viaOnly: { dependencyTypesNot: ["type-only"] },
+      },
+    },
+    {
+      name: "production-has-no-test-dependencies",
+      severity: "error",
+      from: { path: "^(src|worker)/" },
+      to: {
+        path: [
+          "^tests/",
+          "(^|node_modules/)(vitest|@vitest|@testing-library|@playwright)(/|$)",
+          "^node:test$",
+          "^cloudflare:test$",
         ],
       },
     },
-
-    // ── Platform isolation ─────────────────────────────────────────────
     {
-      name: "functions-standalone",
+      name: "no-unresolved-imports",
       severity: "error",
-      comment:
-        "Cloudflare Pages Functions (functions/api/*) run on Workers — " +
-        "they must not import from src/, tests/, or scripts/.",
-      from: { path: "^functions/" },
+      from: {},
+      to: { couldNotResolve: true, pathNot: "^cloudflare:test$" },
+    },
+    {
+      name: "domain-is-framework-free",
+      severity: "error",
+      from: { path: "^src/domain/" },
+      to: {
+        path: [
+          "^src/(components|contexts|hooks|pages|providers|stores|services|app)/",
+          "(^|node_modules/)(react|react-dom|react-router-dom|zustand)(/|$)",
+        ],
+      },
+    },
+    {
+      name: "providers-do-not-own-ui-or-state",
+      severity: "error",
+      from: { path: "^src/providers/" },
+      // A pure format migration is shared by persistence and account import.
+      to: {
+        path: "^src/(components|contexts|hooks|pages|stores|services|app)/",
+      },
+    },
+    {
+      name: "persisted-state-cannot-see-hoyolab-auth",
+      severity: "error",
+      from: { path: "^src/(stores/|services/backup/)" },
+      to: { path: "^src/providers/hoyolab/" },
+    },
+    {
+      name: "browser-has-no-node-builtins",
+      severity: "error",
+      from: { path: "^src/" },
+      to: { dependencyTypes: ["core"] },
+    },
+    {
+      name: "worker-is-standalone",
+      severity: "error",
+      from: { path: "^worker/" },
       to: { path: ["^src/", "^tests/", "^scripts/"] },
     },
     {
-      name: "src-no-node-builtins",
+      name: "browser-cannot-import-worker-or-tooling",
       severity: "error",
-      comment:
-        "src/ runs in the browser — no Node built-ins (node:fs, node:path, etc.). " +
-        "Move such code to scripts/ or functions/.",
-      from: {
-        path: "^src/",
-        pathNot: "^src/data/utils\\.ts$",
-      },
-      to: {
-        path: [
-          "^(fs|path|os|child_process|crypto|http|https|stream|util|zlib|url)$",
-          "^node:",
-        ],
-      },
+      from: { path: "^src/" },
+      to: { path: ["^worker/", "^scripts/"] },
     },
   ],
-
   options: {
-    doNotFollow: {
-      path: "node_modules",
-    },
-    tsConfig: {
-      fileName: "tsconfig.app.json",
-    },
+    doNotFollow: { path: "node_modules" },
+    tsConfig: { fileName: "tsconfig.app.json" },
     tsPreCompilationDeps: true,
     enhancedResolveOptions: {
       exportsFields: ["exports"],
       conditionNames: ["import", "require", "node", "default"],
       mainFields: ["module", "main", "types", "typings"],
     },
-    reporterOptions: {
-      text: { highlightFocused: true },
-      archi: {
-        collapsePattern:
-          "^(src/(data|presets|lib|stores|contexts|hooks|components|pages|config)/[^/]+|functions|tests|scripts)",
-      },
-    },
-    exclude: {
-      path: [
-        "node_modules",
-        "dist",
-        "build",
-        "coverage",
-        "\\.d\\.ts$",
-        "src-tauri",
-        "e2e",
-      ],
-    },
+    // Keep imported package nodes visible to framework/test-dependency rules.
+    // doNotFollow stops traversal into their internals.
+    exclude: { path: ["^dist(/|$)", "^coverage(/|$)", "\\.d\\.ts$"] },
   },
 };

@@ -1,6 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
-import type { CharacterEffect } from "@/data/types";
+import type { CharacterEffect } from "@/domain/models";
 import { cn } from "@/lib/utils";
 
 export function EffectCard({ effect }: { effect: CharacterEffect }) {

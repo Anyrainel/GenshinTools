@@ -9,6 +9,28 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def normalize_export_layout(root: Path) -> None:
+    """Adapt upstream website exports to this repository's architecture."""
+    data = root / "src" / "data"
+    generated = root / "src" / "generated"
+    for name in ("i18n-game.ts", "i18n-beta.ts"):
+        source = data / name
+        if source.is_file():
+            generated.mkdir(parents=True, exist_ok=True)
+            source.replace(generated / name)
+    legacy_info = data / "charInfo.ts"
+    if legacy_info.is_file():
+        legacy_info.replace(data / "characterInfo.ts")
+    for name in ("resources.ts", "resources_beta.ts", "characterInfo.ts"):
+        target = data / name
+        if target.is_file():
+            original = target.read_text(encoding="utf-8")
+            adapted = original.replace('from "./types"', 'from "../domain/models"')
+            adapted = adapted.replace("from './types'", "from '../domain/models'")
+            if adapted != original:
+                target.write_text(adapted, encoding="utf-8")
+
+
 def refresh(
     root: Path,
     hoyodata_root: Path,
@@ -28,7 +50,10 @@ def refresh(
         command.append("--dry-run")
     env = dict(os.environ)
     env.pop("VIRTUAL_ENV", None)
-    return subprocess.run(command, cwd=hoyodata_root, env=env, check=False).returncode
+    result = subprocess.run(command, cwd=hoyodata_root, env=env, check=False).returncode
+    if result == 0 and not dry_run:
+        normalize_export_layout(root)
+    return result
 
 
 def main(argv: list[str] | None = None) -> int:

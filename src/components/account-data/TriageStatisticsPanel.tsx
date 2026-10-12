@@ -4,13 +4,14 @@ import { Link } from "react-router-dom";
 import { CharAvatar } from "@/components/shared/CharAvatar";
 import { TRIAGE_TIER_COLORS } from "@/components/shared/colors";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
-import { artifactsById } from "@/data/gameResources";
 import type {
   QualityTier,
   TriageStatistics,
-} from "@/lib/account-data/triage/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/account/triage/types";
+import { allSlots } from "@/domain/enums";
+import { artifactsById } from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 
 function TierSupply({ supply }: { supply: Record<QualityTier, number> }) {
   const { t } = useLanguage();

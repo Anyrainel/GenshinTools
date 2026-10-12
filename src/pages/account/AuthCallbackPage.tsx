@@ -2,12 +2,12 @@ import { useHandleSignInCallback } from "@logto/react";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { consumeLogtoReturnPath } from "@/cloud/authConfig";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useAppSession } from "@/contexts/AppSessionContext";
+import { consumeLogtoReturnPath } from "@/contexts/authConfig";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function AuthCallbackPage() {

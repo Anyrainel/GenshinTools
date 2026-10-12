@@ -1,13 +1,14 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import path from "node:path";
 import {
   allSlots,
   type MainStat,
   type Slot,
   type SubStat,
-} from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { GeneratorOptions } from "@/lib/team-comp/generator/generator";
+} from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { GeneratorOptions } from "@/domain/combat/generator/generator";
 import { describe, expect, it } from "vitest";
 import {
   prevalidateArtifactGenerationTechnicalProbeCandidates,
@@ -981,7 +982,7 @@ describe("Keqing-Ineffa artifact-generation technical probe", () => {
       KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
         }),
       ),
     );

@@ -5,8 +5,8 @@
  * then processes teams on demand via message passing.
  */
 
-import type { AccountData, ArtifactData } from "@/data/types";
-import type { ComboFormula } from "@/lib/dmgcalc/types";
+import type { ComboFormula } from "@/domain/combat/damage/types";
+import type { AccountData, ArtifactData } from "@/domain/models";
 import type { Team } from "./runner";
 import {
   characterStatsResource,

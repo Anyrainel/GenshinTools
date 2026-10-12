@@ -1,4 +1,4 @@
-import type { Element, ReactionType } from "@/data/enums";
+import type { Element, ReactionType } from "@/domain/enums";
 
 export const ELEMENT_HEX: Readonly<Record<Element, string>> = {
   Pyro: "#b8483f",

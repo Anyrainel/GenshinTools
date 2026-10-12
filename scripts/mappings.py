@@ -71,7 +71,7 @@ def generate_scanner_mappings(project_root: str) -> None:
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
 
     # --- Read charInfo.ts for c3/c5 talent data ---
-    char_info = _parse_char_info(os.path.join(project_root, "src", "data", "charInfo.ts"))
+    char_info = _parse_char_info(os.path.join(project_root, "src", "data", "characterInfo.ts"))
 
     # --- Read character_stats.json for element data ---
     with open(os.path.join(game_dir, "character_stats.json"), encoding="utf-8") as f:

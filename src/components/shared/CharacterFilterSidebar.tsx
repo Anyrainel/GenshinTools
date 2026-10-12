@@ -11,7 +11,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { SortDirection } from "@/data/enums";
+import type { SortDirection } from "@/domain/enums";
 import {
   characterUtilities,
   type Element,
@@ -21,13 +21,14 @@ import {
   regions,
   type WeaponType,
   weaponTypes,
-} from "@/data/enums";
+} from "@/domain/enums";
+import type { CharacterFilters } from "@/domain/models";
 import {
   elementResourcesByName,
   weaponResourcesByName,
-} from "@/data/gameResources";
-import type { CharacterFilters } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 
 interface CharacterFilterSidebarProps {
   filters: CharacterFilters;

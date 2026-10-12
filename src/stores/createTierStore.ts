@@ -1,7 +1,7 @@
 import type { z } from "zod";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { TierAssignment, TierCustomization } from "@/data/types";
+import type { TierAssignment, TierCustomization } from "@/domain/models";
 import { migrateGenericTierStore } from "./migration/tier";
 import { PersistedGenericTierListStoreSchema } from "./schemas";
 

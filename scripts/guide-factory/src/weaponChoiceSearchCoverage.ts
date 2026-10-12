@@ -10,21 +10,21 @@ export const WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
-  "src/data/betaState.ts",
+  "src/stores/betaState.ts",
   "src/data/game/character_stats.json",
   "src/data/game/weapon_stats.json",
-  "src/data/gameResources.ts",
-  "src/data/gameStatsLoader.ts",
+  "src/domain/reference/catalog.ts",
+  "src/providers/reference/statLoaders.ts",
   "src/data/resources.ts",
   "src/data/resources_beta.ts",
-  "src/data/types.ts",
-  "src/lib/team-comp/analyzer/weaponChoice.ts",
+  "src/domain/models.ts",
+  "src/domain/combat/analyzer/weaponChoice.ts",
 ] as const;
 
 const MIRRORED_POLICY_LABEL =
   "offline mirror of private getWeaponCandidates (released inputs)" as const;
 const RUNTIME_POLICY_PATH =
-  "src/lib/team-comp/analyzer/weaponChoice.ts#getWeaponCandidates" as const;
+  "src/domain/combat/analyzer/weaponChoice.ts#getWeaponCandidates" as const;
 
 type CharacterGuide = Extract<KnowledgeRecord, { kind: "character_guide" }>;
 type KnowledgeTeam = Extract<KnowledgeRecord, { kind: "team" }>;

@@ -1,7 +1,8 @@
+import "@/providers/reference/statLoaders";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { WeaponStatsMap } from "@/data/gameStatsLoader";
-import type { WeaponResource } from "@/data/types";
+import type { WeaponResource } from "@/domain/models";
+import type { WeaponStatsMap } from "@/domain/reference/stats";
 import { WeaponArchiveView } from "@/pages/archive/WeaponArchiveView";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 import { render, screen, within } from "../../utils/render";
@@ -27,8 +28,9 @@ vi.mock("@/contexts/LanguageContext", () => ({
   }),
 }));
 
-vi.mock("@/data/gameResources", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/data/gameResources")>();
+vi.mock("@/domain/reference/catalog", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/domain/reference/catalog")>();
   const sortedWeapons = [
     {
       id: "sun_sword",
@@ -45,9 +47,9 @@ vi.mock("@/data/gameResources", async (importOriginal) => {
   return { ...actual, sortedWeapons };
 });
 
-vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+    await importOriginal<typeof import("@/domain/reference/stats")>();
   const weaponStats = {
     sun_sword: {
       rarity: 4,
@@ -65,7 +67,7 @@ vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
 
   return {
     ...actual,
-    weaponStatsResource: { use: () => weaponStats },
+    weaponStatsResource: { peek: () => weaponStats },
   };
 });
 

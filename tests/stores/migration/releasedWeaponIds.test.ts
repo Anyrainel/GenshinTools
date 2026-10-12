@@ -1,15 +1,27 @@
 import { describe, expect, it } from "vitest";
 import {
+  getBuffInstanceKey,
+  StatBuff,
+} from "@/domain/combat/damage/core/statBuff";
+import type { AccountData, TierAssignment } from "@/domain/models";
+import type { TeamSetupConfig } from "@/domain/team/types";
+import { convertGOODToAccountData } from "@/providers/scanner/goodConversion";
+import {
   accountFromCloud,
   accountToCloud,
-} from "@/cloud/adapters/accountAdapter";
-import { buildsFromCloud, buildsToCloud } from "@/cloud/adapters/buildsAdapter";
-import { teamFromCloud, teamToCloud } from "@/cloud/adapters/teamAdapter";
-import { tiersFromCloud, tiersToCloud } from "@/cloud/adapters/tierAdapter";
-import type { AccountData, TierAssignment } from "@/data/types";
-import { convertGOODToAccountData } from "@/lib/account-data/import/goodConversion";
-import { getBuffInstanceKey, StatBuff } from "@/lib/dmgcalc/core/statBuff";
-import type { TeamSetupConfig } from "@/lib/team-comp/types";
+} from "@/services/backup/adapters/accountAdapter";
+import {
+  buildsFromCloud,
+  buildsToCloud,
+} from "@/services/backup/adapters/buildsAdapter";
+import {
+  teamFromCloud,
+  teamToCloud,
+} from "@/services/backup/adapters/teamAdapter";
+import {
+  tiersFromCloud,
+  tiersToCloud,
+} from "@/services/backup/adapters/tierAdapter";
 import { selectActiveTierAssignments } from "@/stores/createTierStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";

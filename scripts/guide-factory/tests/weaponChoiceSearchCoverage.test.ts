@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -23,7 +24,7 @@ describe("weapon-choice candidate-policy coverage", () => {
     const generatedFrom = await Promise.all(
       WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS.map(async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
       })),
     );
     const expected = buildWeaponChoiceSearchCoverageReport(

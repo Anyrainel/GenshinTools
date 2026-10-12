@@ -32,23 +32,23 @@ import {
 import {
   convertGOODToAccountData,
   type GOODData,
-} from "@/lib/account-data/import/goodConversion";
-import {
-  mergePartialAccountData,
-  mergeRecentArtifactsIntoAccount,
-} from "@/lib/account-data/import/mergeAccountData";
+} from "@/providers/scanner/goodConversion";
 import {
   createRecentArtifactScanRequest,
   parseRecentArtifactLimit,
   RECENT_ARTIFACT_SCAN_DEFAULT_LIMIT,
   RECENT_ARTIFACT_SCAN_MAX_LIMIT,
   RECENT_ARTIFACT_SCAN_MIN_LIMIT,
-} from "@/lib/account-data/manager/scanRequest";
+} from "@/providers/scanner-manager/scanRequest";
 import type {
   CategoryProgress,
   ScanProgress,
   ScanRequest,
-} from "@/lib/account-data/manager/types";
+} from "@/providers/scanner-manager/types";
+import {
+  mergePartialAccountData,
+  mergeRecentArtifactsIntoAccount,
+} from "@/services/account/mergeAccountData";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { ConnectionStatus, SetupInstructions } from "./managerSharedUI";

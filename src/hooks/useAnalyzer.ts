@@ -3,12 +3,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   isAnalyzerResult,
   runAnalysis,
-} from "@/lib/team-comp/analyzer/analyzer";
+} from "@/domain/combat/analyzer/analyzer";
 import type {
   AnalyzerOptions,
   AnalyzerProgress,
   AnalyzerResult,
-} from "@/lib/team-comp/analyzer/types";
+} from "@/domain/combat/analyzer/types";
 import { useAnalyzerCacheStore } from "@/stores/useAnalyzerCacheStore";
 import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 

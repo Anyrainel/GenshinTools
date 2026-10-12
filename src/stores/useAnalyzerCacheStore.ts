@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
+import type { AnalyzerResult } from "@/domain/combat/analyzer/types";
 
 interface AnalyzerCacheState {
   /** Map of cache key → result (in-memory only, not persisted) */

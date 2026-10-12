@@ -34,7 +34,7 @@ vi.mock("@/contexts/LanguageContext", () => ({
   }),
 }));
 
-vi.mock("@/data/gameResources", () => ({
+vi.mock("@/domain/reference/catalog", () => ({
   allHalfSetIds: ["alpha_half", "beta_half"],
   artifactIdToHalfSetId: {
     alpha_set: "alpha_half",
@@ -55,7 +55,7 @@ vi.mock("@/data/gameResources", () => ({
   ],
 }));
 
-vi.mock("@/hooks/useMediaQuery", () => ({
+vi.mock("@/components/ui/useMediaQuery", () => ({
   useMediaQuery: () => false,
 }));
 

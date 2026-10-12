@@ -19,7 +19,7 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from "@/components/ui/drawer"
-import { useMediaQuery } from "@/hooks/useMediaQuery"
+import { useMediaQuery } from "@/components/ui/useMediaQuery"
 
 interface TourLabels {
     guideTitle: React.ReactNode

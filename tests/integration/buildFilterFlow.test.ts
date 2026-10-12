@@ -9,13 +9,12 @@
 
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-
-import type { Build, BuildGroup } from "@/data/types";
 import {
   buildRawConfigs,
   DEFAULT_COMPUTE_OPTIONS,
   mergeConfigsAsync,
-} from "@/lib/artifact-builds/computeFilters";
+} from "@/domain/build/computeFilters";
+import type { Build, BuildGroup } from "@/domain/models";
 import {
   getResolvedBuildGroupsSnapshot,
   useBuildsStore,

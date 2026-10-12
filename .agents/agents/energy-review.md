@@ -137,7 +137,7 @@ For each energy recovery mention, read the full context to determine:
    - "为队伍中所有角色恢复" → `party`
    - "为当前场上角色恢复" → `active`
    - "为队伍中所有角色（不包括X）恢复" → `partyOthers`
-4. **Action**: Which gameplay action triggers this. Use the engine's runtime keys — if in doubt, check `ActionType` in `src/lib/ercalc/types.ts`:
+4. **Action**: Which gameplay action triggers this. Use the engine's runtime keys — if in doubt, check `ActionType` in `src/domain/combat/energy/types.ts`:
    - E skill hit → `E` | hold E → `holdE` | alt-form E → `specialE`
    - Normal attack → `NA` | charged attack → `CA` | plunge → `PA`
    - "Any attack" wildcard (fires on NA / CA / PA) → `A`

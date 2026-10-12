@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -1096,7 +1097,7 @@ async function fixture(): Promise<BuildManualConditionArrayCoverageReportInput> 
       MANUAL_CONDITION_ARRAY_COVERAGE_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
         }),
       ),
     ),

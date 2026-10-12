@@ -1,5 +1,5 @@
-import { charactersById } from "@/data/gameResources";
-import { getAssetUrl } from "@/lib/utils";
+import { charactersById } from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
 
 /** Small circular character avatar for compact inline use (timeline blocks, palettes, result rows). */
 export function CharAvatar({

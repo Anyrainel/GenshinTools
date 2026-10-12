@@ -1,20 +1,21 @@
 import { Diamond, Swords, User } from "lucide-react";
 import { useCallback } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
-import { charactersById, weaponsById } from "@/data/gameResources";
-import {
-  characterStatsResource,
-  getCharacterDisplayMeta,
-  getWeaponDisplayMeta,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
 import type {
   AccountData,
   ArtifactSetConfig,
   CharacterResource,
   WeaponResource,
-} from "@/data/types";
-import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+} from "@/domain/models";
+import { charactersById, weaponsById } from "@/domain/reference/catalog";
+import {
+  characterStatsResource,
+  getCharacterDisplayMeta,
+  getWeaponDisplayMeta,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
+import { detectEquippedSets } from "@/domain/team/teamConfigUtils";
+import { useResource } from "@/hooks/useResource";
 
 type TriggerSize = "xs" | "sm" | "md";
 
@@ -47,8 +48,8 @@ export function TeamPickerGrid({
   prefixOrdering = false,
   gap = "md",
 }: TeamPickerGridProps) {
-  const characterStats = characterStatsResource.use();
-  const weaponStats = weaponStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
+  const weaponStats = useResource(weaponStatsResource);
 
   const gapClass = gap === "sm" ? "gap-x-2 gap-y-2" : "gap-3";
 

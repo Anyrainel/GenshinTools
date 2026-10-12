@@ -6,12 +6,14 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import {
-  BackupApiError,
-  type BackupQuotaExceededPayload,
-  type BackupUploadQuota,
-} from "@/cloud/apiClient";
-import type { CloudBackupMetadataSnapshot } from "@/cloud/backupMetadata";
+import { CloudBackupMetadataTable } from "@/components/account/CloudBackupMetadataTable";
+import { ManualBackupChoiceDialog } from "@/components/account/ManualBackupChoiceDialog";
+import { PageLayout } from "@/components/layout/PageLayout";
+import { ScrollLayout } from "@/components/layout/ScrollLayout";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useAppSession } from "@/contexts/AppSessionContext";
 import {
   buildManualBackupMetadataRows,
   downloadManualBackupSelection,
@@ -21,20 +23,18 @@ import {
   readCloudMetadataCache,
   refreshManualBackupMetadata,
   uploadManualBackupSelection,
-} from "@/cloud/manualBackupController";
-import { createCloudBackupApiClient } from "@/cloud/session";
-import type { CloudSyncRunResult } from "@/cloud/syncClient";
-import type { CloudPartitionId } from "@/cloud/types";
-import { CloudBackupMetadataTable } from "@/components/account/CloudBackupMetadataTable";
-import { ManualBackupChoiceDialog } from "@/components/account/ManualBackupChoiceDialog";
-import { PageLayout } from "@/components/layout/PageLayout";
-import { ScrollLayout } from "@/components/layout/ScrollLayout";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useAppSession } from "@/contexts/AppSessionContext";
+} from "@/contexts/backup/manualBackupController";
+import type { CloudSyncRunResult } from "@/contexts/backup/syncClient";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { CloudPartitionId } from "@/domain/backup/types";
 import { cn } from "@/lib/utils";
+import {
+  BackupApiError,
+  type BackupQuotaExceededPayload,
+  type BackupUploadQuota,
+} from "@/providers/backup/apiClient";
+import { createCloudBackupApiClient } from "@/services/auth/session";
+import type { CloudBackupMetadataSnapshot } from "@/services/backup/backupMetadata";
 import { useCloudSyncMetadataStore } from "@/stores/useCloudSyncMetadataStore";
 
 type Operation = "checking" | "upload" | "download" | null;

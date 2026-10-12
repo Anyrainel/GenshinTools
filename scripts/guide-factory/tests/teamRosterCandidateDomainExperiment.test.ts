@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readJson, sha256File, stableJson } from "../src/io";
@@ -390,7 +391,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
       }),
     ),
   );

@@ -1,12 +1,14 @@
 import { useLanguage } from "@/contexts/LanguageContext";
-import { betaWeaponIds, weaponsById } from "@/data/gameResources";
+import type { WeaponData } from "@/domain/models";
+import { betaWeaponIds, weaponsById } from "@/domain/reference/catalog";
 import {
   getWeaponDisplayMeta,
   getWeaponStatsAt90,
   weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { WeaponData } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { BetaBadge } from "./BetaBadge";
 import { getRarityColor } from "./colors";
 import { ItemIcon } from "./ItemIcon";
@@ -25,7 +27,7 @@ export function WeaponTooltip({
   className,
 }: WeaponTooltipProps) {
   const { t } = useLanguage();
-  const weaponStats = weaponStatsResource.use();
+  const weaponStats = useResource(weaponStatsResource);
   const weapon = weaponsById[weaponId];
 
   if (!weapon) return null;

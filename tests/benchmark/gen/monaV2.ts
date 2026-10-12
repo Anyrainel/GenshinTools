@@ -18,19 +18,22 @@
  *     sort higher, finding feasible builds faster)
  */
 
-import type { StatKey } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import { artifactHalfSetsById } from "@/data/gameResources";
-import type { ArtifactData } from "@/data/types";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type { CalcContext, ReactionOverride } from "@/lib/dmgcalc/types";
-import { getHalfSetIds, getSetId } from "@/lib/dmgcalc/utils";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type {
+  CalcContext,
+  ReactionOverride,
+} from "@/domain/combat/damage/types";
+import { getHalfSetIds, getSetId } from "@/domain/combat/damage/utils";
+import type { StatKey } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { artifactHalfSetsById } from "@/domain/reference/catalog";
 import type {
   OptFailReason,
   TeamOptimizerOptions,
   TeamOptYield,
-} from "@/lib/team-comp/types";
+} from "@/domain/team/types";
 import {
   type ArtifactTuple,
   createTeamOptimizer,

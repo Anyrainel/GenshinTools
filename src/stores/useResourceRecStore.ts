@@ -6,17 +6,17 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Tier } from "@/data/enums";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/lib/account-data/accountProfile";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
   type KindTierMinScore,
   type ResourceKind,
   type TierCompletenessThresholds,
-} from "@/lib/account-data/resourceTips";
-import type { AccountProfileId } from "@/lib/account-data/types";
-import { cloneData } from "@/lib/utils";
+} from "@/domain/account/resourceTips";
+import type { AccountProfileId } from "@/domain/account/types";
+import type { Tier } from "@/domain/enums";
+import { cloneData } from "@/lib/cloneData.ts";
 import { migrateResourceRecStore } from "./migration/resource";
 import { PersistedResourceRecStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";

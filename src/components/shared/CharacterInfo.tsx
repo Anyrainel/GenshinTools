@@ -1,16 +1,18 @@
 import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
+import type { CharacterResource } from "@/domain/models";
 import {
   elementResourcesByName,
   weaponResourcesByName,
-} from "@/data/gameResources";
+} from "@/domain/reference/catalog";
 import {
   characterStatsResource,
   getCharacterDisplayMeta,
-} from "@/data/gameStatsLoader";
-import type { CharacterResource } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/reference/stats";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { getElementColor, getRarityColor } from "./colors";
 
 interface CharacterInfoProps {
@@ -30,7 +32,7 @@ export const CharacterInfo = memo(
     children,
   }: CharacterInfoProps) => {
     const { t } = useLanguage();
-    const characterStats = characterStatsResource.use();
+    const characterStats = useResource(characterStatsResource);
     const meta = getCharacterDisplayMeta(
       character,
       characterStats?.[character.id]

@@ -3,15 +3,15 @@ import { ArchiveToolbar } from "@/components/archive/ArchiveToolbar";
 import { ArtifactCard } from "@/components/archive/ArtifactCard";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   allHalfSetIds,
   artifactIdToHalfSetId,
   sortedArtifacts,
-} from "@/data/gameResources";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { filterArchiveItems } from "@/lib/archiveFilters";
-import { fuzzyMatch } from "@/lib/search";
+} from "@/domain/reference/catalog";
+import { filterArchiveItems } from "@/lib/search/archiveFilters";
+import { fuzzyMatch } from "@/lib/search/predicates";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 
 export function ArtifactArchiveView() {

@@ -55,7 +55,7 @@ vi.mock("@/contexts/ThemeContext", () => ({
   }),
 }));
 
-vi.mock("@/components/layout/appNavigation", () => ({
+vi.mock("@/config/navigation", () => ({
   getNavigationConfig: () => [
     { href: "/", label: "Home" },
     { href: "/other", label: "Other" },

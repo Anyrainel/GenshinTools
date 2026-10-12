@@ -35,11 +35,11 @@ export const NOELLE_HIGH_INVESTMENT_SLICE_REPORT_RELATIVE_PATH =
 export const NOELLE_LOWER_INVESTMENT_SLICE_REPORT_RELATIVE_PATH =
   "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json";
 export const NOELLE_IMPLEMENTATION_RELATIVE_PATH =
-  "src/lib/dmgcalc/impl/character4Mondstadt.ts";
+  "src/domain/combat/damage/impl/character4Mondstadt.ts";
 export const NOELLE_DIRECT_DAMAGE_RELATIVE_PATH =
-  "src/lib/dmgcalc/core/teamBuild.ts";
+  "src/domain/combat/damage/core/teamBuild.ts";
 export const NOELLE_COMPILED_DAMAGE_RELATIVE_PATH =
-  "src/lib/dmgcalc/core/formulaCompiler.ts";
+  "src/domain/combat/damage/core/formulaCompiler.ts";
 export const NOELLE_REPLAY_ADAPTER_RELATIVE_PATH =
   "scripts/guide-factory/src/computationReplay.ts";
 export const NOELLE_INVESTMENT_ARTIFACT_PROFILE_COMPUTATION_ADMISSION_CORE_RELATIVE_PATH =

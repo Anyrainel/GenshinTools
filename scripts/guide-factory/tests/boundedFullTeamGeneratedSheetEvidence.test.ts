@@ -1,10 +1,10 @@
 import fs from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
-import type { MainStat, Slot, SubStat } from "@/data/enums";
-import { allSlots } from "@/data/enums";
-import type { ArtifactData } from "@/data/types";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
+import type { MainStat, Slot, SubStat } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { GeneratorResult } from "@/domain/combat/generator/generator";
 import {
   isCompleteBoundedFullTeamEquipmentTechnicalComputationReport,
   runBoundedFullTeamEquipmentTechnicalComputation,

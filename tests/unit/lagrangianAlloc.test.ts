@@ -3,8 +3,8 @@ import {
   DEFAULT_LAGRANGIAN_CONFIG,
   findContestedArtifacts,
   runLagrangianAllocation,
-} from "@/lib/team-comp/optimizer/lagrangianAlloc";
-import type { ArtifactTuple, TopKEntry } from "@/lib/team-comp/optimizer/types";
+} from "@/domain/combat/optimizer/lagrangianAlloc";
+import type { ArtifactTuple, TopKEntry } from "@/domain/combat/optimizer/types";
 
 function makeEntry(damage: number, ids: string[]): TopKEntry {
   return {

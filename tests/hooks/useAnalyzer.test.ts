@@ -1,16 +1,16 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useAnalyzer } from "@/hooks/useAnalyzer";
-import type { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type {
   AnalyzerOptions,
   AnalyzerResult,
-} from "@/lib/team-comp/analyzer/types";
+} from "@/domain/combat/analyzer/types";
+import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useAnalyzerCacheStore } from "@/stores/useAnalyzerCacheStore";
 import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 
 const run = vi.hoisted(() => vi.fn());
-vi.mock("@/lib/team-comp/analyzer/analyzer", () => ({
+vi.mock("@/domain/combat/analyzer/analyzer", () => ({
   runAnalysis: run,
   isAnalyzerResult: (value: object) => "sequence" in value,
 }));

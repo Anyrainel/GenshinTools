@@ -13,14 +13,14 @@ import {
   getLogtoPostSignOutRedirectUri,
   getLogtoRedirectUri,
   rememberLogtoReturnPath,
-} from "@/cloud/authConfig";
+} from "@/contexts/authConfig";
 import {
   AppSessionError,
   type AppSessionUser,
   clearAppSession,
   createAppSession,
   getAppSessionUser,
-} from "@/cloud/session";
+} from "@/services/auth/session";
 
 export type AppSessionContextValue = {
   isAuthenticated: boolean;

@@ -1,4 +1,4 @@
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import type { DamageReplayInput } from "./computationReplay";
 
 /**

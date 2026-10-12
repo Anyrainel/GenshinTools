@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import * as feedbackApi from "@/cloud/feedback";
 import { AccountFeedbackDialog } from "@/components/layout/AccountFeedbackDialog";
+import * as feedbackApi from "@/providers/community/feedback";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -18,8 +18,9 @@ vi.mock("@/contexts/LanguageContext", () => ({
   }),
 }));
 
-vi.mock("@/cloud/feedback", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/cloud/feedback")>();
+vi.mock("@/providers/community/feedback", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/providers/community/feedback")>();
   return {
     ...actual,
     submitFeedback: vi.fn(),

@@ -1,13 +1,14 @@
 import { Lock } from "lucide-react";
 import { forwardRef } from "react";
-import type { Rarity, Slot } from "@/data/enums";
+import type { Rarity, Slot } from "@/domain/enums";
 import {
   artifactHalfSetsById,
   artifactsById,
   charactersById,
   weaponsById,
-} from "@/data/gameResources";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 import { getRarityColor } from "./colors";
 
 /**

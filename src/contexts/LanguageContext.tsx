@@ -7,66 +7,25 @@ import {
   useMemo,
   useState,
 } from "react";
-import type { Language } from "@/data/enums";
+import type { Language } from "@/domain/enums";
+import type {
+  CharacterEffect,
+  CharacterKit,
+  CharacterSkill,
+} from "@/domain/models";
+import { i18nBetaData } from "@/generated/i18n-beta";
+import { i18nGameData } from "@/generated/i18n-game";
+import { useResource } from "@/hooks/useResource";
+import { i18nAppData } from "@/i18n/gameTerms";
+import { i18nUiData } from "@/i18n/messages";
+import type { I18n } from "@/i18n/types";
 /* eslint-disable react-refresh/only-export-components */
 import {
   artifactTextResource,
   characterKitsResource,
   formatWeaponEffect,
   weaponTextResource,
-} from "@/data/gameDataLoader";
-import { i18nAppData } from "@/data/i18n-app";
-import { i18nBetaData } from "@/data/i18n-beta";
-import { i18nGameData } from "@/data/i18n-game";
-import { i18nUiData } from "@/data/i18n-ui";
-import type {
-  CharacterEffect,
-  CharacterKit,
-  CharacterSkill,
-} from "@/data/types";
-
-interface I18n {
-  character: (id: string) => string;
-  artifact: (id: string) => string;
-  artifactHalfSet: (id: string | number) => string;
-  artifactEffects: (id: string) => string[];
-  region: (key: string) => string;
-  stat: (key: string) => string;
-  statShort: (key: string) => string;
-  statMin: (key: string) => string;
-  formula: (key: string) => string;
-  mainStat: (key: string) => string;
-  subStat: (key: string) => string;
-  element: (key: string) => string;
-  reaction: (key: string) => string;
-  receiver: (key: string) => string;
-  ability: (key: string) => string;
-  erAction: (key: string) => string;
-  faction: (key: string) => string;
-  characterUtility: (key: string) => string;
-  resonance: (key: string) => string;
-  weaponType: (type: string) => string;
-  weapon: (id: string) => string;
-  weaponEffect: (id: string, refinement?: number) => string;
-  slot: (key: string) => string;
-  style: (key: string) => string;
-  role: (key: string) => string;
-  tier: (key: string) => string;
-  halfSetShort: (halfSetId: string) => string;
-  formatDate: (dateString: string | null) => string;
-  ui: (path: string) => string;
-  format: (key: string, ...args: (string | number)[]) => string;
-  resolveLabel: (label: Record<string, string>) => string;
-  characterKit: (id: string) => CharacterKit | null;
-  skills: (id: string) => CharacterSkill[] | null;
-  passives: (id: string) => CharacterEffect[] | null;
-  constellations: (id: string) => CharacterEffect[] | null;
-  envBuff: (id: string) => string;
-  glossary: (id: string) => CharacterEffect[] | null;
-  origin: (key: string) => string;
-  elementRes: (key: string) => string;
-  shortDate: (date: Date) => string;
-}
+} from "@/providers/reference/gameDataLoader";
 
 interface LanguageContextType {
   language: Language;
@@ -124,8 +83,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   // resource.preload(); the resources subscribe their consumers via use().
   // Tier C (character kits) is loaded by Archive routes via use(); accessors
   // here just peek so non-Archive callers see null instead of triggering load.
-  const weaponData = weaponTextResource.use(language);
-  const artifactData = artifactTextResource.use(language);
+  const weaponData = useResource(weaponTextResource, language);
+  const artifactData = useResource(artifactTextResource, language);
 
   const getCharacterKit = useCallback(
     (characterId: string): CharacterKit | null =>

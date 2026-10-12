@@ -7,6 +7,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     globals: true,
+    dangerouslyIgnoreUnhandledErrors: false,
     testTimeout: 15000,
     setupFiles: ["./tests/setup.ts"],
     include: ["tests/**/*.test.{ts,tsx}"],
@@ -16,6 +17,9 @@ export default defineConfig({
       reporter: ["text", "text-summary", "html"],
       include: [
         "src/lib/**",
+        "src/domain/**",
+        "src/providers/**",
+        "src/services/**",
         "src/stores/**",
         "src/components/**",
         "src/hooks/**",
@@ -24,9 +28,9 @@ export default defineConfig({
         "src/components/ui/**", // shadcn primitives — not unit tested
         "src/data/**", // static game data / constants
         "src/presets/**", // bundled preset JSONs
-        "src/lib/team-comp/impl/**", // per-character/weapon data definitions
-        "src/lib/team-comp/registry.ts", // registration boilerplate
-        "src/lib/tourConfig.ts", // UI tour definitions
+        "src/domain/combat/damage/impl/**", // per-character/weapon data definitions
+        "src/domain/combat/damage/index.ts", // registration boilerplate
+        "src/app/tourConfig.tsx", // UI tour definitions
         "**/*.d.ts",
       ],
       thresholds: {

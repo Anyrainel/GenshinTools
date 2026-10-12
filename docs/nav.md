@@ -1,8 +1,8 @@
 # Navigation Audit
 
 Source of truth today:
-- Routes: `src/App.tsx`
-- Nav config: `src/components/layout/appNavigation.tsx`
+- Routes: `src/app/App.tsx`
+- Nav config: `src/config/navigation.tsx`
 - Tab canonicalization: `src/hooks/useCanonicalTabRoute.ts`
 
 ## Current Shape

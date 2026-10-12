@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { maybeHandleBetaMagic } from "@/data/betaState";
+import { maybeHandleBetaMagic } from "@/stores/betaState";
 import { PersistedArchiveSessionStoreSchema } from "./schemas";
 
 /**

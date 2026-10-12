@@ -14,8 +14,8 @@ export const KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_INPUT_PATHS = [
   "scripts/guide-factory/src/artifactGenerationSensitivityProbe.ts",
   "scripts/guide-factory/src/io.ts",
   "scripts/guide-factory/src/keqingIneffaArtifactGenerationSensitivityProbe.ts",
-  "src/data/enums.ts",
-  "src/data/types.ts",
+  "src/domain/enums.ts",
+  "src/domain/models.ts",
   ...KEQING_INEFFA_ARTIFACT_GENERATION_TECHNICAL_PROBE_INPUT_PATHS,
 ] as const;
 

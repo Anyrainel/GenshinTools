@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { expandAchievementReferenceData } from "@/data/achievementData";
-import type { AchievementReferenceData, AchievementReferenceText } from "@/data/types";
+import { expandAchievementReferenceData } from "@/domain/achievement/reference";
+import type { AchievementReferenceData, AchievementReferenceText } from "@/domain/models";
 
 const logic: AchievementReferenceData = { categories: [{ id: 0, order: 1, achievements: [[
   { id: 1, order: 1, reward: 5 }, { id: 2, order: 2, reward: 10 },

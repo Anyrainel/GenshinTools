@@ -1,5 +1,5 @@
-import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
-import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { TeamSlotConfig } from "@/domain/combat/damage/types";
 import { describe, expect, it } from "vitest";
 import { bootstrapGuideFactoryComputation } from "../src/computationReplay";
 import {

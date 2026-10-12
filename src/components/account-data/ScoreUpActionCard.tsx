@@ -11,10 +11,10 @@ import { memo } from "react";
 import { ArtifactComparisonHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { Slot } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
-import type { ArtifactData } from "@/data/types";
-import type { ScoreUpAction } from "@/lib/account-data/scoreUpEngine";
+import type { ScoreUpAction } from "@/domain/account/scoreUpEngine";
+import type { Slot } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
+import { charactersById } from "@/domain/reference/catalog";
 import { cn } from "@/lib/utils";
 
 interface ScoreUpActionCardProps {

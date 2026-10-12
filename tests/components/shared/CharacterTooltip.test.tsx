@@ -12,14 +12,13 @@ const mockCharacterStats = {
   },
 };
 
-vi.mock("@/data/gameStatsLoader", async (importOriginal) => {
+vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/data/gameStatsLoader")>();
+    await importOriginal<typeof import("@/domain/reference/stats")>();
   return {
     ...actual,
     characterStatsResource: {
       preload: () => Promise.resolve(mockCharacterStats),
-      use: () => mockCharacterStats,
       peek: () => mockCharacterStats,
     },
   };

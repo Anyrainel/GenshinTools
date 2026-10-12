@@ -19,9 +19,9 @@ import {
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactScannerDialog } from "@/components/shared/ArtifactScannerDialog";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { AccountData } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
+import type { AccountData } from "@/domain/models";
 
 interface InventoryViewProps {
   data: AccountData;

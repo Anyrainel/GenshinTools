@@ -3,7 +3,7 @@ import { FlexPatternDialog } from "@/components/account-data/FlexPatternDialog";
 import type {
   CustomFlexInput,
   TriageSettings,
-} from "@/lib/account-data/triage/types";
+} from "@/domain/account/triage/types";
 import { render } from "../../utils/render";
 
 function makeSettings(

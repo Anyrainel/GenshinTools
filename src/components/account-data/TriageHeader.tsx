@@ -28,18 +28,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import type { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots, type Slot } from "@/data/enums";
-import { artifactsById, sortedArtifacts } from "@/data/gameResources";
-import type { ManagePayload } from "@/lib/account-data/manager/types";
-import { QUALITY_TIERS } from "@/lib/account-data/triage/constants";
+import { QUALITY_TIERS } from "@/domain/account/triage/constants";
 import type {
   FlexPattern,
   QualityTier,
   TriageDecision,
   TriageSettings,
   TriageStatistics,
-} from "@/lib/account-data/triage/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/account/triage/types";
+import { allSlots, type Slot } from "@/domain/enums";
+import { artifactsById, sortedArtifacts } from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
+import type { ManagePayload } from "@/providers/scanner-manager/types";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
 
 type Translator = ReturnType<typeof useLanguage>["t"];

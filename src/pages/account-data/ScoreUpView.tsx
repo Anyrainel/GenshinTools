@@ -15,24 +15,25 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
-import type { LuckExpectation, Tier } from "@/data/enums";
-import { allSlots, LUCK_MULTIPLIERS, tiers } from "@/data/enums";
-import { charactersById } from "@/data/gameResources";
-import {
-  characterStatsResource,
-  weaponStatsResource,
-} from "@/data/gameStatsLoader";
-import type { CharacterData, TierCustomization } from "@/data/types";
-import { useActiveAccount } from "@/hooks/useActiveAccount";
-import { useAsyncScoreUp } from "@/hooks/useAsyncRecommendations";
-import { buildScoreUpEquipInstructions } from "@/lib/account-data/manager/instructions";
 import {
   buildArtifactLookup,
   type CharacterActions,
   recomputeTierUpgrades,
   type ScoreUpAction,
-} from "@/lib/account-data/scoreUpEngine";
-import type { ArtifactScoreResult } from "@/lib/artifact/scoring/artifactScore";
+} from "@/domain/account/scoreUpEngine";
+import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
+import type { LuckExpectation, Tier } from "@/domain/enums";
+import { allSlots, LUCK_MULTIPLIERS, tiers } from "@/domain/enums";
+import type { CharacterData, TierCustomization } from "@/domain/models";
+import { charactersById } from "@/domain/reference/catalog";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
+import { useActiveAccount } from "@/hooks/useActiveAccount";
+import { useAsyncScoreUp } from "@/hooks/useAsyncRecommendations";
+import { useResource } from "@/hooks/useResource";
+import { buildScoreUpEquipInstructions } from "@/providers/scanner-manager/instructions";
 import {
   selectActiveTierAssignments,
   selectActiveTierCustomization,
@@ -72,8 +73,8 @@ export function ScoreUpView({
   onShowTour,
 }: ScoreUpViewProps) {
   const { t } = useLanguage();
-  const characterStats = characterStatsResource.use();
-  const weaponStats = weaponStatsResource.use();
+  const characterStats = useResource(characterStatsResource);
+  const weaponStats = useResource(weaponStatsResource);
   const crBudgetDataReady = characterStats !== null && weaponStats !== null;
   const activeAccount = useActiveAccount();
   const accountData = activeAccount?.data ?? null;

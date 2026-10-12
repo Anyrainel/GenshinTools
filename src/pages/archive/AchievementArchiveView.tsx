@@ -7,16 +7,18 @@ import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { achievementTextResource } from "@/data/gameDataLoader";
-import type { Achievement, AchievementCategory } from "@/data/types";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import {
   achievementMatchesFilters,
   buildAchievementVideoSearchUrl,
   groupAchievementSeries,
-} from "@/lib/achievement/utils";
-import { cn, getAssetUrl } from "@/lib/utils";
+} from "@/domain/achievement/utils";
+import type { Achievement, AchievementCategory } from "@/domain/models";
+import { useResource } from "@/hooks/useResource";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
+import { achievementTextResource } from "@/providers/reference/gameDataLoader";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useAchievementStore } from "@/stores/useAchievementStore";
 
@@ -326,7 +328,7 @@ function AchievementFilterToolbar({
 
 export function AchievementArchiveView() {
   const { language, t } = useLanguage();
-  const achievementData = achievementTextResource.use(language);
+  const achievementData = useResource(achievementTextResource, language);
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const activeAccountId = useAccountStore((state) => state.activeAccountId);
   const earnedIdList = useAchievementStore((state) =>

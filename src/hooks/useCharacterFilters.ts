@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
-import type { CharacterFilters } from "@/data/types";
-import { defaultCharacterFilters } from "@/lib/characterFilters";
+import type { CharacterFilters } from "@/domain/models";
+import { defaultCharacterFilters } from "@/services/catalog/characterFilters";
 import { usePreferencesStore } from "@/stores/usePreferencesStore";
 
 interface UseCharacterFiltersOptions {

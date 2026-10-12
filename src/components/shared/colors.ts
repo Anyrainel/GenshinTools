@@ -1,5 +1,5 @@
-import type { Element, Rarity, Tier } from "@/data/enums";
-import type { BuffReceiverType } from "@/lib/dmgcalc/types";
+import type { BuffReceiverType } from "@/domain/combat/damage/types";
+import type { Element, Rarity, Tier } from "@/domain/enums";
 
 // ============================================================
 // DYNAMIC COLOR HELPERS

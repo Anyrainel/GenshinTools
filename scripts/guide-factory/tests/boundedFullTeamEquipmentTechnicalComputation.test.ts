@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import { beforeAll, describe, expect, it } from "vitest";
-import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
-import { StatSheet } from "@/lib/dmgcalc/core/statSheet";
-import type { GeneratorResult } from "@/lib/team-comp/generator/generator";
+import type { TeamSlotConfig } from "@/domain/combat/damage/types";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import type { GeneratorResult } from "@/domain/combat/generator/generator";
 import {
   isCompleteBoundedFullTeamEquipmentTechnicalComputationReport,
   requireAuthenticatedBoundedFullTeamEquipmentTechnicalComputationReport,

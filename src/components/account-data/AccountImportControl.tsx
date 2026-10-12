@@ -22,16 +22,23 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@/components/ui/responsive-dialog";
+import { SCANNER_DOWNLOAD_PAGE } from "@/config/scannerDownloads";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { SCANNER_DOWNLOAD_PAGE } from "@/data/scannerDownloads";
-import type { GOODData } from "@/lib/account-data/import/goodConversion";
 import {
   type HoyolabCredentials,
   uidToRegion,
-} from "@/lib/account-data/import/hoyolabFetcher";
+} from "@/providers/hoyolab/hoyolabFetcher";
+import type {
+  GOODData,
+  GOODImportOptions,
+} from "@/providers/scanner/goodConversion";
 
 interface AccountImportControlProps {
-  onLocalImport: (data: GOODData, optionalUid: string) => void;
+  onLocalImport: (
+    data: GOODData,
+    optionalUid: string,
+    options: GOODImportOptions
+  ) => void;
   onUidImport: (uid: string, clearData: boolean) => Promise<void>;
   onHoyolabImport: (
     uid: string,
@@ -64,6 +71,8 @@ export const AccountImportControl = forwardRef<
     () => localStorage.getItem("gg_last_local_uid") || ""
   );
   const [clearData, setClearData] = useState(false);
+  const [keepFourStarOfFiveStarSets, setKeepFourStarOfFiveStarSets] =
+    useState(false);
   // HoYoLAB cookie parts — stored per field so users don't need to assemble
   // the "k=v; k=v" string themselves.
   const [hoyolabLtuidV2, setHoyolabLtuidV2] = useState(
@@ -122,6 +131,7 @@ export const AccountImportControl = forwardRef<
   useImperativeHandle(ref, () => ({
     open: () => {
       setMethod("json");
+      setKeepFourStarOfFiveStarSets(false);
       setErrorMessage(null);
       setIsOpen(true);
     },
@@ -151,7 +161,9 @@ export const AccountImportControl = forwardRef<
         } else {
           localStorage.removeItem("gg_last_local_uid");
         }
-        onLocalImport(imported, localUidInput.trim());
+        onLocalImport(imported, localUidInput.trim(), {
+          keepFourStarOfFiveStarSets,
+        });
         setIsOpen(false);
       } catch (error) {
         console.error("Failed to import data:", error);
@@ -247,6 +259,22 @@ export const AccountImportControl = forwardRef<
             badge={t.ui("import.recommended")}
           >
             <p className="text-sm leading-5">{t.ui("import.goodPcHint")}</p>
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="keepFourStarOfFiveStarSets"
+                checked={keepFourStarOfFiveStarSets}
+                onCheckedChange={(checked) =>
+                  setKeepFourStarOfFiveStarSets(checked === true)
+                }
+                disabled={isBusy}
+              />
+              <Label
+                htmlFor="keepFourStarOfFiveStarSets"
+                className="text-sm font-normal cursor-pointer"
+              >
+                {t.ui("import.keepFourStarOfFiveStarSets")}
+              </Label>
+            </div>
             <div className="space-y-1.5">
               <input
                 type="text"

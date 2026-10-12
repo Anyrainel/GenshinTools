@@ -1,3 +1,4 @@
+import "@/providers/reference/statLoaders";
 import { selectActiveTierAssignments } from "@/stores/createTierStore";
 /**
  * Integration Tests: Tier Assignment to Character Sorting Flow
@@ -10,18 +11,17 @@ import { selectActiveTierAssignments } from "@/stores/createTierStore";
 
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-
-import type { CharacterStatsMap } from "@/data/gameStatsLoader";
-import { getCharacterDisplayMeta } from "@/data/gameStatsLoader";
 import type {
   CharacterFilters,
   CharacterResource,
   TierAssignment,
-} from "@/data/types";
+} from "@/domain/models";
+import type { CharacterStatsMap } from "@/domain/reference/stats";
+import { getCharacterDisplayMeta } from "@/domain/reference/stats";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
-} from "@/lib/characterFilters";
+} from "@/services/catalog/characterFilters";
 import { useTierStore } from "@/stores/useTierStore";
 
 const testCharacters: CharacterResource[] = [

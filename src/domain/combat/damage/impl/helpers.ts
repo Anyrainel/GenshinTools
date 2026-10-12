@@ -1,0 +1,99 @@
+import type { Element } from "@/domain/enums";
+import type { StatEntry } from "@/domain/models";
+import type { CharacterBase } from "../core/implModel";
+import { StatBuff } from "../core/statBuff";
+import type { BuffSource, DamageTagFilter, OptionDef } from "../types";
+
+/** Pick a refinement-scaled value (R1–R5, 1-indexed refinement). */
+export function r(
+  refinement: number,
+  values: [number, number, number, number, number]
+): number {
+  return values[refinement - 1]!;
+}
+
+/** Weapon buff source. */
+export function wbs(
+  self: { weaponId: string; refinement: number },
+  triggers?: string[],
+  noStackId?: string
+): BuffSource {
+  return {
+    type: "weapon",
+    id: self.weaponId,
+    triggers,
+    noStackId,
+    origin: `R${self.refinement}`,
+  };
+}
+
+/** Character buff source. */
+export function cbs(
+  self: { charId: string },
+  origin: string,
+  triggers?: string[]
+): BuffSource {
+  return { type: "character", id: self.charId, triggers, origin };
+}
+
+// ─── Traveler Cross-Resonance (glossary passive "buffs") ───
+/**
+ * Every Traveler variant gains these stat bonuses on self for each element
+ * they have resonated with. All seven released elements are active; add a new
+ * entry here whenever another Traveler element ships.
+ */
+export const TRAVELER_RESONANCE_ENTRIES: StatEntry[] = [
+  { key: "cr", value: 0.1 }, // Anemo
+  { key: "def%", value: 0.2 }, // Geo
+  { key: "er", value: 0.2 }, // Electro
+  { key: "em", value: 60 }, // Dendro
+  { key: "hp%", value: 0.2 }, // Hydro
+  { key: "atk%", value: 0.2 }, // Pyro
+  { key: "cd", value: 0.2 }, // Cryo
+];
+
+export function travelerP3Buff(self: CharacterBase): StatBuff {
+  return new StatBuff(
+    cbs(self, "P3", ["passive"]),
+    { receiver: "self" },
+    TRAVELER_RESONANCE_ENTRIES
+  );
+}
+
+/** Filter matching all 7 elements (not Physical). Use with `dmg%` entries. */
+export const ALL_ELEMENTAL_FILTER: DamageTagFilter = {
+  elements: ["Anemo", "Cryo", "Dendro", "Electro", "Geo", "Hydro", "Pyro"],
+};
+
+// Maps a proc element to the attach elements it reacts with.
+const REACTION_TO_AURA_ELEMENTS: Record<Element, readonly Element[]> = {
+  Pyro: ["Hydro", "Electro", "Cryo", "Dendro"],
+  Hydro: ["Pyro", "Electro", "Cryo", "Dendro"],
+  Electro: ["Pyro", "Hydro", "Cryo", "Dendro"],
+  Cryo: ["Pyro", "Hydro", "Electro"],
+  Dendro: ["Pyro", "Hydro", "Electro", "Cryo"],
+  Anemo: ["Pyro", "Hydro", "Electro", "Cryo"],
+  Geo: ["Pyro", "Hydro", "Electro", "Cryo"],
+};
+
+export function getReactionAuraElements(
+  triggerElement: Element
+): readonly Element[] {
+  return REACTION_TO_AURA_ELEMENTS[triggerElement];
+}
+
+// ─── Shared OptionDefs ───
+/**
+ * Royal series (Royal Greatsword/Spear/Bow/Longsword/Grimoire): CRIT Rate
+ * stacks (max 5) that reset on a CRIT hit. Effective stack count depends on
+ * the wielder's CRIT Rate, which can't be determined at construction time —
+ * offer fixed tiers and default to 3 stacks.
+ */
+export const royalSeriesOption = {
+  label: { zh: "专注层数", en: "Focus Stacks" },
+  choices: [
+    { value: "3", label: { zh: "3层（默认）", en: "3 stacks (default)" } },
+    { value: "5", label: { zh: "5层（满层）", en: "5 stacks (max)" } },
+    { value: "1", label: { zh: "1层", en: "1 stack" } },
+  ] as const,
+} satisfies OptionDef;

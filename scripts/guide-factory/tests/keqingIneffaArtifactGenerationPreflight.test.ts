@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
@@ -79,7 +80,7 @@ describe("Keqing-Ineffa artifact-generation preflight fixture", () => {
       KEQING_INEFFA_ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
         }),
       ),
     );

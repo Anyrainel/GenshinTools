@@ -9,13 +9,13 @@ import type { useLanguage } from "@/contexts/LanguageContext";
 import {
   DEFAULT_TRIAGE_SETTINGS,
   TRIAGE_BACKUP_AMOUNT_PRESETS,
-} from "@/lib/account-data/triage/constants";
-import { TRIAGE_TIER_THRESHOLDS } from "@/lib/account-data/triage/tierMath";
+} from "@/domain/account/triage/constants";
+import { TRIAGE_TIER_THRESHOLDS } from "@/domain/account/triage/tierMath";
 import type {
   TriageBackupAmountMode,
   TriageSettings,
-} from "@/lib/account-data/triage/types";
-import { cloneData } from "@/lib/utils";
+} from "@/domain/account/triage/types";
+import { cloneData } from "@/lib/cloneData.ts";
 
 type Translator = ReturnType<typeof useLanguage>["t"];
 

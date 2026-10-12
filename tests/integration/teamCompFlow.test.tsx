@@ -9,7 +9,7 @@
 
 import { act } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { TeamCard } from "@/components/team-comp/TeamCard";
+import { TeamCard } from "@/components/team-analysis/TeamCard";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { render, screen } from "../utils/render";
 

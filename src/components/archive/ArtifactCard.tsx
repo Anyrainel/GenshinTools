@@ -2,10 +2,11 @@ import { ChevronDown } from "lucide-react";
 import { memo, useEffect, useRef, useState } from "react";
 import { BetaBadge } from "@/components/shared/BetaBadge";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { allSlots } from "@/data/enums";
-import { betaArtifactIds } from "@/data/gameResources";
-import type { ArtifactSetResource } from "@/data/types";
-import { cn, getAssetUrl } from "@/lib/utils";
+import { allSlots } from "@/domain/enums";
+import type { ArtifactSetResource } from "@/domain/models";
+import { betaArtifactIds } from "@/domain/reference/catalog";
+import { getAssetUrl } from "@/lib/assets/urls.ts";
+import { cn } from "@/lib/utils";
 
 /** Height threshold (px) for the inner effect container before collapsing kicks in */
 const COLLAPSE_THRESHOLD = 180;

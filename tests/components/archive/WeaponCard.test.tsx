@@ -1,6 +1,6 @@
 import userEvent from "@testing-library/user-event";
 import { WeaponCard } from "@/components/archive/WeaponCard";
-import type { WeaponResource } from "@/data/types";
+import type { WeaponResource } from "@/domain/models";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { render, screen } from "../../utils/render";
 
