@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "./sourceLocations";
+
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { readJson, sha256File, writeJson } from "./io";
@@ -46,7 +46,7 @@ export function formatKeqingIneffaFurinaXilonenCachedPolicyAuditSummary(
 
 export async function runKeqingIneffaFurinaXilonenCachedPolicyAuditCli(): Promise<void> {
   const readInput = (relativePath: string) =>
-    readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)));
+    readJson(path.join(REPOSITORY_ROOT, relativePath));
   const [cp38Report, cp39Report, inputFiles] = await Promise.all([
     readInput(CP38_REPORT_PATH),
     readInput(CP39_REPORT_PATH),
@@ -54,7 +54,7 @@ export async function runKeqingIneffaFurinaXilonenCachedPolicyAuditCli(): Promis
       KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_AUDIT_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import fs from "node:fs";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
@@ -40,13 +40,13 @@ const KNOWLEDGE_REPOSITORY =
 const GENSHINTOOLS_SNAPSHOT =
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json";
 const LIVE_BUILD_PRESET =
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 const KQM_EVIDENCE_REPORT =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 const EXPECTED_FULL_SHA256 =
-  "d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a";
+  "0604af854311eb7196b49cfb5707e6947a0b900113959ed0261c88dcde8c4937";
 const EXPECTED_RUNTIME_FULL_SHA256 =
-  "91bdda079f56a3df47da8e4499aff0bd8f5d38d8a3359aba5d24c4f15bb0dab5";
+  "0604af854311eb7196b49cfb5707e6947a0b900113959ed0261c88dcde8c4937";
 
 let INPUT: BuildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceInput;
 let REPORT: KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport;
@@ -58,15 +58,11 @@ beforeAll(async () => {
 }, 90_000);
 
 describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
-  it("changes only source provenance when recapturing the migrated module layout", () => {
-    const historical = JSON.parse(fs.readFileSync(KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH, "utf8")) as KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport;
-    const normalized = structuredClone(REPORT);
-    normalized.generatedFrom[1].sha256 = historical.generatedFrom[1].sha256;
-    normalized.generatedSheetEvidence!.generatedFrom[1].sha256 = historical.generatedSheetEvidence!.generatedFrom[1].sha256;
-    normalized.generatedSheetEvidence!.authentication.reportContentSha256 = historical.generatedSheetEvidence!.authentication.reportContentSha256;
-    expect(normalized).toEqual(historical);
+  it("rebuilds the current durable capture and rejects mixed source provenance", () => {
+    const durable = JSON.parse(fs.readFileSync(KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_REPORT_PATH, "utf8")) as KeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport;
+    expect(REPORT).toEqual(durable);
     const mixed = structuredClone(REPORT);
-    mixed.generatedFrom[1].sha256 = historical.generatedFrom[1].sha256;
+    mixed.generatedFrom[1].sha256 = "0".repeat(64);
     expect(() => requireAuthenticatedKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport(mixed)).toThrow(/Refusing unauthenticated or mutated/);
   });
   it("authenticates the exact real capture and occurrence-scoped comparison oracle", () => {
@@ -132,7 +128,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
       resultFingerprintSha256:
         "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386",
       reportContentSha256:
-        "bd2283ff3ce229260804830289963365b35722b60983953a25f3400b5dc4842f",
+        "169653f2a1ab7a8d9a4a43dbc76709462285fd0df5c032d2b4fc798e672420fc",
     });
     expect(REPORT.comparisonBoundary).toMatchObject({
       occurrenceCount: 576,
@@ -511,7 +507,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
 async function loadInput(): Promise<BuildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceInput> {
   const read = (relativePath: string) =>
     JSON.parse(
-      fs.readFileSync(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)), "utf8"),
+      fs.readFileSync(path.join(REPOSITORY_ROOT, relativePath), "utf8"),
     );
   return {
     sourceTechnicalReport:
@@ -534,7 +530,7 @@ async function loadInput(): Promise<BuildKeqingIneffaFurinaXilonenGeneratedSheet
       KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

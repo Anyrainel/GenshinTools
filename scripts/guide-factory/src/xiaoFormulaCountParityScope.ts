@@ -60,7 +60,7 @@ export const XIAO_FORMULA_COUNT_PARITY_SCOPE_EXPECTATION = Object.freeze({
   manifestSha256:
     "4359740241a370e3ebc72d6e194ae6441a0bfb59a1f90fe7f414020055a4c1aa",
   scopeProjectionSha256:
-    "17f457d095268b739b46c2acb4f5f98f885c247823c22ff5adb5714c08da3f34",
+    "50859b2ebf360f11f5e55113b3ae20807760b5d0f8072411b817f4b2881df4c5",
 });
 
 export interface XiaoFormulaCountParityScopeInput {

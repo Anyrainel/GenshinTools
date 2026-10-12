@@ -20,15 +20,17 @@ export const SOURCE_REGISTRY_PATH = path.join(
 export const TEAM_PRESET_PATH = path.join(
   REPOSITORY_ROOT,
   "src",
+  "config",
   "presets",
-  "team-comp",
+  "teams",
   "[GGArtifact] 战舰队伍 Flagship Teams.json"
 );
 export const BUILD_PRESET_PATH = path.join(
   REPOSITORY_ROOT,
   "src",
+  "config",
   "presets",
-  "artifact-builds",
+  "builds",
   "[GGArtifact] 全角色配装 AllCharacterBuilds.json"
 );
 export const LEGACY_RESEARCH_PATH = path.join(

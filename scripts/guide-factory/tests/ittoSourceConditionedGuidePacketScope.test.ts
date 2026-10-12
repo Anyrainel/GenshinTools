@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadGameCatalogs } from "../src/catalogs";
@@ -230,7 +230,7 @@ async function buildReport(fixture: Fixture) {
       ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

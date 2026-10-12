@@ -30,11 +30,11 @@ export const ARTIFACT_GENERATION_PREFLIGHT_INPUT_PATHS = [
   "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
   "scripts/guide-factory/src/schemas.ts",
   "src/stores/betaState.ts",
-  "src/data/game/character_stats.json",
-  "src/data/game/weapon_stats.json",
+  "src/generated/catalog/character_stats.json",
+  "src/generated/catalog/weapon_stats.json",
   "src/domain/reference/catalog.ts",
-  "src/data/resources.ts",
-  "src/data/resources_beta.ts",
+  "src/generated/catalog/resources.ts",
+  "src/generated/catalog/resources_beta.ts",
   "src/domain/combat/analyzer/weaponChoice.ts",
 ] as const;
 

@@ -66,7 +66,7 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy robustness census", () => {
         exactPathSet: true,
         allDeclaredFileHashesMatch: true,
         cp40ByteSha256:
-          "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46",
+          "bedffadf60f6281ed9698f00a9f4a7d3af1ef33795b79cd290e9f5cc24318b05",
         cp40PayloadHashMatches: true,
         cp40FullGuardPassed: true,
         authentication: "accepted",
@@ -91,7 +91,7 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy robustness census", () => {
         censusPayloadSha256:
           "a98fd6d0c708be4f7b6974df0c2ae0021f693faa7577b9ee9ee517dccda5e986",
         reportContentSha256:
-          "148493d115ac799579ce36a4a6f8b7947ef3d3bd7882b4110b2463091178955c",
+          "8d417c29c538f5f603d2872aaaf9ac9acecc9cb122fb25c674249be1c180451b",
       },
     });
     expect(stableJson(realReport)).toBe(
@@ -105,7 +105,7 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy robustness census", () => {
         KEQING_INEFFA_FURINA_XILONEN_CACHED_POLICY_ROBUSTNESS_CENSUS_REPORT_PATH,
       ),
     ).toBe(
-      "c446dec2027cc2b77d20d46ea8d521d3ae4f43f798f34715a4c4ddb771ac2b73",
+      "910ba3b1c5e09a2f9fbb7b1e171f9905d05591fe079f22174be7719b75f65aa8",
     );
   });
 
@@ -350,7 +350,7 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy robustness census", () => {
       energyRecoveryValuesInfluencedCensus: null,
     });
     expect(report.authentication.reportContentSha256).toBe(
-      "c9aee97b2b61035a4448984181ca2bfcc340690abf5301db75c259de18812278",
+      "eb006d3a954819844ccdd9056a4f3871a01caae8c260de645f7bcf0e5443bf25",
     );
   });
 

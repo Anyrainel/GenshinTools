@@ -25,7 +25,7 @@ const CLI_PATH =
   "scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts";
 const GATE_ID =
   "guide-factory-xiao-ffxx-unit-expanded-execution-gate-version-5-5";
-const EXPECTED_INPUT_PATH_COUNT = 121;
+const EXPECTED_INPUT_PATH_COUNT = 127;
 const EXPECTED_JSON_INPUT_COUNT = 13;
 const NORMALIZATION_TOLERANCE = 1e-9;
 const EXPECTED_INPUT_LINE_MAPPINGS = [
@@ -169,8 +169,8 @@ export interface XiaoFfxxUnitExpandedExecutionGateReport {
     exactGeneratedFromPathSet: true;
     allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true;
     combinedJsonInputByteAndParsedObjectParity: true;
-    sourceFileCount: 121;
-    generatedFromCount: 121;
+    sourceFileCount: 127;
+    generatedFromCount: 127;
     authenticatedJsonInputParityCount: 13;
   };
   upstreamBoundary: {
@@ -178,7 +178,7 @@ export interface XiaoFfxxUnitExpandedExecutionGateReport {
     durableReportFileSha256: string;
     durableReportCanonicalObjectSha256: string;
     freshlyAuthenticated: true;
-    upstreamInputCount: 118;
+    upstreamInputCount: 124;
     groupedReplayAttemptCount: 6;
     groupedRawDualPathCaptureCount: 6;
     unitExpandedAcceptedReplayCount: 6;
@@ -428,8 +428,8 @@ export async function buildXiaoFfxxUnitExpandedExecutionGateReport(
       exactGeneratedFromPathSet: true,
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
-      sourceFileCount: 121,
-      generatedFromCount: 121,
+      sourceFileCount: 127,
+      generatedFromCount: 127,
       authenticatedJsonInputParityCount: 13,
     },
     upstreamBoundary: {
@@ -437,7 +437,7 @@ export async function buildXiaoFfxxUnitExpandedExecutionGateReport(
       durableReportFileSha256: sha256Bytes(raw.sourceBytesByPath.get(UPSTREAM_REPORT_RELATIVE_PATH)!),
       durableReportCanonicalObjectSha256: upstreamCanonicalObjectSha256,
       freshlyAuthenticated: true,
-      upstreamInputCount: 118,
+      upstreamInputCount: 124,
       groupedReplayAttemptCount: 6,
       groupedRawDualPathCaptureCount: 6,
       unitExpandedAcceptedReplayCount: 6,

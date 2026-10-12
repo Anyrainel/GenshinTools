@@ -53,24 +53,30 @@ export const NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_CLI_RELATIVE_PATH =
  * Binary archives are authenticated as bytes by the outer checkpoint input.
  */
 export const NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_RUNTIME_INPUT_PATHS = [
+  "scripts/lib/nodeReferenceFetch.mjs",
+  "src/config/beta.ts",
+  "src/domain/reference/stats.ts",
+  "src/providers/reference/fetchGzipJson.ts",
+  "src/domain/combat/damage/core/infusion.ts",
+  "src/domain/combat/damage/core/lunarRankWeights.ts",
+  "src/domain/combat/damage/core/dynamicBuffExpressions.ts",
   "scripts/guide-factory/src/computationReplay.ts",
-  "src/stores/betaState.ts",
-  "src/data/characterInfo.ts",
+  "src/generated/catalog/characterInfo.ts",
   "src/config/gameConstants.ts",
   "src/domain/enums.ts",
-  "src/data/game/artifact_stat.json",
-  "src/data/game/character_beta_stats.json.gz",
-  "src/data/game/character_stats.json",
-  "src/data/game/weapon_beta_stats.json.gz",
-  "src/data/game/weapon_stats.json",
+  "src/generated/catalog/artifact_stat.json",
+  "src/generated/catalog/character_beta_stats.json.gz",
+  "src/generated/catalog/character_stats.json",
+  "src/generated/catalog/weapon_beta_stats.json.gz",
+  "src/generated/catalog/weapon_stats.json",
   "src/lib/resources/cache.ts",
   "src/domain/reference/catalog.ts",
   "src/providers/reference/statLoaders.ts",
   "src/i18n/gameTerms.ts",
-  "src/generated/i18n-beta.ts",
-  "src/generated/i18n-game.ts",
-  "src/data/resources_beta.ts",
-  "src/data/resources.ts",
+  "src/generated/translations/i18n-beta.ts",
+  "src/generated/translations/i18n-game.ts",
+  "src/generated/catalog/resources_beta.ts",
+  "src/generated/catalog/resources.ts",
   "src/domain/build/statUtils.ts",
   "src/domain/build/artifact/scoring/constants.ts",
   "src/domain/build/artifact/scoring/utils.ts",
@@ -152,8 +158,8 @@ export const NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_SOURCE_FILE_PATHS = [
 
 const ABSOLUTE_TOLERANCE = 1e-9;
 const RELATIVE_TOLERANCE = 1e-12;
-const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 80;
-const EXPECTED_INPUT_PATH_COUNT = 109;
+const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 86;
+const EXPECTED_INPUT_PATH_COUNT = 115;
 
 const EXPECTED_CP53_CALCULATOR_OBSERVATION = {
   characterRegistration: "noelle",
@@ -311,9 +317,9 @@ export interface NoelleNormalPrefixFormulaProjectionReport {
     allGeneratedFromHashesAuthenticatedFromBytes: true;
     cp53ReportByteAndParsedObjectParity: true;
     exactCp53InputProjection: true;
-    sourceFileCount: 109;
-    generatedFromCount: 109;
-    runtimeInputPathCount: 80;
+    sourceFileCount: 115;
+    generatedFromCount: 115;
+    runtimeInputPathCount: 86;
     binaryRuntimeInputCount: 2;
   };
   upstreamBoundary: {

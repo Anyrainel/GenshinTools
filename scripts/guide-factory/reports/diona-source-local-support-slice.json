@@ -18,7 +18,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
@@ -46,7 +46,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -54,7 +54,7 @@
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
-      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -371,7 +371,7 @@
   "rawInputBoundary": {
     "byteAndParsedObjectClosure": true,
     "canonicalObjectSha256ByPath": {
-      "scripts/guide-factory/data/knowledge/repository.json": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d",
+      "scripts/guide-factory/data/knowledge/repository.json": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625",
       "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json": "9fdf13be944b44710850cfba841ed02c7f4429fa5dd9348d00d52cb2078bc671",
       "scripts/guide-factory/data/source-snapshots/manual-index.json": "50df1f424b811f6a818c376a209606b5ff2f59d2df0a4488740794ce4aef6948",
       "scripts/guide-factory/sources/registry.json": "a8ff9d9ce1a00c95f3bcbccac79ade86a413a43446b913f522f66237f7ab2e86"
@@ -574,7 +574,7 @@
           "manualPath": "records[4].members[0].artifactRecommendations[0].conditions",
           "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[0].artifactRecommendations[0].conditions",
           "payloadSha256": "4e839978e28d338288feea3678928a73c9bd8de3a64a2abac115e2b1b16c1716",
-          "repositoryJsonPath": "records[247].members[0].artifactRecommendations[0].conditions",
+          "repositoryJsonPath": "records[250].members[0].artifactRecommendations[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
           "sliceDisposition": "selected",
@@ -606,7 +606,7 @@
           "manualPath": "records[4].members[2].artifactRecommendations[0].conditions",
           "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[2].artifactRecommendations[0].conditions",
           "payloadSha256": "850ca8732700319db2ceb56502180d0b6067c9e1d11c5b69bb04be1024d5e056",
-          "repositoryJsonPath": "records[247].members[2].artifactRecommendations[0].conditions",
+          "repositoryJsonPath": "records[250].members[2].artifactRecommendations[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
           "sliceDisposition": "selected",
@@ -638,7 +638,7 @@
           "manualPath": "records[4].members[3].artifactRecommendations[0].conditions",
           "occurrenceId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:members[3].artifactRecommendations[0].conditions",
           "payloadSha256": "88398bdd4d438dc83a1342900b2bcedcf0fef2fb5095b3ecedaf424c7a767e43",
-          "repositoryJsonPath": "records[247].members[3].artifactRecommendations[0].conditions",
+          "repositoryJsonPath": "records[250].members[3].artifactRecommendations[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt",
           "sliceDisposition": "selected",
@@ -688,7 +688,7 @@
     "generatedFrom": [
       {
         "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+        "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
       },
       {
         "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",
@@ -716,7 +716,7 @@
       },
       {
         "path": "scripts/guide-factory/src/io.ts",
-        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+        "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
       },
       {
         "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -724,7 +724,7 @@
       },
       {
         "path": "scripts/guide-factory/src/paths.ts",
-        "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+        "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
       },
       {
         "path": "scripts/guide-factory/src/schemas.ts",

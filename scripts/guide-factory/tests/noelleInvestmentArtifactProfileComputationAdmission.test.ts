@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -1346,7 +1346,7 @@ async function readGeneratedFrom(paths: readonly string[]) {
     paths.map(async (relativePath) => ({
       path: relativePath,
       sha256: await sha256File(
-        currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
+        path.join(REPOSITORY_ROOT, relativePath),
       ),
     })),
   );

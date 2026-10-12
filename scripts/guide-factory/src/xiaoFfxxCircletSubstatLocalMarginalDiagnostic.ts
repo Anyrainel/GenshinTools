@@ -61,7 +61,7 @@ const CLI_PATH =
   "scripts/guide-factory/src/assemble-xiao-ffxx-circlet-substat-local-marginal-diagnostic.ts";
 const DIAGNOSTIC_ID =
   "guide-factory-xiao-ffxx-circlet-substat-local-marginal-diagnostic-version-5-5";
-const EXPECTED_INPUT_PATH_COUNT = 127;
+const EXPECTED_INPUT_PATH_COUNT = 133;
 const EXPECTED_JSON_INPUT_COUNT = 15;
 const EXPECTED_RECONSTRUCTION_CONTROL_COUNT = 6;
 const EXPECTED_BASELINE_COUNT = 12;
@@ -454,10 +454,10 @@ export interface XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport {
     exactGeneratedFromPathSet: true;
     allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true;
     combinedJsonInputByteAndParsedObjectParity: true;
-    sourceFileCount: 127;
-    generatedFromCount: 127;
+    sourceFileCount: 133;
+    generatedFromCount: 133;
     authenticatedJsonInputParityCount: 15;
-    declaredInheritedRuntimePathCount: 80;
+    declaredInheritedRuntimePathCount: 86;
     declaredNewRuntimePathCount: 0;
     declaredRuntimePathsRemainInsideInheritedCheckpoint47Set: true;
   };
@@ -466,7 +466,7 @@ export interface XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport {
     durableReportFileSha256: string;
     durableReportCanonicalObjectSha256: string;
     freshlyAuthenticatedCheckpoint49: true;
-    checkpoint49InputCount: 124;
+    checkpoint49InputCount: 130;
     checkpoint49AdditionalReplayCount: 0;
     fullChainFreshlyAuthenticated: true;
     branchSourceFreshlyAuthenticated: true;
@@ -1114,10 +1114,10 @@ export async function buildXiaoFfxxCircletSubstatLocalMarginalDiagnosticReport(
       exactGeneratedFromPathSet: true,
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
-      sourceFileCount: 127,
-      generatedFromCount: 127,
+      sourceFileCount: 133,
+      generatedFromCount: 133,
       authenticatedJsonInputParityCount: 15,
-      declaredInheritedRuntimePathCount: 80,
+      declaredInheritedRuntimePathCount: 86,
       declaredNewRuntimePathCount: 0,
       declaredRuntimePathsRemainInsideInheritedCheckpoint47Set: true,
     },
@@ -1128,7 +1128,7 @@ export async function buildXiaoFfxxCircletSubstatLocalMarginalDiagnosticReport(
       ),
       durableReportCanonicalObjectSha256: upstreamCanonicalObjectSha256,
       freshlyAuthenticatedCheckpoint49: true,
-      checkpoint49InputCount: 124,
+      checkpoint49InputCount: 130,
       checkpoint49AdditionalReplayCount: 0,
       fullChainFreshlyAuthenticated: true,
       branchSourceFreshlyAuthenticated: true,
@@ -1373,13 +1373,13 @@ function authenticateRawInputs(
   if (
     expectedPaths.length !== EXPECTED_INPUT_PATH_COUNT ||
     Object.keys(JSON_INPUT_PATHS).length !== EXPECTED_JSON_INPUT_COUNT ||
-    XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS.length !== 80 ||
+    XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS.length !== 86 ||
     XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS.some(
       (runtimePath) => !expectedPaths.includes(runtimePath),
     )
   ) {
     throw new Error(
-      "Xiao Circlet/substat diagnostic declared path or JSON cardinality drifted from 127/15 with the inherited 80-path runtime set.",
+      "Xiao Circlet/substat diagnostic declared path or JSON cardinality drifted from 133/15 with the inherited 86-path runtime set.",
     );
   }
   const sourceFiles = input.sourceFiles
@@ -1644,7 +1644,7 @@ function requireCheckpoint49Boundary(
     report.validationStatus !== "accepted-as-validation-target-only" ||
     report.diagnosticStatus !==
       "counterexamples-observed-validation-target-only" ||
-    report.rawInputBoundary.sourceFileCount !== 124 ||
+    report.rawInputBoundary.sourceFileCount !== 130 ||
     report.rawInputBoundary.authenticatedJsonInputParityCount !== 14 ||
     report.upstreamBoundary.checkpoint49AdditionalReplayCount !== 0 ||
     report.summary.authenticatedCandidateCount !== 6 ||

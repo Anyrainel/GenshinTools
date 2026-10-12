@@ -1,5 +1,5 @@
 import "@/providers/reference/statLoaders";
-import { currentSourceLocation } from "./sourceLocations";
+
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -82,8 +82,8 @@ export const NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_SOURCE_FILE_PATHS = [
   ...NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_INPUT_PATHS,
 ];
 
-const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 80;
-const EXPECTED_INPUT_PATH_COUNT = 112;
+const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 86;
+const EXPECTED_INPUT_PATH_COUNT = 118;
 const EXPECTED_JSON_INPUT_COUNT = 13;
 const ABSOLUTE_TOLERANCE = 1e-9;
 const RELATIVE_TOLERANCE = 1e-12;
@@ -476,9 +476,9 @@ export interface NoelleHexereiEquipmentResponseSurfaceReport {
     cp54ReportByteAndParsedObjectParity: true;
     exactCp54InputProjection: true;
     exactTechnicalRequest: true;
-    sourceFileCount: 112;
-    generatedFromCount: 112;
-    runtimeInputPathCount: 80;
+    sourceFileCount: 118;
+    generatedFromCount: 118;
+    runtimeInputPathCount: 86;
     jsonInputCount: 13;
     binaryRuntimeInputCount: 2;
   };
@@ -2156,7 +2156,7 @@ function authenticateOuterInputs(
     }
     let workspaceBytes: Buffer;
     try {
-      workspaceBytes = readFileSync(currentSourceLocation(path.join(REPOSITORY_ROOT, sourcePath)));
+      workspaceBytes = readFileSync(path.join(REPOSITORY_ROOT, sourcePath));
     } catch {
       throw new Error(`CP55 workspace source file is unreadable at ${sourcePath}.`);
     }

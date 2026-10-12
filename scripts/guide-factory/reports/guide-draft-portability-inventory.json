@@ -35,27 +35,27 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
-      "sha256": "758e65a9c1204cbae13691ba509629b31bdc3cdbbf634f76528522b13e5047b0"
+      "sha256": "ea3687491939a75f06e1298dc3b1d4e94820383fb73c0823408cca3e7e0e3f2a"
     },
     {
       "path": "scripts/guide-factory/reports/itto-request-context-applicability.json",
-      "sha256": "219575200d70d6bc50bee235711ecec6f585c5621fa31cd012f7a5a0c58d3a70"
+      "sha256": "b7b27428a7701821fa156090afff530171505a659c3e25bec2523395e4be6314"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
-      "sha256": "0d06e54e9f1ccff31242a4eeebe421bddf80f25e33eae7eca3bbd13d1d2caf39"
+      "sha256": "ba23b003e3c71d7ca5e14119e736feee7d08bf869644f014146d653f7ec902e9"
     },
     {
       "path": "scripts/guide-factory/reports/klee-team-scoped-claim-join-witness.json",
-      "sha256": "b8496e22a46db5122943126419a05d3df8304bc9c56c92f8df2a847f4fd80c1a"
+      "sha256": "60ac13159c818d0b15c02d77c0ec381f6512b32dbd3e0b0c962062a9a62d2851"
     },
     {
       "path": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
-      "sha256": "0e2f39fc1d72f5ffb90bda7445addcfdb4ce2528aa68b6fbeb02ac56c359f218"
+      "sha256": "212bff42136b8209fb8d1649d50bb4d9f4f4eba9a9add976c74e56beca2536fa"
     },
     {
       "path": "scripts/guide-factory/reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json",
-      "sha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e"
+      "sha256": "8a6cff2dc24cbb38f7616701e952db43814597f01fa10ff0c576712256a4088e"
     },
     {
       "path": "scripts/guide-factory/src/assemble-guide-draft-portability-inventory.ts",
@@ -80,7 +80,7 @@
     "sourceFileCount": 9,
     "status": "accepted"
   },
-  "reportSha256": "8d7e5682423542df933c9352e3f8d1fc14605904279ea4e8092bd30ff27db70b",
+  "reportSha256": "1b84c8830aa5bc61bdbc4e804f1c06e1e4229b2e70c7405fe11d262717cb6d61",
   "reportType": "guide-draft-portability-inventory",
   "schemaVersion": 1,
   "scopeBoundary": {
@@ -742,13 +742,13 @@
         "sourceReviewStatus": "unreviewed"
       },
       "sourceSurface": {
-        "byteLength": 333121,
-        "canonicalObjectSha256": "219575200d70d6bc50bee235711ecec6f585c5621fa31cd012f7a5a0c58d3a70",
+        "byteLength": 333240,
+        "canonicalObjectSha256": "b7b27428a7701821fa156090afff530171505a659c3e25bec2523395e4be6314",
         "classification": "descriptive-request-account-applicability-projection",
         "durableBytesAuthenticated": true,
-        "embeddedGeneratedFromCanonicalSha256": "f497399a97fab84919a414d61ccb0b5678f882364db2f61ffcc9e34f945c4884",
+        "embeddedGeneratedFromCanonicalSha256": "f8f264eef2db687834e15f1c93bb8a148ac3ce0f330bb2973559f72ed5273323",
         "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
-        "fileSha256": "219575200d70d6bc50bee235711ecec6f585c5621fa31cd012f7a5a0c58d3a70",
+        "fileSha256": "b7b27428a7701821fa156090afff530171505a659c3e25bec2523395e4be6314",
         "publicationStatus": "withheld-experimental-context",
         "reportPath": "scripts/guide-factory/reports/itto-request-context-applicability.json",
         "reportType": "itto-request-context-applicability-report",
@@ -835,7 +835,7 @@
           "valueShape": "scalar"
         },
         {
-          "canonicalValueSha256": "f571b1b817b13130ac962e5527a4807dd7e5d3040e09a50a2720f6a5ebc32543",
+          "canonicalValueSha256": "e0040169cecf84c430177fe35b4b464a92784d96a44ef05fc04269ba8ee8652a",
           "evidenceId": "klee.negative-control",
           "family": "team.exact-context",
           "itemCount": 9,
@@ -1350,13 +1350,13 @@
         "sourceReviewStatus": "unreviewed"
       },
       "sourceSurface": {
-        "byteLength": 125287,
-        "canonicalObjectSha256": "b8496e22a46db5122943126419a05d3df8304bc9c56c92f8df2a847f4fd80c1a",
+        "byteLength": 125417,
+        "canonicalObjectSha256": "60ac13159c818d0b15c02d77c0ec381f6512b32dbd3e0b0c962062a9a62d2851",
         "classification": "authenticated-descriptive-independent-applicability-witness",
         "durableBytesAuthenticated": true,
-        "embeddedGeneratedFromCanonicalSha256": "f6f50b2a20a82b1b2b139ac95aa6071636a863db2cf594485d4090e732b67ac7",
+        "embeddedGeneratedFromCanonicalSha256": "704d18d65df3d5e80362a04fde5816cc3c3d8efcfa375f647c54707b8b53ffdd",
         "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
-        "fileSha256": "b8496e22a46db5122943126419a05d3df8304bc9c56c92f8df2a847f4fd80c1a",
+        "fileSha256": "60ac13159c818d0b15c02d77c0ec381f6512b32dbd3e0b0c962062a9a62d2851",
         "publicationStatus": "withheld-unreviewed-factory-evidence-join",
         "reportPath": "scripts/guide-factory/reports/klee-team-scoped-claim-join-witness.json",
         "reportType": "klee-team-scoped-condition-resolved-claim-join-witness",
@@ -1895,12 +1895,12 @@
       },
       "sourceSurface": {
         "byteLength": 31109,
-        "canonicalObjectSha256": "0e2f39fc1d72f5ffb90bda7445addcfdb4ce2528aa68b6fbeb02ac56c359f218",
+        "canonicalObjectSha256": "212bff42136b8209fb8d1649d50bb4d9f4f4eba9a9add976c74e56beca2536fa",
         "classification": "authenticated-source-local-condition-binding-slice",
         "durableBytesAuthenticated": true,
-        "embeddedGeneratedFromCanonicalSha256": "5037e5a86968003943ccfa7514a625f1f97d2c835cc07c54797ea6a47a9da162",
+        "embeddedGeneratedFromCanonicalSha256": "f609952f1986578edfa2938cb55010ddf02d8980b1a1777eacb3b4aebaa66851",
         "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
-        "fileSha256": "0e2f39fc1d72f5ffb90bda7445addcfdb4ce2528aa68b6fbeb02ac56c359f218",
+        "fileSha256": "212bff42136b8209fb8d1649d50bb4d9f4f4eba9a9add976c74e56beca2536fa",
         "publicationStatus": "withheld-unreviewed-source-slice",
         "reportPath": "scripts/guide-factory/reports/kokomi-source-local-artifact-slice.json",
         "reportType": "kokomi-source-local-artifact-slice",
@@ -2479,12 +2479,12 @@
       },
       "sourceSurface": {
         "byteLength": 61623,
-        "canonicalObjectSha256": "758e65a9c1204cbae13691ba509629b31bdc3cdbbf634f76528522b13e5047b0",
+        "canonicalObjectSha256": "ea3687491939a75f06e1298dc3b1d4e94820383fb73c0823408cca3e7e0e3f2a",
         "classification": "authenticated-source-local-condition-binding-slice",
         "durableBytesAuthenticated": true,
-        "embeddedGeneratedFromCanonicalSha256": "c6c777b66dc3a4662a0b50daf37e42ef87510c389c75e5b5b620ec882c3b2af2",
+        "embeddedGeneratedFromCanonicalSha256": "3dd19b0b73ba62210fb44eeb24e50d02c94394b891579e12810223afe3ca8c2a",
         "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
-        "fileSha256": "758e65a9c1204cbae13691ba509629b31bdc3cdbbf634f76528522b13e5047b0",
+        "fileSha256": "ea3687491939a75f06e1298dc3b1d4e94820383fb73c0823408cca3e7e0e3f2a",
         "publicationStatus": "withheld-unreviewed-source-slice",
         "reportPath": "scripts/guide-factory/reports/diona-source-local-support-slice.json",
         "reportType": "diona-source-local-support-slice",
@@ -2580,7 +2580,7 @@
           "valueShape": "object"
         },
         {
-          "canonicalValueSha256": "eedc98c35bb10548427bc12ade8345f3333cedcdf85d23926bb605f5bc478096",
+          "canonicalValueSha256": "f6225bccf5dd4707bd3e004902bc61b14706b2630784fe4e51783337ca06f859",
           "evidenceId": "xiao.request-views",
           "family": "request.entered",
           "itemCount": 2,
@@ -2598,7 +2598,7 @@
           "valueShape": "scalar"
         },
         {
-          "canonicalValueSha256": "07936d19723bba501af17b25488c629810013193fb34ca1abb7fade6b140e875",
+          "canonicalValueSha256": "f8de583491e91354847fa3b7c2b7c27c16e227ea9da8953d7d5274547cd8c267",
           "evidenceId": "xiao.candidates",
           "family": "authority.composition-authorship",
           "itemCount": 6,
@@ -3131,12 +3131,12 @@
       },
       "sourceSurface": {
         "byteLength": 64466,
-        "canonicalObjectSha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e",
+        "canonicalObjectSha256": "8a6cff2dc24cbb38f7616701e952db43814597f01fa10ff0c576712256a4088e",
         "classification": "authenticated-guide-factory-authored-partial-branch-candidate-domain",
         "durableBytesAuthenticated": true,
-        "embeddedGeneratedFromCanonicalSha256": "ffbb0eb22a94d2b6beef2710f25a833d5fa3ed52cb61580ad4dcce24ede00fe6",
+        "embeddedGeneratedFromCanonicalSha256": "4b04a2e01ce19e2d1514a11bf8e6b3f17fefe8b3697eda459c287274b16dfcb7",
         "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
-        "fileSha256": "d692c52bb1abcc1dc9628b40536aac0c70ca72f525c0f246c16a1d1a48d1610e",
+        "fileSha256": "8a6cff2dc24cbb38f7616701e952db43814597f01fa10ff0c576712256a4088e",
         "publicationStatus": "withheld-unreviewed-partial-candidate-domain",
         "reportPath": "scripts/guide-factory/reports/xiao-ffxx-non-er-condition-free-branch-candidate-contract.json",
         "reportType": "xiao-ffxx-non-er-condition-free-branch-candidate-contract",
@@ -3776,13 +3776,13 @@
         "sourceReviewStatus": "unreviewed"
       },
       "sourceSurface": {
-        "byteLength": 30124,
-        "canonicalObjectSha256": "0d06e54e9f1ccff31242a4eeebe421bddf80f25e33eae7eca3bbd13d1d2caf39",
+        "byteLength": 30118,
+        "canonicalObjectSha256": "ba23b003e3c71d7ca5e14119e736feee7d08bf869644f014146d653f7ec902e9",
         "classification": "keqing-lunar-cross-record-composition-contract",
         "durableBytesAuthenticated": true,
-        "embeddedGeneratedFromCanonicalSha256": "a774bcf630537ad64eac9f7fa2d550a5269763fd8bad95cace397ec971201539",
+        "embeddedGeneratedFromCanonicalSha256": "266bd6c230ffddacff61bc773c62ec464dfe5a8ea27146578e26feb55a07bc7b",
         "embeddedGeneratedFromWorkspaceRecheckPerformedByThisInventory": false,
-        "fileSha256": "0d06e54e9f1ccff31242a4eeebe421bddf80f25e33eae7eca3bbd13d1d2caf39",
+        "fileSha256": "ba23b003e3c71d7ca5e14119e736feee7d08bf869644f014146d653f7ec902e9",
         "publicationStatus": null,
         "reportPath": "scripts/guide-factory/reports/keqing-lunar-cross-record-composition-contract.json",
         "reportType": null,

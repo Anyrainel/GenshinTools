@@ -2,7 +2,7 @@
   "authentication": {
     "censusInputProjectionSha256": "86fb2b9c41881840b348adc66dffa5d4f4a198a67ec6609363095af22793d294",
     "censusPayloadSha256": "a98fd6d0c708be4f7b6974df0c2ae0021f693faa7577b9ee9ee517dccda5e986",
-    "reportContentSha256": "148493d115ac799579ce36a4a6f8b7947ef3d3bd7882b4110b2463091178955c"
+    "reportContentSha256": "8d417c29c538f5f603d2872aaaf9ac9acecc9cb122fb25c674249be1c180451b"
   },
   "capabilities": {
     "damageClaims": false,
@@ -1040,7 +1040,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-cached-policy-audit.json",
-      "sha256": "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46"
+      "sha256": "bedffadf60f6281ed9698f00a9f4a7d3af1ef33795b79cd290e9f5cc24318b05"
     },
     {
       "path": "scripts/guide-factory/src/boundedLatticePolicy.ts",
@@ -1079,11 +1079,11 @@
     "authentication": "accepted",
     "censusSourceByteSha256": "1770b7a9c061523742d39bc065e7194e1909087f99b48642eb931cd8c4fb754b",
     "censusSourceHashMatches": true,
-    "cp40ByteSha256": "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46",
+    "cp40ByteSha256": "bedffadf60f6281ed9698f00a9f4a7d3af1ef33795b79cd290e9f5cc24318b05",
     "cp40CompactNodeTableSha256": "95dbf16cb035227488f77fa12673120505b058a7e81a2914adf848a293d37106",
     "cp40FullGuardPassed": true,
     "cp40PayloadHashMatches": true,
-    "cp40PayloadSha256": "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46",
+    "cp40PayloadSha256": "bedffadf60f6281ed9698f00a9f4a7d3af1ef33795b79cd290e9f5cc24318b05",
     "cp40PolicyAuditSha256": "159828178c5a42affc6d7d97c5092842fa8fab41b0fbb58ee8e55f626ec8b5a2",
     "cp40ReviewProjectionSha256": "ea108239bcadd49bfcdbde1057b5caf476eeb2c168271f9c97f87ac8bc855d73",
     "dependencySetClassification": "authenticated-declared-non-self-selected-checkpoint-inputs",

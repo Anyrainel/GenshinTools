@@ -61,7 +61,7 @@ const KEQING_HYDRO_ROLE_SOURCE_RECORD_ID =
   "keqing-lunar-charged-off-field-hydro-appliers";
 const KEQING_SHRED_ROLE_SOURCE_RECORD_ID =
   "keqing-lunar-charged-resistance-shred-options";
-const EXPECTED_ELIGIBLE_CHARACTER_COUNT = 125;
+const EXPECTED_ELIGIBLE_CHARACTER_COUNT = 127;
 const EXPECTED_EXTRACTION_METHOD = "agent-assisted";
 const EXPECTED_REVIEW_STATUS = "unreviewed";
 const EXPECTED_ROSTER_DOMAIN_STATUS = "withheld-unresolved-role";
@@ -571,7 +571,7 @@ export async function runKeqingSourceScopedRolePairSample(
       "Both role records preserve source-positive members with unspecified exhaustiveness and no ranking; unexercised members remain evidence rather than failures or inferred negatives.",
       "Only the four exact teams published on the same KQM page are evaluated. No other combination of the two role-member lists is generated, judged, or recommended.",
       "Viridescent Venerer conditions are acknowledged for the configured Jean, Sucrose, and Kaedehara Kazuha targets, but the wrapper does not verify aura setup, timing, or gameplay execution.",
-      "The current 125-ID catalog is checked against independently stored counts and fingerprints in the checked-in roster-domain report; same-count fingerprint drift fails this gate.",
+      "The current 127-ID catalog is checked against independently stored counts and fingerprints in the checked-in roster-domain report; same-count fingerprint drift fails this gate.",
       "The Keqing Lunar-Charged template remains role-withheld in both a fresh roster-domain replay and the checked-in roster-domain report; these observations are not installed as a global resolver.",
       "No damage, equipment, stat allocation, rotation-quality, or energy-recovery computation is performed.",
     ],

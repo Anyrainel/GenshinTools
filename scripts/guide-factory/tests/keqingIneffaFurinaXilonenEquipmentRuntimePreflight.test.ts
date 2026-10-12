@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readJson, sha256File, sha256Text, stableJson } from "../src/io";
@@ -17,7 +17,7 @@ import { REPOSITORY_ROOT } from "../src/paths";
 import type { SourceBackedEquipmentRuntimePreflightEnvironment } from "../src/sourceBackedEquipmentRuntimePreflight";
 
 const EXPECTED_REPORT_SHA256 =
-  "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b";
+  "00377729276cd5f53271e60c6bad1db819622e66a594c44e232987fb73482d59";
 
 describe("Keqing/Ineffa/Furina/Xilonen equipment runtime preflight", () => {
   it("authenticates both upstream reports and materializes all 36 nodes without evaluating them", async () => {
@@ -384,7 +384,7 @@ async function fixture(): Promise<MutableInput> {
       KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

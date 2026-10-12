@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -352,14 +352,14 @@ async function loadFixture(): Promise<BuildXiaoFormulaCountParityInput> {
       XIAO_FORMULA_COUNT_PARITY_SOURCE_FILE_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          text: await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)), "utf8"),
+          text: await readFile(path.join(REPOSITORY_ROOT, relativePath), "utf8"),
         }),
       ),
     ),
     Promise.all(
       XIAO_FORMULA_COUNT_PARITY_CODE_PATHS.map(async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       })),
     ),
   ]);

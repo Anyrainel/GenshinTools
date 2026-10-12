@@ -630,7 +630,7 @@
     },
     {
       "baseline": {
-        "recordCount": 6,
+        "recordCount": 7,
         "sourceIds": [
           "genshintools-presets"
         ]
@@ -1584,7 +1584,7 @@
     },
     {
       "baseline": {
-        "recordCount": 4,
+        "recordCount": 5,
         "sourceIds": [
           "genshintools-presets"
         ]
@@ -1876,7 +1876,7 @@
     },
     {
       "baseline": {
-        "recordCount": 4,
+        "recordCount": 3,
         "sourceIds": [
           "genshintools-presets"
         ]
@@ -2065,6 +2065,42 @@
         "sourceIds": [
           "legacy-team-research"
         ]
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 2,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "vesna",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "presence": "baseline-only"
+    },
+    {
+      "baseline": {
+        "recordCount": 3,
+        "sourceIds": [
+          "genshintools-presets"
+        ]
+      },
+      "characterId": "vodyanitsa",
+      "externalEditorial": {
+        "recordCount": 0,
+        "sourceIds": []
+      },
+      "other": {
+        "recordCount": 0,
+        "sourceIds": []
       },
       "presence": "baseline-only"
     },
@@ -2426,7 +2462,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -2448,38 +2484,38 @@
   "sources": [
     {
       "byKind": {
-        "character_guide": 120,
+        "character_guide": 122,
         "character_role": 0,
         "energy_guidance": 0,
         "rotation_fixture": 0,
-        "team": 71,
+        "team": 72,
         "team_template": 0
       },
       "byStatus": {
         "accepted": 0,
-        "baseline": 191,
+        "baseline": 194,
         "candidate": 0,
         "contested": 0,
         "rejected": 0
       },
       "evidence": {
-        "artifactChoiceOccurrences": 472,
-        "exactTeamRecords": 71,
+        "artifactChoiceOccurrences": 478,
+        "exactTeamRecords": 72,
         "exactTeamRecordsWithRotations": 0,
         "exactTeamRotationEntries": 0,
-        "mainStatGroups": 712,
-        "mainStatIdOccurrences": 712,
-        "recordsWithArtifacts": 191,
-        "recordsWithMainStats": 120,
-        "recordsWithSubstats": 120,
-        "recordsWithWeapons": 180,
-        "substatGroups": 590,
-        "substatIdOccurrences": 590,
+        "mainStatGroups": 720,
+        "mainStatIdOccurrences": 720,
+        "recordsWithArtifacts": 194,
+        "recordsWithMainStats": 122,
+        "recordsWithSubstats": 122,
+        "recordsWithWeapons": 184,
+        "substatGroups": 597,
+        "substatIdOccurrences": 597,
         "teamTemplateRecords": 0,
-        "weaponIdOccurrences": 411
+        "weaponIdOccurrences": 419
       },
       "ingestionMode": "internal-adapter",
-      "records": 191,
+      "records": 194,
       "sourceId": "genshintools-presets",
       "sourceKind": "internal"
     },
@@ -2561,37 +2597,37 @@
   "supportsGuideClaims": false,
   "totals": {
     "byKind": {
-      "character_guide": 164,
+      "character_guide": 166,
       "character_role": 3,
       "energy_guidance": 1,
       "rotation_fixture": 1,
-      "team": 226,
+      "team": 227,
       "team_template": 7
     },
     "byStatus": {
       "accepted": 0,
-      "baseline": 191,
+      "baseline": 194,
       "candidate": 211,
       "contested": 0,
       "rejected": 0
     },
     "evidence": {
-      "artifactChoiceOccurrences": 1075,
-      "exactTeamRecords": 226,
+      "artifactChoiceOccurrences": 1081,
+      "exactTeamRecords": 227,
       "exactTeamRecordsWithRotations": 13,
       "exactTeamRotationEntries": 18,
-      "mainStatGroups": 753,
-      "mainStatIdOccurrences": 763,
-      "recordsWithArtifacts": 348,
-      "recordsWithMainStats": 129,
-      "recordsWithSubstats": 128,
-      "recordsWithWeapons": 339,
-      "substatGroups": 612,
-      "substatIdOccurrences": 619,
+      "mainStatGroups": 761,
+      "mainStatIdOccurrences": 771,
+      "recordsWithArtifacts": 351,
+      "recordsWithMainStats": 131,
+      "recordsWithSubstats": 130,
+      "recordsWithWeapons": 343,
+      "substatGroups": 619,
+      "substatIdOccurrences": 626,
       "teamTemplateRecords": 7,
-      "weaponIdOccurrences": 1026
+      "weaponIdOccurrences": 1034
     },
-    "records": 402,
-    "sourceAttributedRecords": 402
+    "records": 405,
+    "sourceAttributedRecords": 405
   }
 }

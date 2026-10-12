@@ -23,10 +23,10 @@
       "slotOptionSemantics": "or-within-slot;and-across-slots"
     },
     "catalogBoundary": {
-      "characterCount": 125,
-      "characterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+      "characterCount": 127,
+      "characterIdsSha256": "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa",
       "label": "guide-domain-eligible-released-character-ids",
-      "playableIdentityCount": 119,
+      "playableIdentityCount": 121,
       "sharedPlayableIdentityGroups": [
         {
           "characterIds": [
@@ -708,37 +708,37 @@
         "assignmentMultiplicityHistogram": [
           {
             "assignmentCount": 1,
-            "rosterCount": 27902
+            "rosterCount": 29996
           },
           {
             "assignmentCount": 2,
-            "rosterCount": 19010
+            "rosterCount": 19519
           },
           {
             "assignmentCount": 4,
-            "rosterCount": 3021
+            "rosterCount": 3211
           },
           {
             "assignmentCount": 6,
             "rosterCount": 1140
           }
         ],
-        "canonicalRosterCount": 51073,
-        "duplicateMemberAssignmentRejectionCount": 7654,
-        "exactDuplicateMemberAssignmentRejectionCount": 7100,
+        "canonicalRosterCount": 53866,
+        "duplicateMemberAssignmentRejectionCount": 7802,
+        "exactDuplicateMemberAssignmentRejectionCount": 7240,
         "failures": [],
-        "reactionAcceptedDomainSha256": "4d66f3bb35094bcd58d8de54519ffb19c12d9ffaaf3063fb9255154a05c31d37",
+        "reactionAcceptedDomainSha256": "027821e7cdd7d4a9c2bc349e58b1fd6112056bc1d13cbd93606749a31fbf9d11",
         "reactionGate": {
-          "acceptedCanonicalRosterCount": 41866,
-          "acceptedOrderedAssignmentCount": 68035,
+          "acceptedCanonicalRosterCount": 44307,
+          "acceptedOrderedAssignmentCount": 71357,
           "declaredReactions": [
             "electroCharged"
           ],
-          "rejectedCanonicalRosterCount": 9207,
-          "rejectedOrderedAssignmentCount": 16811,
+          "rejectedCanonicalRosterCount": 9559,
+          "rejectedOrderedAssignmentCount": 17361,
           "status": "completed"
         },
-        "samePlayableIdentityAssignmentRejectionCount": 554,
+        "samePlayableIdentityAssignmentRejectionCount": 562,
         "slotPools": [
           {
             "poolSha256": "4197d36baaaa44073ae19d742f01d545035c1c351f1492f238602fb93e1ea216",
@@ -757,16 +757,16 @@
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "158b9e703a009781e461afe71c82f2bed37bb501ba5f0f35f337a36bcf254207",
-            "poolSize": 37,
+            "poolSha256": "f6cf241439a2f94b094017f6b1f92d8331d8b2e1c718d807161259f1297743ea",
+            "poolSize": 38,
             "resolution": "resolved",
             "slotId": "electro-or-hydro",
             "slotIndex": 2,
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "e385270a4a5bf7f01255d0fc6277f52067d5b480b2febbb38685ae28bab76b24",
-            "poolSize": 125,
+            "poolSha256": "1779f1c9c73cb74488049f833d32e73619f93ffe117433d505392ab4aacdc48b",
+            "poolSize": 127,
             "resolution": "resolved",
             "slotId": "anemo-or-flex",
             "slotIndex": 3,
@@ -774,39 +774,39 @@
           }
         ],
         "status": "comparable",
-        "structuralDomainSha256": "de643aa7cb44ef8cf1eb3ef6101f32fa8ca38bd3d68bfa95cd95684b19f9a49c",
+        "structuralDomainSha256": "a65ecd79c8f2ae9be691bfefd058d959ce44098dbf0da3dec9ad333eb6c8141a",
         "templateId": "kqm:team-template:furina-team-template-electro-charged",
-        "theoreticalOrderedAssignmentCount": 92500,
+        "theoreticalOrderedAssignmentCount": 96520,
         "unresolvedRoleIds": [],
-        "validOrderedAssignmentCount": 84846
+        "validOrderedAssignmentCount": 88718
       },
       {
         "assignmentMultiplicityHistogram": [
           {
             "assignmentCount": 1,
-            "rosterCount": 30006
+            "rosterCount": 32266
           },
           {
             "assignmentCount": 2,
-            "rosterCount": 22386
+            "rosterCount": 22968
           },
           {
             "assignmentCount": 4,
-            "rosterCount": 3675
+            "rosterCount": 3906
           },
           {
             "assignmentCount": 6,
             "rosterCount": 1540
           }
         ],
-        "canonicalRosterCount": 57607,
-        "duplicateMemberAssignmentRejectionCount": 8532,
-        "exactDuplicateMemberAssignmentRejectionCount": 7942,
+        "canonicalRosterCount": 60680,
+        "duplicateMemberAssignmentRejectionCount": 8694,
+        "exactDuplicateMemberAssignmentRejectionCount": 8096,
         "failures": [],
-        "reactionAcceptedDomainSha256": "9db83c959d91bbe0d952c5fed76798c02ff8ec82aca3b963f18eeb6b23fd8db7",
+        "reactionAcceptedDomainSha256": "39532fc3d426837f2c6da075fd08ac71d71b41e2b77c055967a37f7bcaf82cf6",
         "reactionGate": {
-          "acceptedCanonicalRosterCount": 57607,
-          "acceptedOrderedAssignmentCount": 98718,
+          "acceptedCanonicalRosterCount": 60680,
+          "acceptedOrderedAssignmentCount": 103066,
           "declaredReactions": [
             "frozen"
           ],
@@ -814,7 +814,7 @@
           "rejectedOrderedAssignmentCount": 0,
           "status": "completed"
         },
-        "samePlayableIdentityAssignmentRejectionCount": 590,
+        "samePlayableIdentityAssignmentRejectionCount": 598,
         "slotPools": [
           {
             "poolSha256": "8355bfad31a97f568dfe7f63f5db640c2c7acc7fd6c480086e21f0f455207d02",
@@ -833,16 +833,16 @@
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "851480d6ec05c44606f1f4861c2f2226534c64b0671348aa28e323a9e2a48f30",
-            "poolSize": 39,
+            "poolSha256": "ef3cb64aa733c420141f41eac950c6149b3d1037f235222372b8315b6c3ab011",
+            "poolSize": 40,
             "resolution": "resolved",
             "slotId": "cryo-or-hydro",
             "slotIndex": 2,
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "ba27f4d83bbd5af5070dfcabace396bd8bd14494f70ad74882055637a39ea182",
-            "poolSize": 125,
+            "poolSha256": "b50016f576c0bc9546a9e5a725a4cdfd861b487075a8e0bef6fb8336290a9824",
+            "poolSize": 127,
             "resolution": "resolved",
             "slotId": "support-flex",
             "slotIndex": 3,
@@ -850,11 +850,11 @@
           }
         ],
         "status": "comparable",
-        "structuralDomainSha256": "9db83c959d91bbe0d952c5fed76798c02ff8ec82aca3b963f18eeb6b23fd8db7",
+        "structuralDomainSha256": "39532fc3d426837f2c6da075fd08ac71d71b41e2b77c055967a37f7bcaf82cf6",
         "templateId": "kqm:team-template:furina-team-template-freeze",
-        "theoreticalOrderedAssignmentCount": 107250,
+        "theoreticalOrderedAssignmentCount": 111760,
         "unresolvedRoleIds": [],
-        "validOrderedAssignmentCount": 98718
+        "validOrderedAssignmentCount": 103066
       },
       {
         "assignmentMultiplicityHistogram": [],
@@ -885,16 +885,16 @@
             ]
           },
           {
-            "poolSha256": "c456d072d6a6f0fc856dcd8ac5e172f35338d697e1af120b1aa3a4074f83edec",
-            "poolSize": 125,
+            "poolSha256": "63a77ce9030a4821c9bed5165c31458322ddfcc0c29eea24d3eb75b0a327404a",
+            "poolSize": 127,
             "resolution": "resolved",
             "slotId": "flex-1",
             "slotIndex": 2,
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "63e875cd326704043e4eedf6f1f03e8f7f3c05d70a93fecdd7f0ba218e7a9ec5",
-            "poolSize": 125,
+            "poolSha256": "7a68543c37fdbcbc00acf2835abfa1c7181a35093a3f221128c8ad2b5840314c",
+            "poolSize": 127,
             "resolution": "resolved",
             "slotId": "flex-2",
             "slotIndex": 3,
@@ -914,21 +914,21 @@
         "assignmentMultiplicityHistogram": [
           {
             "assignmentCount": 1,
-            "rosterCount": 23414
+            "rosterCount": 23932
           },
           {
             "assignmentCount": 2,
             "rosterCount": 3999
           }
         ],
-        "canonicalRosterCount": 27413,
-        "duplicateMemberAssignmentRejectionCount": 1088,
+        "canonicalRosterCount": 27931,
+        "duplicateMemberAssignmentRejectionCount": 1090,
         "exactDuplicateMemberAssignmentRejectionCount": 780,
         "failures": [],
-        "reactionAcceptedDomainSha256": "ca46c4eae8fa5caa01e095bb78c8279f4c330c64ac80c4b47f21fa15ec328a9b",
+        "reactionAcceptedDomainSha256": "66bb9991880b99e16ee1ab554e1ebbad762560fbaeab216f1878a958a3f078dc",
         "reactionGate": {
-          "acceptedCanonicalRosterCount": 27413,
-          "acceptedOrderedAssignmentCount": 31412,
+          "acceptedCanonicalRosterCount": 27931,
+          "acceptedOrderedAssignmentCount": 31930,
           "declaredReactions": [
             "hyperbloom",
             "quicken"
@@ -937,7 +937,7 @@
           "rejectedOrderedAssignmentCount": 0,
           "status": "completed"
         },
-        "samePlayableIdentityAssignmentRejectionCount": 308,
+        "samePlayableIdentityAssignmentRejectionCount": 310,
         "slotPools": [
           {
             "poolSha256": "210ac4fcec7b285aeb33abad5f7713d48bf21993e09f813099fd5ecb9f53909d",
@@ -964,8 +964,8 @@
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "f87f60b5cb75bd7bf4dd9e7732ae226af6353cc3d2fd6be706cc0664f9253308",
-            "poolSize": 125,
+            "poolSha256": "3ca858235920a1fbc2b199f0d61ffee449e8d60c45463995839bafd84c597555",
+            "poolSize": 127,
             "resolution": "resolved",
             "slotId": "flex",
             "slotIndex": 3,
@@ -973,39 +973,39 @@
           }
         ],
         "status": "comparable",
-        "structuralDomainSha256": "ca46c4eae8fa5caa01e095bb78c8279f4c330c64ac80c4b47f21fa15ec328a9b",
+        "structuralDomainSha256": "66bb9991880b99e16ee1ab554e1ebbad762560fbaeab216f1878a958a3f078dc",
         "templateId": "kqm:team-template:furina-team-template-quickbloom",
-        "theoreticalOrderedAssignmentCount": 32500,
+        "theoreticalOrderedAssignmentCount": 33020,
         "unresolvedRoleIds": [],
-        "validOrderedAssignmentCount": 31412
+        "validOrderedAssignmentCount": 31930
       },
       {
         "assignmentMultiplicityHistogram": [
           {
             "assignmentCount": 1,
-            "rosterCount": 46778
+            "rosterCount": 48786
           },
           {
             "assignmentCount": 2,
-            "rosterCount": 23610
+            "rosterCount": 24463
           },
           {
             "assignmentCount": 4,
-            "rosterCount": 6120
+            "rosterCount": 6291
           },
           {
             "assignmentCount": 6,
             "rosterCount": 969
           }
         ],
-        "canonicalRosterCount": 77477,
-        "duplicateMemberAssignmentRejectionCount": 8708,
-        "exactDuplicateMemberAssignmentRejectionCount": 7828,
+        "canonicalRosterCount": 80509,
+        "duplicateMemberAssignmentRejectionCount": 8851,
+        "exactDuplicateMemberAssignmentRejectionCount": 7961,
         "failures": [],
-        "reactionAcceptedDomainSha256": "34c96c4bb3df24c69f71a1a074defe1e959dbd1872f8dce6e146b18447e83e1e",
+        "reactionAcceptedDomainSha256": "3beff4d290d1f2f2f650782667fbab631bbbf0721d1346a9906a3d811ee985f1",
         "reactionGate": {
-          "acceptedCanonicalRosterCount": 77477,
-          "acceptedOrderedAssignmentCount": 124292,
+          "acceptedCanonicalRosterCount": 80509,
+          "acceptedOrderedAssignmentCount": 128690,
           "declaredReactions": [
             "vaporize"
           ],
@@ -1013,7 +1013,7 @@
           "rejectedOrderedAssignmentCount": 0,
           "status": "completed"
         },
-        "samePlayableIdentityAssignmentRejectionCount": 880,
+        "samePlayableIdentityAssignmentRejectionCount": 890,
         "slotPools": [
           {
             "poolSha256": "4bf6d1b8a742427bbf23bf3accfa17d42cb05dbf34288cec27edd9c98b0d4993",
@@ -1032,16 +1032,16 @@
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "467274b18daf615f5940410d4cbdef8602fef909387c105bd9d570ff2085853a",
-            "poolSize": 56,
+            "poolSha256": "78bd3f98e1022560cc091dc0817842ea36ee8725d085712fa7683399ff4d122f",
+            "poolSize": 57,
             "resolution": "resolved",
             "slotId": "second-applier",
             "slotIndex": 2,
             "unresolvedRoleIds": []
           },
           {
-            "poolSha256": "d4115abb30deac4b7a610438a3c36b5455010adfc43e7c73f1297307a71dfdfd",
-            "poolSize": 125,
+            "poolSha256": "a7a4d8d8e9c2bf5413d234d3419288ffeb2ad4c463271c3a5ce9405eac321b50",
+            "poolSize": 127,
             "resolution": "resolved",
             "slotId": "flex-or-healer",
             "slotIndex": 3,
@@ -1049,11 +1049,11 @@
           }
         ],
         "status": "comparable",
-        "structuralDomainSha256": "34c96c4bb3df24c69f71a1a074defe1e959dbd1872f8dce6e146b18447e83e1e",
+        "structuralDomainSha256": "3beff4d290d1f2f2f650782667fbab631bbbf0721d1346a9906a3d811ee985f1",
         "templateId": "kqm:team-template:furina-team-template-vaporize",
-        "theoreticalOrderedAssignmentCount": 133000,
+        "theoreticalOrderedAssignmentCount": 137541,
         "unresolvedRoleIds": [],
-        "validOrderedAssignmentCount": 124292
+        "validOrderedAssignmentCount": 128690
       },
       {
         "assignmentMultiplicityHistogram": [],
@@ -1118,15 +1118,15 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
-      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+      "sha256": "48c47b7715855999e966fd0a8d1275cb432cfa23085fb2785d5203550d1c555e"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -1138,63 +1138,63 @@
     },
     {
       "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
-      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+      "sha256": "91e132e09ee38be67f184ad07944d0bcfcc720fdf523259dc1aeb34b9a273eed"
     },
     {
       "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
-      "sha256": "c085ac93bf752b5c9e98a0419874d7177f8dee6309de020604da92c56e8d2924"
+      "sha256": "07dd714a56bee615db2d390cb5dbc666e62694c0207c5c0f8d6fbb43b37854a8"
     },
     {
       "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
-      "sha256": "bad1d04f242eae911998ae902f3fd210f1fe27838e724ff24080f6639c2563fa"
+      "sha256": "c0f47e567599a0973c6cdfc320680e2381f7368d3d60652021268008ffcace70"
     },
     {
-      "path": "src/data/betaState.ts",
-      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+      "path": "src/domain/build/statUtils.ts",
+      "sha256": "b855aba1f83d0bb07472652711f2a1490bc97de58cbd2bf202a5c5d1877866fe"
     },
     {
-      "path": "src/data/charInfo.ts",
-      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+      "path": "src/domain/combat/damage/constants.ts",
+      "sha256": "d8548a6174124f7e50edf9de43015e865b7ef0129140d759ed73642d99db6932"
     },
     {
-      "path": "src/data/game/character_beta_stats.json.gz",
-      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+      "path": "src/domain/combat/damage/core/teamMeta.ts",
+      "sha256": "f83591945518a8650a3ee8ceb73e5eab28c6670f91e6042b293357af07e2ab44"
     },
     {
-      "path": "src/data/game/character_stats.json",
-      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+      "path": "src/domain/reference/catalog.ts",
+      "sha256": "ffaaa71669580a7972dfda2f7a431a4b0885c36ac03220ff42a242112ebe3308"
     },
     {
-      "path": "src/data/gameDataUtil.ts",
-      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+      "path": "src/generated/catalog/characterInfo.ts",
+      "sha256": "b38abdfe2436e8063697d1d10bcbf4894a60368c4da525f1a3572622c19f3aeb"
     },
     {
-      "path": "src/data/gameResources.ts",
-      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+      "path": "src/generated/catalog/character_beta_stats.json.gz",
+      "sha256": "33c3f374e9b34d8ef2cb183fd1dc3886ed82d21515286f89467c0ac2d91512ba"
     },
     {
-      "path": "src/data/gameStatsLoader.ts",
-      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+      "path": "src/generated/catalog/character_stats.json",
+      "sha256": "74a3bd262f9ff26f1777f9a3a50ccf13bb2a7906f51030adde7fe1b756d96033"
     },
     {
-      "path": "src/data/resources.ts",
-      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+      "path": "src/generated/catalog/resources.ts",
+      "sha256": "7a6c531254b0943d430c72ac51ad52c49657715dcd3d9ee14ccdfd506ccb191a"
     },
     {
-      "path": "src/data/resources_beta.ts",
-      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+      "path": "src/generated/catalog/resources_beta.ts",
+      "sha256": "beaa526631c00e6d796b87e1cceae358abeee1a3ced078a4002e524b932b2d60"
     },
     {
-      "path": "src/data/utils.ts",
-      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+      "path": "src/lib/resources/cache.ts",
+      "sha256": "b156981a5e4b55b580a3a78cecd87c48c566efbfd5122cba8d7db7475d183577"
     },
     {
-      "path": "src/lib/dmgcalc/constants.ts",
-      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+      "path": "src/providers/reference/statLoaders.ts",
+      "sha256": "01940c5233c94d915d2c17dcc920aabe79f2fa57add4f4df8a182af8d35b4acd"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamMeta.ts",
-      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+      "path": "src/stores/betaState.ts",
+      "sha256": "68af501983f02b9db6700c494147ae0765c2c0daf1d243ae19bfe9f7f690994e"
     }
   ],
   "prohibitedInterpretations": [
@@ -1206,15 +1206,15 @@
     "energy-requirement"
   ],
   "releasedCatalogBoundary": {
-    "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
-    "eligibleCharacterCount": 125,
+    "eligibleCatalogSha256": "49b96aa837a35ef93e419da006690f9a6d53ce14c41cb42451b9c934f846b080",
+    "eligibleCharacterCount": 127,
     "excludedSpecialAvatarForms": {
       "count": 14,
       "reason": "Manekin and Manekina element variants are special-avatar forms withheld from the first guide-oriented team domain.",
       "sha256": "86178627101600f7d50850a7b15707271b96caeee99fc012e8c00283722fb0b1"
     },
-    "fullStableCatalogSha256": "746eceae23ed319088a12d83e98a1e09b5e629f8f25ca0cf5a371e766e23d6f7",
-    "fullStableCharacterCount": 139,
+    "fullStableCatalogSha256": "3d7f157716eed4cb3ca5fd7e0ea223a564308ae228e8d262c5859accebc152f8",
+    "fullStableCharacterCount": 141,
     "source": "stable-resources",
     "travelerIdentityPolicy": "all traveler element variants share playableIdentityId=traveler"
   },

@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { allSlots, type MainStat, type Slot } from "@/domain/enums";
 import type { ArtifactData } from "@/domain/models";
@@ -735,7 +735,7 @@ async function hashInputs(
   return Promise.all(
     relativePaths.map(async (relativePath) => ({
       path: relativePath,
-      sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
     })),
   );
 }

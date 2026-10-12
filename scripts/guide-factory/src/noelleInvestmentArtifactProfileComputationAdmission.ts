@@ -74,17 +74,17 @@ const JSON_INPUT_PATHS = {
 
 const EXPECTED_INPUT_SHA256 = {
   highSliceReport:
-    "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5",
+    "6364b9f641efe25a6de535c5d5511c39a73ac8ff77759ff9f4b4f007a0f9a9bd",
   lowerSliceReport:
-    "4e9ce6dfa605f12af3660a63e842b9f79ce700870d985abfae0604d0c3540919",
+    "ba900c079c587255bfacce9df672176614d0d5dd3a80d477a4b8caf1307d16ae",
   implementation:
-    "62421a3ee438bdf7ec9958f9c0802accd91acd2a77f6317fbab56fb4a0b94ff9",
+    "f45b9c974b25f40cc48f1f7f4a51f09470c4e4586c0f9a5c0f97e6ffe009b665",
   directDamage:
-    "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29",
+    "1f57bedcb89de09ea2bd096e5c09c9b65e61fd21a8b5559fba0561110f866180",
   compiledDamage:
-    "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3",
+    "9660463da2084a28eeda3b14604e2a48349b7e3056256ede56e5c69a3eac150d",
   replayAdapter:
-    "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff",
+    "3c974458435a61938dadba8f7bc0be43467a3382c0ac2175210d6f65aa3074ff",
   huskRecord:
     "84c6cabba79b2e1a5a8f25d741828ed7a4e9ab5bcf6256f8d1c24a79252cdb69",
   lowerRecord:

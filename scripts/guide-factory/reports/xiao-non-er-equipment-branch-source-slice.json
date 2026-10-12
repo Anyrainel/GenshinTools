@@ -59,7 +59,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
@@ -71,7 +71,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
-      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+      "sha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -91,7 +91,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -99,7 +99,7 @@
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
-      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -942,8 +942,8 @@
   ],
   "upstreamBoundary": {
     "conditionBindingsAddedToCheckpoint42": 0,
-    "durableReportCanonicalObjectSha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
-    "durableReportFileSha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
+    "durableReportCanonicalObjectSha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826",
+    "durableReportFileSha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826",
     "durableReportPath": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
     "emptyOccurrenceCount": 4,
     "freshlyAuthenticated": true,

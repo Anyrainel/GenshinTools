@@ -180,7 +180,7 @@ export const ITTO_REQUEST_CONTEXT_APPLICABILITY_INPUT_PATHS = [
   "scripts/guide-factory/src/ittoRequestContextApplicability.ts",
   "scripts/guide-factory/src/assemble-itto-request-context-applicability.ts",
   "scripts/guide-factory/src/paths.ts",
-  "src/data/game/weapon_stats.json",
+  "src/generated/catalog/weapon_stats.json",
   ITTO_REQUEST_CONTEXT_FIXTURE_RELATIVE_PATH,
   ITTO_REQUEST_CONTEXT_SOURCE_REPORT_RELATIVE_PATH,
   ...ITTO_SOURCE_CONDITIONED_GUIDE_PACKET_INPUT_PATHS,

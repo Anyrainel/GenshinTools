@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import type { ArtifactChoiceSearchCoverageReport } from "../src/artifactChoiceSearchCoverage";
@@ -234,7 +234,7 @@ describe("CP36 equipment candidate-lattice semantic scope", () => {
 async function fixture(): Promise<BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput> {
   const values = await Promise.all(
     KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS.map(
-      (relativePath) => readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      (relativePath) => readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ),
   );
   return {

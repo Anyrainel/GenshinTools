@@ -139,13 +139,13 @@ describe("Noelle Hexerei local stat-priority diagnostic", () => {
         NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_CLI_RELATIVE_PATH,
       ]),
     ].sort(compareText);
-    expect(expectedPaths).toHaveLength(116);
+    expect(expectedPaths).toHaveLength(122);
     expect(NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_INPUT_PATHS).toEqual(
       expectedPaths,
     );
     expect(
       NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_RUNTIME_INPUT_PATHS,
-    ).toHaveLength(80);
+    ).toHaveLength(86);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json")))
       .toHaveLength(14);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json.gz")))
@@ -165,9 +165,9 @@ describe("Noelle Hexerei local stat-priority diagnostic", () => {
       cp55ReportByteAndParsedObjectParity: true,
       exactCp55InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 116,
-      generatedFromCount: 116,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 122,
+      generatedFromCount: 122,
+      runtimeInputPathCount: 86,
       jsonInputCount: 14,
       binaryRuntimeInputCount: 2,
     });

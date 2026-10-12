@@ -37,7 +37,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
@@ -61,7 +61,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -73,7 +73,7 @@
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
-      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -334,7 +334,7 @@
   "rawInputBoundary": {
     "byteAndParsedObjectClosure": true,
     "canonicalObjectSha256ByPath": {
-      "scripts/guide-factory/data/knowledge/repository.json": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d",
+      "scripts/guide-factory/data/knowledge/repository.json": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625",
       "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json": "cc72deae3b61ce592b1fb47808c3ec7c568036b9d9683bac3f8de91b5428c5e5",
       "scripts/guide-factory/data/source-snapshots/manual-index.json": "50df1f424b811f6a818c376a209606b5ff2f59d2df0a4488740794ce4aef6948",
       "scripts/guide-factory/sources/registry.json": "a8ff9d9ce1a00c95f3bcbccac79ade86a413a43446b913f522f66237f7ab2e86"
@@ -586,7 +586,7 @@
           "manualPath": "records[2].recommendation.mainStats.sands[0].conditions",
           "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.sands[0].conditions",
           "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
-          "repositoryJsonPath": "records[225].recommendations[0].mainStats.sands[0].conditions",
+          "repositoryJsonPath": "records[228].recommendations[0].mainStats.sands[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
           "sliceDisposition": "selected",
@@ -630,7 +630,7 @@
           "manualPath": "records[2].recommendation.mainStats.goblet[0].conditions",
           "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.goblet[0].conditions",
           "payloadSha256": "27b0565556c4d4cb4abe6c800046b0e1269484e769b15ce91ec7581ec6e9026a",
-          "repositoryJsonPath": "records[225].recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryJsonPath": "records[228].recommendations[0].mainStats.goblet[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
           "sliceDisposition": "selected",
@@ -674,7 +674,7 @@
           "manualPath": "records[2].recommendation.mainStats.circlet[0].conditions",
           "occurrenceId": "kqm:character_guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii:recommendation.mainStats.circlet[0].conditions",
           "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
-          "repositoryJsonPath": "records[225].recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryJsonPath": "records[228].recommendations[0].mainStats.circlet[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:noelle-c0-c5-talent-9-artifact-stats-luna-viii",
           "sliceDisposition": "selected",
@@ -735,7 +735,7 @@
     "generatedFrom": [
       {
         "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+        "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
       },
       {
         "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
@@ -759,7 +759,7 @@
       },
       {
         "path": "scripts/guide-factory/src/io.ts",
-        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+        "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
       },
       {
         "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -771,7 +771,7 @@
       },
       {
         "path": "scripts/guide-factory/src/paths.ts",
-        "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+        "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
       },
       {
         "path": "scripts/guide-factory/src/schemas.ts",

@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -49,8 +49,8 @@ const FORMULA_COUNT_REPORT_PATH =
 const GROUPED_REPLAY_REPORT_PATH =
   "scripts/guide-factory/reports/xiao-ffxx-grouped-replay-representation-preflight.json";
 const CHARACTER_BETA_STATS_PATH =
-  "src/data/game/character_beta_stats.json.gz";
-const WEAPON_BETA_STATS_PATH = "src/data/game/weapon_beta_stats.json.gz";
+  "src/generated/catalog/character_beta_stats.json.gz";
+const WEAPON_BETA_STATS_PATH = "src/generated/catalog/weapon_beta_stats.json.gz";
 
 const WEAPONS = [
   "calamity_queller",
@@ -92,16 +92,16 @@ let canonicalReport: XiaoFfxxUnitExpandedExecutionGateReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(currentSourceLocation(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_REPORT_PATH)) as Promise<XiaoFfxxUnitExpandedExecutionGateReport>,
+    readJson(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_REPORT_PATH) as Promise<XiaoFfxxUnitExpandedExecutionGateReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxUnitExpandedExecutionGateReport(fixture());
 }, 60_000);
 
 describe("Xiao FFXX unit-expanded execution gate", () => {
-  it("rebuilds deterministically and authenticates the exact 121-byte/13-JSON closure", async () => {
+  it("rebuilds deterministically and authenticates the exact 127-file/13-JSON closure", async () => {
     expect(stableJson(canonicalReport)).toBe(stableJson(durableReport));
-    expect(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_INPUT_PATHS).toHaveLength(121);
+    expect(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_INPUT_PATHS).toHaveLength(127);
     expect(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_SOURCE_FILE_PATHS).toEqual(
       XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_INPUT_PATHS,
     );
@@ -110,7 +110,7 @@ describe("Xiao FFXX unit-expanded execution gate", () => {
     );
     expect(
       new Set(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_INPUT_PATHS).size,
-    ).toBe(121);
+    ).toBe(127);
     expect(JSON_INPUTS).toHaveLength(13);
     expect(
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS.every(
@@ -138,8 +138,8 @@ describe("Xiao FFXX unit-expanded execution gate", () => {
       exactGeneratedFromPathSet: true,
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
-      sourceFileCount: 121,
-      generatedFromCount: 121,
+      sourceFileCount: 127,
+      generatedFromCount: 127,
       authenticatedJsonInputParityCount: 13,
     });
 
@@ -318,7 +318,7 @@ describe("Xiao FFXX unit-expanded execution gate", () => {
         /^[a-f0-9]{64}$/,
       ),
       freshlyAuthenticated: true,
-      upstreamInputCount: 118,
+      upstreamInputCount: 124,
       groupedReplayAttemptCount: 6,
       groupedRawDualPathCaptureCount: 6,
       unitExpandedAcceptedReplayCount: 6,
@@ -609,7 +609,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxUnitExpandedExecutionGateInpu
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([
@@ -627,7 +627,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxUnitExpandedExecutionGateInpu
       XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

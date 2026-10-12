@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadGameCatalogs } from "../src/catalogs";
@@ -242,7 +242,7 @@ describe("Itto request/account context applicability", () => {
 
   it("authenticates the durable output and rejects tampered output", async () => {
     const input = await fixture();
-    const durable = (await readJson(currentSourceLocation(ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH))) as IttoRequestContextApplicabilityReport;
+    const durable = (await readJson(ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH)) as IttoRequestContextApplicabilityReport;
     expect(
       await authenticateIttoRequestContextApplicabilityReport(durable, input),
     ).toMatchObject({ authenticated: true });
@@ -517,11 +517,11 @@ describe("Itto request/account context applicability", () => {
     expect(ITTO_REQUEST_CONTEXT_APPLICABILITY_INPUT_PATHS).toEqual(
       expect.arrayContaining([
         "scripts/guide-factory/src/paths.ts",
-        "src/data/game/weapon_stats.json",
+        "src/generated/catalog/weapon_stats.json",
       ]),
     );
     expect(checkpoint23Paths.has("scripts/guide-factory/src/paths.ts")).toBe(false);
-    expect(checkpoint23Paths.has("src/data/game/weapon_stats.json")).toBe(false);
+    expect(checkpoint23Paths.has("src/generated/catalog/weapon_stats.json")).toBe(false);
   });
 });
 
@@ -535,10 +535,10 @@ async function fixture(): Promise<BuildIttoRequestContextApplicabilityInput> {
     sourceReportSnapshot,
     contextFixtureSnapshot,
   ] = await Promise.all([
-    readJson(currentSourceLocation(KNOWLEDGE_REPOSITORY_PATH)),
-    readJson(currentSourceLocation(path.join(SOURCE_SNAPSHOT_ROOT, "kqm-itto-manual.json"))),
-    readJson(currentSourceLocation(MANUAL_SNAPSHOT_INDEX_PATH)),
-    readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
+    readJson(KNOWLEDGE_REPOSITORY_PATH),
+    readJson(path.join(SOURCE_SNAPSHOT_ROOT, "kqm-itto-manual.json")),
+    readJson(MANUAL_SNAPSHOT_INDEX_PATH),
+    readJson(SOURCE_REGISTRY_PATH),
     loadGameCatalogs(),
     readHashedJsonSnapshot(
       REPOSITORY_ROOT,
@@ -559,7 +559,7 @@ async function fixture(): Promise<BuildIttoRequestContextApplicabilityInput> {
         path: relativePath,
         sha256:
           snapshotHashes.get(relativePath) ??
-          (await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)))),
+          (await sha256File(path.join(REPOSITORY_ROOT, relativePath))),
       }),
     ),
   );

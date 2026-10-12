@@ -23,7 +23,7 @@ export const KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SEMAN
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json",
   "scripts/guide-factory/data/knowledge/repository.json",
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
 ] as const;
 
@@ -47,7 +47,7 @@ export type GeneratedSheetKnowledgeTargetComparison =
 const EXACT_TEAM_RECORD_ID =
   "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example" as const;
 const PRESET_FILE =
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json" as const;
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json" as const;
 const FURINA_POST_ER_RECORD_ID =
   "kqm:character-guide:furina-post-er-substats-luna-ii" as const;
 
@@ -55,7 +55,7 @@ const FURINA_POST_ER_RECORD_ID =
 // accidental corruption, but only this independent expectation authenticates
 // the current target catalog content.
 const EXPECTED_AUTHENTICATED_CONTENT_SHA256 =
-  "3607aac1eceddbf22120a9cf838f21c6442647fa9fe54dbd0459aa1ca3199c48";
+  "28fea664aec43b7ad37d9bdde67c6d7570bce9a585a608ed74b7a14327b4f105";
 
 type Issue = { code: string; path: string; message: string };
 type ArtifactChoice =

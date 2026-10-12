@@ -64,8 +64,8 @@ export const NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_RUNTIME_INPUT_PATHS =
   ...NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_RUNTIME_INPUT_PATHS,
 ] as const;
 
-const EXPECTED_INPUT_PATH_COUNT = 116;
-const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 80;
+const EXPECTED_INPUT_PATH_COUNT = 122;
+const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 86;
 const EXPECTED_JSON_INPUT_COUNT = 14;
 const EXPECTED_BINARY_RUNTIME_INPUT_COUNT = 2;
 const HUSK_RUNTIME_RELATIVE_PATH = "src/domain/combat/damage/impl/artifact4pc.ts";
@@ -404,9 +404,9 @@ export interface NoelleHexereiLocalStatPriorityDiagnosticReport {
     cp55ReportByteAndParsedObjectParity: true;
     exactCp55InputProjection: true;
     exactTechnicalRequest: true;
-    sourceFileCount: 116;
-    generatedFromCount: 116;
-    runtimeInputPathCount: 80;
+    sourceFileCount: 122;
+    generatedFromCount: 122;
+    runtimeInputPathCount: 86;
     jsonInputCount: 14;
     binaryRuntimeInputCount: 2;
   };
@@ -745,9 +745,9 @@ export async function buildNoelleHexereiLocalStatPriorityDiagnosticReport(
       cp55ReportByteAndParsedObjectParity: true,
       exactCp55InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 116,
-      generatedFromCount: 116,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 122,
+      generatedFromCount: 122,
+      runtimeInputPathCount: 86,
       jsonInputCount: 14,
       binaryRuntimeInputCount: 2,
     },

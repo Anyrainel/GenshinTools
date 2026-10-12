@@ -51615,7 +51615,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "718f504ad7b95e20caaaac1e4e65b13f5a2a4fc2b88181496ad0ddc2fe15493a"
+      "sha256": "939a56b7b0fece84f583f5402a538f6ae0803c4bc9c993d44ffa8cb2426ea634"
     },
     {
       "path": "scripts/guide-factory/reports/weapon-choice-search-coverage.json",
@@ -51631,7 +51631,7 @@
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
-      "sha256": "768900fe54d0d812ca8433ac9a8fe030bb7da52b822885e0f51aec585212a58d"
+      "sha256": "48c47b7715855999e966fd0a8d1275cb432cfa23085fb2785d5203550d1c555e"
     },
     {
       "path": "scripts/guide-factory/src/characterGuideInputCoverage.ts",
@@ -51643,7 +51643,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "3ec7fb40674d9b263b1b8991bc3df1de0d3967d36c5923ba4714696a793a4b00"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",

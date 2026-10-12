@@ -29,7 +29,7 @@ const REPOSITORY_PATH =
 const MANUAL_INDEX_PATH =
   "scripts/guide-factory/data/source-snapshots/manual-index.json";
 const SOURCE_REGISTRY_PATH = "scripts/guide-factory/sources/registry.json";
-const CHARACTER_STATS_PATH = "src/data/game/character_stats.json";
+const CHARACTER_STATS_PATH = "src/generated/catalog/character_stats.json";
 const SNAPSHOT_ENVELOPE_KEY = "kqm-keqing-manual";
 const MANUAL_RECOMMENDATION_PARITY_ADAPTER_ID =
   "kqm-manual-repository-recommendation-parity-v1";
@@ -88,9 +88,9 @@ export const KEQING_LUNAR_EQUIPMENT_SCOPE_CHARACTER_IDS = Object.freeze([
 export const KEQING_LUNAR_EQUIPMENT_SCOPE_EXPECTATION = Object.freeze({
   scopeId: "keqing-lunar-equipment-evidence-v1",
   manifestSha256:
-    "a2a0dd00c300182512e654fb106cac4e12eac0c83daf6ccf4650116853241ae4",
+    "7b1ea3c28c999c05005573af51e59c1a7b8d588f1b593ca5fd5272180a172833",
   scopeProjectionSha256:
-    "23f13c9ca714e7d25f01199a629e280b2baa833a77272f57511bc3b423bd935f",
+    "b8779cbcdd6ad6bccc1d7523cdee86e03c6964a10d64d77cfc4dd0becbce4896",
 } as const);
 
 export interface KeqingLunarEquipmentScopeAuthority {

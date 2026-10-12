@@ -162,7 +162,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
@@ -174,11 +174,11 @@
     },
     {
       "path": "scripts/guide-factory/reports/xiao-ffxx-applicable-claim-projection-contract.json",
-      "sha256": "92a6cd2eda00891477189387686e57142c8ab10d540edeff4d795b0ee58e07d0"
+      "sha256": "0aeb7306d7555c6e3720cdf60f6f4adaf3a27cb3b0daa17677f155fab8e7ca1b"
     },
     {
       "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
-      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+      "sha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -202,7 +202,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -328,15 +328,15 @@
   "supportsStatRecommendations": false,
   "supportsTeamRecommendations": false,
   "upstreamBoundary": {
-    "durableReportCanonicalObjectSha256": "92a6cd2eda00891477189387686e57142c8ab10d540edeff4d795b0ee58e07d0",
-    "durableReportFileSha256": "92a6cd2eda00891477189387686e57142c8ab10d540edeff4d795b0ee58e07d0",
+    "durableReportCanonicalObjectSha256": "0aeb7306d7555c6e3720cdf60f6f4adaf3a27cb3b0daa17677f155fab8e7ca1b",
+    "durableReportFileSha256": "0aeb7306d7555c6e3720cdf60f6f4adaf3a27cb3b0daa17677f155fab8e7ca1b",
     "durableReportPath": "scripts/guide-factory/reports/xiao-ffxx-applicable-claim-projection-contract.json",
     "emptyOccurrenceCount": 4,
     "freshlyAuthenticated": true,
     "holdoutOccurrenceCount": 14,
     "requestViewMatchedOccurrenceCount": 3,
     "selectedOccurrenceCount": 3,
-    "semanticScopeSha256": "cff2a04818cf432c3ad31c71e04d9d9df2c79f11cc5f24875a65e2f0156d8461",
+    "semanticScopeSha256": "37186c978b6e9374f15614563bcbd122de737d1dcdd3ed1bc6d152c429d0828d",
     "sourceOnlyMatchedOccurrenceCount": 2,
     "status": "accepted",
     "upstreamAssembledBuildCount": 0,
@@ -349,10 +349,10 @@
           "axisId": "artifact-set",
           "occurrenceEvidence": [
             {
-              "conditionControlSha256": "68db45b02b15a2e41a2be5c57d7320101d901058976b264186fd1a76596f067a",
+              "conditionControlSha256": "5c626f18d0059f0f5fe4df780947892cb565b98fd0459c6bbcbc29480dc57e11",
               "contextApplicability": "source-already-matched",
               "effectiveResolution": "matched",
-              "occurrenceEvidenceSha256": "be41ccf5cf0d7c3c107924770ec510a1d8f4df4ca71d992e9551d6082a0e9184",
+              "occurrenceEvidenceSha256": "ed32cca0773205d6ec73dca2717c83b6dd026818e2259583c89bc9b73e9f467f",
               "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
               "requestContextBindingCount": 0,
               "requestProjectionSha256": "34d19cada6d55fb6e3b51516f98816c79ee8d46ba9bb99c189c9a88dd36ba23b",
@@ -371,10 +371,10 @@
           "axisId": "main-stat:goblet",
           "occurrenceEvidence": [
             {
-              "conditionControlSha256": "17b7046a895e2e5a997dd0a6d6a1f029d75357b380036bef1ccd986ddd5571d8",
+              "conditionControlSha256": "9aa1fb9bcfd6b2752231d262196477b0486f2d489fb3e13d2616bc57e5923b9b",
               "contextApplicability": "source-already-matched",
               "effectiveResolution": "matched",
-              "occurrenceEvidenceSha256": "0eac7d1b70f2f5320bc3ba195833b616c592e07a552a1d6a67a3bd68ea52e334",
+              "occurrenceEvidenceSha256": "4238df468278e95be8fbea0152d973cf71a6948b9c7da069d03691b4a036f08f",
               "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
               "requestContextBindingCount": 0,
               "requestProjectionSha256": "2c82d94d5182cdba8bb3c4a81a94b1d45b9f3b33e661372dfca1a1387650f6fa",
@@ -408,7 +408,7 @@
         "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions"
       ],
       "upstreamViewSha256": "0f9fa406a277932c08a33de50b4c24e7c2648bea34abb20ea1bd0cc3c485096c",
-      "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+      "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
       "viewId": "source-only-ffxx"
     },
     {
@@ -417,10 +417,10 @@
           "axisId": "artifact-set",
           "occurrenceEvidence": [
             {
-              "conditionControlSha256": "68db45b02b15a2e41a2be5c57d7320101d901058976b264186fd1a76596f067a",
+              "conditionControlSha256": "5c626f18d0059f0f5fe4df780947892cb565b98fd0459c6bbcbc29480dc57e11",
               "contextApplicability": "source-already-matched",
               "effectiveResolution": "matched",
-              "occurrenceEvidenceSha256": "be41ccf5cf0d7c3c107924770ec510a1d8f4df4ca71d992e9551d6082a0e9184",
+              "occurrenceEvidenceSha256": "ed32cca0773205d6ec73dca2717c83b6dd026818e2259583c89bc9b73e9f467f",
               "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
               "requestContextBindingCount": 0,
               "requestProjectionSha256": "34d19cada6d55fb6e3b51516f98816c79ee8d46ba9bb99c189c9a88dd36ba23b",
@@ -439,10 +439,10 @@
           "axisId": "main-stat:goblet",
           "occurrenceEvidence": [
             {
-              "conditionControlSha256": "17b7046a895e2e5a997dd0a6d6a1f029d75357b380036bef1ccd986ddd5571d8",
+              "conditionControlSha256": "9aa1fb9bcfd6b2752231d262196477b0486f2d489fb3e13d2616bc57e5923b9b",
               "contextApplicability": "source-already-matched",
               "effectiveResolution": "matched",
-              "occurrenceEvidenceSha256": "0eac7d1b70f2f5320bc3ba195833b616c592e07a552a1d6a67a3bd68ea52e334",
+              "occurrenceEvidenceSha256": "4238df468278e95be8fbea0152d973cf71a6948b9c7da069d03691b4a036f08f",
               "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
               "requestContextBindingCount": 0,
               "requestProjectionSha256": "2c82d94d5182cdba8bb3c4a81a94b1d45b9f3b33e661372dfca1a1387650f6fa",
@@ -452,10 +452,10 @@
               "sourceResolution": "matched"
             },
             {
-              "conditionControlSha256": "5b10191ca84d5e14f8ff041160ac55996b8b9537bb74afd374bfc6999930298d",
+              "conditionControlSha256": "71040c0c19a27a2cb12ba5f06bcc4ef0516292b282c5956ce9e06992f2e46c13",
               "contextApplicability": "applicable-under-supplied-context",
               "effectiveResolution": "matched",
-              "occurrenceEvidenceSha256": "a2e175a55326a40092def545e3548428925ffb88bae2b81398cc869b2900eff6",
+              "occurrenceEvidenceSha256": "5a1889ed0b38dfc322177acf637acd27a58efb3a4a71a9a8b309835ab7274ca7",
               "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
               "requestContextBindingCount": 1,
               "requestProjectionSha256": "509f8b6de92edd168fb15f190ac85261dc983061e2e5c037656a9c5e80fb5afd",
@@ -494,7 +494,7 @@
       "technicalCombinationSha256": "ea44ea430cd50fae70491188c520d25c00eb611ff7076bcd424182e5e1631d5e",
       "unresolvedOccurrenceIds": [],
       "upstreamViewSha256": "3e8bf1c525946179752b3f858061a428155d124c5502b0850205c5118d85c6d7",
-      "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+      "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
       "viewId": "exact-ffxx-plus-wrapper-c6"
     }
   ]

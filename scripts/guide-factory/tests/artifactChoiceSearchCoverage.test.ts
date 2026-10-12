@@ -21,14 +21,14 @@ describe("artifact-choice search-space coverage", () => {
       searchSpace: { catalogScope: "released" },
       summary: {
         guideBuilds: {
-          total: 188,
-          enumeratedInitially: 167,
+          total: 190,
+          enumeratedInitially: 169,
           conditionallyRepresentable: 14,
           notRepresentable: 7,
         },
         teamSelectedArtifacts: {
-          total: 840,
-          enumeratedInitially: 820,
+          total: 844,
+          enumeratedInitially: 824,
           conditionallyRepresentable: 7,
           notRepresentable: 13,
         },
@@ -45,8 +45,8 @@ describe("artifact-choice search-space coverage", () => {
           notRepresentable: 0,
         },
         all: {
-          total: 1075,
-          enumeratedInitially: 1026,
+          total: 1081,
+          enumeratedInitially: 1032,
           conditionallyRepresentable: 21,
           notRepresentable: 28,
         },

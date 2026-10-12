@@ -217,14 +217,14 @@ describe("Noelle Hexerei request-conditioned candidate admission", () => {
         NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_CLI_RELATIVE_PATH,
       ]),
     ].sort(compareText);
-    expect(expectedPaths).toHaveLength(119);
+    expect(expectedPaths).toHaveLength(125);
     expect(NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_INPUT_PATHS)
       .toEqual(expectedPaths);
     expect(NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_SOURCE_FILE_PATHS)
       .toEqual(expectedPaths);
     expect(
       NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_RUNTIME_INPUT_PATHS,
-    ).toHaveLength(80);
+    ).toHaveLength(86);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json")))
       .toHaveLength(15);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json.gz")))
@@ -244,9 +244,9 @@ describe("Noelle Hexerei request-conditioned candidate admission", () => {
       exactCp53InputProjection: true,
       exactCp56InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 119,
-      generatedFromCount: 119,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 125,
+      generatedFromCount: 125,
+      runtimeInputPathCount: 86,
       jsonInputCount: 15,
       binaryRuntimeInputCount: 2,
     });

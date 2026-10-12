@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
@@ -292,12 +292,12 @@ describe("Keqing source-scoped role-pair sample integration", () => {
 
     expect(report.releasedCatalogBoundary).toMatchObject({
       source: "stable-resources",
-      fullStableCharacterCount: 139,
+      fullStableCharacterCount: 141,
       excludedSpecialAvatarFormCount: 14,
-      eligibleCharacterCount: 125,
-      expectedEligibleCharacterCount: 125,
+      eligibleCharacterCount: 127,
+      expectedEligibleCharacterCount: 127,
       eligibleCharacterCountMatchesExpectation: true,
-      playableIdentityCount: 119,
+      playableIdentityCount: 121,
       checkedInRosterReportComparison: {
         referenceReportComparable: true,
         eligibleCharacterCountMatches: true,
@@ -750,7 +750,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     KEQING_SOURCE_SCOPED_ROLE_PAIR_SAMPLE_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   );

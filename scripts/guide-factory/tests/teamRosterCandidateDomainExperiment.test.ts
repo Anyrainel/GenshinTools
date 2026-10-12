@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readJson, sha256File, stableJson } from "../src/io";
@@ -51,11 +51,11 @@ describe("team-roster candidate-domain experiment", () => {
     });
     expect(fixture.releasedCatalogBoundary).toMatchObject({
       source: "stable-resources",
-      fullStableCharacterCount: 139,
-      eligibleCharacterCount: 125,
+      fullStableCharacterCount: 141,
+      eligibleCharacterCount: 127,
       excludedSpecialAvatarForms: { count: 14 },
     });
-    expect(fixture.coreInput.releasedCharacters).toHaveLength(125);
+    expect(fixture.coreInput.releasedCharacters).toHaveLength(127);
     expect(
       fixture.coreInput.releasedCharacters.some(({ characterId }) =>
         /^(?:manekin|manekina)_/.test(characterId),
@@ -95,14 +95,14 @@ describe("team-roster candidate-domain experiment", () => {
     expect(report.domain.allHoldoutsMatch).toBe(true);
     expect(report.validationEvidenceBoundary.allTargetsMatch).toBe(true);
     expect(report.releasedCatalogBoundary).toMatchObject({
-      fullStableCharacterCount: 139,
-      eligibleCharacterCount: 125,
+      fullStableCharacterCount: 141,
+      eligibleCharacterCount: 127,
     });
     expect(report.domain.catalogBoundary).toMatchObject({
-      characterCount: 125,
+      characterCount: 127,
       characterIdsSha256:
-        "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
-      playableIdentityCount: 119,
+        "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa",
+      playableIdentityCount: 121,
     });
     expect(report.domain.catalogBoundary.sharedPlayableIdentityGroups).toEqual([
       {
@@ -141,39 +141,39 @@ describe("team-roster candidate-domain experiment", () => {
     ]);
 
     expectTemplateCounts(template(report, ELECTRO_CHARGED_TEMPLATE_ID), {
-      validOrdered: 84_846,
-      rejectedOrdered: 16_811,
-      acceptedOrdered: 68_035,
-      acceptedCanonical: 41_866,
+      validOrdered: 88_718,
+      rejectedOrdered: 17_361,
+      acceptedOrdered: 71_357,
+      acceptedCanonical: 44_307,
       acceptedSha256:
-        "4d66f3bb35094bcd58d8de54519ffb19c12d9ffaaf3063fb9255154a05c31d37",
+        "027821e7cdd7d4a9c2bc349e58b1fd6112056bc1d13cbd93606749a31fbf9d11",
     });
     expectTemplateCounts(template(report, FREEZE_TEMPLATE_ID), {
-      validOrdered: 98_718,
+      validOrdered: 103_066,
       rejectedOrdered: 0,
-      acceptedOrdered: 98_718,
-      acceptedCanonical: 57_607,
+      acceptedOrdered: 103_066,
+      acceptedCanonical: 60_680,
       acceptedSha256:
-        "9db83c959d91bbe0d952c5fed76798c02ff8ec82aca3b963f18eeb6b23fd8db7",
+        "39532fc3d426837f2c6da075fd08ac71d71b41e2b77c055967a37f7bcaf82cf6",
     });
     expectTemplateCounts(template(report, QUICKBLOOM_TEMPLATE_ID), {
-      validOrdered: 31_412,
+      validOrdered: 31_930,
       rejectedOrdered: 0,
-      acceptedOrdered: 31_412,
-      acceptedCanonical: 27_413,
+      acceptedOrdered: 31_930,
+      acceptedCanonical: 27_931,
       acceptedSha256:
-        "ca46c4eae8fa5caa01e095bb78c8279f4c330c64ac80c4b47f21fa15ec328a9b",
+        "66bb9991880b99e16ee1ab554e1ebbad762560fbaeab216f1878a958a3f078dc",
     });
     expect(
       template(report, QUICKBLOOM_TEMPLATE_ID).assignmentMultiplicityHistogram,
     ).toContainEqual({ assignmentCount: 2, rosterCount: 3_999 });
     expectTemplateCounts(template(report, VAPORIZE_TEMPLATE_ID), {
-      validOrdered: 124_292,
+      validOrdered: 128_690,
       rejectedOrdered: 0,
-      acceptedOrdered: 124_292,
-      acceptedCanonical: 77_477,
+      acceptedOrdered: 128_690,
+      acceptedCanonical: 80_509,
       acceptedSha256:
-        "34c96c4bb3df24c69f71a1a074defe1e959dbd1872f8dce6e146b18447e83e1e",
+        "3beff4d290d1f2f2f650782667fbab631bbbf0721d1346a9906a3d811ee985f1",
     });
 
     expect(report.domain.holdouts).toHaveLength(20);
@@ -391,7 +391,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     TEAM_ROSTER_CANDIDATE_DOMAIN_EXPERIMENT_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   );

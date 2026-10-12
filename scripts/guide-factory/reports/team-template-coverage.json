@@ -830,11 +830,11 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
-      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+      "sha256": "48c47b7715855999e966fd0a8d1275cb432cfa23085fb2785d5203550d1c555e"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -846,11 +846,11 @@
     },
     {
       "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
-      "sha256": "bad1d04f242eae911998ae902f3fd210f1fe27838e724ff24080f6639c2563fa"
+      "sha256": "c0f47e567599a0973c6cdfc320680e2381f7368d3d60652021268008ffcace70"
     },
     {
-      "path": "src/data/game/character_stats.json",
-      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+      "path": "src/generated/catalog/character_stats.json",
+      "sha256": "74a3bd262f9ff26f1777f9a3a50ccf13bb2a7906f51030adde7fe1b756d96033"
     }
   ],
   "limitations": [

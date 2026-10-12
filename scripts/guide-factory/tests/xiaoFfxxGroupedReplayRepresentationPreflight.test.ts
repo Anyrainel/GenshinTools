@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -46,8 +46,8 @@ const BRANCH_CANDIDATE_REPORT_PATH =
 const FORMULA_COUNT_REPORT_PATH =
   "scripts/guide-factory/reports/xiao-formula-count-parity.json";
 const CHARACTER_BETA_STATS_PATH =
-  "src/data/game/character_beta_stats.json.gz";
-const WEAPON_BETA_STATS_PATH = "src/data/game/weapon_beta_stats.json.gz";
+  "src/generated/catalog/character_beta_stats.json.gz";
+const WEAPON_BETA_STATS_PATH = "src/generated/catalog/weapon_beta_stats.json.gz";
 
 const WEAPONS = [
   "calamity_queller",
@@ -88,14 +88,14 @@ let canonicalReport: XiaoFfxxGroupedReplayRepresentationPreflightReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(currentSourceLocation(XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_REPORT_PATH)) as Promise<XiaoFfxxGroupedReplayRepresentationPreflightReport>,
+    readJson(XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_REPORT_PATH) as Promise<XiaoFfxxGroupedReplayRepresentationPreflightReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxGroupedReplayRepresentationPreflightReport(fixture());
 }, 60_000);
 
 describe("Xiao FFXX grouped replay representation preflight", () => {
-  it("rebuilds deterministically and authenticates the durable 118-file raw-byte/12-JSON closure", async () => {
+  it("rebuilds deterministically and authenticates the durable 124-file raw-byte/12-JSON closure", async () => {
     const rebuilt =
       await buildXiaoFfxxGroupedReplayRepresentationPreflightReport(fixture());
 
@@ -103,7 +103,7 @@ describe("Xiao FFXX grouped replay representation preflight", () => {
     expect(stableJson(canonicalReport)).toBe(stableJson(durableReport));
     expect(
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS,
-    ).toHaveLength(118);
+    ).toHaveLength(124);
     expect(
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_SOURCE_FILE_PATHS,
     ).toEqual(
@@ -120,7 +120,7 @@ describe("Xiao FFXX grouped replay representation preflight", () => {
       new Set(
         XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS,
       ).size,
-    ).toBe(118);
+    ).toBe(124);
     expect(
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS,
     ).toEqual(
@@ -138,10 +138,10 @@ describe("Xiao FFXX grouped replay representation preflight", () => {
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
       staticFirstPartyReplayRuntimePathClosure: true,
-      staticFirstPartyReplayRuntimeFileCount: 80,
+      staticFirstPartyReplayRuntimeFileCount: 86,
       runtimeGlobDiscoveryUsed: false,
-      sourceFileCount: 118,
-      generatedFromCount: 118,
+      sourceFileCount: 124,
+      generatedFromCount: 124,
       authenticatedJsonInputParityCount: 12,
       directDurableReportJsonInputCount: 2,
     });
@@ -179,7 +179,7 @@ describe("Xiao FFXX grouped replay representation preflight", () => {
   }, 60_000);
 
   it("contains every local static value import reached by the declared replay runtime and checkpoint implementation", async () => {
-    expect(XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS).toHaveLength(80);
+    expect(XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS).toHaveLength(86);
     const allDeclaredPaths: Set<string> = new Set(
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS,
     );
@@ -725,7 +725,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxGroupedReplayRepresentationPr
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([
@@ -743,7 +743,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxGroupedReplayRepresentationPr
       XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

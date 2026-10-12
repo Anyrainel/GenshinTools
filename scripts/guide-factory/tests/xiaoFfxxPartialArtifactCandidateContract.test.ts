@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -60,15 +60,15 @@ const TECHNICAL_COMBINATION_SHA256 =
 const CANDIDATE_IDENTITY_SHA256 =
   "74775416f9e1fd158f850821c710e41a8c48375566ece39e48ae20d410d10790";
 const UPSTREAM_SEMANTIC_SCOPE_SHA256 =
-  "cff2a04818cf432c3ad31c71e04d9d9df2c79f11cc5f24875a65e2f0156d8461";
+  "37186c978b6e9374f15614563bcbd122de737d1dcdd3ed1bc6d152c429d0828d";
 const SOURCE_VIEW_SHA256 =
   "0f9fa406a277932c08a33de50b4c24e7c2648bea34abb20ea1bd0cc3c485096c";
 const SOURCE_BINDING_SHA256 =
-  "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d";
+  "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be";
 const REQUEST_VIEW_SHA256 =
   "3e8bf1c525946179752b3f858061a428155d124c5502b0850205c5118d85c6d7";
 const REQUEST_BINDING_SHA256 =
-  "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e";
+  "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c";
 
 let baseInput: BuildXiaoFfxxPartialArtifactCandidateContractInput;
 let durableReport: XiaoFfxxPartialArtifactCandidateContractReport;
@@ -321,7 +321,7 @@ describe("Xiao FFXX partial artifact candidate contract", () => {
     expect(requestGoblet?.occurrenceEvidence).toHaveLength(2);
     expect(c6).toMatchObject({
       occurrenceEvidenceSha256:
-        "a2e175a55326a40092def545e3548428925ffb88bae2b81398cc869b2900eff6",
+        "5a1889ed0b38dfc322177acf637acd27a58efb3a4a71a9a8b309835ab7274ca7",
       selectedOccurrenceSha256:
         "1994639390ec2bf81953c4828a54e05e7830ecb70b7e7011920b881cceb75f51",
       sourceCellSha256:
@@ -677,7 +677,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxPartialArtifactCandidateContr
       XIAO_FFXX_PARTIAL_ARTIFACT_CANDIDATE_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

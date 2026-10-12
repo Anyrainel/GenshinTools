@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import characterStatsInput from "@/generated/catalog/character_stats.json";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -49,7 +49,7 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     const repositoryBefore = structuredClone(fixture.repository);
     const manualInputsBefore = structuredClone(fixture.manualInputs);
     const generatedFrom = await hashInputs();
-    const durable = await readJson(currentSourceLocation(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH));
+    const durable = await readJson(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH);
 
     const report = buildKeqingLunarEquipmentEvidenceValidationReport(
       fixture.repository,
@@ -98,9 +98,9 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
       trust: "authenticated-current-input-rebuild-and-pinned-expectation",
       scopeId: "keqing-lunar-equipment-evidence-v1",
       manifestSha256:
-        "a2a0dd00c300182512e654fb106cac4e12eac0c83daf6ccf4650116853241ae4",
+        "7b1ea3c28c999c05005573af51e59c1a7b8d588f1b593ca5fd5272180a172833",
       scopeProjectionSha256:
-        "23f13c9ca714e7d25f01199a629e280b2baa833a77272f57511bc3b423bd935f",
+        "b8779cbcdd6ad6bccc1d7523cdee86e03c6964a10d64d77cfc4dd0becbce4896",
       parity: {
         configuredCount: 17,
         exactCount: 17,
@@ -134,7 +134,7 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
         "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
         "scripts/guide-factory/sources/registry.json",
         "scripts/guide-factory/src/schemas.ts",
-        "src/data/game/character_stats.json",
+        "src/generated/catalog/character_stats.json",
       ]),
     );
     expect(
@@ -965,9 +965,9 @@ interface Fixture {
 async function loadFixture(): Promise<Fixture> {
   const [repositoryInput, manualIndexInput, sourceRegistryInput] =
     await Promise.all([
-      readJson(currentSourceLocation(KNOWLEDGE_REPOSITORY_PATH)),
-      readJson(currentSourceLocation(MANUAL_SNAPSHOT_INDEX_PATH)),
-      readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
+      readJson(KNOWLEDGE_REPOSITORY_PATH),
+      readJson(MANUAL_SNAPSHOT_INDEX_PATH),
+      readJson(SOURCE_REGISTRY_PATH),
     ]);
   const manualIndex = ManualSnapshotIndexSchema.parse(manualIndexInput);
   const sourceRegistry = SourceRegistrySchema.parse(sourceRegistryInput);
@@ -983,7 +983,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   );

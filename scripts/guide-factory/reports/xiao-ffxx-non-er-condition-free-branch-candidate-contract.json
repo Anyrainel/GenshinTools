@@ -6,8 +6,8 @@
     "conditionFreeOccurrenceCount": 4,
     "conditionFreeWeaponGroupCount": 3,
     "conditionFreeWeaponLeafCount": 6,
-    "durableReportCanonicalObjectSha256": "97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51",
-    "durableReportFileSha256": "97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51",
+    "durableReportCanonicalObjectSha256": "b903029b8b4eb633ae7616d8abfaef892d7fe2c3813927cec1aa58c33d9e077e",
+    "durableReportFileSha256": "b903029b8b4eb633ae7616d8abfaef892d7fe2c3813927cec1aa58c33d9e077e",
     "durableReportPath": "scripts/guide-factory/reports/xiao-non-er-equipment-branch-source-slice.json",
     "freshlyAuthenticated": true,
     "guardedOccurrenceCount": 9,
@@ -130,21 +130,21 @@
           "bindingId": "xiao-ffxx-source-only-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 0,
-          "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+          "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
           "viewId": "source-only-ffxx"
         },
         {
           "bindingId": "xiao-ffxx-plus-wrapper-c6-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 1,
-          "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+          "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
           "viewId": "exact-ffxx-plus-wrapper-c6"
         }
       ],
       "branchAdmissionConditionStatus": "weapon-and-sands-source-condition-free",
       "candidateId": "guide-factory:xiao-ffxx:partial-non-er:primordial_jade_wingedspear:mh-atk-anemo",
       "candidateIdentitySha256": "3f9fc7a1382a1cd433fb894d2bb2c2fc1a13c9751ad44c5a7648953cac88695f",
-      "candidateProvenanceSha256": "f32e127f0f80c4090f4437a63e9c34838ca3d66742c908a7a7d4ccff2fe322ce",
+      "candidateProvenanceSha256": "f59e5fed52ed2cebbf7a5664f38565d3054b047489c18d37ab4336ef402ce60c",
       "characterId": "xiao",
       "completeness": {
         "axisCount": 6,
@@ -307,21 +307,21 @@
           "bindingId": "xiao-ffxx-source-only-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 0,
-          "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+          "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
           "viewId": "source-only-ffxx"
         },
         {
           "bindingId": "xiao-ffxx-plus-wrapper-c6-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 1,
-          "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+          "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
           "viewId": "exact-ffxx-plus-wrapper-c6"
         }
       ],
       "branchAdmissionConditionStatus": "weapon-and-sands-source-condition-free",
       "candidateId": "guide-factory:xiao-ffxx:partial-non-er:staff_of_homa:mh-atk-anemo",
       "candidateIdentitySha256": "fc24fa993cb6de7b2a1f5e1bda5f60ebc9f0cf3e3ca69d838958d48dff83d483",
-      "candidateProvenanceSha256": "a0c0e84dc8114061354eb94490bb4f30d49427f567cb49ca46ee85f4a99d7a48",
+      "candidateProvenanceSha256": "c24a2fa4d397337c5d25817614bf41e4a060e4fb20f7b3491d065834c3742c76",
       "characterId": "xiao",
       "completeness": {
         "axisCount": 6,
@@ -484,21 +484,21 @@
           "bindingId": "xiao-ffxx-source-only-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 0,
-          "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+          "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
           "viewId": "source-only-ffxx"
         },
         {
           "bindingId": "xiao-ffxx-plus-wrapper-c6-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 1,
-          "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+          "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
           "viewId": "exact-ffxx-plus-wrapper-c6"
         }
       ],
       "branchAdmissionConditionStatus": "weapon-and-sands-source-condition-free",
       "candidateId": "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo",
       "candidateIdentitySha256": "3f7e93efb8040a8c5562dcb64f6b7563f427869ad13ca470d9e12ecd43ca9863",
-      "candidateProvenanceSha256": "9680ecaa07412858218f1e641312412aaa447a0d4ab17d0620a56c5a92fa3a06",
+      "candidateProvenanceSha256": "c763e561a0bb4c9e98e5a9ff52e08325b17db1768d62368d58010a0220abcaec",
       "characterId": "xiao",
       "completeness": {
         "axisCount": 6,
@@ -661,21 +661,21 @@
           "bindingId": "xiao-ffxx-source-only-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 0,
-          "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+          "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
           "viewId": "source-only-ffxx"
         },
         {
           "bindingId": "xiao-ffxx-plus-wrapper-c6-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 1,
-          "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+          "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
           "viewId": "exact-ffxx-plus-wrapper-c6"
         }
       ],
       "branchAdmissionConditionStatus": "weapon-and-sands-source-condition-free",
       "candidateId": "guide-factory:xiao-ffxx:partial-non-er:vortex_vanquisher:mh-atk-anemo",
       "candidateIdentitySha256": "b9b68ec9797ab2c1b39bafb29fc323740c7928ead417abba62998d0a0a6a8cd9",
-      "candidateProvenanceSha256": "9cfb6336d4f98a897c4fb3cb6201438b9789267e66da6cba45423bda4a27c106",
+      "candidateProvenanceSha256": "de741b39e2586040f190b36054ebc4a2e91089c00b5476544330c6ce84cd9d9e",
       "characterId": "xiao",
       "completeness": {
         "axisCount": 6,
@@ -838,21 +838,21 @@
           "bindingId": "xiao-ffxx-source-only-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 0,
-          "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+          "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
           "viewId": "source-only-ffxx"
         },
         {
           "bindingId": "xiao-ffxx-plus-wrapper-c6-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 1,
-          "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+          "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
           "viewId": "exact-ffxx-plus-wrapper-c6"
         }
       ],
       "branchAdmissionConditionStatus": "weapon-and-sands-source-condition-free",
       "candidateId": "guide-factory:xiao-ffxx:partial-non-er:calamity_queller:mh-atk-anemo",
       "candidateIdentitySha256": "499a04a953c2b9382697f12cb97f862d0db5e3a9ec4d97b6a53f86c5ede06cca",
-      "candidateProvenanceSha256": "f95264c5d2a437dec3515bafd962767e56f343f0108e48df90bfbd8ed5f7d8cb",
+      "candidateProvenanceSha256": "a96e7839688583de3d8354c38e5b3120e5bb836c700f38620c67bee4bc1b9749",
       "characterId": "xiao",
       "completeness": {
         "axisCount": 6,
@@ -1015,21 +1015,21 @@
           "bindingId": "xiao-ffxx-source-only-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 0,
-          "viewBindingSha256": "92421f3a81e24c93d922f20bfccbf4223cf1a1c9a7d7094a345973cab4cbc05d",
+          "viewBindingSha256": "9bb9a77d48c64d906cf7429801bb928bdb13eb3f4703537a0369026807be07be",
           "viewId": "source-only-ffxx"
         },
         {
           "bindingId": "xiao-ffxx-plus-wrapper-c6-partial-candidate-binding",
           "inheritedWithoutChangingTechnicalCandidate": true,
           "requestFactCount": 1,
-          "viewBindingSha256": "0a1b7881f168b5108a60d7bd04593415aa8a0517538667428a6dddaad78d8e2e",
+          "viewBindingSha256": "c5b645818c71b91d822b2c950d7b0c18d1367520f089b42690977b9ef558461c",
           "viewId": "exact-ffxx-plus-wrapper-c6"
         }
       ],
       "branchAdmissionConditionStatus": "weapon-and-sands-source-condition-free",
       "candidateId": "guide-factory:xiao-ffxx:partial-non-er:deathmatch:mh-atk-anemo",
       "candidateIdentitySha256": "0836ff03f2a8ad390461326e93b0e42d8b606c77eba709be420754fb9eece479",
-      "candidateProvenanceSha256": "b2e87f8641515ce8f7b7c97415ec900899f8a9e9e2ab1a2eea5c4bec86448e50",
+      "candidateProvenanceSha256": "0a025c6d1d8123645ebb66f8d5531af70efefa870c09efe71eae0d2b9edd1efa",
       "characterId": "xiao",
       "completeness": {
         "axisCount": 6,
@@ -1140,7 +1140,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
@@ -1152,19 +1152,19 @@
     },
     {
       "path": "scripts/guide-factory/reports/xiao-ffxx-applicable-claim-projection-contract.json",
-      "sha256": "92a6cd2eda00891477189387686e57142c8ab10d540edeff4d795b0ee58e07d0"
+      "sha256": "0aeb7306d7555c6e3720cdf60f6f4adaf3a27cb3b0daa17677f155fab8e7ca1b"
     },
     {
       "path": "scripts/guide-factory/reports/xiao-ffxx-partial-artifact-candidate-contract.json",
-      "sha256": "71d82d02188d1575fe5a78890b193816e33c06c327ff3f6ce64887c066abcecd"
+      "sha256": "e58b617ba2000f471d2c449c4babd285ba23e35ddea834a997434ef1dc2d595b"
     },
     {
       "path": "scripts/guide-factory/reports/xiao-non-er-equipment-branch-source-slice.json",
-      "sha256": "97e1b1fc63979d684d7cbb227d3ed1ae440e325e9b5df880b6c3a7b3ce017b51"
+      "sha256": "b903029b8b4eb633ae7616d8abfaef892d7fe2c3813927cec1aa58c33d9e077e"
     },
     {
       "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
-      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+      "sha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -1196,7 +1196,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -1204,7 +1204,7 @@
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
-      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -1250,10 +1250,10 @@
   "generatorExecuted": false,
   "idealRollAllocationExecuted": false,
   "identityBoundary": {
-    "aggregateCompositionSha256": "fcfed128ffbff4ddc72088c6ce1517bf3138ed90b0d837cce7c606c6b882eea4",
+    "aggregateCompositionSha256": "1ad8e1d05957c197a05e891e47f302a06edd83259c3e24eca816ea6082ddc696",
     "branchGroupSetSha256": "b77245cab26a075ba63c80e9b2fc7eb95feaeab7ab72cc4f9c12110234ea1f28",
     "candidateIdentitySetSha256": "5f851edfcc5ffadf0a12c11a5a368e4e4620548699bd53358ae83c709f8f35ea",
-    "candidateProvenanceSetSha256": "723ecb4190e75026153d517778a202980dc496ccdf3755ca14493d733e82495e",
+    "candidateProvenanceSetSha256": "5505cf874721c9821f83109205ee902622364f0bb7413379dc530e4c16334fbf",
     "requestFactExcludedFromCandidateIdentity": true,
     "sourceRankExcludedFromTechnicalIdentity": true,
     "withheldGuardedDomainSha256": "729d827f9ee11e27214b43642b29557fa3adc45d989c7192cff60e69f0cdafb4"
@@ -1303,8 +1303,8 @@
     "baseMissingAxisCount": 4,
     "basePresentAxisCount": 2,
     "baseViewBindingCount": 2,
-    "durableReportCanonicalObjectSha256": "71d82d02188d1575fe5a78890b193816e33c06c327ff3f6ce64887c066abcecd",
-    "durableReportFileSha256": "71d82d02188d1575fe5a78890b193816e33c06c327ff3f6ce64887c066abcecd",
+    "durableReportCanonicalObjectSha256": "e58b617ba2000f471d2c449c4babd285ba23e35ddea834a997434ef1dc2d595b",
+    "durableReportFileSha256": "e58b617ba2000f471d2c449c4babd285ba23e35ddea834a997434ef1dc2d595b",
     "durableReportPath": "scripts/guide-factory/reports/xiao-ffxx-partial-artifact-candidate-contract.json",
     "freshlyAuthenticated": true,
     "partialCandidateCount": 1,

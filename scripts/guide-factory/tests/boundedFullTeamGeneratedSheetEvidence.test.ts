@@ -458,7 +458,7 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
         resultFingerprintSha256:
           "6a958c472fe28f1d4b8c6edaf0a52495309377742f46175541acbf6566233386",
         reportContentSha256:
-          "0510351135877d48ba5af2a57656ea007c1594f326b0d5ac38343583e18f6348",
+          "9c6c5357662f50bd9290e2e9ebc834936610d55feb318d35f92efb35cb8c3b90",
       });
       expect(
         report.nodes.every((node) =>

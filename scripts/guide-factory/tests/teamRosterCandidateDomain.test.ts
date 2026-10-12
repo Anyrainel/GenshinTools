@@ -116,10 +116,10 @@ describe("team roster candidate domain", () => {
 
       expect(report.catalogBoundary).toMatchObject({
         label: "guide-domain-eligible-released-character-ids",
-        characterCount: 125,
+        characterCount: 127,
         characterIdsSha256:
-          "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
-        playableIdentityCount: 119,
+          "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa",
+        playableIdentityCount: 121,
       });
       expect(
         report.catalogBoundary.sharedPlayableIdentityGroups,
@@ -137,48 +137,48 @@ describe("team roster candidate domain", () => {
       });
 
       expectComparable(report.templates, FURINA_ELECTRO_CHARGED, {
-        validOrderedAssignmentCount: 84_846,
-        acceptedOrderedAssignmentCount: 68_035,
-        rejectedOrderedAssignmentCount: 16_811,
-        acceptedCanonicalRosterCount: 41_866,
+        validOrderedAssignmentCount: 88_718,
+        acceptedOrderedAssignmentCount: 71_357,
+        rejectedOrderedAssignmentCount: 17_361,
+        acceptedCanonicalRosterCount: 44_307,
         structuralDomainSha256:
-          "de643aa7cb44ef8cf1eb3ef6101f32fa8ca38bd3d68bfa95cd95684b19f9a49c",
+          "a65ecd79c8f2ae9be691bfefd058d959ce44098dbf0da3dec9ad333eb6c8141a",
       });
       expect(
         templateReport(report.templates, FURINA_ELECTRO_CHARGED)
           .reactionAcceptedDomainSha256,
       ).toBe(
-        "4d66f3bb35094bcd58d8de54519ffb19c12d9ffaaf3063fb9255154a05c31d37",
+        "027821e7cdd7d4a9c2bc349e58b1fd6112056bc1d13cbd93606749a31fbf9d11",
       );
       expectComparable(report.templates, FURINA_FREEZE, {
-        validOrderedAssignmentCount: 98_718,
-        acceptedOrderedAssignmentCount: 98_718,
+        validOrderedAssignmentCount: 103_066,
+        acceptedOrderedAssignmentCount: 103_066,
         rejectedOrderedAssignmentCount: 0,
-        acceptedCanonicalRosterCount: 57_607,
+        acceptedCanonicalRosterCount: 60_680,
         structuralDomainSha256:
-          "9db83c959d91bbe0d952c5fed76798c02ff8ec82aca3b963f18eeb6b23fd8db7",
+          "39532fc3d426837f2c6da075fd08ac71d71b41e2b77c055967a37f7bcaf82cf6",
       });
       expectComparable(report.templates, FURINA_QUICKBLOOM, {
-        validOrderedAssignmentCount: 31_412,
-        acceptedOrderedAssignmentCount: 31_412,
+        validOrderedAssignmentCount: 31_930,
+        acceptedOrderedAssignmentCount: 31_930,
         rejectedOrderedAssignmentCount: 0,
-        acceptedCanonicalRosterCount: 27_413,
+        acceptedCanonicalRosterCount: 27_931,
         structuralDomainSha256:
-          "ca46c4eae8fa5caa01e095bb78c8279f4c330c64ac80c4b47f21fa15ec328a9b",
+          "66bb9991880b99e16ee1ab554e1ebbad762560fbaeab216f1878a958a3f078dc",
       });
       expect(templateReport(report.templates, FURINA_QUICKBLOOM)).toMatchObject({
         assignmentMultiplicityHistogram: [
-          { assignmentCount: 1, rosterCount: 23_414 },
+          { assignmentCount: 1, rosterCount: 23_932 },
           { assignmentCount: 2, rosterCount: 3_999 },
         ],
       });
       expectComparable(report.templates, FURINA_VAPORIZE, {
-        validOrderedAssignmentCount: 124_292,
-        acceptedOrderedAssignmentCount: 124_292,
+        validOrderedAssignmentCount: 128_690,
+        acceptedOrderedAssignmentCount: 128_690,
         rejectedOrderedAssignmentCount: 0,
-        acceptedCanonicalRosterCount: 77_477,
+        acceptedCanonicalRosterCount: 80_509,
         structuralDomainSha256:
-          "34c96c4bb3df24c69f71a1a074defe1e959dbd1872f8dce6e146b18447e83e1e",
+          "3beff4d290d1f2f2f650782667fbab631bbbf0721d1346a9906a3d811ee985f1",
       });
 
       expect(templateReport(report.templates, FURINA_HYPERCARRY)).toMatchObject({

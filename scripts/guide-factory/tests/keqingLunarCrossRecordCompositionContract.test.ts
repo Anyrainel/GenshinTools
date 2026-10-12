@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readJson, sha256File, sha256Text, stableJson } from "../src/io";
@@ -744,7 +744,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     KEQING_LUNAR_CROSS_RECORD_COMPOSITION_CONTRACT_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   );

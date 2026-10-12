@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readJson } from "../src/io";
@@ -583,7 +583,7 @@ async function canonicalReport(): Promise<KeqingIneffaFurinaXilonenGeneratedShee
 async function fixture(): Promise<BuildKeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetsInput> {
   const values = await Promise.all(
     KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SEMANTIC_INPUT_PATHS.map(
-      (relativePath) => readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      (relativePath) => readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ),
   );
   return {

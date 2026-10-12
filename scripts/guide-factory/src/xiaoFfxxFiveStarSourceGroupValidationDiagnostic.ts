@@ -21,7 +21,7 @@ const CLI_PATH =
   "scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts";
 const DIAGNOSTIC_ID =
   "guide-factory-xiao-ffxx-five-star-source-group-validation-diagnostic-version-5-5";
-const EXPECTED_INPUT_PATH_COUNT = 124;
+const EXPECTED_INPUT_PATH_COUNT = 130;
 const EXPECTED_JSON_INPUT_COUNT = 14;
 const RANK_ONE_GROUP_ID = "xiao-ffxx:five-star-source-rank-group-1";
 const RANK_TWO_GROUP_ID = "xiao-ffxx:five-star-source-rank-group-2";
@@ -194,8 +194,8 @@ export interface XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport {
     exactGeneratedFromPathSet: true;
     allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true;
     combinedJsonInputByteAndParsedObjectParity: true;
-    sourceFileCount: 124;
-    generatedFromCount: 124;
+    sourceFileCount: 130;
+    generatedFromCount: 130;
     authenticatedJsonInputParityCount: 14;
   };
   upstreamBoundary: {
@@ -203,7 +203,7 @@ export interface XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport {
     durableReportFileSha256: string;
     durableReportCanonicalObjectSha256: string;
     freshlyAuthenticated: true;
-    upstreamInputCount: 121;
+    upstreamInputCount: 127;
     authenticatedTechnicalObservationCount: 6;
     checkpoint49AdditionalReplayCount: 0;
     checkpoint49ReplayExecuted: false;
@@ -499,8 +499,8 @@ export async function buildXiaoFfxxFiveStarSourceGroupValidationDiagnosticReport
       exactGeneratedFromPathSet: true,
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
-      sourceFileCount: 124,
-      generatedFromCount: 124,
+      sourceFileCount: 130,
+      generatedFromCount: 130,
       authenticatedJsonInputParityCount: 14,
     },
     upstreamBoundary: {
@@ -510,7 +510,7 @@ export async function buildXiaoFfxxFiveStarSourceGroupValidationDiagnosticReport
       ),
       durableReportCanonicalObjectSha256: upstreamCanonicalObjectSha256,
       freshlyAuthenticated: true,
-      upstreamInputCount: 121,
+      upstreamInputCount: 127,
       authenticatedTechnicalObservationCount: 6,
       checkpoint49AdditionalReplayCount: 0,
       checkpoint49ReplayExecuted: false,
@@ -822,7 +822,7 @@ function requireUpstreamBoundary(
     report.summary.recommendationCount !== 0 ||
     report.summary.completeBuildCount !== 0 ||
     report.summary.energyRecoveryComputationCount !== 0 ||
-    report.rawInputBoundary.sourceFileCount !== 121 ||
+    report.rawInputBoundary.sourceFileCount !== 127 ||
     report.rawInputBoundary.authenticatedJsonInputParityCount !== 13 ||
     report.upstreamBoundary.checkpoint48AdditionalReplayCount !== 0 ||
     report.normalizationBoundary.normalizedLineCount !== 13 ||

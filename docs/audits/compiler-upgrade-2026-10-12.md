@@ -93,6 +93,42 @@ Its blockers include old source paths, historical raw-byte fingerprints, and a
 125-character catalog boundary against the current 127-character catalog.
 Those historical evidence boundaries have not been silently rehashed or removed.
 
+## Current research rebuild follow-up — 2026-10-12
+
+The user chose to rebuild the research reports against the current repository.
+Current guide code now imports the authoritative module paths directly; the
+historical path-remapping helper was removed. Catalog expectations now cover
+127 eligible character forms, 121 playable identities, 889 C0–C6 rows, and
+242 released weapons / 317 weapon-refinement pairs. Scope projections and
+independent source-byte pins were reviewed against the regenerated inputs.
+
+Independent import-closure checks exposed seven newly reachable runtime files
+and one obsolete beta-state dependency. The Noelle and Xiao witnesses now
+authenticate the exact 86-file runtime closure. Source bytes were normalized
+to the repository's LF convention before rebuilding to preserve checkout
+reproducibility. Report writes now use a temporary file and atomic rename.
+
+The Keqing numeric result fingerprint remains unchanged after 144 fresh
+generator calls and 364 direct/compiled replays. The 576 generated-sheet
+occurrences, compact policy table, policy traces, and exhaustive census also
+retain their semantic fingerprints. No recommendations, damage claims, or ER
+claims were promoted. The explicit mutation and independent authentication
+guards remain, with historical capture alternatives removed.
+
+`npm run guide:rebuild` now regenerates reports in dependency order, includes
+the previously omitted sheet/policy/census/portability producers, and finishes
+with current non-ER validation. `npm run test:guides` exposes the independent
+suite. The rebuilt pipeline validates with zero errors and exactly the twelve
+known source weapon-type warnings; the two historical Diona/ER reports remain
+explicitly deferred. The complete app, Worker, and Python check also passed.
+
+Final independent guide verification passed **1,074 tests, zero failures and
+zero skips**, with both `GUIDE_FACTORY_CP38_REAL_RUNTIME=1` and
+`GUIDE_FACTORY_CP39_REAL_SHEET_EVIDENCE=1`. The default command keeps those two
+costly generic runtime regressions opt-in; its other 1,072 tests passed in the
+same run. All 63 original research failures and their dependent skipped tests
+are resolved against the current inputs.
+
 ## References
 
 - [Cloudflare Workers Vitest migration](https://developers.cloudflare.com/workers/testing/vitest-integration/migration-guides/migrate-to-vitest-plugin/)

@@ -52,8 +52,8 @@ const FURINA_FIXTURE_GENERATED_FROM = [
   "scripts/guide-factory/src/furinaNeuvilletteFormulaDraft.ts",
   "scripts/guide-factory/src/schemas.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
-  "src/data/game/character_stats.json",
-  "src/data/game/weapon_stats.json",
+  "src/generated/catalog/character_stats.json",
+  "src/generated/catalog/weapon_stats.json",
   "src/providers/reference/statLoaders.ts",
   "src/domain/combat/damage/constants.ts",
   "src/domain/combat/damage/core/charBuild.ts",
@@ -84,7 +84,7 @@ export const DERIVED_FORMULA_FIXTURE_COVERAGE_INPUT_PATHS = [
   MANUAL_INDEX_PATH,
   ...DERIVED_FORMULA_FIXTURE_MANUAL_SNAPSHOT_PATHS,
   ROSTER_REPORT_PATH,
-  "src/data/resources.ts",
+  "src/generated/catalog/resources.ts",
   ...DERIVED_FORMULA_FIXTURE_REPORT_PATHS,
   ...FURINA_FIXTURE_GENERATED_FROM,
   ...KEQING_FIXTURE_GENERATED_FROM,
@@ -103,9 +103,9 @@ export const DERIVED_FORMULA_FIXTURE_COVERAGE_SOURCE_FILE_PATHS = [
   ...XIAO_FORMULA_COUNT_PARITY_SOURCE_FILE_PATHS,
 ].filter((value, index, all) => all.indexOf(value) === index) as string[];
 
-const EXPECTED_RELEASED_CHARACTER_COUNT = 125;
+const EXPECTED_RELEASED_CHARACTER_COUNT = 127;
 const EXPECTED_RELEASED_CHARACTER_IDS_SHA256 =
-  "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f";
+  "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa";
 
 interface LegacyFixtureSpec {
   reportPath: (typeof DERIVED_FORMULA_FIXTURE_REPORT_PATHS)[0 | 1];
@@ -320,7 +320,7 @@ export interface DerivedFormulaFixtureCoverageReport {
       completeExpectedInputSetRequired: true;
     };
     roster: {
-      releasedCharacterCount: 125;
+      releasedCharacterCount: 127;
       releasedCharacterIdsSha256: string;
       checkedInRosterReferenceMatched: true;
       everyObservedCharacterIsReleased: true;
@@ -576,7 +576,7 @@ export function buildDerivedFormulaFixtureCoverageReport(
         completeExpectedInputSetRequired: true,
       },
       roster: {
-        releasedCharacterCount: 125,
+        releasedCharacterCount: 127,
         releasedCharacterIdsSha256: EXPECTED_RELEASED_CHARACTER_IDS_SHA256,
         checkedInRosterReferenceMatched: true,
         everyObservedCharacterIsReleased: true,

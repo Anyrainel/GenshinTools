@@ -564,9 +564,9 @@ describe("authenticated current condition-binding catalog", () => {
 
     expect(lowerEntries).toHaveLength(3);
     expect(lowerEntries.map((entry) => sha256Text(stableJson(entry)))).toEqual([
-      "883cb35b1dd8737799217aef780944d32aa781f98af22ce55032908b222b08d8",
-      "05e71e643ea4f8b29dbfe541800da01da6138a63af858c8974ca64019ebc33a5",
-      "30c89c0b5a5036f4ebf3611aba37ab41c93567bcce27a4b0944838f34afb5dd0",
+      "a26fb4359e23a81dad338c17b78f269da1dc334d273071cff3be8a1935f3b63a",
+      "60fb9a491c958540606749e24b67e1a001e1faa9255e6300701797bbc313cf87",
+      "9868e571923da1bef8f2a831162d82e155f439de4ffdfbdb1d9e89955bc2199d",
     ]);
     expect(
       lowerEntries.map(({ manualClaimPath }) => manualClaimPath).sort(),

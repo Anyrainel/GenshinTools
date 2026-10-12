@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -51,8 +51,8 @@ const GROUPED_REPLAY_REPORT_PATH =
 const UNIT_EXPANDED_GATE_REPORT_PATH =
   "scripts/guide-factory/reports/xiao-ffxx-unit-expanded-execution-gate.json";
 const CHARACTER_BETA_STATS_PATH =
-  "src/data/game/character_beta_stats.json.gz";
-const WEAPON_BETA_STATS_PATH = "src/data/game/weapon_beta_stats.json.gz";
+  "src/generated/catalog/character_beta_stats.json.gz";
+const WEAPON_BETA_STATS_PATH = "src/generated/catalog/weapon_beta_stats.json.gz";
 
 const RANK_ONE_IDS = [
   "guide-factory:xiao-ffxx:partial-non-er:lumidouce_elegy:mh-atk-anemo",
@@ -137,18 +137,18 @@ let canonicalReport: XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(currentSourceLocation(XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_REPORT_PATH)) as Promise<XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport>,
+    readJson(XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_REPORT_PATH) as Promise<XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxFiveStarSourceGroupValidationDiagnosticReport(fixture());
 }, 60_000);
 
 describe("Xiao FFXX five-star source-group validation diagnostic", () => {
-  it("rebuilds deterministically and authenticates the exact 124-byte/14-JSON closure", async () => {
+  it("rebuilds deterministically and authenticates the exact 130-byte/14-JSON closure", async () => {
     expect(stableJson(canonicalReport)).toBe(stableJson(durableReport));
     expect(
       XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS,
-    ).toHaveLength(124);
+    ).toHaveLength(130);
     expect(
       XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_SOURCE_FILE_PATHS,
     ).toEqual(
@@ -165,7 +165,7 @@ describe("Xiao FFXX five-star source-group validation diagnostic", () => {
       new Set(
         XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS,
       ).size,
-    ).toBe(124);
+    ).toBe(130);
     expect(JSON_INPUTS).toHaveLength(14);
     expect(
       XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_INPUT_PATHS.every((sourcePath) =>
@@ -192,8 +192,8 @@ describe("Xiao FFXX five-star source-group validation diagnostic", () => {
       exactGeneratedFromPathSet: true,
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
-      sourceFileCount: 124,
-      generatedFromCount: 124,
+      sourceFileCount: 130,
+      generatedFromCount: 130,
       authenticatedJsonInputParityCount: 14,
     });
 
@@ -231,7 +231,7 @@ describe("Xiao FFXX five-star source-group validation diagnostic", () => {
         /^[a-f0-9]{64}$/,
       ),
       freshlyAuthenticated: true,
-      upstreamInputCount: 121,
+      upstreamInputCount: 127,
       authenticatedTechnicalObservationCount: 6,
       checkpoint49AdditionalReplayCount: 0,
       checkpoint49ReplayExecuted: false,
@@ -808,7 +808,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxFiveStarSourceGroupValidation
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([
@@ -826,7 +826,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxFiveStarSourceGroupValidation
       XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

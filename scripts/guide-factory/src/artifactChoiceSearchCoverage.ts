@@ -24,8 +24,8 @@ export const ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS = [
   "src/config/gameConstants.ts",
   "src/domain/enums.ts",
   "src/domain/reference/catalog.ts",
-  "src/data/resources.ts",
-  "src/data/resources_beta.ts",
+  "src/generated/catalog/resources.ts",
+  "src/generated/catalog/resources_beta.ts",
   "src/domain/models.ts",
   "src/domain/combat/analyzer/weaponChoice.ts",
 ] as const;

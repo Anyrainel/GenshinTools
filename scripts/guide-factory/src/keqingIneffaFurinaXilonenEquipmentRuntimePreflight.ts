@@ -43,92 +43,92 @@ export const KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_INPUT_PATH
     "scripts/guide-factory/src/sourceBackedEquipmentCandidateLattice.ts",
     "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts",
     ...KEQING_INEFFA_FORMULA_DRAFT_INPUT_PATHS,
-    "src/data/gameResources.ts",
-    "src/data/resources.ts",
-    "src/data/resources_beta.ts",
-    "src/lib/dmgcalc/impl/weapon4Sword.ts",
+    "src/domain/reference/catalog.ts",
+    "src/generated/catalog/resources.ts",
+    "src/generated/catalog/resources_beta.ts",
+    "src/domain/combat/damage/impl/weapon4Sword.ts",
   ]),
 ] as const;
 
 const EXPECTED_INPUT_FILE_SHA256 = {
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-equipment-candidate-lattice.json":
-    "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6",
+    "b81199dde159fac7c08990e26318f0ea3f391854115234df76243deadba8620b",
   "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json":
-    "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
+    "bf415e8ff6b8c3ba216ab208574ad632c7c3ed59caef3bb380c7f9cfae87aa96",
   "scripts/guide-factory/src/keqingIneffaFurinaXilonenEquipmentCandidateLattice.ts":
-    "37353a9d2481607a1a2eb293ac7a445827019cfaf3618ea41469d1d0e04533a8",
+    "4f2c92dd2c5bdc0cb08a251fc26c352ea57408bf60fada256ca60c8f0a711250",
   "scripts/guide-factory/src/sourceBackedEquipmentCandidateLattice.ts":
     "d098653f47fed1572dbb2e5ed596c0086b4ed18cf28e6d86f41037c8b966e5cf",
   "scripts/guide-factory/src/sourceBackedEquipmentRuntimePreflight.ts":
-    "2602c8af1cf81bec68d824b2a51a2438e5a8945a437adc8c06f11c96dcca53b7",
+    "9810032c3ec3067720ac62cd934ee0e3a161d1ab73869788b7f75666a2090cfd",
   "scripts/guide-factory/src/computationReplay.ts":
-    "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff",
+    "3c974458435a61938dadba8f7bc0be43467a3382c0ac2175210d6f65aa3074ff",
   "scripts/guide-factory/src/formulaPlanDraft.ts":
-    "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407",
+    "6e1e19fb82c327142eeecdb6dd024f6fd936438671eb37dd196b151f70492977",
   "scripts/guide-factory/src/formulaPlanReadiness.ts":
     "70417b8fc11b4a25ca3a0e65c52099dffcfd8256591f7870bdfff4fd18f4c922",
   "scripts/guide-factory/src/keqingIneffaFormulaSemanticScope.ts":
-    "ad485772ffb7d9cbcc46c43f9c905c6ff4a621dd476d7a271acd83c46a96ffb9",
+    "13ef01e504879d0bc242bf4114213bbbce29d6ad83e742b16f4dcc9e21d1152b",
   "scripts/guide-factory/src/scopedSemanticDependency.ts":
     "57e746459c94a3cbd44f462c9a7b9db420ef8a4b7ff34e24a4f02abc9f2a9619",
   "scripts/guide-factory/src/sourceBackedEquipmentScenario.ts":
     "b877b626adc552b6a672f7c18958e3463498ddb8b1f5a230dc2b91bedb417d42",
   "scripts/guide-factory/src/keqingIneffaFormulaDraft.ts":
-    "5f3175d099eb3b34a9c9fa43716e9be458bbddcdca70e274c999d32c636d1072",
+    "2dc326af79b394b61432936e3907f3ccc597d61d35e2021ff1dc5bfb10586acc",
   "scripts/guide-factory/src/schemas.ts":
     "a5a22dbe0d4cffcb47392aed613dafa563779df9d5eecd308a0f2cca5d9d02b5",
   "scripts/guide-factory/src/teamMemberInvestment.ts":
     "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c",
-  "src/data/game/character_stats.json":
-    "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f",
-  "src/data/game/weapon_stats.json":
-    "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8",
-  "src/data/charInfo.ts":
-    "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68",
-  "src/data/gameStatsLoader.ts":
-    "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce",
-  "src/lib/dmgcalc/index.ts":
+  "src/generated/catalog/character_stats.json":
+    "74a3bd262f9ff26f1777f9a3a50ccf13bb2a7906f51030adde7fe1b756d96033",
+  "src/generated/catalog/weapon_stats.json":
+    "62821edb2b6e1b9be888a7330edc020f5f4c397e3329693f9ca2f23406d6b36c",
+  "src/generated/catalog/characterInfo.ts":
+    "b38abdfe2436e8063697d1d10bcbf4894a60368c4da525f1a3572622c19f3aeb",
+  "src/providers/reference/statLoaders.ts":
+    "01940c5233c94d915d2c17dcc920aabe79f2fa57add4f4df8a182af8d35b4acd",
+  "src/domain/combat/damage/index.ts":
     "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab",
-  "src/lib/dmgcalc/constants.ts":
-    "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1",
-  "src/lib/dmgcalc/core/charBuild.ts":
-    "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4",
-  "src/lib/dmgcalc/core/combo.ts":
-    "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca",
-  "src/lib/dmgcalc/core/implModel.ts":
-    "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65",
-  "src/lib/dmgcalc/core/registry.ts":
-    "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893",
-  "src/lib/dmgcalc/core/teamBuild.ts":
-    "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29",
-  "src/lib/dmgcalc/core/teamFormulaCatalog.ts":
-    "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db",
-  "src/lib/dmgcalc/core/teamMeta.ts":
-    "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858",
-  "src/lib/dmgcalc/core/teamReaction.ts":
-    "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18",
-  "src/lib/dmgcalc/impl/artifact4pc.ts":
-    "d8b3a69e11cf01e02122f0040b0225ea5860ad520a82429faf2e09a0a71b4948",
-  "src/lib/dmgcalc/impl/character5Fontaine.ts":
-    "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb",
-  "src/lib/dmgcalc/impl/character5Liyue.ts":
-    "a9fa0c572e3ca1ea8a09e9498c0f7fd5c9bab6a82c854bcd4af0cdc5f08ad264",
-  "src/lib/dmgcalc/impl/character5Natlan.ts":
-    "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2",
-  "src/lib/dmgcalc/impl/character5NodKrai.ts":
-    "86a07352cef23faaa7de023adcd619eed02b6ba282224cd88a38a565ac583557",
-  "src/lib/dmgcalc/impl/weapon5Polearm.ts":
+  "src/domain/combat/damage/constants.ts":
+    "d8548a6174124f7e50edf9de43015e865b7ef0129140d759ed73642d99db6932",
+  "src/domain/combat/damage/core/charBuild.ts":
+    "9ae06e5424b7ab087856c5f622828701c79f3361f9de47e607d7d17387dfdd15",
+  "src/domain/combat/damage/core/combo.ts":
+    "b459aeb9103ef6de2330bb221a1cbf8c04205bb35c22193e0c02a6848751c2c6",
+  "src/domain/combat/damage/core/implModel.ts":
+    "f62785b391ea48753fdb51a8265a2aa742990b941af3cfb4e6d6a40978dbcd42",
+  "src/domain/combat/damage/core/registry.ts":
+    "36ae833c856559d44c5092fcf35238c03c7262473e3874b5e9deebac098380c6",
+  "src/domain/combat/damage/core/teamBuild.ts":
+    "1f57bedcb89de09ea2bd096e5c09c9b65e61fd21a8b5559fba0561110f866180",
+  "src/domain/combat/damage/core/teamFormulaCatalog.ts":
+    "fc181e07e43e28c6462b9237977630feb7eeceef57fba56d7ff11d3e49c686cd",
+  "src/domain/combat/damage/core/teamMeta.ts":
+    "f83591945518a8650a3ee8ceb73e5eab28c6670f91e6042b293357af07e2ab44",
+  "src/domain/combat/damage/core/teamReaction.ts":
+    "f2889b2933b63872dc890a651d6d54c9a05c360e489c1c6edb2e286244a20b0c",
+  "src/domain/combat/damage/impl/artifact4pc.ts":
+    "5af5136e5fbe19c0cde575bc40e4a9e097a87fbb118d61fc250a2fc3b2c46405",
+  "src/domain/combat/damage/impl/character5Fontaine.ts":
+    "7e981b0b557abd9495a6240d9dba25537d3787b98d9a2e125f97b2a23c9220ee",
+  "src/domain/combat/damage/impl/character5Liyue.ts":
+    "7c3c8f125019e904354621796ca6b4c2159ae95f1b7612de6ee56398133351b5",
+  "src/domain/combat/damage/impl/character5Natlan.ts":
+    "ab629ca2dc02e62ed87815c8fcd3cb04f35cf2b0e37e1f0473be28eaa73e7b25",
+  "src/domain/combat/damage/impl/character5NodKrai.ts":
+    "70520075b58e54b99826b50fe975be71377f68d600ffb3051cdb3c5bbecaeb25",
+  "src/domain/combat/damage/impl/weapon5Polearm.ts":
     "ba43f6e6e8d4b1483d1460d90d08b93c2a4e995aa0a06cef660f934df2e9718c",
-  "src/lib/dmgcalc/impl/weapon5Sword.ts":
-    "5e5d0c58eb33b67f51288e167b2a691f4693eedfa7709de00346df243ab3a0a8",
-  "src/data/gameResources.ts":
-    "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb",
-  "src/data/resources.ts":
-    "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd",
-  "src/data/resources_beta.ts":
-    "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21",
-  "src/lib/dmgcalc/impl/weapon4Sword.ts":
-    "e57306601e6b105fee72b1183383f916f48c2f5cd175e3f503b10c8df24aec79",
+  "src/domain/combat/damage/impl/weapon5Sword.ts":
+    "18c81de8d027fbcd99c6bdb9eee0e025c0d3d89b15517857f342bc5689028f1f",
+  "src/domain/reference/catalog.ts":
+    "ffaaa71669580a7972dfda2f7a431a4b0885c36ac03220ff42a242112ebe3308",
+  "src/generated/catalog/resources.ts":
+    "7a6c531254b0943d430c72ac51ad52c49657715dcd3d9ee14ccdfd506ccb191a",
+  "src/generated/catalog/resources_beta.ts":
+    "beaa526631c00e6d796b87e1cceae358abeee1a3ced078a4002e524b932b2d60",
+  "src/domain/combat/damage/impl/weapon4Sword.ts":
+    "48c30464c6dae1565b8a54600566a6feab11611a3a5525cab0df68d175325cc7",
 } as const satisfies Record<
   (typeof KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_RUNTIME_PREFLIGHT_INPUT_PATHS)[number],
   string
@@ -141,13 +141,13 @@ const DELIBERATELY_EXCLUDED_PRODUCER_PATHS = [
 ] as const;
 
 const EXPECTED_LATTICE_REPORT_SHA256 =
-  "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6";
+  "b81199dde159fac7c08990e26318f0ea3f391854115234df76243deadba8620b";
 const EXPECTED_FORMULA_DRAFT_REPORT_SHA256 =
-  "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b";
+  "bf415e8ff6b8c3ba216ab208574ad632c7c3ed59caef3bb380c7f9cfae87aa96";
 const EXPECTED_OBJECTIVE_LINES_SHA256 =
   "cb0f071bd5151936f010b3cbbcc6582233b0ae08f2aace0df654f2f58afe060a";
 const EXPECTED_AUTHENTICATED_REPORT_SHA256 =
-  "c0dedcfb87d27dfebeba99d89a26a6ed614f4de536b23d6bef54529b0246155b";
+  "00377729276cd5f53271e60c6bad1db819622e66a594c44e232987fb73482d59";
 
 const TEAM_RECORD_ID =
   "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example";

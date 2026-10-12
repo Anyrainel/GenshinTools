@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "./sourceLocations";
+
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { readJson, sha256File, writeJson } from "./io";
@@ -27,7 +27,7 @@ const KNOWLEDGE_REPOSITORY =
 const GENSHINTOOLS_SNAPSHOT =
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json";
 const LIVE_BUILD_PRESET =
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 const KQM_EVIDENCE_REPORT =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 
@@ -64,7 +64,7 @@ export async function writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport
 
 export async function runKeqingIneffaFurinaXilonenGeneratedSheetEvidenceCli(): Promise<void> {
   const readInput = (relativePath: string) =>
-    readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)));
+    readJson(path.join(REPOSITORY_ROOT, relativePath));
   const [
     sourceTechnicalReport,
     equipmentLatticeReport,
@@ -84,7 +84,7 @@ export async function runKeqingIneffaFurinaXilonenGeneratedSheetEvidenceCli(): P
       KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_EVIDENCE_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

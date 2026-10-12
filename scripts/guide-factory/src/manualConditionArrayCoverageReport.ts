@@ -368,7 +368,7 @@ export function selectManualConditionCoverageIndex(
 }
 
 const EXPECTED_MANUAL_CONDITION_REPOSITORY_PROJECTION_SHA256 =
-  "232acf871b56d1543075fd2881d70a3cc432a29d3e4b9c3456d712b671ab1e13";
+  "e25a2305a6588dd03959d9230dc87621703ee0a5860349977ed4208f5193990c";
 
 export function requireCurrentManualConditionRepositoryProjection(
   repositoryProjection: KnowledgeRepository,
@@ -465,9 +465,9 @@ const PROHIBITED_INTERPRETATIONS = [
 ];
 
 const EXPECTED_CURRENT_OCCURRENCES_SHA256 =
-  "b7c6b7df14e2f8e4c4c9b1635f98ce7127a80c74f3939a380738e8db6da32360";
+  "e9de4e2272fb188f0c6bf41fddb13df6cef3a7d80477b045bd8ab4534b19f3c5";
 const EXPECTED_CURRENT_BINDING_CATALOG_SHA256 =
-  "b7bb72248f8f7a4148115a6fdc9e286d47ff52eb24f118755cfce80f3d7a2414";
+  "0e791ccbe670c066c979c1946bc2b91d3d2f3198c84d396690301e5beec700f6";
 
 export async function buildManualConditionArrayCoverageReport(
   input: BuildManualConditionArrayCoverageReportInput,

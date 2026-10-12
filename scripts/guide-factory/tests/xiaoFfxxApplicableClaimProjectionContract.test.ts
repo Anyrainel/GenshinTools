@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -62,7 +62,7 @@ const EXPECTED_LINEAGE_HASHES = {
     sourceClaimSha256:
       "f3a06383da54355bb383c1ddceb60031311e5727896332612978277cb81795c8",
     conditionControlSha256:
-      "68db45b02b15a2e41a2be5c57d7320101d901058976b264186fd1a76596f067a",
+      "5c626f18d0059f0f5fe4df780947892cb565b98fd0459c6bbcbc29480dc57e11",
     sourceCellSha256:
       "23b591c3dd359b0e8c3b0f30173b27e3b3f48b319c84fdaa7697a86c507d4a3e",
     requestProjectionSha256:
@@ -74,7 +74,7 @@ const EXPECTED_LINEAGE_HASHES = {
     sourceClaimSha256:
       "7df7650e957d48d22ff046f298960c150c1bb60b7dbecd30c0611e988ede22e3",
     conditionControlSha256:
-      "17b7046a895e2e5a997dd0a6d6a1f029d75357b380036bef1ccd986ddd5571d8",
+      "9aa1fb9bcfd6b2752231d262196477b0486f2d489fb3e13d2616bc57e5923b9b",
     sourceCellSha256:
       "84d4dc8982ff1c20de2ccece2664a44f4392a2b3cbf24f70ce39fc3ee96478b9",
     requestProjectionSha256:
@@ -86,7 +86,7 @@ const EXPECTED_LINEAGE_HASHES = {
     sourceClaimSha256:
       "6a6c450cd8d51dba26112f66b1e45595b86701c14ce3218d508428d6e49216c8",
     conditionControlSha256:
-      "5b10191ca84d5e14f8ff041160ac55996b8b9537bb74afd374bfc6999930298d",
+      "71040c0c19a27a2cb12ba5f06bcc4ef0516292b282c5956ce9e06992f2e46c13",
     sourceCellSha256:
       "e5f54b96ca56536895db4ba9bd8890cc2d37530ecf39593c5d027a3d044e4003",
     requestProjectionSha256:
@@ -131,9 +131,9 @@ describe("Xiao FFXX applicable-claim projection contract", () => {
       status: "accepted",
       durableReportPath: XIAO_UPSTREAM_REPORT_RELATIVE_PATH,
       durableReportFileSha256:
-        "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
+        "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826",
       durableReportCanonicalObjectSha256:
-        "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
+        "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826",
       freshlyAuthenticated: true,
       sliceId:
         "kqm-xiao-ffxx-roster-and-c6-source-local-condition-slice-version-5-5",
@@ -735,7 +735,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxApplicableClaimProjectionCont
       XIAO_FFXX_APPLICABLE_CLAIM_PROJECTION_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

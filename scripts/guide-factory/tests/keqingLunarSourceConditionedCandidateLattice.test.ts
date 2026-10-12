@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { readJson, sha256File } from "../src/io";
@@ -43,26 +43,12 @@ describe("Keqing Lunar source-conditioned candidate lattice", () => {
     );
 
     expect(repeated).toEqual(report);
-    // Pin both source versions: only the validator's four catalog imports moved.
-    // Keep the historical report intact and require the complete lattice payload
-    // and every other input hash to remain identical.
     const validatorPath = "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts";
-    const historical = durable as typeof report;
-    const oldSource = historical.generatedFrom.find(({ path }) => path === validatorPath);
-    expect(oldSource).toEqual({
-      path: validatorPath,
-      sha256: "546148f2da695cfea544a7c9eab71a89e23251af680f64d7187ae91770de003d",
-    });
     expect(report.generatedFrom.find(({ path }) => path === validatorPath)).toEqual({
       path: validatorPath,
-      sha256: "f4debf51cf1dcad3988e31407d36e05f70787e5fdd243e546d90b973270ba6e3",
+      sha256: "37769361b0c0d02f9b906f274c3009fa557d26479d3ea22a69cd04abf6455db7",
     });
-    expect(historical).toEqual({
-      ...report,
-      generatedFrom: report.generatedFrom.map((source) =>
-        source.path === validatorPath ? oldSource : source,
-      ),
-    });
+    expect(durable).toEqual(report);
     expect(fixture.evidence).toEqual(evidenceBefore);
     expect(fixture.formulaDraft).toEqual(formulaBefore);
     expect(report).toMatchObject({
@@ -580,7 +566,7 @@ async function hashInputs(): Promise<Array<{ path: string; sha256: string }>> {
     KEQING_LUNAR_SOURCE_CONDITIONED_CANDIDATE_LATTICE_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   );

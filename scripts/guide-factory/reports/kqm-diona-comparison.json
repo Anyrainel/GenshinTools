@@ -277,7 +277,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
-      "sha256": "f3d831a925f150c10acd3641311cd4b6af99334bcb3bc771bbcffcc89bf94dc9"
+      "sha256": "172f5d4d882b61bd5245f7876fcf7a48e43e39f534d4baf063b5b1c1eac64f6a"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-diona-manual.json",

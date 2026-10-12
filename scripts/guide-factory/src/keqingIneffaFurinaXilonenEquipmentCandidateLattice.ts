@@ -44,7 +44,7 @@ export const KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATH
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json",
   "scripts/guide-factory/data/source-snapshots/manual-index.json",
   "scripts/guide-factory/sources/registry.json",
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json",
   "scripts/guide-factory/reports/weapon-choice-search-coverage.json",
   "scripts/guide-factory/reports/artifact-choice-search-coverage.json",
@@ -74,7 +74,7 @@ const XILONEN_SCROLL_WARNING =
   "Xilonen generally cannot activate Scroll for Hydro in the stated setup because of the Crystallize interaction; the source presents pause-menu booking only as a niche exception";
 
 const EXPECTED_AUTHENTICATED_REPORT_SHA256 =
-  "a4477c1e941a12e30d8ef14cf6343fbef46406ccd06416cc8b751394e41e4bb6";
+  "b81199dde159fac7c08990e26318f0ea3f391854115234df76243deadba8620b";
 
 export type BuildKeqingIneffaFurinaXilonenEquipmentCandidateLatticeInput = {
   repository: KnowledgeRepository;

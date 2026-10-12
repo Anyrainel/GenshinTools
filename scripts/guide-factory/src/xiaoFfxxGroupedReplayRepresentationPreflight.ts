@@ -84,8 +84,8 @@ const EXCLUDED_C6_VIEW_ID = "exact-ffxx-plus-wrapper-c6";
 const ABSOLUTE_TOLERANCE = 1e-9;
 const RELATIVE_TOLERANCE = 1e-12;
 const REGRESSION_TOLERANCE = 1e-6;
-const EXPECTED_REPLAY_RUNTIME_INPUT_COUNT = 80;
-const EXPECTED_INPUT_PATH_COUNT = 118;
+const EXPECTED_REPLAY_RUNTIME_INPUT_COUNT = 86;
+const EXPECTED_INPUT_PATH_COUNT = 124;
 
 /**
  * Static first-party module closure traversed from computationReplay and the
@@ -95,24 +95,30 @@ const EXPECTED_INPUT_PATH_COUNT = 118;
  * process-environment override even though this fixture executes non-beta data.
  */
 export const XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS = [
+  "scripts/lib/nodeReferenceFetch.mjs",
+  "src/config/beta.ts",
+  "src/domain/reference/stats.ts",
+  "src/providers/reference/fetchGzipJson.ts",
+  "src/domain/combat/damage/core/infusion.ts",
+  "src/domain/combat/damage/core/lunarRankWeights.ts",
+  "src/domain/combat/damage/core/dynamicBuffExpressions.ts",
   "scripts/guide-factory/src/computationReplay.ts",
-  "src/stores/betaState.ts",
-  "src/data/characterInfo.ts",
+  "src/generated/catalog/characterInfo.ts",
   "src/config/gameConstants.ts",
   "src/domain/enums.ts",
-  "src/data/game/artifact_stat.json",
-  "src/data/game/character_beta_stats.json.gz",
-  "src/data/game/character_stats.json",
-  "src/data/game/weapon_beta_stats.json.gz",
-  "src/data/game/weapon_stats.json",
+  "src/generated/catalog/artifact_stat.json",
+  "src/generated/catalog/character_beta_stats.json.gz",
+  "src/generated/catalog/character_stats.json",
+  "src/generated/catalog/weapon_beta_stats.json.gz",
+  "src/generated/catalog/weapon_stats.json",
   "src/lib/resources/cache.ts",
   "src/domain/reference/catalog.ts",
   "src/providers/reference/statLoaders.ts",
   "src/i18n/gameTerms.ts",
-  "src/generated/i18n-beta.ts",
-  "src/generated/i18n-game.ts",
-  "src/data/resources_beta.ts",
-  "src/data/resources.ts",
+  "src/generated/translations/i18n-beta.ts",
+  "src/generated/translations/i18n-game.ts",
+  "src/generated/catalog/resources_beta.ts",
+  "src/generated/catalog/resources.ts",
   "src/domain/build/statUtils.ts",
   "src/domain/build/artifact/scoring/constants.ts",
   "src/domain/build/artifact/scoring/utils.ts",
@@ -312,10 +318,10 @@ export interface XiaoFfxxGroupedReplayRepresentationPreflightReport {
     allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true;
     combinedJsonInputByteAndParsedObjectParity: true;
     staticFirstPartyReplayRuntimePathClosure: true;
-    staticFirstPartyReplayRuntimeFileCount: 80;
+    staticFirstPartyReplayRuntimeFileCount: 86;
     runtimeGlobDiscoveryUsed: false;
-    sourceFileCount: 118;
-    generatedFromCount: 118;
+    sourceFileCount: 124;
+    generatedFromCount: 124;
     authenticatedJsonInputParityCount: 12;
     directDurableReportJsonInputCount: 2;
   };
@@ -701,10 +707,10 @@ export async function buildXiaoFfxxGroupedReplayRepresentationPreflightReport(
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
       staticFirstPartyReplayRuntimePathClosure: true,
-      staticFirstPartyReplayRuntimeFileCount: 80,
+      staticFirstPartyReplayRuntimeFileCount: 86,
       runtimeGlobDiscoveryUsed: false,
-      sourceFileCount: 118,
-      generatedFromCount: 118,
+      sourceFileCount: 124,
+      generatedFromCount: 124,
       authenticatedJsonInputParityCount: 12,
       directDurableReportJsonInputCount: 2,
     },
@@ -934,7 +940,7 @@ function authenticateRawInputs(
     expectedPaths.length !== EXPECTED_INPUT_PATH_COUNT
   ) {
     throw new Error(
-      `Xiao FFXX grouped-replay static closure drifted from 80 runtime / 118 total paths (${XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS.length}/${expectedPaths.length}).`,
+      `Xiao FFXX grouped-replay static closure drifted from 86 runtime / 124 total paths (${XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS.length}/${expectedPaths.length}).`,
     );
   }
   const sourceFiles = [...input.sourceFiles]

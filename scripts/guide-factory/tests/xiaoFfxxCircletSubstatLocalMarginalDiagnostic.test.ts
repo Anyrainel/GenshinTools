@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -60,8 +60,8 @@ const UNIT_EXPANDED_GATE_REPORT_PATH =
 const FIVE_STAR_GROUP_REPORT_PATH =
   "scripts/guide-factory/reports/xiao-ffxx-five-star-source-group-validation-diagnostic.json";
 const CHARACTER_BETA_STATS_PATH =
-  "src/data/game/character_beta_stats.json.gz";
-const WEAPON_BETA_STATS_PATH = "src/data/game/weapon_beta_stats.json.gz";
+  "src/generated/catalog/character_beta_stats.json.gz";
+const WEAPON_BETA_STATS_PATH = "src/generated/catalog/weapon_beta_stats.json.gz";
 const CP50_CORE_PATH =
   "scripts/guide-factory/src/xiaoFfxxCircletSubstatLocalMarginalDiagnostic.ts";
 const CP50_CLI_PATH =
@@ -144,18 +144,18 @@ let canonicalReport: XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(currentSourceLocation(XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_REPORT_PATH)) as Promise<XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport>,
+    readJson(XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_REPORT_PATH) as Promise<XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxCircletSubstatLocalMarginalDiagnosticReport(fixture());
 }, 120_000);
 
 describe("Xiao FFXX guarded Circlet and local-substat marginal diagnostic", () => {
-  it("rebuilds deterministically and authenticates the exact 127-byte/15-JSON closure", async () => {
+  it("rebuilds deterministically and authenticates the exact 133-byte/15-JSON closure", async () => {
     expect(stableJson(canonicalReport)).toBe(stableJson(durableReport));
     expect(
       XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_INPUT_PATHS,
-    ).toHaveLength(127);
+    ).toHaveLength(133);
     expect(
       XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_SOURCE_FILE_PATHS,
     ).toEqual(
@@ -172,7 +172,7 @@ describe("Xiao FFXX guarded Circlet and local-substat marginal diagnostic", () =
       new Set(
         XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_INPUT_PATHS,
       ).size,
-    ).toBe(127);
+    ).toBe(133);
     expect(JSON_INPUTS).toHaveLength(15);
     expect(
       XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_INPUT_PATHS.every(
@@ -196,10 +196,10 @@ describe("Xiao FFXX guarded Circlet and local-substat marginal diagnostic", () =
       exactGeneratedFromPathSet: true,
       allDeclaredGeneratedFromHashesAuthenticatedFromBytes: true,
       combinedJsonInputByteAndParsedObjectParity: true,
-      sourceFileCount: 127,
-      generatedFromCount: 127,
+      sourceFileCount: 133,
+      generatedFromCount: 133,
       authenticatedJsonInputParityCount: 15,
-      declaredInheritedRuntimePathCount: 80,
+      declaredInheritedRuntimePathCount: 86,
       declaredNewRuntimePathCount: 0,
       declaredRuntimePathsRemainInsideInheritedCheckpoint47Set: true,
     });
@@ -237,7 +237,7 @@ describe("Xiao FFXX guarded Circlet and local-substat marginal diagnostic", () =
     const expectedRuntime = new Set<string>(
       XIAO_FFXX_GROUPED_REPLAY_RUNTIME_INPUT_PATHS,
     );
-    expect(expectedRuntime.size).toBe(80);
+    expect(expectedRuntime.size).toBe(86);
     expect([...expectedRuntime].every((sourcePath) => declared.has(sourcePath))).toBe(
       true,
     );
@@ -312,7 +312,7 @@ describe("Xiao FFXX guarded Circlet and local-substat marginal diagnostic", () =
         /^[a-f0-9]{64}$/,
       ),
       freshlyAuthenticatedCheckpoint49: true,
-      checkpoint49InputCount: 124,
+      checkpoint49InputCount: 130,
       checkpoint49AdditionalReplayCount: 0,
       fullChainFreshlyAuthenticated: true,
       branchSourceFreshlyAuthenticated: true,
@@ -1130,7 +1130,7 @@ describe("Xiao FFXX guarded Circlet and local-substat marginal diagnostic", () =
   }, 120_000);
 
   it("rejects resealed runtime-numeric drift and serialized report tampering", async () => {
-    const numericSourcePath = "src/data/game/artifact_stat.json";
+    const numericSourcePath = "src/generated/catalog/artifact_stat.json";
     const numericTamper = fixture();
     const original = numericTamper.sourceFiles.find(
       ({ path: sourcePath }) => sourcePath === numericSourcePath,
@@ -1229,7 +1229,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxCircletSubstatLocalMarginalDi
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([
@@ -1247,7 +1247,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxCircletSubstatLocalMarginalDi
       XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     ),

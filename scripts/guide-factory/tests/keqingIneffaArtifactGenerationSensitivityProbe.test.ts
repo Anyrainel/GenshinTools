@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
@@ -316,7 +316,7 @@ describe("Keqing-Ineffa artifact-generation sensitivity probe", () => {
       KEQING_INEFFA_ARTIFACT_GENERATION_SENSITIVITY_INPUT_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+          sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
         }),
       ),
     );

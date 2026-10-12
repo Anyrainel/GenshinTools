@@ -88,17 +88,17 @@ export const CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
   "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
   "src/stores/betaState.ts",
-  "src/data/characterInfo.ts",
+  "src/generated/catalog/characterInfo.ts",
   "src/config/gameConstants.ts",
   "src/domain/enums.ts",
-  "src/data/game/character_beta_stats.json.gz",
-  "src/data/game/character_stats.json",
-  "src/data/game/weapon_stats.json",
+  "src/generated/catalog/character_beta_stats.json.gz",
+  "src/generated/catalog/character_stats.json",
+  "src/generated/catalog/weapon_stats.json",
   "src/lib/resources/cache.ts",
   "src/domain/reference/catalog.ts",
   "src/providers/reference/statLoaders.ts",
-  "src/data/resources.ts",
-  "src/data/resources_beta.ts",
+  "src/generated/catalog/resources.ts",
+  "src/generated/catalog/resources_beta.ts",
   "src/domain/models.ts",
   "src/domain/build/statUtils.ts",
   "src/domain/combat/analyzer/weaponChoice.ts",
@@ -136,9 +136,9 @@ export function selectCharacterGuideInputManualSnapshots(
   );
 }
 
-const EXPECTED_RELEASED_CHARACTER_COUNT = 125;
+const EXPECTED_RELEASED_CHARACTER_COUNT = 127;
 const EXPECTED_CHARACTER_GUIDE_INPUT_REPOSITORY_PROJECTION_SHA256 =
-  "cd64a0642f498b3746c29428ee9806f20acb7fae34a85aa4cd18d5ed524c8b54";
+  "040f1a6a7fe380c738f10ac084c0c7b12b5747f7af56dc17a5eacf101e479d5a";
 
 export interface CharacterGuideInputCoverageSourceFile {
   path: string;
@@ -264,7 +264,7 @@ export interface CharacterGuideInputCoverageReport {
   boundaries: {
     releasedGuideDomain: {
       characterCount: number;
-      expectedCharacterCount: 125;
+      expectedCharacterCount: 127;
       eligibleCatalogSha256: string;
       characterIdsSha256: string;
       checkedInRosterReportComparison: ReturnType<

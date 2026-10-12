@@ -53,7 +53,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-xiao-manual.json",
@@ -65,7 +65,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
-      "sha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353"
+      "sha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -85,7 +85,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -141,7 +141,7 @@
           "manualPath": "records[2].recommendation.artifactRecommendations[0].conditions",
           "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
           "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
-          "repositoryJsonPath": "records[231].recommendations[0].artifactRecommendations[0].conditions",
+          "repositoryJsonPath": "records[234].recommendations[0].artifactRecommendations[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
           "sliceDisposition": "selected",
@@ -153,7 +153,7 @@
         },
         "requestBindings": []
       },
-      "conditionControlSha256": "68db45b02b15a2e41a2be5c57d7320101d901058976b264186fd1a76596f067a",
+      "conditionControlSha256": "5c626f18d0059f0f5fe4df780947892cb565b98fd0459c6bbcbc29480dc57e11",
       "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
       "requestProjection": {
         "claimId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
@@ -288,7 +288,7 @@
           "manualPath": "records[0].recommendation.mainStats.goblet[3].conditions",
           "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
           "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
-          "repositoryJsonPath": "records[232].recommendations[0].mainStats.goblet[3].conditions",
+          "repositoryJsonPath": "records[235].recommendations[0].mainStats.goblet[3].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
           "sliceDisposition": "selected",
@@ -300,7 +300,7 @@
         },
         "requestBindings": []
       },
-      "conditionControlSha256": "17b7046a895e2e5a997dd0a6d6a1f029d75357b380036bef1ccd986ddd5571d8",
+      "conditionControlSha256": "9aa1fb9bcfd6b2752231d262196477b0486f2d489fb3e13d2616bc57e5923b9b",
       "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
       "requestProjection": {
         "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
@@ -436,7 +436,7 @@
           "manualPath": "records[0].recommendation.mainStats.goblet[4].conditions",
           "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
           "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
-          "repositoryJsonPath": "records[232].recommendations[0].mainStats.goblet[4].conditions",
+          "repositoryJsonPath": "records[235].recommendations[0].mainStats.goblet[4].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
           "sliceDisposition": "selected",
@@ -458,7 +458,7 @@
           }
         ]
       },
-      "conditionControlSha256": "5b10191ca84d5e14f8ff041160ac55996b8b9537bb74afd374bfc6999930298d",
+      "conditionControlSha256": "71040c0c19a27a2cb12ba5f06bcc4ef0516292b282c5956ce9e06992f2e46c13",
       "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
       "requestProjection": {
         "claimId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
@@ -709,8 +709,8 @@
   "supportsStatRecommendations": false,
   "supportsTeamRecommendations": false,
   "upstreamBoundary": {
-    "durableReportCanonicalObjectSha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
-    "durableReportFileSha256": "2de90b57e0611156294aa8a60095fd4829a0c8ab3f6523b61ed82959d15d8353",
+    "durableReportCanonicalObjectSha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826",
+    "durableReportFileSha256": "521f59b8b827faec0a79b480f14b4609d3d4118ad0e3858ff0fa5dc125da1826",
     "durableReportPath": "scripts/guide-factory/reports/xiao-source-local-condition-slice.json",
     "effectiveMatchedCount": 3,
     "emptyOccurrenceCount": 4,

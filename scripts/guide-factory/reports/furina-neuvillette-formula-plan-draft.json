@@ -343,19 +343,19 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
-      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+      "sha256": "3c974458435a61938dadba8f7bc0be43467a3382c0ac2175210d6f65aa3074ff"
     },
     {
       "path": "scripts/guide-factory/src/formulaPlanDraft.ts",
-      "sha256": "7c2f822b124b0e0143c6b4055a51639d6a0a609cc32765899e65693383346407"
+      "sha256": "6e1e19fb82c327142eeecdb6dd024f6fd936438671eb37dd196b151f70492977"
     },
     {
       "path": "scripts/guide-factory/src/furinaNeuvilletteFormulaDraft.ts",
-      "sha256": "6f923cdd5b8d8a4827c44c565fc782b979b9657bfe1a8a266f85169a3c987ff0"
+      "sha256": "5dcc2b13486324c5604eb2c371d10c65d7141e897a807ce999a2004c75b2e719"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -366,68 +366,68 @@
       "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
     },
     {
-      "path": "src/data/game/character_stats.json",
-      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+      "path": "src/domain/combat/damage/constants.ts",
+      "sha256": "d8548a6174124f7e50edf9de43015e865b7ef0129140d759ed73642d99db6932"
     },
     {
-      "path": "src/data/game/weapon_stats.json",
-      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+      "path": "src/domain/combat/damage/core/charBuild.ts",
+      "sha256": "9ae06e5424b7ab087856c5f622828701c79f3361f9de47e607d7d17387dfdd15"
     },
     {
-      "path": "src/data/gameStatsLoader.ts",
-      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+      "path": "src/domain/combat/damage/core/combo.ts",
+      "sha256": "b459aeb9103ef6de2330bb221a1cbf8c04205bb35c22193e0c02a6848751c2c6"
     },
     {
-      "path": "src/lib/dmgcalc/constants.ts",
-      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+      "path": "src/domain/combat/damage/core/implModel.ts",
+      "sha256": "f62785b391ea48753fdb51a8265a2aa742990b941af3cfb4e6d6a40978dbcd42"
     },
     {
-      "path": "src/lib/dmgcalc/core/charBuild.ts",
-      "sha256": "2e78712774a25fb6581b5b498b0fe323f91974ea16624740aa03b1e3e626f2a4"
+      "path": "src/domain/combat/damage/core/registry.ts",
+      "sha256": "36ae833c856559d44c5092fcf35238c03c7262473e3874b5e9deebac098380c6"
     },
     {
-      "path": "src/lib/dmgcalc/core/combo.ts",
-      "sha256": "e09ce763270285f1805e72f7347cd5a56c65c3ea0fc16758fa58fbf31b535bca"
+      "path": "src/domain/combat/damage/core/teamBuild.ts",
+      "sha256": "1f57bedcb89de09ea2bd096e5c09c9b65e61fd21a8b5559fba0561110f866180"
     },
     {
-      "path": "src/lib/dmgcalc/core/implModel.ts",
-      "sha256": "239afd2965af55921c3419eb9fe4a61d65570edbc879ab57ae00ccde9d259a65"
+      "path": "src/domain/combat/damage/core/teamFormulaCatalog.ts",
+      "sha256": "fc181e07e43e28c6462b9237977630feb7eeceef57fba56d7ff11d3e49c686cd"
     },
     {
-      "path": "src/lib/dmgcalc/core/registry.ts",
-      "sha256": "c80a29a6cea754bb8460bc156dbbe4f6f1c9381782df948e5033505e82da7893"
+      "path": "src/domain/combat/damage/core/teamMeta.ts",
+      "sha256": "f83591945518a8650a3ee8ceb73e5eab28c6670f91e6042b293357af07e2ab44"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamBuild.ts",
-      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+      "path": "src/domain/combat/damage/core/teamReaction.ts",
+      "sha256": "f2889b2933b63872dc890a651d6d54c9a05c360e489c1c6edb2e286244a20b0c"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamFormulaCatalog.ts",
-      "sha256": "9332f59cb4d04ee8387cbe7e10bf4a0f06284c6004e6d4f8bd786c26dd6347db"
+      "path": "src/domain/combat/damage/impl/character5Fontaine.ts",
+      "sha256": "7e981b0b557abd9495a6240d9dba25537d3787b98d9a2e125f97b2a23c9220ee"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamMeta.ts",
-      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+      "path": "src/domain/combat/damage/impl/character5Inazuma.ts",
+      "sha256": "e71300940a10eaf4f2b0e5d90b18c543f551f61b329c27ccf715af73f27bd79e"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamReaction.ts",
-      "sha256": "85ad4d2ca90fe7c9c083fde10c774745a5021fa6dd6125752b4160b21f308f18"
+      "path": "src/domain/combat/damage/impl/character5Natlan.ts",
+      "sha256": "ab629ca2dc02e62ed87815c8fcd3cb04f35cf2b0e37e1f0473be28eaa73e7b25"
     },
     {
-      "path": "src/lib/dmgcalc/impl/character5Fontaine.ts",
-      "sha256": "7db2d79b2623ef0a6871f64b5d6ae5c6ac018fedf4e9549b90f524a51859b5eb"
-    },
-    {
-      "path": "src/lib/dmgcalc/impl/character5Inazuma.ts",
-      "sha256": "16778887d05d77f314891562c3726d5b4af78e111e341e11e1dda62327bfc83d"
-    },
-    {
-      "path": "src/lib/dmgcalc/impl/character5Natlan.ts",
-      "sha256": "2fe28a48b6a6918634bc0c581326e9f971aac5c0aba9b1a2bbfe96572b0d22e2"
-    },
-    {
-      "path": "src/lib/dmgcalc/index.ts",
+      "path": "src/domain/combat/damage/index.ts",
       "sha256": "00c92a2f1f53f5c9d21d7f57afbe992563c0105e466cc81aa17f17840b3c0cab"
+    },
+    {
+      "path": "src/generated/catalog/character_stats.json",
+      "sha256": "74a3bd262f9ff26f1777f9a3a50ccf13bb2a7906f51030adde7fe1b756d96033"
+    },
+    {
+      "path": "src/generated/catalog/weapon_stats.json",
+      "sha256": "62821edb2b6e1b9be888a7330edc020f5f4c397e3329693f9ca2f23406d6b36c"
+    },
+    {
+      "path": "src/providers/reference/statLoaders.ts",
+      "sha256": "01940c5233c94d915d2c17dcc920aabe79f2fa57add4f4df8a182af8d35b4acd"
     }
   ],
   "lines": [

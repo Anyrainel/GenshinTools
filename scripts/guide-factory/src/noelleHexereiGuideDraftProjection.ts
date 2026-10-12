@@ -64,8 +64,8 @@ export const NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_RUNTIME_INPUT_PATHS = [
   ...NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_RUNTIME_INPUT_PATHS,
 ].sort(compareText);
 
-const EXPECTED_INPUT_PATH_COUNT = 123;
-const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 80;
+const EXPECTED_INPUT_PATH_COUNT = 129;
+const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 86;
 const EXPECTED_JSON_INPUT_COUNT = 16;
 const EXPECTED_BINARY_RUNTIME_INPUT_COUNT = 2;
 const EXPECTED_PACKET_COUNT = 6;
@@ -182,9 +182,9 @@ export interface NoelleHexereiGuideDraftProjectionReport {
     cp57ReportByteAndParsedObjectParity: true;
     exactCp57InputProjection: true;
     exactTechnicalRequest: true;
-    sourceFileCount: 123;
-    generatedFromCount: 123;
-    runtimeInputPathCount: 80;
+    sourceFileCount: 129;
+    generatedFromCount: 129;
+    runtimeInputPathCount: 86;
     jsonInputCount: 16;
     binaryRuntimeInputCount: 2;
   };
@@ -457,9 +457,9 @@ export async function buildNoelleHexereiGuideDraftProjectionReport(
       cp57ReportByteAndParsedObjectParity: true,
       exactCp57InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 123,
-      generatedFromCount: 123,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 129,
+      generatedFromCount: 129,
+      runtimeInputPathCount: 86,
       jsonInputCount: 16,
       binaryRuntimeInputCount: 2,
     },

@@ -29,6 +29,8 @@
     "data:scanner:check": "node scripts/check-scanner-data.mjs",
     "type-check": "npm run cf:types:check && tsc -b --noEmit && npm run type-check:scripts",
     "type-check:scripts": "tsc -p tsconfig.scripts.json --noEmit",
+    "guide:rebuild": "node scripts/guide-factory/rebuild.mjs",
+    "test:guides": "vitest run -c scripts/guide-factory/vitest.config.ts",
     "test": "vitest run",
     "styles:generate": "node scripts/generate-game-palette.mjs",
     "styles:check": "node scripts/generate-game-palette.mjs --check",

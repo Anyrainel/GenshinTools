@@ -438,7 +438,7 @@ const SEMANTICALLY_SCOPED_INPUT_PATHS = new Set([
   "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
   "scripts/guide-factory/sources/registry.json",
   "scripts/guide-factory/src/schemas.ts",
-  "src/data/game/character_stats.json",
+  "src/generated/catalog/character_stats.json",
 ]);
 
 export const KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_INPUT_PATHS = [

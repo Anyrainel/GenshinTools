@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -24,7 +24,7 @@ describe("weapon-choice candidate-policy coverage", () => {
     const generatedFrom = await Promise.all(
       WEAPON_CHOICE_SEARCH_COVERAGE_INPUT_PATHS.map(async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       })),
     );
     const expected = buildWeaponChoiceSearchCoverageReport(
@@ -52,19 +52,19 @@ describe("weapon-choice candidate-policy coverage", () => {
         catalogScope: "released",
         candidateDomainOrigin: "offline-mirror",
         counts: {
-          weaponIds: 236,
-          weaponRefinementPairs: 309,
+          weaponIds: 242,
+          weaponRefinementPairs: 317,
           byRarity: {
             "3": { weaponIds: 24, weaponRefinementPairs: 24 },
-            "4": { weaponIds: 139, weaponRefinementPairs: 139 },
-            "5": { weaponIds: 73, weaponRefinementPairs: 146 },
+            "4": { weaponIds: 143, weaponRefinementPairs: 143 },
+            "5": { weaponIds: 75, weaponRefinementPairs: 150 },
           },
           byWeaponType: {
-            Bow: { weaponIds: 47, weaponRefinementPairs: 59 },
-            Catalyst: { weaponIds: 51, weaponRefinementPairs: 70 },
+            Bow: { weaponIds: 48, weaponRefinementPairs: 60 },
+            Catalyst: { weaponIds: 53, weaponRefinementPairs: 73 },
             Claymore: { weaponIds: 43, weaponRefinementPairs: 54 },
             Polearm: { weaponIds: 41, weaponRefinementPairs: 54 },
-            Sword: { weaponIds: 54, weaponRefinementPairs: 72 },
+            Sword: { weaponIds: 57, weaponRefinementPairs: 76 },
           },
         },
         candidateDomainComparison: {
@@ -77,24 +77,24 @@ describe("weapon-choice candidate-policy coverage", () => {
         },
       },
       summary: {
-        all: { total: 1026 },
+        all: { total: 1034 },
         bySourceKind: {
-          guideWeaponOrder: 127,
-          teamSelectedWeapons: 840,
+          guideWeaponOrder: 131,
+          teamSelectedWeapons: 844,
           characterGuideRecommendations: 59,
           teamMemberRecommendations: 0,
         },
         weaponIdDomain: {
-          inReleasedCandidateDomain: 1026,
+          inReleasedCandidateDomain: 1034,
           excludedFromReleasedCandidateDomain: 0,
         },
         refinementCoverage: {
           exactCandidate: 0,
-          unspecified: 1026,
+          unspecified: 1034,
           excludedByPolicy: 0,
         },
         nativeTypeCompatibility: {
-          compatible: 1014,
+          compatible: 1022,
           mismatched: 12,
           unknown: 0,
         },
@@ -106,15 +106,15 @@ describe("weapon-choice candidate-policy coverage", () => {
         categoryConditions: 1,
       },
     });
-    expect(report.searchSpace.candidateWeaponIds).toHaveLength(236);
-    expect(new Set(report.searchSpace.candidateWeaponIds).size).toBe(236);
+    expect(report.searchSpace.candidateWeaponIds).toHaveLength(242);
+    expect(new Set(report.searchSpace.candidateWeaponIds).size).toBe(242);
     expect(
       new Set(
         report.searchSpace.candidatePairs.map(
           ({ weaponId, refinement }) => `${weaponId}@R${refinement}`,
         ),
       ).size,
-    ).toBe(309);
+    ).toBe(317);
 
     expect(report.summary.weaponIdDomain.byFailureReason).toEqual({
       "beta-only-weapon": 0,

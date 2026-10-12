@@ -433,24 +433,24 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/reports/keqing-ineffa-formula-plan-draft.json",
-      "sha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b"
+      "sha256": "bf415e8ff6b8c3ba216ab208574ad632c7c3ed59caef3bb380c7f9cfae87aa96"
     },
     {
       "path": "scripts/guide-factory/reports/keqing-lunar-source-conditioned-candidate-lattice.json",
-      "sha256": "8857d5c4d3ec592b665987fff590ee0ff70f341d77c0bc3f34c25f8dfbcca758"
+      "sha256": "c9d084836d6ec13723fd58cbe1213ebb3c839ff9363f01305773ebb3b8685546"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarCrossRecordCompositionContract.ts",
-      "sha256": "b9b7ac32ea2160a330807ca70a1c92b5f7098234ce5ef8ed6c6041a82e71afad"
+      "sha256": "a4f62fe3f5a2d89ac3d435b3264e615ff5f115a268a8c5c44371c726844957db"
     }
   ],
   "generatorExecuted": false,
   "guideFactoryAuthoredCompositionCount": 2,
   "inputBoundary": {
     "candidateLatticeClassification": "keqing-lunar-source-conditioned-candidate-lattice",
-    "candidateLatticeSha256": "8857d5c4d3ec592b665987fff590ee0ff70f341d77c0bc3f34c25f8dfbcca758",
+    "candidateLatticeSha256": "c9d084836d6ec13723fd58cbe1213ebb3c839ff9363f01305773ebb3b8685546",
     "candidateLatticeStatus": "comparable",
-    "formulaDraftSha256": "e65fb7f94e5b77845239575321d1b093f50401e9cf10306b2eaba38e06fb860b",
+    "formulaDraftSha256": "bf415e8ff6b8c3ba216ab208574ad632c7c3ed59caef3bb380c7f9cfae87aa96",
     "formulaFixtureId": "keqing-ineffa-source-rotation-comparison-v1",
     "formulaSourceTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example",
     "targetTeamRecordId": "kqm:team:keqing-ineffa-furina-xilonen-lunar-charged-example"
@@ -610,7 +610,7 @@
           "guideSourceRefs": [
             {
               "locator": {
-                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
                 "recordId": "ineffa"
               },
               "sourceId": "genshintools-presets",
@@ -631,7 +631,7 @@
           "guideSourceRefs": [
             {
               "locator": {
-                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
                 "recordId": "furina"
               },
               "sourceId": "genshintools-presets",
@@ -652,7 +652,7 @@
           "guideSourceRefs": [
             {
               "locator": {
-                "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+                "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
                 "recordId": "xilonen"
               },
               "sourceId": "genshintools-presets",

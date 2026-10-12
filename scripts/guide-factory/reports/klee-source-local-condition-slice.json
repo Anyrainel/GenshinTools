@@ -15,7 +15,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
@@ -39,7 +39,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
@@ -51,7 +51,7 @@
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
-      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -373,7 +373,7 @@
   "rawInputBoundary": {
     "byteAndParsedObjectClosure": true,
     "canonicalObjectSha256ByPath": {
-      "scripts/guide-factory/data/knowledge/repository.json": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d",
+      "scripts/guide-factory/data/knowledge/repository.json": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625",
       "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json": "b7f767c7866a17426a5e9869d65ab54d4756eb2bf7e3edd5903ff4d5215c6ca6",
       "scripts/guide-factory/data/source-snapshots/manual-index.json": "50df1f424b811f6a818c376a209606b5ff2f59d2df0a4488740794ce4aef6948",
       "scripts/guide-factory/sources/registry.json": "a8ff9d9ce1a00c95f3bcbccac79ade86a413a43446b913f522f66237f7ab2e86"
@@ -594,7 +594,7 @@
           "manualPath": "records[0].recommendation.mainStats.circlet[0].conditions",
           "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.circlet[0].conditions",
           "payloadSha256": "d227c8c1fb0defbc9cfba9365cea3a70d5ae13927f0f1438188c48dd5e437603",
-          "repositoryJsonPath": "records[222].recommendations[0].mainStats.circlet[0].conditions",
+          "repositoryJsonPath": "records[225].recommendations[0].mainStats.circlet[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
           "sliceDisposition": "selected",
@@ -627,7 +627,7 @@
           "manualPath": "records[0].recommendation.mainStats.goblet[0].conditions",
           "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.goblet[0].conditions",
           "payloadSha256": "bfe1b637292ec34c0601bf2d2eb5daf3b7c88c1bfd4ceefd6d7571c0f0b9249c",
-          "repositoryJsonPath": "records[222].recommendations[0].mainStats.goblet[0].conditions",
+          "repositoryJsonPath": "records[225].recommendations[0].mainStats.goblet[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
           "sliceDisposition": "selected",
@@ -660,7 +660,7 @@
           "manualPath": "records[0].recommendation.mainStats.sands[0].conditions",
           "occurrenceId": "kqm:character_guide:klee-on-field-artifact-stats-luna-iv:recommendation.mainStats.sands[0].conditions",
           "payloadSha256": "917185549050e86abe934fa610c2763e532ea9d6ca54682a8656efd9f8c6dc24",
-          "repositoryJsonPath": "records[222].recommendations[0].mainStats.sands[0].conditions",
+          "repositoryJsonPath": "records[225].recommendations[0].mainStats.sands[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:klee-on-field-artifact-stats-luna-iv",
           "sliceDisposition": "selected",
@@ -692,7 +692,7 @@
           "manualPath": "records[1].recommendation.artifactRecommendations[2].conditions",
           "occurrenceId": "kqm:character_guide:klee-on-field-contextual-artifact-sets-luna-iv:recommendation.artifactRecommendations[2].conditions",
           "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
-          "repositoryJsonPath": "records[223].recommendations[0].artifactRecommendations[2].conditions",
+          "repositoryJsonPath": "records[226].recommendations[0].artifactRecommendations[2].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:klee-on-field-contextual-artifact-sets-luna-iv",
           "sliceDisposition": "selected",
@@ -749,7 +749,7 @@
     "generatedFrom": [
       {
         "path": "scripts/guide-factory/data/knowledge/repository.json",
-        "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+        "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
       },
       {
         "path": "scripts/guide-factory/data/source-snapshots/kqm-klee-manual.json",
@@ -773,7 +773,7 @@
       },
       {
         "path": "scripts/guide-factory/src/io.ts",
-        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+        "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
       },
       {
         "path": "scripts/guide-factory/src/kleeSourceLocalConditionSlice.ts",
@@ -785,7 +785,7 @@
       },
       {
         "path": "scripts/guide-factory/src/paths.ts",
-        "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+        "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
       },
       {
         "path": "scripts/guide-factory/src/schemas.ts",

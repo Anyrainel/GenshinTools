@@ -103,7 +103,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -858,7 +858,7 @@
           "manualPath": "records[2].recommendation.artifactRecommendations[0].conditions",
           "occurrenceId": "kqm:character_guide:xiao-mh-artifact-branch-version-5-5:recommendation.artifactRecommendations[0].conditions",
           "payloadSha256": "3f1da28d319a9d68334c22cf1f7998b682159989bf09753aed8935ce3db85fdb",
-          "repositoryJsonPath": "records[231].recommendations[0].artifactRecommendations[0].conditions",
+          "repositoryJsonPath": "records[234].recommendations[0].artifactRecommendations[0].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:xiao-mh-artifact-branch-version-5-5",
           "sliceDisposition": "selected",
@@ -881,7 +881,7 @@
           "manualPath": "records[0].recommendation.mainStats.goblet[3].conditions",
           "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[3].conditions",
           "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
-          "repositoryJsonPath": "records[232].recommendations[0].mainStats.goblet[3].conditions",
+          "repositoryJsonPath": "records[235].recommendations[0].mainStats.goblet[3].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
           "sliceDisposition": "selected",
@@ -904,7 +904,7 @@
           "manualPath": "records[0].recommendation.mainStats.goblet[4].conditions",
           "occurrenceId": "kqm:character_guide:xiao-offensive-artifact-stats-version-5-5:recommendation.mainStats.goblet[4].conditions",
           "payloadSha256": "091c19dded0fd5a8cbf9ccb686bf826261cb7859276580f7f81c8ef26d709ef1",
-          "repositoryJsonPath": "records[232].recommendations[0].mainStats.goblet[4].conditions",
+          "repositoryJsonPath": "records[235].recommendations[0].mainStats.goblet[4].conditions",
           "repositoryParity": "exact",
           "repositoryRecordId": "kqm:character-guide:xiao-offensive-artifact-stats-version-5-5",
           "sliceDisposition": "selected",
@@ -966,7 +966,7 @@
       },
       {
         "path": "scripts/guide-factory/src/io.ts",
-        "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+        "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
       },
       {
         "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",

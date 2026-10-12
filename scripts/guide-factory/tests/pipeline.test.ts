@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { describe, expect, it } from "vitest";
 import { consolidateKnowledge } from "../src/consolidation";
 import { loadGameCatalogs } from "../src/catalogs";
@@ -64,7 +64,7 @@ interface RawLegacyResearch {
 describe("guide-factory data pipeline", () => {
   it("registers every source under a unique stable ID", async () => {
     const registry = SourceRegistrySchema.parse(
-      await readJson(currentSourceLocation(SOURCE_REGISTRY_PATH))
+      await readJson(SOURCE_REGISTRY_PATH)
     );
     const ids = registry.sources.map((source) => source.id);
 
@@ -89,9 +89,9 @@ describe("guide-factory data pipeline", () => {
 
   it("imports every live GenshinTools preset record", async () => {
     const [registryInput, rawTeamInput, rawBuildInput] = await Promise.all([
-      readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
-      readJson(currentSourceLocation(TEAM_PRESET_PATH)),
-      readJson(currentSourceLocation(BUILD_PRESET_PATH)),
+      readJson(SOURCE_REGISTRY_PATH),
+      readJson(TEAM_PRESET_PATH),
+      readJson(BUILD_PRESET_PATH),
     ]);
     const registry = SourceRegistrySchema.parse(registryInput);
     const rawTeams = rawTeamInput as RawTeamPreset;
@@ -154,8 +154,8 @@ describe("guide-factory data pipeline", () => {
 
   it("imports legacy candidates with stable IDs and provenance gaps", async () => {
     const [registryInput, rawInput] = await Promise.all([
-      readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
-      readJson(currentSourceLocation(LEGACY_RESEARCH_PATH)),
+      readJson(SOURCE_REGISTRY_PATH),
+      readJson(LEGACY_RESEARCH_PATH),
     ]);
     const raw = rawInput as RawLegacyResearch;
     const first = await importLegacyTeamResearch(registryInput);
@@ -202,7 +202,7 @@ describe("guide-factory data pipeline", () => {
 
   it("keeps the KQM pilot heading-scoped, unranked, and unreviewed", async () => {
     const snapshot = ManualObservationSnapshotSchema.parse(
-      await readJson(currentSourceLocation(KQM_MANUAL_SNAPSHOT_PATH))
+      await readJson(KQM_MANUAL_SNAPSHOT_PATH)
     );
 
     expect(snapshot.sourceId).toBe("kqm");
@@ -276,7 +276,7 @@ describe("guide-factory data pipeline", () => {
 
   it("binds every primary manual assertion to its declared page", async () => {
     const snapshot = ManualObservationSnapshotSchema.parse(
-      await readJson(currentSourceLocation(KQM_MANUAL_SNAPSHOT_PATH))
+      await readJson(KQM_MANUAL_SNAPSHOT_PATH)
     );
     const mutated = structuredClone(snapshot);
     const first = mutated.records[0];
@@ -304,11 +304,11 @@ describe("guide-factory data pipeline", () => {
       manualInput,
       catalogs,
     ] = await Promise.all([
-      readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
-      readJson(currentSourceLocation(KNOWLEDGE_REPOSITORY_PATH)),
-      readJson(currentSourceLocation(GENSHINTOOLS_SNAPSHOT_PATH)),
-      readJson(currentSourceLocation(LEGACY_SNAPSHOT_PATH)),
-      readJson(currentSourceLocation(KQM_MANUAL_SNAPSHOT_PATH)),
+      readJson(SOURCE_REGISTRY_PATH),
+      readJson(KNOWLEDGE_REPOSITORY_PATH),
+      readJson(GENSHINTOOLS_SNAPSHOT_PATH),
+      readJson(LEGACY_SNAPSHOT_PATH),
+      readJson(KQM_MANUAL_SNAPSHOT_PATH),
       loadGameCatalogs(),
     ]);
     const registry = SourceRegistrySchema.parse(registryInput);
@@ -340,12 +340,12 @@ describe("guide-factory data pipeline", () => {
   });
 
   it("consolidates deterministically without erasing source unknowns", async () => {
-    const registryInput = await readJson(currentSourceLocation(SOURCE_REGISTRY_PATH));
+    const registryInput = await readJson(SOURCE_REGISTRY_PATH);
     const [genshinTools, legacy, manualIndexInput, sourceRegistrySha256] =
       await Promise.all([
       importGenshinToolsPresets(registryInput),
       importLegacyTeamResearch(registryInput),
-      readJson(currentSourceLocation(MANUAL_SNAPSHOT_INDEX_PATH)),
+      readJson(MANUAL_SNAPSHOT_INDEX_PATH),
       sha256File(SOURCE_REGISTRY_PATH),
     ]);
     const manualInputs = await loadManualSnapshotInputs(
@@ -585,7 +585,7 @@ async function expectCurrentSourceRevisions(
   absolutePaths: string[]
 ): Promise<void> {
   expect(revisions.map((revision) => revision.sha256)).toEqual(
-    await Promise.all(absolutePaths.map((filePath) => sha256File(currentSourceLocation(filePath))))
+    await Promise.all(absolutePaths.map((filePath) => sha256File(filePath)))
   );
 }
 

@@ -4323,19 +4323,19 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
-      "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
+      "sha256": "196a5ca18ec165f392e9d47eee7fb936fa7e15d44e01755edd29d434daf91f45"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceScope.ts",
-      "sha256": "462633f766e2821850988ca3ef772920a91319ea0ac8283aea19e000b59183dd"
+      "sha256": "57301764ea266ea35428ca75716f6dd70483e8fce0d63c0459f1868121807395"
     },
     {
       "path": "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts",
-      "sha256": "546148f2da695cfea544a7c9eab71a89e23251af680f64d7187ae91770de003d"
+      "sha256": "37769361b0c0d02f9b906f274c3009fa557d26479d3ea22a69cd04abf6455db7"
     },
     {
       "path": "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
-      "sha256": "42358c4974cb31ac49d856fa594c43dcaa27ff632836cebeeefda1873fe2a6f8"
+      "sha256": "053f96c5e639f6ee1875c699bc42cddf139ad605c4b56815dd57bc26396f9d7e"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -4351,47 +4351,47 @@
     },
     {
       "path": "scripts/guide-factory/src/weaponChoiceSearchCoverage.ts",
-      "sha256": "06be012cf4b4c086e01795c9e0453d75ea57e3f0691709a0dc80b04c80d07b4c"
+      "sha256": "5cec9af48166e481732b0a8ff1eb832e82000ce4e01f24789d32b12e7f941dc1"
     },
     {
-      "path": "src/data/betaState.ts",
-      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+      "path": "src/config/gameConstants.ts",
+      "sha256": "432240461c5d88c19b8f55d924cbd480f0594b701eb98dc2f08b0d83e90dd72d"
     },
     {
-      "path": "src/data/constants.ts",
-      "sha256": "3e076788dfac5447d5d59456dc23d47c8d7fe5827795264b2d1dc20bde532c08"
+      "path": "src/domain/combat/analyzer/weaponChoice.ts",
+      "sha256": "a2cfa449d980984b734d9ce7b732eac85f62ed087b9abc7bb559bda767bc7d11"
     },
     {
-      "path": "src/data/enums.ts",
+      "path": "src/domain/enums.ts",
       "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
     },
     {
-      "path": "src/data/game/weapon_stats.json",
-      "sha256": "e88cb5073dea3e6d45fcd52c020c8be73639cf443b28971a4534c8ea0c63eec8"
+      "path": "src/domain/models.ts",
+      "sha256": "ad37d0498bd19ae56508c39a820048dba224d99572439124f7182f312dd8482a"
     },
     {
-      "path": "src/data/gameResources.ts",
-      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+      "path": "src/domain/reference/catalog.ts",
+      "sha256": "ffaaa71669580a7972dfda2f7a431a4b0885c36ac03220ff42a242112ebe3308"
     },
     {
-      "path": "src/data/gameStatsLoader.ts",
-      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+      "path": "src/generated/catalog/resources.ts",
+      "sha256": "7a6c531254b0943d430c72ac51ad52c49657715dcd3d9ee14ccdfd506ccb191a"
     },
     {
-      "path": "src/data/resources.ts",
-      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+      "path": "src/generated/catalog/resources_beta.ts",
+      "sha256": "beaa526631c00e6d796b87e1cceae358abeee1a3ced078a4002e524b932b2d60"
     },
     {
-      "path": "src/data/resources_beta.ts",
-      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+      "path": "src/generated/catalog/weapon_stats.json",
+      "sha256": "62821edb2b6e1b9be888a7330edc020f5f4c397e3329693f9ca2f23406d6b36c"
     },
     {
-      "path": "src/data/types.ts",
-      "sha256": "bdd204ea6ca5d18a3541de9667993a868c089da066bcc4deaa72af3426ac3e81"
+      "path": "src/providers/reference/statLoaders.ts",
+      "sha256": "01940c5233c94d915d2c17dcc920aabe79f2fa57add4f4df8a182af8d35b4acd"
     },
     {
-      "path": "src/lib/team-comp/analyzer/weaponChoice.ts",
-      "sha256": "297995b86d74d30422dcbc8948acd13a19401ff7c872435ccb28dd84aaac95f4"
+      "path": "src/stores/betaState.ts",
+      "sha256": "68af501983f02b9db6700c494147ae0765c2c0daf1d243ae19bfe9f7f690994e"
     }
   ],
   "prohibitedInterpretations": [
@@ -4546,52 +4546,52 @@
         "dependencyId": "kqm-keqing-manual-guides",
         "selectedCount": 17,
         "selectedKeySetSha256": "bf23f78579873888dd02f582bdec13be2ea5de83ab7c53da6c19ac0125cdf639",
-        "selectedPayloadSha256": "762dd949000096744ba768f3a28bb0226dcc6562733423066c0ddc27c6a42b71"
+        "selectedPayloadSha256": "85879a6355809638873b8dffd9a0ee74d7fbfb48cc24b97c999867e6bc69561d"
       },
       {
         "dependencyId": "kqm-keqing-repository-guides",
         "selectedCount": 17,
         "selectedKeySetSha256": "961ad1b792ef0af38229c97f68c14e12b3ebf758487ea523434eb32bf3d79d92",
-        "selectedPayloadSha256": "e5a89a28cae710ebaf7e1799746f8a0455e95d4b452a976c8ddb59c3e3cc629d"
+        "selectedPayloadSha256": "b4bb45eba760255be1b9e8374dcdd4990ca861fec02525598fa01e516dbfd821"
       },
       {
         "dependencyId": "genshintools-keqing-baseline-guide",
         "selectedCount": 1,
         "selectedKeySetSha256": "33ed9f9de6e49891712af55b5b33740efe2aa3594cf2303f9dbf696d7b5eeba8",
-        "selectedPayloadSha256": "38cffb640d16d320c01d2b4946951496e866ecb9e7792b09abdc75339598443a"
+        "selectedPayloadSha256": "405b5138ec5ba6eb2d238da70168716ab4675a2c0335bb09cd489fb008938df9"
       },
       {
         "dependencyId": "kqm-keqing-lunar-target-teams",
         "selectedCount": 4,
         "selectedKeySetSha256": "523a9b52ed4b6c460cee1fda41ee2999e98a04a53e4616a0f067cd39bbb92c22",
-        "selectedPayloadSha256": "69df959386172f71b105426394dae8709d9fc839e921cf57df267129f3c7dd31"
+        "selectedPayloadSha256": "0ae063d8dea232c03810106ce0f0be770fb3fc036a4d1704f4180026478bdc3c"
       },
       {
         "dependencyId": "kqm-keqing-snapshot-envelope",
         "selectedCount": 1,
         "selectedKeySetSha256": "7c2ddf7beb002e7af9669bd26b5081acacc70ce8082628d28e99cbe098369564",
-        "selectedPayloadSha256": "5304235aeacad3a1686148c3f814c1e7a4376da4316dfc280ccadbbcfc4fc756"
+        "selectedPayloadSha256": "4926f1511c7fbcb2b190773aea23cdc40104f8a14cd514229bab3a91fac25489"
       },
       {
         "dependencyId": "manual-snapshot-index-entry",
         "selectedCount": 1,
         "selectedKeySetSha256": "d31824527a0381e7154cd952ad2f452d2c097397bedcb4e8d9e709deb6aa25cd",
-        "selectedPayloadSha256": "9cdc121819f682fa10c3e5d19df04bef40b5ef06b798243a2d9bbdb207051109"
+        "selectedPayloadSha256": "9e2caf35a2ce2f7570276e4d40294807c3b3844607e742ce9d9b592710c42fbf"
       },
       {
         "dependencyId": "kqm-source-registry-entry",
         "selectedCount": 1,
         "selectedKeySetSha256": "4e48e2de2f60f39ba8be83ab4b7793317629000b0bdce3e2e16fab8cd453b9ff",
-        "selectedPayloadSha256": "a948d113431183fd971243c2c9b7deac375a365554d0993bfa8ae95557715db8"
+        "selectedPayloadSha256": "05f7108eec34d0453976a7d7725eac636a60225b8ac3c82f754b92e9ac57e705"
       },
       {
         "dependencyId": "keqing-lunar-character-facts",
         "selectedCount": 9,
-        "selectedKeySetSha256": "60e7e0d0ad62f264d61e2c55f649649d06e7b85da57f3d8e4cb748494d48675e",
-        "selectedPayloadSha256": "afd7aa24eb9e1875302f25d3e861c7a21df838f5b502dce03085d98f6aaea79c"
+        "selectedKeySetSha256": "a9d227391fc079efee47f45d3f1b087e266bcac3ffe90c8224773a52da08e065",
+        "selectedPayloadSha256": "5229ec17f46e3e7e9f17c7774f34f882659dcc2f7ff6e1d86a8f61f1701b669f"
       }
     ],
-    "manifestSha256": "a2a0dd00c300182512e654fb106cac4e12eac0c83daf6ccf4650116853241ae4",
+    "manifestSha256": "7b1ea3c28c999c05005573af51e59c1a7b8d588f1b593ca5fd5272180a172833",
     "parity": {
       "configuredCount": 17,
       "exactCount": 17,
@@ -4599,7 +4599,7 @@
       "parityIdsSha256": "9a1fc55846bb4e26a2b7715e5927f70b44a685ee456962dff5ba35ebe49db4c0"
     },
     "scopeId": "keqing-lunar-equipment-evidence-v1",
-    "scopeProjectionSha256": "23f13c9ca714e7d25f01199a629e280b2baa833a77272f57511bc3b423bd935f",
+    "scopeProjectionSha256": "b8779cbcdd6ad6bccc1d7523cdee86e03c6964a10d64d77cfc4dd0becbce4896",
     "status": "accepted",
     "trust": "authenticated-current-input-rebuild-and-pinned-expectation"
   },

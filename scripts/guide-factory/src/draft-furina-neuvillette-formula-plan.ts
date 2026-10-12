@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "./sourceLocations";
+
 import path from "node:path";
 import {
   buildFurinaNeuvilletteFormulaDraftReport,
@@ -18,7 +18,7 @@ const [repositoryInput, generatedFrom] = await Promise.all([
     FURINA_NEUVILLETTE_FORMULA_DRAFT_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   ),

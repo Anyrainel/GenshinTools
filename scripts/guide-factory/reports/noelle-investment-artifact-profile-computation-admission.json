@@ -98,7 +98,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-noelle-manual.json",
@@ -110,11 +110,11 @@
     },
     {
       "path": "scripts/guide-factory/reports/noelle-source-local-high-investment-slice.json",
-      "sha256": "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5"
+      "sha256": "6364b9f641efe25a6de535c5d5511c39a73ac8ff77759ff9f4b4f007a0f9a9bd"
     },
     {
       "path": "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json",
-      "sha256": "4e9ce6dfa605f12af3660a63e842b9f79ce700870d985abfae0604d0c3540919"
+      "sha256": "ba900c079c587255bfacce9df672176614d0d5dd3a80d477a4b8caf1307d16ae"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -134,7 +134,7 @@
     },
     {
       "path": "scripts/guide-factory/src/computationReplay.ts",
-      "sha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+      "sha256": "3c974458435a61938dadba8f7bc0be43467a3382c0ac2175210d6f65aa3074ff"
     },
     {
       "path": "scripts/guide-factory/src/guideRequestContext.ts",
@@ -142,7 +142,7 @@
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/manualConditionArrayCoverage.ts",
@@ -150,7 +150,7 @@
     },
     {
       "path": "scripts/guide-factory/src/noelleInvestmentArtifactProfileComputationAdmission.ts",
-      "sha256": "c41013b557cf6be3724d53a4dbf7e6ccceef2129b0cebd23e3c706d2659219d0"
+      "sha256": "ce780cb8c5971ff933afc1a5ae4ce34c42afb1d430b6705affb476badad33076"
     },
     {
       "path": "scripts/guide-factory/src/noelleSourceLocalHighInvestmentSlice.ts",
@@ -162,7 +162,7 @@
     },
     {
       "path": "scripts/guide-factory/src/paths.ts",
-      "sha256": "f6655ad67be9d9e6e9cbd8ca7d179638f09705dba76738a7e360cebbb6390fc1"
+      "sha256": "3df77d4f52bb60fdd6bf8a9790fe14d8bd2e36ee5c2f13c08d3aa3008c9b4675"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -177,16 +177,16 @@
       "sha256": "ff726c4a924699036c76dff453639be615016a7196cb25b449846efe9c44aeab"
     },
     {
-      "path": "src/lib/dmgcalc/core/formulaCompiler.ts",
-      "sha256": "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3"
+      "path": "src/domain/combat/damage/core/formulaCompiler.ts",
+      "sha256": "9660463da2084a28eeda3b14604e2a48349b7e3056256ede56e5c69a3eac150d"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamBuild.ts",
-      "sha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29"
+      "path": "src/domain/combat/damage/core/teamBuild.ts",
+      "sha256": "1f57bedcb89de09ea2bd096e5c09c9b65e61fd21a8b5559fba0561110f866180"
     },
     {
-      "path": "src/lib/dmgcalc/impl/character4Mondstadt.ts",
-      "sha256": "62421a3ee438bdf7ec9958f9c0802accd91acd2a77f6317fbab56fb4a0b94ff9"
+      "path": "src/domain/combat/damage/impl/character4Mondstadt.ts",
+      "sha256": "f45b9c974b25f40cc48f1f7f4a51f09470c4e4586c0f9a5c0f97e6ffe009b665"
     }
   ],
   "generatorExecuted": false,
@@ -553,8 +553,8 @@
   "rawInputBoundary": {
     "authenticatedJsonInputParityCount": 6,
     "canonicalReportObjectSha256": {
-      "high": "dfa95115e98de29b1e09c363a23c7c2934ce8dce64e4ce49fe01694ec9a35fc5",
-      "lower": "4e9ce6dfa605f12af3660a63e842b9f79ce700870d985abfae0604d0c3540919"
+      "high": "6364b9f641efe25a6de535c5d5511c39a73ac8ff77759ff9f4b4f007a0f9a9bd",
+      "lower": "ba900c079c587255bfacce9df672176614d0d5dd3a80d477a4b8caf1307d16ae"
     },
     "consolidatedRepositoryParity": {
       "recordCount": 4,
@@ -607,14 +607,14 @@
       "status": "exact"
     },
     "evaluationSemantics": {
-      "compiledDamagePath": "src/lib/dmgcalc/core/formulaCompiler.ts",
-      "compiledDamageSha256": "0bfca4750fdceda75df8080df977e1c2f6e942b46e14c037bb4928525233beb3",
-      "directDamagePath": "src/lib/dmgcalc/core/teamBuild.ts",
-      "directDamageSha256": "0ad001a80494e76d4a0e1aa4af422145d534b6787191f8ec776d7d42c36a0e29",
+      "compiledDamagePath": "src/domain/combat/damage/core/formulaCompiler.ts",
+      "compiledDamageSha256": "9660463da2084a28eeda3b14604e2a48349b7e3056256ede56e5c69a3eac150d",
+      "directDamagePath": "src/domain/combat/damage/core/teamBuild.ts",
+      "directDamageSha256": "1f57bedcb89de09ea2bd096e5c09c9b65e61fd21a8b5559fba0561110f866180",
       "importedAtRuntime": false,
       "inspectedAsPinnedTextOnly": true,
       "replayAdapterPath": "scripts/guide-factory/src/computationReplay.ts",
-      "replayAdapterSha256": "228a1eb55b329acbf46241583b38e2edd957050d705dc37f30c058360e4672ff"
+      "replayAdapterSha256": "3c974458435a61938dadba8f7bc0be43467a3382c0ac2175210d6f65aa3074ff"
     },
     "everySourceFileHashBoundToGeneratedFrom": true,
     "exactPathClosureAuthenticated": true,
@@ -624,8 +624,8 @@
     "implementation": {
       "importedAtRuntime": false,
       "inspectedAsPinnedTextOnly": true,
-      "path": "src/lib/dmgcalc/impl/character4Mondstadt.ts",
-      "sha256": "62421a3ee438bdf7ec9958f9c0802accd91acd2a77f6317fbab56fb4a0b94ff9"
+      "path": "src/domain/combat/damage/impl/character4Mondstadt.ts",
+      "sha256": "f45b9c974b25f40cc48f1f7f4a51f09470c4e4586c0f9a5c0f97e6ffe009b665"
     },
     "lowerSliceFreshAuthentication": "accepted",
     "lowerSliceReportPath": "scripts/guide-factory/reports/noelle-source-local-lower-investment-slice.json",

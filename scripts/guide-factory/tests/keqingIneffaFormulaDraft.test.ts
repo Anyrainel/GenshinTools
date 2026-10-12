@@ -100,7 +100,7 @@ describe("Keqing-Ineffa formula-plan review fixture", () => {
         expectedManifestSha256:
           "8b93f93844b29fae7483a16d484945fe1f4376dd1fb0d1a579d0f55b0197008b",
         expectedScopeProjectionSha256:
-          "860ad7388a681147ab68e45b5730bcede1efc864a71667bd1f5497b6dbdd1c41",
+          "e6d250bd87e00b7de68dea432911e7c15841ad89ceffd5cbdb0eab10f2be93bc",
         acceptedAudit: {
           status: "accepted",
           trust: "authenticated-current-input-rebuild-and-pinned-expectation",

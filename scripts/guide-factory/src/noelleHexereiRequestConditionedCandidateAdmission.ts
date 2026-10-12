@@ -72,8 +72,8 @@ export const NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_SOURCE_FILE_
 export const NOELLE_HEXEREI_REQUEST_CONDITIONED_CANDIDATE_ADMISSION_RUNTIME_INPUT_PATHS =
   [...NOELLE_HEXEREI_LOCAL_STAT_PRIORITY_DIAGNOSTIC_RUNTIME_INPUT_PATHS] as const;
 
-const EXPECTED_INPUT_PATH_COUNT = 119;
-const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 80;
+const EXPECTED_INPUT_PATH_COUNT = 125;
+const EXPECTED_RUNTIME_INPUT_PATH_COUNT = 86;
 const EXPECTED_JSON_INPUT_COUNT = 15;
 const EXPECTED_BINARY_RUNTIME_INPUT_COUNT = 2;
 
@@ -413,9 +413,9 @@ export interface NoelleHexereiRequestConditionedCandidateAdmissionReport {
     exactCp53InputProjection: true;
     exactCp56InputProjection: true;
     exactTechnicalRequest: true;
-    sourceFileCount: 119;
-    generatedFromCount: 119;
-    runtimeInputPathCount: 80;
+    sourceFileCount: 125;
+    generatedFromCount: 125;
+    runtimeInputPathCount: 86;
     jsonInputCount: 15;
     binaryRuntimeInputCount: 2;
   };
@@ -729,9 +729,9 @@ export async function buildNoelleHexereiRequestConditionedCandidateAdmissionRepo
       exactCp53InputProjection: true,
       exactCp56InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 119,
-      generatedFromCount: 119,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 125,
+      generatedFromCount: 125,
+      runtimeInputPathCount: 86,
       jsonInputCount: 15,
       binaryRuntimeInputCount: 2,
     },

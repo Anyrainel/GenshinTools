@@ -29,7 +29,7 @@ const REPOSITORY_PATH =
 const PRESET_SNAPSHOT_PATH =
   "scripts/guide-factory/data/source-snapshots/genshintools-presets.json";
 const LIVE_PRESET_PATH =
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 const EVIDENCE_REPORT_PATH =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 const EQUIPMENT_LATTICE_REPORT_PATH =
@@ -137,9 +137,9 @@ export const KEQING_INEFFA_FURINA_XILONEN_GENERATED_SHEET_KNOWLEDGE_TARGET_SCOPE
     scopeId:
       "keqing-ineffa-furina-xilonen-generated-sheet-knowledge-targets-v1",
     manifestSha256:
-      "d7c66a48751deffcbae499e5b67d4d3212c65a8fbd769c1b23bb15c3aa67f3cd",
+      "a9039cfe4f5fe2ef73fb902296c359742b67418a131989001010801505832c73",
     scopeProjectionSha256:
-      "610087fda9d902936ee55c8b8ea74ddc9247701aef19a47bdf1777bef5f331cf",
+      "7decb52cfb71e39b9710b9a8013407c38a5c0f13211aa5d892c277c9b7b3d7e3",
   });
 
 export type KeqingIneffaFurinaXilonenGeneratedSheetKnowledgeTargetScopeInput = {

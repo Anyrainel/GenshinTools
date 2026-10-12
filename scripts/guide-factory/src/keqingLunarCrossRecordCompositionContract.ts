@@ -627,7 +627,7 @@ const EXPECTED_TEAMMATE_EQUIPMENT = [
         sourceId: "genshintools-presets",
         sourceRecordId: "ineffa",
         locator: {
-          file: "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+          file: "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
           recordId: "ineffa",
         },
       },
@@ -645,7 +645,7 @@ const EXPECTED_TEAMMATE_EQUIPMENT = [
         sourceId: "genshintools-presets",
         sourceRecordId: "furina",
         locator: {
-          file: "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+          file: "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
           recordId: "furina",
         },
       },
@@ -663,7 +663,7 @@ const EXPECTED_TEAMMATE_EQUIPMENT = [
         sourceId: "genshintools-presets",
         sourceRecordId: "xilonen",
         locator: {
-          file: "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+          file: "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
           recordId: "xilonen",
         },
       },

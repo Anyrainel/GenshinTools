@@ -8,7 +8,7 @@ export const TEAM_TEMPLATE_COVERAGE_INPUT_PATHS = [
   "scripts/guide-factory/src/teamTemplateCoverage.ts",
   "scripts/guide-factory/src/teamMemberInvestment.ts",
   "scripts/guide-factory/data/knowledge/repository.json",
-  "src/data/game/character_stats.json",
+  "src/generated/catalog/character_stats.json",
 ] as const;
 
 type BaselineTeam = Extract<KnowledgeRecord, { kind: "team" }>;

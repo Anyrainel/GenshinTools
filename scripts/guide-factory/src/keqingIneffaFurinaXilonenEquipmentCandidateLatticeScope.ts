@@ -41,7 +41,7 @@ const MANUAL_INDEX_PATH =
   "scripts/guide-factory/data/source-snapshots/manual-index.json";
 const SOURCE_REGISTRY_PATH = "scripts/guide-factory/sources/registry.json";
 const LIVE_PRESET_PATH =
-  "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
+  "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 const EVIDENCE_REPORT_PATH =
   "scripts/guide-factory/reports/keqing-lunar-equipment-evidence-validation.json";
 const WEAPON_COVERAGE_PATH =
@@ -142,9 +142,9 @@ export const KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_SCOPE_EXPECTATION =
   Object.freeze({
     scopeId: "keqing-ineffa-furina-xilonen-equipment-candidate-lattice-v1",
     manifestSha256:
-      "696b2c4c1e0ffee57eb35f9cd4f055bf2d5ebb8a4b28e85629167860500f2b80",
+      "f4907c81c815ee86746760ef6dc27fd584070cd92f5d7bb9a29b943eea6a13a5",
     scopeProjectionSha256:
-      "0cf0bcfe97370ad607ba0837d2fdf3015f73304059aed6e8e018fe68bfdcb3d6",
+      "e8aba64510b33ce059a0d2a900cd669c699bd86a07713b2cd80b16b705a694c6",
   });
 
 export type KeqingIneffaFurinaXilonenEquipmentScopeInput = {

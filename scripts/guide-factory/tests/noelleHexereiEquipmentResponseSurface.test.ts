@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -127,10 +127,10 @@ describe("Noelle Hexerei equipment response surface", () => {
     const expectedPaths = [
       ...NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_INPUT_PATHS,
     ];
-    expect(expectedPaths).toHaveLength(112);
+    expect(expectedPaths).toHaveLength(118);
     expect(
       NOELLE_HEXEREI_EQUIPMENT_RESPONSE_SURFACE_RUNTIME_INPUT_PATHS,
-    ).toHaveLength(80);
+    ).toHaveLength(86);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json")))
       .toHaveLength(13);
     expect(baseInput.sourceFiles.map(({ path }) => path)).toEqual(expectedPaths);
@@ -149,9 +149,9 @@ describe("Noelle Hexerei equipment response surface", () => {
       cp54ReportByteAndParsedObjectParity: true,
       exactCp54InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 112,
-      generatedFromCount: 112,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 118,
+      generatedFromCount: 118,
+      runtimeInputPathCount: 86,
       jsonInputCount: 13,
       binaryRuntimeInputCount: 2,
     });
@@ -163,7 +163,7 @@ describe("Noelle Hexerei equipment response surface", () => {
         const sourceBytes = Buffer.from(source.bytesBase64, "base64");
         expect(generated?.sha256).toBe(sha256(sourceBytes));
         await expect(
-          readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, source.path))),
+          readFile(path.join(REPOSITORY_ROOT, source.path)),
         ).resolves.toEqual(sourceBytes);
       }),
     );
@@ -192,7 +192,7 @@ describe("Noelle Hexerei equipment response surface", () => {
       if (cached) return cached;
       if (!/\.tsx?$/.test(sourcePath)) return [];
       const sourceText = await readFile(
-        currentSourceLocation(path.join(REPOSITORY_ROOT, sourcePath)),
+        path.join(REPOSITORY_ROOT, sourcePath),
         "utf8",
       );
       const sourceFile = parseSourceAst(sourceText, sourcePath);

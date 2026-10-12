@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "./sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -48,7 +48,7 @@ export async function loadNoelleHexereiEquipmentResponseSurfaceInputFromWorkspac
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
-              await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)))
+              await readFile(path.join(REPOSITORY_ROOT, relativePath))
             ).toString("base64"),
           }),
         ),
@@ -58,7 +58,7 @@ export async function loadNoelleHexereiEquipmentResponseSurfaceInputFromWorkspac
           async (relativePath) => ({
             path: relativePath,
             sha256: await sha256File(
-              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
+              path.join(REPOSITORY_ROOT, relativePath),
             ),
           }),
         ),

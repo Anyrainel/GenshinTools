@@ -54,7 +54,7 @@ export const FURINA_SOURCE_SCOPED_ROLE_SAMPLE_INPUT_PATHS = [
   ]),
 ].sort(compareText);
 
-const EXPECTED_ELIGIBLE_CHARACTER_COUNT = 125;
+const EXPECTED_ELIGIBLE_CHARACTER_COUNT = 127;
 const EXPECTED_ROLE_REVIEW_STATUS = "unreviewed";
 const EXPECTED_ROSTER_DOMAIN_STATUS = "withheld-unresolved-role";
 const TARGET_MEMBER_CHARACTER_IDS = [
@@ -292,7 +292,7 @@ export async function runFurinaSourceScopedRoleSample(
       "The exact target team, template, and role evidence share one KQM page, so this is a same-page extraction and structural-binding check rather than independent gameplay validation.",
       "The two flex-slot permutations explain the structural multiplicity of two; they are not two distinct recommended teams.",
       "The broader roster-domain experiment deliberately remains role-withheld because this named observation is not installed as a global role resolver.",
-      "The current 125-ID catalog is checked against the independently stored counts and fingerprints in the checked-in roster-domain report; same-count membership drift does not pass this gate.",
+      "The current 127-ID catalog is checked against the independently stored counts and fingerprints in the checked-in roster-domain report; same-count membership drift does not pass this gate.",
       "No energy threshold, rotation energy model, damage objective, equipment search, or stat allocation is evaluated here.",
     ],
     prohibitedInterpretations: [

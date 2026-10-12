@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -54,7 +54,7 @@ let report: NoelleNormalPrefixFormulaProjectionReport;
 beforeAll(async () => {
   [baseInput, report] = await Promise.all([
     loadNoelleNormalPrefixFormulaProjectionInputFromWorkspace(),
-    readJson(currentSourceLocation(NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH)) as Promise<NoelleNormalPrefixFormulaProjectionReport>,
+    readJson(NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH) as Promise<NoelleNormalPrefixFormulaProjectionReport>,
   ]);
 });
 
@@ -75,10 +75,10 @@ describe("Noelle exact Normal-prefix formula projection", () => {
     const expectedPaths = [
       ...NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_INPUT_PATHS,
     ];
-    expect(expectedPaths).toHaveLength(109);
+    expect(expectedPaths).toHaveLength(115);
     expect(
       NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_RUNTIME_INPUT_PATHS,
-    ).toHaveLength(80);
+    ).toHaveLength(86);
     expect(baseInput.sourceFiles.map(({ path }) => path)).toEqual(expectedPaths);
     expect(baseInput.generatedFrom.map(({ path }) => path)).toEqual(
       expectedPaths,
@@ -139,7 +139,7 @@ describe("Noelle exact Normal-prefix formula projection", () => {
       if (cached) return cached;
       if (!/\.tsx?$/.test(sourcePath)) return [];
       const sourceText = await readFile(
-        currentSourceLocation(path.join(REPOSITORY_ROOT, sourcePath)),
+        path.join(REPOSITORY_ROOT, sourcePath),
         "utf8",
       );
       const sourceFile = parseSourceAst(sourceText, sourcePath);
@@ -200,10 +200,10 @@ describe("Noelle exact Normal-prefix formula projection", () => {
 
     expect(await importsFor("src/providers/reference/statLoaders.ts")).toEqual(
       expect.arrayContaining([
-        "src/data/game/character_stats.json",
-        "src/data/game/character_beta_stats.json.gz",
-        "src/data/game/weapon_stats.json",
-        "src/data/game/weapon_beta_stats.json.gz",
+        "src/generated/catalog/character_stats.json",
+        "src/generated/catalog/character_beta_stats.json.gz",
+        "src/generated/catalog/weapon_stats.json",
+        "src/generated/catalog/weapon_beta_stats.json.gz",
       ]),
     );
   });

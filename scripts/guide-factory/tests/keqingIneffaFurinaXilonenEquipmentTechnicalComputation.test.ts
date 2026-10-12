@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
@@ -31,7 +31,7 @@ beforeAll(async () => {
     KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_TECHNICAL_COMPUTATION_INPUT_PATHS.map(
       async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       }),
     ),
   );
@@ -147,9 +147,9 @@ describe("Keqing/Ineffa/Furina/Xilonen bounded equipment technical computation",
     });
     expect(REPORT.technicalReferenceSummary).toMatchObject({
       genericReportContentSha256:
-        "3b9147e01cb01cc7d321970b3765e9720c28afacbf013653fcddc36e1fa17e6f",
+        "e79fb6100d2f7c00b028f5127db9353fd776b961dac97ea37a2156cc545eb848",
       genericStableFullReportSha256:
-        "d2c460e59f55216ec0ff9914f106284d41eee817f65d77f7a241202c7dacf0ed",
+        "7ccf8ae26a77846e294fda4cd2555e5e0a59173ccb00b4fff6ec22bdc6d323ea",
       resultFingerprintSha256:
         "ea78f4ea4252bd2b39cfe9d99fb0a7ba37d172e2095c628f9df07d82825392b5",
       objectiveObservationCount: 364,

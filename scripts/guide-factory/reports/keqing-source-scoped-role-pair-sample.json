@@ -3,7 +3,7 @@
     "Both role records preserve source-positive members with unspecified exhaustiveness and no ranking; unexercised members remain evidence rather than failures or inferred negatives.",
     "Only the four exact teams published on the same KQM page are evaluated. No other combination of the two role-member lists is generated, judged, or recommended.",
     "Viridescent Venerer conditions are acknowledged for the configured Jean, Sucrose, and Kaedehara Kazuha targets, but the wrapper does not verify aura setup, timing, or gameplay execution.",
-    "The current 125-ID catalog is checked against independently stored counts and fingerprints in the checked-in roster-domain report; same-count fingerprint drift fails this gate.",
+    "The current 127-ID catalog is checked against independently stored counts and fingerprints in the checked-in roster-domain report; same-count fingerprint drift fails this gate.",
     "The Keqing Lunar-Charged template remains role-withheld in both a fresh roster-domain replay and the checked-in roster-domain report; these observations are not installed as a global resolver.",
     "No damage, equipment, stat allocation, rotation-quality, or energy-recovery computation is performed."
   ],
@@ -160,7 +160,7 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/data/source-snapshots/kqm-keqing-manual.json",
@@ -172,7 +172,7 @@
     },
     {
       "path": "scripts/guide-factory/reports/team-roster-candidate-domain-experiment.json",
-      "sha256": "12be18b24ca591f6aae97eaad6e9a9cbc89f202e699663e9eb92d791914b1ece"
+      "sha256": "939a56b7b0fece84f583f5402a538f6ae0803c4bc9c993d44ffa8cb2426ea634"
     },
     {
       "path": "scripts/guide-factory/sources/registry.json",
@@ -180,15 +180,15 @@
     },
     {
       "path": "scripts/guide-factory/src/catalogs.ts",
-      "sha256": "c66098dbe1ae3353cf81beea16fed47d7425b9adffc21ca021f3826b8e0cb8fa"
+      "sha256": "48c47b7715855999e966fd0a8d1275cb432cfa23085fb2785d5203550d1c555e"
     },
     {
       "path": "scripts/guide-factory/src/io.ts",
-      "sha256": "cbfae2bef83feac01e841adfbef0d30e96f828e4a20fa8a4c6f8c12fc9200935"
+      "sha256": "c5a691734e8a65219ec43254c7f08fd5df5c4819fe023c84e79f41ce3ed5c553"
     },
     {
       "path": "scripts/guide-factory/src/keqingSourceScopedRolePairSample.ts",
-      "sha256": "42358c4974cb31ac49d856fa594c43dcaa27ff632836cebeeefda1873fe2a6f8"
+      "sha256": "053f96c5e639f6ee1875c699bc42cddf139ad605c4b56815dd57bc26396f9d7e"
     },
     {
       "path": "scripts/guide-factory/src/manualSnapshots.ts",
@@ -216,63 +216,63 @@
     },
     {
       "path": "scripts/guide-factory/src/teamRosterCandidateDomain.ts",
-      "sha256": "8742d2811db67cab5bf91529ff583757445e29750422a3ecd1e264febabe5bfd"
+      "sha256": "91e132e09ee38be67f184ad07944d0bcfcc720fdf523259dc1aeb34b9a273eed"
     },
     {
       "path": "scripts/guide-factory/src/teamRosterCandidateDomainExperiment.ts",
-      "sha256": "c085ac93bf752b5c9e98a0419874d7177f8dee6309de020604da92c56e8d2924"
+      "sha256": "07dd714a56bee615db2d390cb5dbc666e62694c0207c5c0f8d6fbb43b37854a8"
     },
     {
       "path": "scripts/guide-factory/src/teamTemplateCoverage.ts",
-      "sha256": "bad1d04f242eae911998ae902f3fd210f1fe27838e724ff24080f6639c2563fa"
+      "sha256": "c0f47e567599a0973c6cdfc320680e2381f7368d3d60652021268008ffcace70"
     },
     {
-      "path": "src/data/betaState.ts",
-      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+      "path": "src/domain/build/statUtils.ts",
+      "sha256": "b855aba1f83d0bb07472652711f2a1490bc97de58cbd2bf202a5c5d1877866fe"
     },
     {
-      "path": "src/data/charInfo.ts",
-      "sha256": "6ff9b8d1fb7dce4f4d9875eee55df5fac5899e13ba6bebb5bbe45256db345d68"
+      "path": "src/domain/combat/damage/constants.ts",
+      "sha256": "d8548a6174124f7e50edf9de43015e865b7ef0129140d759ed73642d99db6932"
     },
     {
-      "path": "src/data/game/character_beta_stats.json.gz",
-      "sha256": "d3e13652ab4a520f1fd1eaa03bc3b754c6dedf438a230950e3ed23fdac9fdc84"
+      "path": "src/domain/combat/damage/core/teamMeta.ts",
+      "sha256": "f83591945518a8650a3ee8ceb73e5eab28c6670f91e6042b293357af07e2ab44"
     },
     {
-      "path": "src/data/game/character_stats.json",
-      "sha256": "f9ff524039a400b46e453147847fef4d26873a53bfe85af851f554eb7c5d3a0f"
+      "path": "src/domain/reference/catalog.ts",
+      "sha256": "ffaaa71669580a7972dfda2f7a431a4b0885c36ac03220ff42a242112ebe3308"
     },
     {
-      "path": "src/data/gameDataUtil.ts",
-      "sha256": "1192437fa64753fc11f23236a8c2018510ebc62390cffb1f1220e210c037434f"
+      "path": "src/generated/catalog/characterInfo.ts",
+      "sha256": "b38abdfe2436e8063697d1d10bcbf4894a60368c4da525f1a3572622c19f3aeb"
     },
     {
-      "path": "src/data/gameResources.ts",
-      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+      "path": "src/generated/catalog/character_beta_stats.json.gz",
+      "sha256": "33c3f374e9b34d8ef2cb183fd1dc3886ed82d21515286f89467c0ac2d91512ba"
     },
     {
-      "path": "src/data/gameStatsLoader.ts",
-      "sha256": "9cefd00bf25e44ba8ca06915568731728ce94a6c4e19c861456458e1fa9894ce"
+      "path": "src/generated/catalog/character_stats.json",
+      "sha256": "74a3bd262f9ff26f1777f9a3a50ccf13bb2a7906f51030adde7fe1b756d96033"
     },
     {
-      "path": "src/data/resources.ts",
-      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+      "path": "src/generated/catalog/resources.ts",
+      "sha256": "7a6c531254b0943d430c72ac51ad52c49657715dcd3d9ee14ccdfd506ccb191a"
     },
     {
-      "path": "src/data/resources_beta.ts",
-      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+      "path": "src/generated/catalog/resources_beta.ts",
+      "sha256": "beaa526631c00e6d796b87e1cceae358abeee1a3ced078a4002e524b932b2d60"
     },
     {
-      "path": "src/data/utils.ts",
-      "sha256": "8b55991704c1de9b661dac596fa34155a54a43f915f814185dc7f8db3c93f15d"
+      "path": "src/lib/resources/cache.ts",
+      "sha256": "b156981a5e4b55b580a3a78cecd87c48c566efbfd5122cba8d7db7475d183577"
     },
     {
-      "path": "src/lib/dmgcalc/constants.ts",
-      "sha256": "aeee718a71e82e043205279469af1c6884bc6333a528438f0f6fa12fde3fe1a1"
+      "path": "src/providers/reference/statLoaders.ts",
+      "sha256": "01940c5233c94d915d2c17dcc920aabe79f2fa57add4f4df8a182af8d35b4acd"
     },
     {
-      "path": "src/lib/dmgcalc/core/teamMeta.ts",
-      "sha256": "010fe2e64205719d60f78991d18af67ad6f4750158764917a6dbb072e9be9858"
+      "path": "src/stores/betaState.ts",
+      "sha256": "68af501983f02b9db6700c494147ae0765c2c0daf1d243ae19bfe9f7f690994e"
     }
   ],
   "prohibitedInterpretations": [
@@ -322,22 +322,22 @@
       "referenceReportComparable": true
     },
     "checkedInRosterReportReference": {
-      "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
-      "eligibleCharacterCount": 125,
-      "eligibleCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
-      "playableIdentityCount": 119,
+      "eligibleCatalogSha256": "49b96aa837a35ef93e419da006690f9a6d53ce14c41cb42451b9c934f846b080",
+      "eligibleCharacterCount": 127,
+      "eligibleCharacterIdsSha256": "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa",
+      "playableIdentityCount": 121,
       "reportComparisonStatus": "comparable",
       "source": "checked-in-team-roster-candidate-domain-report"
     },
-    "eligibleCatalogSha256": "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
-    "eligibleCharacterCount": 125,
+    "eligibleCatalogSha256": "49b96aa837a35ef93e419da006690f9a6d53ce14c41cb42451b9c934f846b080",
+    "eligibleCharacterCount": 127,
     "eligibleCharacterCountMatchesExpectation": true,
-    "eligibleCharacterIdsSha256": "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+    "eligibleCharacterIdsSha256": "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa",
     "excludedSpecialAvatarFormCount": 14,
     "excludedSpecialAvatarFormsSha256": "86178627101600f7d50850a7b15707271b96caeee99fc012e8c00283722fb0b1",
-    "expectedEligibleCharacterCount": 125,
-    "fullStableCharacterCount": 139,
-    "playableIdentityCount": 119,
+    "expectedEligibleCharacterCount": 127,
+    "fullStableCharacterCount": 141,
+    "playableIdentityCount": 121,
     "source": "stable-resources",
     "travelerIdentityPolicy": "all traveler element variants share playableIdentityId=traveler"
   },

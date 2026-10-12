@@ -8,6 +8,29 @@ The formats and algorithms are intentionally provisional. They should change
 when real source data, validation failures, or computation experiments show
 that the current model is inadequate.
 
+## Current repository rebuild — 2026-10-12
+
+The durable non-ER reports have been rebuilt against the current repository
+layout and released catalog: 141 stable character forms, 127 eligible forms
+representing 121 playable identities, 889 C0–C6 coverage rows, and 242 released
+weapons / 317 weapon-refinement pairs. Counts in the checkpoint narrative below
+describe the original experiments; use current reports for current coverage.
+
+Run `npm run guide:rebuild` to regenerate reports in dependency order and finish
+with `validate.ts --defer-er`. Run `npm run test:guides` for the independent
+authentication, mutation, source-binding, runtime-closure, and numeric checks.
+Rebuilding never updates authentication pins automatically. Review source and
+semantic changes, then update independent pins before rebuilding downstream
+reports. Preserve LF source bytes, as required by `.gitattributes`.
+
+The Noelle and Xiao runtime witnesses now cover 86 reachable first-party files,
+including the current reference-fetch and damage-expression dependencies.
+Keqing's 144 generator / 364 replay numeric fingerprint, 576 generated-sheet
+occurrences, cached node table, policy traces, and exhaustive census remain
+unchanged. Reports still withhold recommendations and ER claims where their
+evidence does not support them. The 12 known source weapon-type mismatches and
+15 deferred ER condition occurrences remain visible.
+
 ## Boundary
 
 The allowed dependency direction is:
@@ -1320,64 +1343,9 @@ legacy APL language that requires explicit migration and renewed validation.
 Run from the repository root:
 
 ```powershell
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/import-sources.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/consolidate.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate.ts --defer-er
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-knowledge-corpus.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-character-guide-input-coverage.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/compare-diona.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-team-template-coverage.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-furina-neuvillette-formula-plan.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/draft-keqing-ineffa-formula-plan.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-derived-formula-fixture-coverage.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-artifact-choice-search-coverage.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/analyze-weapon-choice-search-coverage.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-artifact-generation.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/probe-keqing-ineffa-artifact-generation-sensitivity.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-keqing-ineffa-bounded-joint-artifacts.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/experiment-team-roster-candidate-domain.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/diagnose-keqing-ineffa-team-stat-marginals.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-keqing-artifact-rating-kqm-marginal-validation-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-ineffa-furina-xilonen-equipment-candidate-lattice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/preflight-keqing-ineffa-furina-xilonen-equipment-runtime.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/compute-keqing-ineffa-furina-xilonen-equipment-technical.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-furina-source-scoped-role.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/sample-keqing-source-scoped-role-pair.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/validate-keqing-lunar-equipment-evidence.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-source-conditioned-candidate-lattice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/construct-keqing-lunar-cross-record-composition-contract.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/run-keqing-lunar-cross-record-technical-matrix.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-source-conditioned-guide-packets.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-itto-request-context-applicability.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-source-local-condition-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-diona-source-local-support-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-kokomi-source-local-artifact-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-high-investment-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-source-local-lower-investment-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-source-local-condition-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-applicable-claim-projection-contract.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-partial-artifact-candidate-contract.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-non-er-equipment-branch-source-slice.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-non-er-condition-free-branch-candidate-contract.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-formula-count-parity.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-grouped-replay-representation-preflight.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-unit-expanded-execution-gate.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-five-star-source-group-validation-diagnostic.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-xiao-ffxx-circlet-substat-local-marginal-diagnostic.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-investment-artifact-profile-computation-admission.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-weapon-team-source-binding.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-partial-equipment-composition.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-normal-prefix-formula-projection.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-equipment-response-surface.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-local-stat-priority-diagnostic.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-request-conditioned-candidate-admission.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-noelle-hexerei-guide-draft-projection.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/inventory-manual-condition-array-coverage.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/assemble-klee-team-scoped-claim-join-witness.ts
-npx tsx --tsconfig scripts/guide-factory/tsconfig.json scripts/guide-factory/src/replay-eula-structural-smoke.ts
+npm run guide:rebuild
 npx tsc -p scripts/guide-factory/tsconfig.json --noEmit
-npx vitest run --config scripts/guide-factory/vitest.config.ts
+npm run test:guides
 ```
 
 The documented validation command keeps ER work deferred and explicitly skips

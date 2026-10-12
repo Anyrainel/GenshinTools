@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "./sourceLocations";
+
 import { createHash } from "node:crypto";
 import { artifactHalfSets } from "@/generated/catalog/resources";
 import {
@@ -88,8 +88,8 @@ export async function importGenshinToolsPresets(
 ): Promise<GenshinToolsPresetSnapshot> {
   const registry = SourceRegistrySchema.parse(registryInput);
   const capturedAt = getCheckedAt(registry, "genshintools-presets");
-  const teamPreset = (await readJson(currentSourceLocation(TEAM_PRESET_PATH))) as RawTeamPreset;
-  const buildPreset = (await readJson(currentSourceLocation(BUILD_PRESET_PATH))) as RawBuildPreset;
+  const teamPreset = (await readJson(TEAM_PRESET_PATH)) as RawTeamPreset;
+  const buildPreset = (await readJson(BUILD_PRESET_PATH)) as RawBuildPreset;
 
   const teams = teamPreset.teams.map((team) => ({
     kind: "team" as const,
@@ -165,7 +165,7 @@ export async function importGenshinToolsPresets(
       files: await Promise.all(
         [TEAM_PRESET_PATH, BUILD_PRESET_PATH].map(async (filePath) => ({
           path: relativePath(filePath),
-          sha256: await sha256File(currentSourceLocation(filePath)),
+          sha256: await sha256File(filePath),
         }))
       ),
     },
@@ -179,7 +179,7 @@ export async function importLegacyTeamResearch(
 ): Promise<LegacyTeamSnapshot> {
   const registry = SourceRegistrySchema.parse(registryInput);
   const capturedAt = getCheckedAt(registry, "legacy-team-research");
-  const source = (await readJson(currentSourceLocation(LEGACY_RESEARCH_PATH))) as RawLegacyResearch;
+  const source = (await readJson(LEGACY_RESEARCH_PATH)) as RawLegacyResearch;
 
   const records = source.teams.map((team, index) => {
     const sourceRecordId = `team-${createHash("sha256")

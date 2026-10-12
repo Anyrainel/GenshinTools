@@ -247,12 +247,12 @@ describe("Noelle Hexerei guide-draft projection", () => {
         NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_CLI_RELATIVE_PATH,
       ]),
     ].sort(compareText);
-    expect(expectedPaths).toHaveLength(123);
+    expect(expectedPaths).toHaveLength(129);
     expect(NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_INPUT_PATHS).toEqual(
       expectedPaths,
     );
     expect(NOELLE_HEXEREI_GUIDE_DRAFT_PROJECTION_RUNTIME_INPUT_PATHS)
-      .toHaveLength(80);
+      .toHaveLength(86);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json")))
       .toHaveLength(16);
     expect(expectedPaths.filter((sourcePath) => sourcePath.endsWith(".json.gz")))
@@ -270,9 +270,9 @@ describe("Noelle Hexerei guide-draft projection", () => {
       cp57ReportByteAndParsedObjectParity: true,
       exactCp57InputProjection: true,
       exactTechnicalRequest: true,
-      sourceFileCount: 123,
-      generatedFromCount: 123,
-      runtimeInputPathCount: 80,
+      sourceFileCount: 129,
+      generatedFromCount: 129,
+      runtimeInputPathCount: 86,
       jsonInputCount: 16,
       binaryRuntimeInputCount: 2,
     });

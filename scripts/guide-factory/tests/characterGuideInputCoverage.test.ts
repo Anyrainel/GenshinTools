@@ -1,4 +1,4 @@
-import { currentSourceLocation } from "../src/sourceLocations";
+
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { characters } from "@/generated/catalog/resources";
@@ -65,14 +65,14 @@ beforeAll(async () => {
 });
 
 describe("character-guide input coverage", () => {
-  it("authenticates the 125-character guide domain and matches the durable report", async () => {
+  it("authenticates the 127-character guide domain and matches the durable report", async () => {
     const durable = await readJson(CHARACTER_GUIDE_INPUT_COVERAGE_REPORT_PATH);
 
     expect(durable).toEqual(report);
     expect(report.comparisonStatus).toBe("comparable");
     expect(report.summary).toMatchObject({
-      characterCount: 125,
-      constellationRowCount: 875,
+      characterCount: 127,
+      constellationRowCount: 889,
       repositoryAuthoredDamagePlanObservationCount: 0,
       coupledArtifactPlanObservationCount: 1,
       guideLessCharacterIds: [
@@ -84,12 +84,12 @@ describe("character-guide input coverage", () => {
       ],
     });
     expect(report.boundaries.releasedGuideDomain).toMatchObject({
-      characterCount: 125,
-      expectedCharacterCount: 125,
+      characterCount: 127,
+      expectedCharacterCount: 127,
       eligibleCatalogSha256:
-        "8eb36c1d496e01698ba40a82d3ac10c506d2c67360f9d6f5580eb2355fba8ef6",
+        "49b96aa837a35ef93e419da006690f9a6d53ce14c41cb42451b9c934f846b080",
       characterIdsSha256:
-        "070e664f88275374348f80e340b2ac1515ed5abe4a0b24029d84baa843f2b87f",
+        "9a0fd29ca4344912db8b5b77ba64dea7a4e073761df0ec618e73816257d7ddfa",
       checkedInRosterReportComparison: { allChecksMatch: true },
     });
     expect(report.boundaries.formula).toEqual({
@@ -107,7 +107,7 @@ describe("character-guide input coverage", () => {
   });
 
   it("keeps exact teams atomic and reconstructs every compact row bucket from the ledger", () => {
-    expect(report.summary.observationCountsByAxis["exact-team"]).toBe(226);
+    expect(report.summary.observationCountsByAxis["exact-team"]).toBe(227);
     const teamObservation = observation(
       "kqm:team:c6-diona-mavuika-citlali-bennett-forward-melt:exact-team",
     );
@@ -458,17 +458,17 @@ describe("character-guide input coverage", () => {
     expect(plans[0].searchGrammarRepresentability.policyObservationIds).toHaveLength(2);
     expect(report.boundaries.representability).toMatchObject({
       allEquipmentPolicyObservationsLinked: true,
-      weaponCoverageObservationCount: 1026,
-      weaponLinkedPolicyObservationCount: 1026,
-      artifactCoverageObservationCount: 1075,
-      artifactLinkedPolicyObservationCount: 1075,
+      weaponCoverageObservationCount: 1034,
+      weaponLinkedPolicyObservationCount: 1034,
+      artifactCoverageObservationCount: 1081,
+      artifactLinkedPolicyObservationCount: 1081,
       weaponOutcomeClassificationCounts: {
-        "in-released-candidate-domain|unspecified|compatible": 1014,
+        "in-released-candidate-domain|unspecified|compatible": 1022,
         "in-released-candidate-domain|unspecified|mismatched": 12,
       },
       artifactOutcomeClassificationCounts: {
         "conditionally-representable": 21,
-        "enumerated-initially": 1026,
+        "enumerated-initially": 1032,
         "not-representable:non-five-star-filter": 21,
         "not-representable:tier-list-other-filter": 2,
         "not-representable:unmapped-dynamic-half-set-family": 5,
@@ -865,7 +865,7 @@ async function loadFixture(): Promise<Fixture> {
     Promise.all(
       CHARACTER_GUIDE_INPUT_COVERAGE_INPUT_PATHS.map(async (relativePath) => ({
         path: relativePath,
-        sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+        sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
       })),
     ),
     Promise.all(

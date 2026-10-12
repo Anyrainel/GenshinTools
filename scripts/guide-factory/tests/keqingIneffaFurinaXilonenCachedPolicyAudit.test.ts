@@ -33,7 +33,7 @@ const CP39_PATH = path.join(
   "scripts/guide-factory/reports/keqing-ineffa-furina-xilonen-generated-sheet-evidence.json",
 );
 const EXPECTED_REPORT_SHA256 =
-  "a2ce1d99443deb81a9559bb0aed9c4d378aefa5d564d2f16074a82fadd987a46";
+  "bedffadf60f6281ed9698f00a9f4a7d3af1ef33795b79cd290e9f5cc24318b05";
 const EXPECTED_REPORT_SIZE = 2_029_334;
 
 const CP38_REPORT = JSON.parse(
@@ -78,10 +78,10 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy audit", () => {
         authentication: "accepted",
         selectedInputsAuthenticatedBeforePolicyExecution: true,
         cp38ByteSha256:
-          "c1e62f94d50be01cb5a8b24f2b419a9e52ecafad6829320e2341322691111063",
+          "b196a533b7606157b91b2916a7e53dcf4aeed64d541c594273e3fd622dae4ace",
         cp38FullGuardPassed: true,
         cp39ByteSha256:
-          "d6b8f196891ee122a9ce8267f7da7efae3e7e39076b5babf28c3d352b56e6b4a",
+          "0604af854311eb7196b49cfb5707e6947a0b900113959ed0261c88dcde8c4937",
         cp39FullGuardPassed: true,
         policySourceByteSha256:
           "73a9ee8f253686ec63fb841287953fe3fb342b491316b7915bb4299144266bbc",
@@ -146,7 +146,7 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy audit", () => {
         policyAuditSha256:
           "159828178c5a42affc6d7d97c5092842fa8fab41b0fbb58ee8e55f626ec8b5a2",
         reportContentSha256:
-          "7e923f9aeeca1abc2d6bf1a96abc38dc4ae9579718c2c37bc073bd9ac60fe296",
+          "9dd2fa84746131bee8129952fabb0e9e672db5ade2f38cb195dbd87078ca3e6f",
       },
     });
     expect(
@@ -344,7 +344,7 @@ describe("Keqing/Ineffa/Furina/Xilonen cached-policy audit", () => {
       energyRecoveryValuesInfluencedPolicy: null,
     });
     expect(report.authentication.reportContentSha256).toBe(
-      "ed41cf3970d36f204388af2c033a6a1396884000b59ae99327a3093c0d250bf2",
+      "96597df6d2d206cc11dbb26fe85d67b0e5df1dd3212a715566241a79a8e11262",
     );
 
     const falselyAttested = structuredClone(report);
