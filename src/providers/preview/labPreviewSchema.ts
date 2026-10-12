@@ -25,16 +25,6 @@ export const LabPreviewSchema = z.object({
       observations: z.unknown(),
     })
   ),
-  optimizer: z.array(
-    z.object({
-      id: z.string(),
-      commit: z.string(),
-      ratio: z.number(),
-      regressions: z.number(),
-      status: z.string(),
-      description: z.string(),
-    })
-  ),
 });
 
 export type LabPreview = z.infer<typeof LabPreviewSchema>;

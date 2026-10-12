@@ -10,7 +10,6 @@ page for these paths.
 | `/__lab` | Index of available experiments and links to existing app features |
 | `/__lab/guides` | Six saved Noelle draft packets, their team/equipment/stat observations, missing choices and publication blockers |
 | `/__lab/sources` | Character-filtered source records, saved build observations, source links and unresolved assumptions |
-| `/__lab/optimizer` | Eight saved optimizer experiments from `docs/optimizer-research/results.tsv` |
 
 The guide page is a view of the actual generated packets, currently limited to
 Noelle. Other characters have source records but not portable completed guide
@@ -19,8 +18,7 @@ and withheld publication. Viewing a source option never assigns equipment or
 promotes a recommendation. It does not run the guide pipeline or change stores.
 
 Use `npm run guide:rebuild` to refresh offline reports, then **Reload snapshot**
-on the page. The timestamp is the saved guide report's modification time;
-optimizer measurements retain their historical experiment/commit labels.
+on the page. The timestamp is the saved guide report's modification time.
 
 The Vite dev-only plugin reads fixed local artifacts and exposes a read-only
 JSON projection at `/__dev/lab-preview.json`. Browser code never imports
@@ -43,7 +41,7 @@ visible error with a rebuild hint, not invented defaults.
 | Onboarding sample previews | Existing welcome guide on Home; sample content, not standalone calculators |
 | Calculator QA, particle extraction, Excel comparison, implementation audits | CLI/data-maintenance tools; no complete interactive feature to route. Keep execution in tooling. |
 
-The source library and optimizer history are safe read-only previews added here.
+The source library is a safe read-only preview added here.
 The inventory found no additional complete, unrouted product page requiring
 promotion. Future experiments can follow the same dev-only route and artifact
 boundary without adding a main navigation item.

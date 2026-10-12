@@ -28,7 +28,6 @@ describe("development experiment preview", () => {
           source.characterId === "noelle" && source.status === "candidate"
       )
     ).toBe(true);
-    expect(data.optimizer.length).toBeGreaterThan(0);
   });
 
   it("does not request experiment data in a production environment", async () => {

@@ -16,11 +16,6 @@ export const i18nUiData = {
       en: "Browse saved build presets and extracted source observations by character. Candidate observations still need review.",
       zh: "按角色浏览保存的配装预设与提取的来源记录。候选记录仍需审核。",
     },
-    optimizer: { en: "Optimizer experiments", zh: "优化器实验" },
-    optimizerDescription: {
-      en: "Saved algorithm experiments and their benchmark ratios. These are historical measurements, not equipment rankings or a live benchmark.",
-      zh: "查看已保存的算法实验与基准比值。这些是历史测试结果，不是装备排行，也不会运行新的测试。",
-    },
     existing: { en: "Already available in the app", zh: "应用中已有的功能" },
     existingDescription: {
       en: "Energy analysis, achievements, and artifact tier lists already have normal routes. Scanner downloads and account tools are linked from their existing entry points.",
@@ -63,10 +58,6 @@ export const i18nUiData = {
       en: "Unresolved source assumptions",
       zh: "来源中尚未明确的条件",
     },
-    experiment: { en: "Experiment", zh: "实验" },
-    ratio: { en: "Benchmark ratio", zh: "基准比值" },
-    regressions: { en: "Regressions", zh: "退步项" },
-    description: { en: "Description", zh: "说明" },
   },
   charactersMode: {
     replace: { en: "Replace characters", zh: "替换角色" },

@@ -31,10 +31,9 @@ function collectFields(value: unknown): LabPreview["drafts"][number]["fields"] {
 /** Read-only projection of saved artifacts. Never imports or executes the lab. */
 export async function loadLabPreview(root: string): Promise<LabPreview> {
   const reportPath = path.join(root, "scripts/guide-factory/reports/noelle-hexerei-guide-draft-projection.json");
-  const [draftBytes, corpusBytes, optimizerBytes, modified] = await Promise.all([
+  const [draftBytes, corpusBytes, modified] = await Promise.all([
     readFile(reportPath, "utf8"),
     readFile(path.join(root, "scripts/guide-factory/data/knowledge/repository.json"), "utf8"),
-    readFile(path.join(root, "docs/optimizer-research/results.tsv"), "utf8"),
     stat(reportPath),
   ]);
   const drafts = z.object({ packets: z.array(packet) }).parse(JSON.parse(draftBytes));
@@ -51,17 +50,13 @@ export async function loadLabPreview(root: string): Promise<LabPreview> {
       observations: { recommendations: item.recommendations ?? [], builds: item.builds ?? [], weaponOrder: item.weaponOrder ?? [] },
     };
   });
-  const optimizer = optimizerBytes.trim().split(/\r?\n/).slice(1).map((line) => {
-    const [id, commit, ratio, regressions, status, ...description] = line.split("\t");
-    return { id, commit, ratio: Number(ratio), regressions: Number(regressions), status, description: description.join("\t") };
-  });
   return LabPreviewSchema.parse({
     updatedAt: modified.mtime.toISOString(),
     drafts: drafts.packets.map((item) => ({
       id: item.packetId, ...item.subject, readiness: item.readiness.guideReadiness,
       publication: item.readiness.publicationStatus, fields: collectFields(item.fields),
       blockers: item.blockers.map((blocker) => ({ field: blocker.fieldId, code: blocker.code })),
-    })), sources, optimizer,
+    })), sources,
   });
 }
 

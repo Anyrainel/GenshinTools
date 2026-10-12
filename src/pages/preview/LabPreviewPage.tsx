@@ -140,11 +140,6 @@ export default function LabPreviewPage() {
       title: t.ui("labPreview.sources"),
       description: t.ui("labPreview.sourcesDescription"),
     },
-    {
-      id: "optimizer",
-      title: t.ui("labPreview.optimizer"),
-      description: t.ui("labPreview.optimizerDescription"),
-    },
   ];
   const draft =
     data?.drafts.find((item) => item.id === params.get("draft")) ??
@@ -210,7 +205,7 @@ export default function LabPreviewPage() {
           </nav>
           {!section && (
             <>
-              <div className="grid gap-4 md:grid-cols-3">
+              <div className="grid gap-4 md:grid-cols-2">
                 {views.map((view) => (
                   <Link
                     key={view.id}
@@ -421,48 +416,6 @@ export default function LabPreviewPage() {
                         </ul>
                       </section>
                     ))}
-                </>
-              )}
-              {section === "optimizer" && (
-                <>
-                  <p>{t.ui("labPreview.optimizerDescription")}</p>
-                  <div className="overflow-auto rounded-xl border border-border">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-muted">
-                        <tr>
-                          {[
-                            t.ui("labPreview.experiment"),
-                            t.ui("labPreview.ratio"),
-                            t.ui("labPreview.regressions"),
-                            t.ui("teamComp.extraBuffsStatus"),
-                            t.ui("labPreview.description"),
-                          ].map((label) => (
-                            <th key={label} className="p-3">
-                              {label}
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {data.optimizer.map((item) => (
-                          <tr key={item.id} className="border-t border-border">
-                            <td className="p-3">
-                              {item.id}
-                              <div className="text-xs text-muted-foreground">
-                                {item.commit}
-                              </div>
-                            </td>
-                            <td className="p-3 tabular-nums">
-                              {item.ratio.toFixed(6)}
-                            </td>
-                            <td className="p-3">{item.regressions}</td>
-                            <td className="p-3">{item.status}</td>
-                            <td className="p-3">{item.description}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
                 </>
               )}
             </>
