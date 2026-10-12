@@ -607,7 +607,7 @@ describe("bounded full-team equipment technical computation", () => {
         true,
       );
     },
-    30_000,
+    90_000,
   );
 
   it.each([

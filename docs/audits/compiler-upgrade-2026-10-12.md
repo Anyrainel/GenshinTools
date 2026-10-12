@@ -122,12 +122,18 @@ suite. The rebuilt pipeline validates with zero errors and exactly the twelve
 known source weapon-type warnings; the two historical Diona/ER reports remain
 explicitly deferred. The complete app, Worker, and Python check also passed.
 
-Final independent guide verification passed **1,074 tests, zero failures and
-zero skips**, with both `GUIDE_FACTORY_CP38_REAL_RUNTIME=1` and
-`GUIDE_FACTORY_CP39_REAL_SHEET_EVIDENCE=1`. The default command keeps those two
-costly generic runtime regressions opt-in; its other 1,072 tests passed in the
-same run. All 63 original research failures and their dependent skipped tests
-are resolved against the current inputs.
+Independent guide verification passed all **1,072 standard tests**. Both
+costly generic runtime regressions remain opt-in through
+`GUIDE_FACTORY_CP38_REAL_RUNTIME=1` and
+`GUIDE_FACTORY_CP39_REAL_SHEET_EVIDENCE=1`. Their original 30-second limits
+timed out under parallel suite load; their allowance now matches the
+90-second report-specific generator tests, with all numeric and authentication
+assertions retained. All 63 original research failures and their dependent
+skipped tests are resolved against the current inputs.
+
+The final run with both opt-in flags enabled and `--maxWorkers=4` passed
+**1,074 tests, zero failures and zero skips**. This supersedes the earlier
+parallel run's timeout results.
 
 ## References
 

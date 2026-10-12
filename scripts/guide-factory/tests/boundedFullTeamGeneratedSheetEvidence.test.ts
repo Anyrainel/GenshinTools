@@ -477,7 +477,7 @@ describe("bounded full-team generated-sheet/allocation evidence", () => {
         true,
       );
     },
-    30_000,
+    90_000,
   );
 });
 
