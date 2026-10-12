@@ -13,7 +13,7 @@
 | teams/AnalyzerResultCard.tsx | 投入档位；32px 高、80px 宽 |
 | archive/SkillCard.tsx | 天赋等级；28px，窄宽度，渐变背景 |
 | shared/BuildCard.tsx | 最低命座；圆角胶囊，自动高度，响应式内边距，命座语义颜色，小箭头 |
-| shared/StatSelect.tsx | 单词条选择；28px，渐变背景，紧凑宽度，自定义短标签、取消选项；同一组件中有多个调用分支 |
+| shared/StatSelect.tsx | 单词条选择；28px，渐变背景，紧凑宽度，自定义短标签、取消选项；已选项与添加项复用，添加时受控自动打开 |
 | shared/WeightedStatSelect.tsx | 添加加权词条；嵌入行内，高度跟随父级，无边框、透明背景；BuildCard 的主、副词条编辑通过此组件间接使用 |
 
 ## GGStarRail：6 个直接调用文件
@@ -38,4 +38,4 @@ GGStarRail 的 CompactSelect 间接调用者共 8 个：team/RosterCard、Member
 - Content 保留 `position="popper"`、触发器宽度约束、碰撞留白、滚轮事件阻止冒泡和高度上限。现有 stock 默认 item-aligned，不能只替换 import。
 - Item 保留左侧勾选标记和对应缩进；stock 的右侧标记会改变现有视觉。
 
-迁移前验证弹层定位、滚轮不带动父页面、键盘与禁用选项、触发器短标签、移动端碰撞及大量配装卡片渲染。variant 可以解决外观重复；布局参数和弹层行为也对齐后，才删除 LightweightSelect。
+迁移前验证受控自动打开、弹层定位、滚轮不带动父页面、键盘与禁用选项、触发器短标签、移动端碰撞及大量配装卡片渲染。variant 可以解决外观重复；布局参数和弹层行为也对齐后，才删除 LightweightSelect。
