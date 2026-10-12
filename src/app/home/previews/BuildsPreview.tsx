@@ -24,7 +24,7 @@ export default function BuildsPreview({ t }: PreviewProps) {
     },
   ];
   return (
-    <div className="grid min-w-0 items-start gap-5 md:grid-cols-[1.3fr_1fr]">
+    <div className="grid min-w-0 items-start gap-5 @min-[56rem]:grid-cols-[1.3fr_1fr]">
       <figure className="min-w-0 overflow-hidden rounded-xl border border-border bg-gradient-card">
         <figcaption className="border-b border-border px-4 py-3 text-xs font-semibold">
           {t.ui("greeting.examplePreview")}

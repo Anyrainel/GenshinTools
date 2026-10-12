@@ -56,7 +56,7 @@ export default function WelcomeGuide({
   }
   return (
     <ResponsiveDialog open onOpenChange={(open) => !open && handleClose()}>
-      <ResponsiveDialogContent className="flex max-h-[90dvh] w-full max-w-5xl flex-col gap-0 overflow-hidden p-0">
+      <ResponsiveDialogContent className="flex max-h-[90dvh] w-full flex-col gap-0 overflow-hidden p-0 sm:w-[calc(100%-2rem)] sm:max-w-5xl">
         <div className="shrink-0 border-b border-border px-4 pb-3 pt-5 sm:px-6">
           <ResponsiveDialogHeader className="p-0 text-left">
             <ResponsiveDialogTitle>
@@ -91,7 +91,7 @@ export default function WelcomeGuide({
         </div>
         <div
           ref={contentRef}
-          className="min-h-0 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5"
+          className="@container min-h-0 overflow-y-auto px-4 py-4 sm:px-6 sm:py-5"
         >
           <h2 className="sr-only">{chapters[step].title}</h2>
           <Suspense fallback={<div className="min-h-48" aria-busy="true" />}>
@@ -145,7 +145,7 @@ export default function WelcomeGuide({
 
 function StepAccountData({ t }: StepProps) {
   return (
-    <div className="grid min-w-0 items-start gap-5 md:grid-cols-[1.3fr_1fr]">
+    <div className="grid min-w-0 items-start gap-5 @min-[56rem]:grid-cols-[1.3fr_1fr]">
       <AccountDataPreview t={t} />
       <div className="min-w-0 space-y-4">
         <div className="rounded-xl border border-border bg-gradient-card p-4">
@@ -186,7 +186,7 @@ function StepAccountData({ t }: StepProps) {
 
 function StepTeams({ t }: StepProps) {
   return (
-    <div className="grid min-w-0 items-start gap-5 md:grid-cols-[1.3fr_1fr]">
+    <div className="grid min-w-0 items-start gap-5 @min-[56rem]:grid-cols-[1.3fr_1fr]">
       <TeamCompPreview t={t} />
       <div className="min-w-0 space-y-4">
         <div className="rounded-xl border border-border bg-gradient-card p-4">

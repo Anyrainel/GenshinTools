@@ -30,13 +30,13 @@ export function TabPreview({
       <Tabs defaultValue={tabs[0].id}>
         <TabsList
           aria-label={t.ui("greeting.previewTabs")}
-          className="flex h-auto flex-wrap justify-start gap-1 rounded-none border-b border-border p-2"
+          className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-none border-b border-border p-2 group-data-[orientation=horizontal]/tabs:h-auto"
         >
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="min-h-10 gap-1.5 whitespace-normal px-2 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+              className="h-auto min-h-10 flex-none gap-1.5 whitespace-nowrap px-2 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
             >
               <tab.icon className="size-3.5 shrink-0" aria-hidden />
               {tab.label}
