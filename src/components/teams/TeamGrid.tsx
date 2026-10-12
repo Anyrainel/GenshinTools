@@ -701,12 +701,6 @@ export function TeamGrid({
                 const order = filteredTeamOrder.get(team.id);
                 const isVisible = order !== undefined;
                 const freeze = teamFreezeMap?.get(team.id);
-                const ownership = teamOwnershipMap.get(team.id);
-                const allUnowned =
-                  hasAccountData &&
-                  !!ownership &&
-                  ownership.filledCount > 0 &&
-                  ownership.ownedCount === 0;
                 return (
                   <SortableTeamSlot
                     key={team.id}
@@ -751,7 +745,6 @@ export function TeamGrid({
                           enableFreeze ? () => unfreezeTeam(team.id) : undefined
                         }
                         accountData={accountData}
-                        allUnowned={allUnowned}
                         dragHandleProps={dragHandleProps}
                       />
                     )}

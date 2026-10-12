@@ -76,7 +76,6 @@ interface TeamCardProps {
   frozenCharIds?: Set<string>;
   onUnfreeze?: () => void;
   accountData?: AccountData | null;
-  allUnowned?: boolean;
   /** When provided, renders a drag handle instead of the index number. Pass useSortable listeners. */
   dragHandleProps?: React.HTMLAttributes<HTMLDivElement>;
 }
@@ -106,7 +105,6 @@ export const TeamCard = memo(
     frozenCharIds,
     onUnfreeze,
     accountData,
-    allUnowned,
     dragHandleProps,
   }: TeamCardProps) {
     const { t } = useLanguage();
@@ -116,6 +114,21 @@ export const TeamCard = memo(
     const { characters, weapons, artifacts } = useMemo(
       () => teamCompToArrays(teamComp),
       [teamComp]
+    );
+
+    const ownedCharacters = useMemo(
+      () => new Set(accountData?.characters.map((character) => character.key)),
+      [accountData]
+    );
+    const ownedWeapons = useMemo(
+      () =>
+        new Set([
+          ...(accountData?.characters.flatMap((character) =>
+            character.weapon ? [character.weapon.key] : []
+          ) ?? []),
+          ...(accountData?.extraWeapons.map((weapon) => weapon.key) ?? []),
+        ]),
+      [accountData]
     );
 
     const updateCompArrays = (
@@ -166,9 +179,7 @@ export const TeamCard = memo(
             "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]",
           isFrozen &&
             !isFullyFrozen &&
-            "ring-1 ring-cyan-400/15 border-cyan-400/10",
-          allUnowned &&
-            "grayscale opacity-50 hover:grayscale-0 hover:opacity-100"
+            "ring-1 ring-cyan-400/15 border-cyan-400/10"
         )}
       >
         {/* Header: Index + Reaction tags + Name + Context menu */}
@@ -305,6 +316,12 @@ export const TeamCard = memo(
                   type="character"
                   value={charId}
                   triggerSize="md"
+                  className={cn(
+                    accountData &&
+                      charId &&
+                      !ownedCharacters.has(charId) &&
+                      "grayscale"
+                  )}
                   frozen={!!(charId && frozenCharIds?.has(charId))}
                   filter={(item) => {
                     const c = item as { id: string };
@@ -401,6 +418,12 @@ export const TeamCard = memo(
                   type="weapon"
                   value={weaponId}
                   triggerSize="md"
+                  className={cn(
+                    accountData &&
+                      weaponId &&
+                      !ownedWeapons.has(weaponId) &&
+                      "grayscale"
+                  )}
                   frozen={!!(charId && frozenCharIds?.has(charId))}
                   onChange={(val) => {
                     const newWeapons = [...weapons];
@@ -510,6 +533,5 @@ export const TeamCard = memo(
     prev.isFullyFrozen === next.isFullyFrozen &&
     setsEqual(prev.frozenCharIds, next.frozenCharIds) &&
     prev.accountData === next.accountData &&
-    prev.allUnowned === next.allUnowned &&
     prev.dragHandleProps === next.dragHandleProps
 );
