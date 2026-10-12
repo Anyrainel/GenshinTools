@@ -1,4 +1,73 @@
 export const i18nUiData = {
+  labPreview: {
+    title: { en: "Preview lab", zh: "实验预览" },
+    devOnly: {
+      en: "Development only · unlisted experiments",
+      zh: "仅开发环境可用 · 未上线的实验内容",
+    },
+    overview: { en: "Overview", zh: "概览" },
+    guides: { en: "Generated guide drafts", zh: "生成的攻略草稿" },
+    guidesDescription: {
+      en: "Inspect six Noelle draft scenarios, source observations, and unresolved choices.",
+      zh: "查看诺艾尔六种场景的攻略草稿、来源记录和待确认选项。",
+    },
+    sources: { en: "Guide source library", zh: "攻略来源库" },
+    sourcesDescription: {
+      en: "Browse saved build presets and extracted source observations by character. Candidate observations still need review.",
+      zh: "按角色浏览保存的配装预设与提取的来源记录。候选记录仍需审核。",
+    },
+    optimizer: { en: "Optimizer experiments", zh: "优化器实验" },
+    optimizerDescription: {
+      en: "Saved algorithm experiments and their benchmark ratios. These are historical measurements, not equipment rankings or a live benchmark.",
+      zh: "查看已保存的算法实验与基准比值。这些是历史测试结果，不是装备排行，也不会运行新的测试。",
+    },
+    existing: { en: "Already available in the app", zh: "应用中已有的功能" },
+    existingDescription: {
+      en: "Energy analysis, achievements, and artifact tier lists already have normal routes. Scanner downloads and account tools are linked from their existing entry points.",
+      zh: "充能分析、成就图鉴和圣遗物榜单已有常规入口。扫描器下载与账号工具也可从原有入口打开。",
+    },
+    refresh: { en: "Reload snapshot", zh: "重新载入记录" },
+    loading: { en: "Loading saved experiments…", zh: "正在载入实验记录…" },
+    loadError: {
+      en: "The saved experiment data could not be loaded.",
+      zh: "无法载入已保存的实验数据。",
+    },
+    rebuildHint: {
+      en: "Check the dev-server log. If guide reports are missing, run npm run guide:rebuild, then reload.",
+      zh: "请查看开发服务器日志。如果缺少攻略报告，请运行 npm run guide:rebuild 后重新载入。",
+    },
+    snapshot: { en: "Guide snapshot updated", zh: "攻略记录更新时间" },
+    draft: { en: "Draft preview", zh: "草稿预览" },
+    draftNotice: {
+      en: "This is an incomplete research draft. Source options remain unselected, and rotations, team damage, and Energy Recharge are unresolved. It is not ready to publish as a recommendation.",
+      zh: "这是尚未完成的研究草稿。来源中的选项尚未确定，输出手法、队伍伤害与充能需求仍待验证，暂不能作为正式推荐发布。",
+    },
+    request: { en: "Character assumptions", zh: "角色配置假设" },
+    team: { en: "Team context", zh: "队伍条件" },
+    weapon: { en: "Weapon observations", zh: "武器来源记录" },
+    artifacts: { en: "Artifact options", zh: "圣遗物选项" },
+    substats: { en: "Substat observations", zh: "副词条来源记录" },
+    computation: { en: "Rotation and results", zh: "输出手法与计算结果" },
+    blockers: { en: "What is still missing", zh: "尚待补全的内容" },
+    blockersDescription: {
+      en: "These gaps are preserved from the draft. A successful formula check does not fill them in.",
+      zh: "以下缺项保留自原始草稿。公式验证通过并不代表这些内容已得到确认。",
+    },
+    unresolved: {
+      en: "Not selected or not yet established",
+      zh: "尚未选择或确认",
+    },
+    evidenceDetails: { en: "View source evidence", zh: "查看来源证据" },
+    search: { en: "Search characters", zh: "搜索角色" },
+    unknowns: {
+      en: "Unresolved source assumptions",
+      zh: "来源中尚未明确的条件",
+    },
+    experiment: { en: "Experiment", zh: "实验" },
+    ratio: { en: "Benchmark ratio", zh: "基准比值" },
+    regressions: { en: "Regressions", zh: "退步项" },
+    description: { en: "Description", zh: "说明" },
+  },
   charactersMode: {
     title: {
       en: "Find character replacements",
