@@ -119,8 +119,8 @@ export function AutoTuneResults({ result }: AutoTuneResultsProps) {
   return (
     <div className="space-y-4">
       {/* ER Warning Banner */}
-      <div className="flex items-start gap-2 px-3 py-2 rounded bg-amber-500/10 border border-amber-500/30">
-        <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+      <div className="flex items-start gap-2 px-3 py-2 rounded-[4px] bg-amber-500/10 border border-amber-500/30">
+        <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
         <span className="text-xs text-amber-200">
           {t.ui("buildCard.autoTuneErWarning")}
         </span>
@@ -181,7 +181,7 @@ function MainStatColumn({
 }) {
   const { t } = useLanguage();
   return (
-    <div className="rounded bg-muted/30 px-2 py-1.5">
+    <div className="rounded-[4px] bg-muted/30 px-2 py-1.5">
       <span className="text-xs font-medium block mb-1.5">{label}</span>
       <div className="flex flex-wrap gap-1.5">
         {weights.map(({ stat, weight }) => {
@@ -284,16 +284,16 @@ function TeamBreakdownSection({ breakdown }: { breakdown: TeamBreakdown }) {
   const qualifyingCount = qualifying.length;
 
   return (
-    <div className="border border-border/30 rounded">
+    <div className="border border-border/30 rounded-[4px]">
       <button
         type="button"
         className="flex items-center gap-2 w-full px-2 py-1.5 text-left hover:bg-muted/30"
         onClick={() => setExpanded(!expanded)}
       >
         {expanded ? (
-          <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" />
+          <ChevronDown className="w-3.5 h-3.5 shrink-0" />
         ) : (
-          <ChevronRight className="w-3.5 h-3.5 flex-shrink-0" />
+          <ChevronRight className="w-3.5 h-3.5 shrink-0" />
         )}
         <span className="text-sm font-medium">{breakdown.label}</span>
         <span className="text-xs text-muted-foreground ml-auto">

@@ -373,7 +373,7 @@ export function FormulaSelectorCard({
                                           key={rx}
                                           type="button"
                                           className={cn(
-                                            "px-1.5 py-0.5 rounded text-[10px] md:text-xs font-semibold border transition-colors",
+                                            "px-1.5 py-0.5 rounded-[4px] text-[10px] md:text-xs font-semibold border transition-colors",
                                             isRxActive
                                               ? "bg-primary/20 border-primary/40 text-primary"
                                               : "bg-secondary/40 border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
@@ -425,7 +425,7 @@ export function FormulaSelectorCard({
                           return (
                             <div
                               key={formulaId}
-                              className="px-2 py-0.5 rounded transition-colors"
+                              className="px-2 py-0.5 rounded-[4px] transition-colors"
                             >
                               <div className="flex items-center gap-2">
                                 {iconCharRes && (

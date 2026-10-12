@@ -214,7 +214,7 @@ export function ArtifactSwapDialog({
                   ? "opacity-50 cursor-not-allowed border-sky-800/30 bg-sky-950/10"
                   : "hover:bg-white/5",
                 isSelected
-                  ? "border-primary bg-primary/10 shadow-sm"
+                  ? "border-primary bg-primary/10 shadow-xs"
                   : !isFrozen && "border-border/20 bg-black/10"
               )}
             >

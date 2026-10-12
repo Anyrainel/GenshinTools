@@ -5,6 +5,31 @@ import baseline from "./fixtures/ui-invariants-baseline.json";
 import { collectUiViolations, findUiViolations } from "./helpers/uiInvariants";
 
 describe("shared UI invariants", () => {
+  it("rejects stock source drift rather than adding visual debt allowances", () => {
+    const root = fs.mkdtempSync(path.join(os.tmpdir(), "shadcn-drift-"));
+    try {
+      fs.mkdirSync(path.join(root, "docs/audits"), { recursive: true });
+      fs.mkdirSync(path.join(root, "src/components/ui"), { recursive: true });
+      fs.writeFileSync(
+        path.join(root, "docs/audits/shadcn-stock.json"),
+        JSON.stringify({
+          components: [
+            { path: "src/components/ui/button.tsx", sha256: "wrong" },
+          ],
+        })
+      );
+      fs.writeFileSync(
+        path.join(root, "src/components/ui/button.tsx"),
+        "changed"
+      );
+      expect(() => collectUiViolations(root)).toThrow(
+        "Stock shadcn source drift: src/components/ui/button.tsx"
+      );
+    } finally {
+      fs.rmSync(root, { recursive: true, force: true });
+    }
+  });
+
   it("rejects new violations without changing existing visual debt", () => {
     const root = path.resolve(
       path.dirname(fileURLToPath(import.meta.url)),
@@ -50,3 +75,6 @@ describe("shared UI invariants", () => {
     ).toEqual([]);
   });
 });
+
+import fs from "node:fs";
+import os from "node:os";

@@ -126,7 +126,7 @@ export const ArtifactBuildsView = forwardRef<
         <div className="space-y-2 lg:space-y-3">
           {/* Sticky computing indicator */}
           {isComputing && (
-            <div className="sticky top-0 z-10 flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20 text-sm text-primary backdrop-blur-sm">
+            <div className="sticky top-0 z-10 flex items-center gap-2 px-4 py-3 rounded-lg bg-primary/10 border border-primary/20 text-sm text-primary backdrop-blur-xs">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span>{t.ui("computeFilters.computing")}</span>
             </div>

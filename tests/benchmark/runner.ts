@@ -1,6 +1,7 @@
 import { installNodeReferenceFetch } from "../../scripts/lib/nodeReferenceFetch.mjs";
 
 installNodeReferenceFetch();
+
 import "@/providers/reference/statLoaders";
 /**
  * Shared runner utilities for the optimizer benchmark.

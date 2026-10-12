@@ -50,10 +50,10 @@ function InclusionLegend({
         <Switch
           checked
           aria-label={onLabel}
-          className="pointer-events-none flex-shrink-0 data-[state=checked]:bg-primary/70"
+          className="pointer-events-none shrink-0 data-[state=checked]:bg-primary/70"
         />
         <span className="flex items-center gap-1.5">
-          <Check className="h-4 w-4 flex-shrink-0 text-emerald-500" />
+          <Check className="h-4 w-4 shrink-0 text-emerald-500" />
           <span className="font-medium text-foreground">{onLabel}</span>
         </span>
       </div>
@@ -61,10 +61,10 @@ function InclusionLegend({
         <Switch
           checked={false}
           aria-label={offLabel}
-          className="pointer-events-none flex-shrink-0 data-[state=checked]:bg-primary/70"
+          className="pointer-events-none shrink-0 data-[state=checked]:bg-primary/70"
         />
         <span className="flex items-center gap-1.5">
-          <X className="h-4 w-4 flex-shrink-0 text-destructive" />
+          <X className="h-4 w-4 shrink-0 text-destructive" />
           <span className="font-medium text-foreground">{offLabel}</span>
         </span>
       </div>

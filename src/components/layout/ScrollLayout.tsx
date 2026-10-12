@@ -34,10 +34,7 @@ export function ScrollLayout({
       {/* Fixed header - not scrollable */}
       {header && (
         <div
-          className={cn(
-            "flex-shrink-0 container pb-2 2xl:pb-4",
-            headerClassName
-          )}
+          className={cn("shrink-0 container pb-2 2xl:pb-4", headerClassName)}
         >
           {header}
         </div>

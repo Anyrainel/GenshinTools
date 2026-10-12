@@ -85,7 +85,7 @@ export function EmptyState({
           <div
             className={`absolute inset-0 ${glowColor} rounded-full blur-xl`}
           />
-          <div className="relative bg-background p-4 rounded-full border border-border shadow-sm">
+          <div className="relative bg-background p-4 rounded-full border border-border shadow-xs">
             <Icon className={`w-12 h-12 ${iconColor} opacity-80`} />
           </div>
         </div>

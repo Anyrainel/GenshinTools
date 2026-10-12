@@ -196,21 +196,21 @@ function PartTab({
                     {name}
                   </span>
                   {buff.source.origin && (
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded leading-none shrink-0">
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-[4px] leading-none shrink-0">
                       {t.origin(buff.source.origin)}
                     </span>
                   )}
                   {buff.source.triggers?.map((trig) => (
                     <span
                       key={trig}
-                      className="text-xs font-medium text-primary bg-primary/10 px-1 py-0.5 rounded leading-none shrink-0"
+                      className="text-xs font-medium text-primary bg-primary/10 px-1 py-0.5 rounded-[4px] leading-none shrink-0"
                     >
                       {trig}
                     </span>
                   ))}
                   <span
                     className={cn(
-                      "ml-auto text-xs font-bold uppercase px-1.5 py-0.5 rounded shrink-0",
+                      "ml-auto text-xs font-bold uppercase px-1.5 py-0.5 rounded-[4px] shrink-0",
                       getReceiverColor(
                         buff.target.receiver,
                         !!buff.target.charId
@@ -332,7 +332,7 @@ export function PartBuffDialog({
     <>
       <button
         type="button"
-        className="relative p-0.5 rounded hover:bg-muted/50 transition-colors"
+        className="relative p-0.5 rounded-[4px] hover:bg-muted/50 transition-colors"
         aria-label={t.ui("teamComp.buffActivation")}
         onClick={() => {
           setActiveTab(initialTab);

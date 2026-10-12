@@ -107,20 +107,20 @@ describe("getCrBudget", () => {
     { weaponId: "heretics_molten_blade", expected: 0.276 },
     { weaponId: "jade_vista", expected: 0.276 },
     { weaponId: "whitelake_frostfeather", expected: 0.221 },
-  ])("includes the current CR secondary stat for $weaponId", ({
-    weaponId,
-    expected,
-  }) => {
-    const result = getCrBudget({
-      characterId: "hu_tao",
-      characterLevel: 90,
-      constellation: 0,
-      weaponId,
-      weaponRefinement: 1,
-    });
+  ])(
+    "includes the current CR secondary stat for $weaponId",
+    ({ weaponId, expected }) => {
+      const result = getCrBudget({
+        characterId: "hu_tao",
+        characterLevel: 90,
+        constellation: 0,
+        weaponId,
+        weaponRefinement: 1,
+      });
 
-    expect(result.weaponSecondaryCr).toBeCloseTo(expected, 6);
-  });
+      expect(result.weaponSecondaryCr).toBeCloseTo(expected, 6);
+    }
+  );
 
   it("handles missing weapon gracefully", () => {
     const char: CharacterData = {
@@ -263,19 +263,18 @@ describe("getCrBudget", () => {
       constellation: 1,
       expected: 0.2,
     },
-  ])("includes the current self-applicable CR ceiling for $label", ({
-    characterId,
-    constellation,
-    expected,
-  }) => {
-    expect(
-      getCrBudget({
-        characterId,
-        characterLevel: 90,
-        constellation,
-      }).characterBuffCr
-    ).toBe(expected);
-  });
+  ])(
+    "includes the current self-applicable CR ceiling for $label",
+    ({ characterId, constellation, expected }) => {
+      expect(
+        getCrBudget({
+          characterId,
+          characterLevel: 90,
+          constellation,
+        }).characterBuffCr
+      ).toBe(expected);
+    }
+  );
 
   it("preserves Kokomi's negative CR adjustment in artifact headroom", () => {
     const result = getCrBudget({

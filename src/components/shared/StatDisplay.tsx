@@ -47,7 +47,7 @@ export function StatDisplay({
         )}
       >
         <span className="min-w-0 flex-1 truncate">{statName}</span>
-        <span className="flex-shrink-0 whitespace-nowrap">{displayValue}</span>
+        <span className="shrink-0 whitespace-nowrap">{displayValue}</span>
       </div>
     );
   };
@@ -70,7 +70,7 @@ export function StatDisplay({
         </div>
         <div
           className={cn(
-            "shrink-0 whitespace-nowrap rounded bg-black/40 font-mono",
+            "shrink-0 whitespace-nowrap rounded-[4px] bg-black/40 font-mono",
             compact ? "text-[10px]" : "text-xs px-1",
             getRarityColor(artifact.rarity, "text")
           )}

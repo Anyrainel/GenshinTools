@@ -88,7 +88,7 @@ export function FeatureCard({
       {banner ? (
         <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-3 md:gap-6 p-4 md:py-4 md:px-6">
           <div className="flex items-center gap-2.5 shrink-0">
-            <div className="p-1.5 rounded-lg bg-primary/20 text-primary backdrop-blur-sm border border-primary/30">
+            <div className="p-1.5 rounded-lg bg-primary/20 text-primary backdrop-blur-xs border border-primary/30">
               {icon}
             </div>
             <span className="text-sm font-semibold text-foreground/60 uppercase tracking-wider">
@@ -117,7 +117,7 @@ export function FeatureCard({
         <>
           <div className="relative z-10 flex flex-col h-full p-5 pb-14 gap-2 md:max-w-[52%]">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/20 text-primary backdrop-blur-sm border border-primary/30 shadow-lg shadow-primary/10">
+              <div className="p-2 rounded-lg bg-primary/20 text-primary backdrop-blur-xs border border-primary/30 shadow-lg shadow-primary/10">
                 {icon}
               </div>
               <span className="text-sm font-semibold text-foreground/60 uppercase tracking-wider">

@@ -1,0 +1,63 @@
+{
+  "format": "GOOD",
+  "version": 3,
+  "source": "yas-GOODScanner",
+  "characters": [
+    {
+      "key": "Amber",
+      "constellation": 0,
+      "level": 20,
+      "ascension": 1,
+      "talent": { "auto": 1, "skill": 1, "burst": 1 }
+    }
+  ],
+  "weapons": [
+    {
+      "key": "FavoniusWarbow",
+      "level": 1,
+      "ascension": 0,
+      "refinement": 1,
+      "location": "Amber",
+      "lock": true
+    }
+  ],
+  "artifacts": [
+    {
+      "setKey": "CrimsonWitchOfFlames",
+      "slotKey": "flower",
+      "level": 20,
+      "rarity": 5,
+      "mainStatKey": "hp",
+      "location": "Amber",
+      "lock": true,
+      "astralMark": true,
+      "elixirCrafted": false,
+      "totalRolls": 9,
+      "substats": [
+        { "key": "critDMG_", "value": 28.8 },
+        { "key": "critRate_", "value": 6.6 },
+        { "key": "atk_", "value": 5.8, "initialValue": 5.8 },
+        { "key": "eleMas", "value": 40 }
+      ]
+    },
+    {
+      "setKey": "CrimsonWitchOfFlames",
+      "slotKey": "plume",
+      "level": 0,
+      "rarity": 5,
+      "mainStatKey": "atk",
+      "location": "",
+      "lock": false,
+      "astralMark": false,
+      "elixirCrafted": true,
+      "totalRolls": 3,
+      "substats": [
+        { "key": "critDMG_", "value": 7.8, "initialValue": 7.8 },
+        { "key": "atk_", "value": 5.8 },
+        { "key": "eleMas", "value": 23 }
+      ],
+      "unactivatedSubstats": [{ "key": "critRate_", "value": 3.9 }]
+    }
+  ],
+  "achievements": [81001]
+}

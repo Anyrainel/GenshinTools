@@ -491,7 +491,7 @@ export function AppBar({
     <div className="flex shrink-0 items-center gap-1">
       <Link
         to="/"
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md hover:bg-accent/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={t.ui("app.brand")}
         title={t.ui("common.home")}
       >
@@ -560,8 +560,8 @@ export function AppBar({
     <>
       <header
         className={cn(
-          "bg-card/20 backdrop-blur-sm",
-          "flex-shrink-0 z-50 sticky top-0 transition-transform duration-300",
+          "bg-card/20 backdrop-blur-xs",
+          "shrink-0 z-50 sticky top-0 transition-transform duration-300",
           // Hide on mobile when scrolling down
           isHidden && "md:translate-y-0 -translate-y-full",
           className
@@ -758,8 +758,8 @@ export function AppBar({
       {hasTabs && (
         <div
           className={cn(
-            "border-b border-border/50 bg-card/20 backdrop-blur-sm",
-            "hidden md:block flex-shrink-0 z-40"
+            "border-b border-border/50 bg-card/20 backdrop-blur-xs",
+            "hidden md:block shrink-0 z-40"
           )}
         >
           <div className="container mx-auto pb-2">

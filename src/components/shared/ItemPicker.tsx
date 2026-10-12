@@ -361,7 +361,7 @@ function PickerTrigger({
     return (
       <div
         className={cn(
-          "rounded-md border-2 border-border transition-all flex items-center justify-center shadow-sm relative overflow-hidden ring-1 ring-inset ring-foreground/20",
+          "rounded-md border-2 border-border transition-all flex items-center justify-center shadow-xs relative overflow-hidden ring-1 ring-inset ring-foreground/20",
           disabled
             ? "bg-muted opacity-70"
             : "bg-gradient-select hover:shadow-md"
@@ -799,7 +799,7 @@ function PickerContent({
       }}
       className="flex flex-col h-full w-full"
     >
-      <div className="p-3 space-y-2 shrink-0 bg-background/95 backdrop-blur z-10 border-b">
+      <div className="p-3 space-y-2 shrink-0 bg-background/95 backdrop-blur-sm z-10 border-b">
         {type === "artifact" && (
           <TabsList className="w-full grid grid-cols-2">
             <TabsTrigger value="4pc">{t.ui("buildCard.4pc")}</TabsTrigger>
@@ -1092,7 +1092,7 @@ function FilterChip({
       className={cn(
         "h-7 border rounded-md text-xs font-medium transition-all shrink-0 flex items-center justify-center",
         isActive
-          ? "bg-primary/80 text-primary-foreground border-primary shadow-sm"
+          ? "bg-primary/80 text-primary-foreground border-primary shadow-xs"
           : "bg-secondary text-secondary-foreground border-transparent hover:bg-secondary/80",
         className
       )}

@@ -137,7 +137,7 @@ function CharacterCardComponent({
               nameClassName={isVeryNarrow ? "text-base" : undefined}
             >
               {!isVeryNarrow && (
-                <div className="3xl:ml-2 flex flex-shrink-0 items-center gap-1.5 text-muted-foreground text-xs overflow-hidden text-ellipsis whitespace-nowrap">
+                <div className="3xl:ml-2 flex shrink-0 items-center gap-1.5 text-muted-foreground text-xs overflow-hidden text-ellipsis whitespace-nowrap">
                   <span>
                     {isMobile ? "A" : t.ui("accountData.talents.auto")}{" "}
                     <span className="text-foreground/90">
@@ -171,9 +171,9 @@ function CharacterCardComponent({
             <button
               type="button"
               onClick={onEdit}
-              className="flex-shrink-0 w-7 h-7 rounded-md bg-primary/20 hover:bg-primary/30 border border-primary/20 flex items-center justify-center transition-colors self-end mb-1 z-10"
+              className="shrink-0 w-7 h-7 rounded-md bg-primary/20 hover:bg-primary/30 border border-primary/20 flex items-center justify-center transition-colors self-end mb-1 z-10"
             >
-              <Pencil className="w-3.5 h-3.5 text-primary drop-shadow-sm" />
+              <Pencil className="w-3.5 h-3.5 text-primary drop-shadow-xs" />
             </button>
           )}
 
@@ -182,7 +182,7 @@ function CharacterCardComponent({
             {/* ... tooltip trigger ... */}
             <TooltipTrigger asChild>
               {weapon && weaponInfo ? (
-                <div className="cursor-help flex-shrink-0">
+                <div className="cursor-help shrink-0">
                   <ItemIcon
                     weaponId={weapon.key}
                     badge={weapon.refinement}
@@ -191,7 +191,7 @@ function CharacterCardComponent({
                   />
                 </div>
               ) : (
-                <div className="w-16 h-16 bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center opacity-30 cursor-help flex-shrink-0">
+                <div className="w-16 h-16 bg-black/40 border-2 border-dashed border-white/10 flex items-center justify-center opacity-30 cursor-help shrink-0">
                   <Sword className="w-6 h-6" />
                 </div>
               )}

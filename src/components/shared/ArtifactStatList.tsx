@@ -65,11 +65,11 @@ export function ArtifactStatList({
         >
           <span className="flex items-center gap-1.5 flex-1 whitespace-nowrap overflow-hidden">
             <span>{compact ? t.statMin(statKey) : t.statShort(statKey)}</span>
-            <span className="text-xs px-1 py-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums">
+            <span className="text-xs px-1 py-0.5 rounded-[4px] bg-white/10 text-amber-200/80 font-mono tabular-nums">
               {rollCount.toFixed(1)}
             </span>
           </span>
-          <span className="flex-shrink-0 font-mono">{displayValue}</span>
+          <span className="shrink-0 font-mono">{displayValue}</span>
         </div>
       );
     }
@@ -80,7 +80,7 @@ export function ArtifactStatList({
           <span className="min-w-0 truncate">
             {compact ? t.statMin(statKey) : t.statShort(statKey)}
           </span>
-          <span className="text-xs px-1 py-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums shrink-0">
+          <span className="text-xs px-1 py-0.5 rounded-[4px] bg-white/10 text-amber-200/80 font-mono tabular-nums shrink-0">
             {rollCount.toFixed(1)}
           </span>
         </span>
@@ -108,7 +108,7 @@ export function ArtifactStatList({
           </span>
           <span
             className={cn(
-              "text-xs px-1 py-0.5 rounded bg-black/40 font-mono tabular-nums shrink-0",
+              "text-xs px-1 py-0.5 rounded-[4px] bg-black/40 font-mono tabular-nums shrink-0",
               getRarityColor(artifact.rarity, "text")
             )}
           >
@@ -164,7 +164,7 @@ export function ArtifactStatList({
                     ? t.statMin(key as SubStat)
                     : t.statShort(key as SubStat)}
                 </span>
-                <span className="flex-shrink-0 font-mono">
+                <span className="shrink-0 font-mono">
                   {fmtStat(key as SubStat, val, false, true)}
                 </span>
               </div>

@@ -30,7 +30,7 @@ export function StatEntryRow({
   return (
     <div
       className={cn(
-        "flex items-center gap-1 text-xs bg-black/5 px-1 rounded",
+        "flex items-center gap-1 text-xs bg-black/5 px-1 rounded-[4px]",
         className
       )}
     >

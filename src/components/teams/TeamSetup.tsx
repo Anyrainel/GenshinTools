@@ -157,7 +157,7 @@ function TeamSlotCard({
 
   return (
     <div
-      className={`bg-gradient-card ${borderColor} border rounded-xl p-3 flex flex-col gap-2 relative group shadow`}
+      className={`bg-gradient-card ${borderColor} border rounded-xl p-3 flex flex-col gap-2 relative group shadow-sm`}
     >
       <button
         type="button"

@@ -2,14 +2,17 @@ import { ArrowRight, CircleHelp } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { ArtifactStatList } from "@/components/shared/ArtifactStatList";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { PortalHoverCardContent as HoverCardContent } from "@/components/shared/PortalHoverCardContent";
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerTitle,
 } from "@/components/ui/drawer";
-import { HoverCard, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Slot } from "@/domain/enums";

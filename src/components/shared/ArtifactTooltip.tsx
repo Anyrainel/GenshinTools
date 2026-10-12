@@ -30,7 +30,7 @@ export function ArtifactTooltip({
         )}
       >
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/60 to-transparent pointer-events-none" />
 
         <div className="relative z-10 flex-1">
           <h3 className="font-bold text-lg leading-tight text-white mb-1 drop-shadow-md">

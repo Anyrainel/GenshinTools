@@ -205,7 +205,7 @@ Dependency rules enforce every layer for both runtime and type imports. The
 cycle gate rejects executable cycles everywhere, with no damage-engine folder
 exemption. Erased TypeScript references between an engine class and its method
 contracts may form type cycles; they cannot bypass layer ownership rules.
-The Cloudflare Worker test runtime supplies the virtual cloudflare:test module.
+The Cloudflare Worker test runtime supplies the virtual cloudflare:workers module.
 
 npm run check runs the complete validation stack. Husky is installed by
 prepare; commits gate types, dependencies, negative rule fixtures and related

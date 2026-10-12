@@ -187,7 +187,7 @@ export function FeatureMatrix() {
                   <li key={item.href}>
                     <Link
                       to={item.href}
-                      className="group/link block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                      className="group/link block rounded-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                     >
                       <span className="inline-flex items-center gap-1.5 border-b border-transparent text-sm font-semibold text-foreground group-hover/link:border-primary group-hover/link:text-primary">
                         {Icon && (

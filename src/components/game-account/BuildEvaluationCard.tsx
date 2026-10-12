@@ -102,7 +102,7 @@ function BuildEvaluationCardComponent({
                 </TooltipTrigger>
                 <TooltipContent
                   side="bottom"
-                  className="text-xs bg-card/90 backdrop-blur-sm"
+                  className="text-xs bg-card/90 backdrop-blur-xs"
                 >
                   {t.character(charId)}
                 </TooltipContent>
@@ -143,7 +143,7 @@ function BuildEvaluationCardComponent({
           <span
             key={stat}
             className={cn(
-              "inline-flex items-center px-1 2xl:px-1.5 py-0 rounded text-[11px] 2xl:text-xs font-medium leading-relaxed",
+              "inline-flex items-center px-1 2xl:px-1.5 py-0 rounded-[4px] text-[11px] 2xl:text-xs font-medium leading-relaxed",
               weight >= 100
                 ? "bg-amber-500/20 text-amber-300"
                 : weight >= 75
@@ -185,7 +185,7 @@ function BuildEvaluationCardComponent({
                   />
                 </ArtifactDataHoverCard>
               ) : (
-                <div className="w-12 h-12 rounded border border-dashed border-border flex items-center justify-center">
+                <div className="w-12 h-12 rounded-[4px] border border-dashed border-border flex items-center justify-center">
                   <span className="text-xs text-muted-foreground">--</span>
                 </div>
               )}

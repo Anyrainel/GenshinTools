@@ -7,10 +7,11 @@ import {
   requireUser,
 } from "../../worker/auth";
 import { createTestJwt, sha256Hex } from "./jwtTestUtils";
+import { mockJwks } from "./network";
 
 describe("Worker auth boundary", () => {
   afterEach(() => {
-    vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   it("rejects requests without a bearer token", async () => {
@@ -61,10 +62,7 @@ describe("Worker auth boundary", () => {
         scope: "profile",
       },
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
     const db = new FakeAuthD1Database();
 
     const result = await requireUser(
@@ -108,10 +106,7 @@ describe("Worker auth boundary", () => {
         email: "session@example.com",
       },
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
     const db = new FakeAuthD1Database();
     const env = {
       BACKUP_DB: db,
@@ -192,10 +187,7 @@ describe("Worker auth boundary", () => {
       },
       expiresIn: "30d",
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
     const db = new FakeAuthD1Database();
     const env = {
       BACKUP_DB: db,
@@ -250,10 +242,7 @@ describe("Worker auth boundary", () => {
       audience,
       subject: "logto-user-logout",
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
     const db = new FakeAuthD1Database();
     const env = {
       BACKUP_DB: db,
@@ -300,10 +289,7 @@ describe("Worker auth boundary", () => {
       audience: "wrong-spa-app",
       subject: "logto-user-1",
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
 
     const result = await requireUser(
       request({ Authorization: `Bearer ${token}` }),
@@ -328,10 +314,7 @@ describe("Worker auth boundary", () => {
       audience: "test-spa-app",
       subject: "logto-user-1",
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
 
     const result = await requireUser(
       request({ Authorization: `Bearer ${token}` }),
@@ -357,10 +340,7 @@ describe("Worker auth boundary", () => {
       subject: "logto-user-1",
       expiresIn: Math.floor(Date.now() / 1000) - 60,
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
 
     const result = await requireUser(
       request({ Authorization: `Bearer ${token}` }),
@@ -384,10 +364,7 @@ describe("Worker auth boundary", () => {
       issuer,
       audience: "test-spa-app",
     });
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(issuer, jwks);
 
     const result = await requireUser(
       request({ Authorization: `Bearer ${token}` }),

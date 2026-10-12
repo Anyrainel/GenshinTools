@@ -48,7 +48,7 @@ export function MixedSetTooltip(props: MixedSetTooltipProps) {
             return (
               <div
                 key={sid}
-                className="w-9 h-9 rounded border border-white/10 overflow-hidden bg-slate-800 shrink-0"
+                className="w-9 h-9 rounded-[4px] border border-white/10 overflow-hidden bg-slate-800 shrink-0"
               >
                 <img
                   src={getAssetUrl(art.imagePaths.flower)}
@@ -72,7 +72,7 @@ export function MixedSetTooltip(props: MixedSetTooltipProps) {
           "bg-rarity-gradient-5" // Hardcoded for 2pc+2pc which is always considered max rarity
         )}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/60 to-transparent pointer-events-none" />
         <div className="relative z-10 flex-1">
           <h3 className="font-bold text-lg leading-tight text-white mb-1 drop-shadow-md">
             {t.ui("buildCard.2pc+2pc")}

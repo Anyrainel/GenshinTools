@@ -1,6 +1,14 @@
-import { SELF } from "cloudflare:test";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { exports } from "cloudflare:workers";
+import { HttpResponse, http } from "msw";
+import { describe, expect, it, vi } from "vitest";
 import worker, { isStaticAssetRequest } from "../../worker/index";
+import { network } from "./network";
+
+type UpstreamRequest = {
+  url: string;
+  method: string;
+  headers: { get(name: string): string | null };
+};
 
 const hoyolabCredentialHeaders = {
   "x-hoyolab-ltuid-v2": "uid",
@@ -9,14 +17,13 @@ const hoyolabCredentialHeaders = {
 };
 
 describe("Worker API routing", () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
   it("handles Enka CORS preflight in the Workers runtime", async () => {
-    const response = await SELF.fetch("https://example.com/api/enka/uid/1", {
-      method: "OPTIONS",
-    });
+    const response = await exports.default.fetch(
+      "https://example.com/api/enka/uid/1",
+      {
+        method: "OPTIONS",
+      }
+    );
 
     expect(response.status).toBe(204);
     expect(response.headers.get("Access-Control-Allow-Origin")).toBe("*");
@@ -26,9 +33,12 @@ describe("Worker API routing", () => {
   });
 
   it("rejects HoYoLAB requests without a region and endpoint", async () => {
-    const response = await SELF.fetch("https://example.com/api/hoyolab", {
-      method: "POST",
-    });
+    const response = await exports.default.fetch(
+      "https://example.com/api/hoyolab",
+      {
+        method: "POST",
+      }
+    );
 
     expect(response.status).toBe(400);
     await expect(response.json()).resolves.toMatchObject({
@@ -37,26 +47,28 @@ describe("Worker API routing", () => {
   });
 
   it("proxies only the Enka UID endpoint", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ playerInfo: {} }), {
-        headers: { "Content-Type": "application/json" },
+    const upstreamRequests: UpstreamRequest[] = [];
+    network.use(
+      http.get("https://enka.network/api/uid/123456789", ({ request }) => {
+        upstreamRequests.push(request);
+        return HttpResponse.json({ playerInfo: {} });
       })
     );
 
-    const response = await worker.fetch(
-      new Request("https://example.com/api/enka/uid/123456789"),
-      fakeAssetEnv()
+    const response = await exports.default.fetch(
+      "https://example.com/api/enka/uid/123456789"
     );
 
     expect(response.status).toBe(200);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://enka.network/api/uid/123456789",
-      expect.objectContaining({ method: "GET" })
+    expect(upstreamRequests).toHaveLength(1);
+    expect(upstreamRequests[0].url).toBe(
+      "https://enka.network/api/uid/123456789"
     );
+    expect(upstreamRequests[0].method).toBe("GET");
   });
 
   it("rejects unsupported Enka proxy paths before upstream fetch", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch");
+    const fetchMock = captureOutboundRequests();
 
     const response = await worker.fetch(
       new Request("https://example.com/api/enka/avatar/123456789"),
@@ -71,64 +83,63 @@ describe("Worker API routing", () => {
   });
 
   it("proxies only supported HoYoLAB endpoints", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ retcode: 0, message: "OK", data: {} }), {
-        headers: { "Content-Type": "application/json" },
-      })
+    const upstreamRequests: UpstreamRequest[] = [];
+    network.use(
+      http.post(
+        "https://sg-public-api.hoyolab.com/event/game_record/genshin/api/character/list",
+        ({ request }) => {
+          upstreamRequests.push(request);
+          return HttpResponse.json({ retcode: 0, message: "OK", data: {} });
+        }
+      )
     );
 
-    const response = await worker.fetch(
+    const response = await exports.default.fetch(
       new Request("https://example.com/api/hoyolab/os/character/list", {
         method: "POST",
         headers: hoyolabCredentialHeaders,
         body: JSON.stringify({ role_id: "800000000", server: "os_asia" }),
-      }),
-      fakeAssetEnv()
+      })
     );
 
     expect(response.status).toBe(200);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://sg-public-api.hoyolab.com/event/game_record/genshin/api/character/list",
-      expect.objectContaining({
-        method: "POST",
-        headers: expect.objectContaining({
-          Cookie: "ltuid_v2=uid; ltmid_v2=mid; ltoken_v2=token",
-        }),
-      })
+    expect(upstreamRequests).toHaveLength(1);
+    expect(upstreamRequests[0].method).toBe("POST");
+    expect(upstreamRequests[0].headers.get("Cookie")).toBe(
+      "ltuid_v2=uid; ltmid_v2=mid; ltoken_v2=token"
     );
   });
 
   it("uses the current upstream 米游社 web-client headers for CN requests", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(JSON.stringify({ retcode: 0, message: "OK", data: {} }), {
-        headers: { "Content-Type": "application/json" },
-      })
+    const upstreamRequests: UpstreamRequest[] = [];
+    network.use(
+      http.post(
+        "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character/list",
+        ({ request }) => {
+          upstreamRequests.push(request);
+          return HttpResponse.json({ retcode: 0, message: "OK", data: {} });
+        }
+      )
     );
 
-    await worker.fetch(
+    await exports.default.fetch(
       new Request("https://example.com/api/hoyolab/cn/character/list", {
         method: "POST",
         headers: hoyolabCredentialHeaders,
         body: JSON.stringify({ role_id: "123456789", server: "cn_gf01" }),
-      }),
-      fakeAssetEnv()
-    );
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character/list",
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          "x-rpc-app_version": "2.109.0",
-          "x-rpc-channel": "miyousheluodi",
-          "X-Requested-With": "com.mihoyo.hyperion",
-          "User-Agent": expect.stringContaining("miHoYoBBS/2.109.0"),
-        }),
       })
     );
+
+    expect(upstreamRequests).toHaveLength(1);
+    const headers = upstreamRequests[0].headers;
+    expect(headers.get("x-rpc-app_version")).toBe("2.109.0");
+    expect(headers.get("x-rpc-channel")).toBe("miyousheluodi");
+    expect(headers.get("X-Requested-With")).toBe("com.mihoyo.hyperion");
+    expect(headers.get("User-Agent")).toContain("miHoYoBBS/2.109.0");
   });
 
   it("rejects incomplete HoYoLAB credentials before upstream fetch", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch");
+    const fetchMock = captureOutboundRequests();
 
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/character/list", {
@@ -151,7 +162,7 @@ describe("Worker API routing", () => {
   });
 
   it("rejects unsupported HoYoLAB proxy paths before upstream fetch", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch");
+    const fetchMock = captureOutboundRequests();
 
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/account/info", {
@@ -170,7 +181,7 @@ describe("Worker API routing", () => {
   });
 
   it("rejects malformed HoYoLAB detail bodies before upstream fetch", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch");
+    const fetchMock = captureOutboundRequests();
 
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/character/detail", {
@@ -187,7 +198,7 @@ describe("Worker API routing", () => {
   });
 
   it("rejects HoYoLAB UID and server mismatches before upstream fetch", async () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch");
+    const fetchMock = captureOutboundRequests();
 
     const response = await worker.fetch(
       new Request("https://example.com/api/hoyolab/os/character/list", {
@@ -204,7 +215,9 @@ describe("Worker API routing", () => {
   });
 
   it("returns JSON 404s for unknown API routes", async () => {
-    const response = await SELF.fetch("https://example.com/api/missing");
+    const response = await exports.default.fetch(
+      "https://example.com/api/missing"
+    );
 
     expect(response.status).toBe(404);
     expect(response.headers.get("Content-Type")).toContain("application/json");
@@ -254,6 +267,17 @@ describe("Worker API routing", () => {
     expect(isStaticAssetRequest("/team-comp/damage")).toBe(false);
   });
 });
+
+function captureOutboundRequests() {
+  const requests = vi.fn<(request: UpstreamRequest) => void>();
+  network.use(
+    http.all("*", ({ request }) => {
+      requests(request);
+      return HttpResponse.json({});
+    })
+  );
+  return requests;
+}
 
 function fakeAssetEnv(): Env {
   return {

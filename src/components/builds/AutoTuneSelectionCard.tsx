@@ -110,7 +110,7 @@ export function AutoTuneSelectionCard({
         {/* Selection indicator */}
         <div
           className={cn(
-            "grid place-content-center h-4 w-4 shrink-0 rounded-sm border shadow",
+            "grid place-content-center h-4 w-4 shrink-0 rounded-sm border shadow-sm",
             !noTeams && entry.selected
               ? "border-primary bg-primary/70 text-primary-foreground"
               : "border-primary",

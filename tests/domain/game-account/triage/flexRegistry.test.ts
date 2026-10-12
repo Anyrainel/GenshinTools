@@ -2,23 +2,23 @@ import { describe, expect, it } from "vitest";
 import { buildCustomFlexPattern } from "@/domain/game-account/triage/flexRegistry";
 
 describe("buildCustomFlexPattern", () => {
-  it.each([
-    "goblet",
-    "circlet",
-  ] as const)("supports an EM %s with no substat requirements", (slot) => {
-    const result = buildCustomFlexPattern({
-      slot,
-      mainStat: "em",
-      requiredSubs: [],
-    });
-    expect(result).toMatchObject({
-      slot,
-      mainStat: "em",
-      requiredSubs: [],
-      custom: true,
-    });
-    expect(result!.rarity).toBeGreaterThan(0);
-  });
+  it.each(["goblet", "circlet"] as const)(
+    "supports an EM %s with no substat requirements",
+    (slot) => {
+      const result = buildCustomFlexPattern({
+        slot,
+        mainStat: "em",
+        requiredSubs: [],
+      });
+      expect(result).toMatchObject({
+        slot,
+        mainStat: "em",
+        requiredSubs: [],
+        custom: true,
+      });
+      expect(result!.rarity).toBeGreaterThan(0);
+    }
+  );
 
   it("returns correct key, sorted subs, rarity, and custom flag", () => {
     const result = buildCustomFlexPattern({

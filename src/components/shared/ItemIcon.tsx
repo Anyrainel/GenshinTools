@@ -243,7 +243,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         <div
           ref={ref}
           className={cn(
-            "overflow-hidden relative flex-shrink-0 border-2 border-rarity-5 bg-item-mixed",
+            "overflow-hidden relative shrink-0 border-2 border-rarity-5 bg-item-mixed",
             frozen && "ring-2 ring-cyan-400/60",
             className
           )}
@@ -315,7 +315,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
     const iconElement = (
       <div
         className={cn(
-          "relative overflow-hidden flex-shrink-0 select-none",
+          "relative overflow-hidden shrink-0 select-none",
           getRarityColor(rarity, "gradient"),
           frozen && "ring-2 ring-cyan-400/60"
         )}
@@ -343,7 +343,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         {/* Lock indicator - top right */}
         {showLock && (
           <div
-            className="absolute flex items-center justify-center bg-red-900/90 shadow-sm"
+            className="absolute flex items-center justify-center bg-red-900/90 shadow-xs"
             style={{
               width: corner.size,
               height: corner.size,
@@ -383,7 +383,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         {/* Element badge - top right (alternative to lock) */}
         {showElement && (
           <div
-            className="absolute flex items-center justify-center bg-black/60 shadow-sm"
+            className="absolute flex items-center justify-center bg-black/60 shadow-xs"
             style={{
               width: corner.size,
               height: corner.size,
@@ -408,7 +408,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         {/* Weapon type badge - top right (rounded with backdrop blur) */}
         {weaponTypeBadge && !showLock && !showElement && (
           <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
-            <div className="relative bg-black/30 rounded-full backdrop-blur-sm">
+            <div className="relative bg-black/30 rounded-full backdrop-blur-xs">
               <img
                 src={getAssetUrl(weaponTypeBadge)}
                 alt="weapon type"
@@ -426,7 +426,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           const badgeSize = Math.round(iconSize * 0.34);
           return (
             <div
-              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-sm rounded-full"
+              className="absolute bottom-0 left-1/2 -translate-x-1/2 bg-black/50 backdrop-blur-xs rounded-full"
               style={{ width: badgeSize, height: badgeSize, padding: 1 }}
             >
               <img
@@ -446,7 +446,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
       return (
         <div
           ref={ref}
-          className={cn("flex-shrink-0 block", className)}
+          className={cn("shrink-0 block", className)}
           style={wrapperStyle}
           {...props}
         >
@@ -460,7 +460,7 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
     return (
       <div
         ref={ref}
-        className={cn("flex-shrink-0 block", className)}
+        className={cn("shrink-0 block", className)}
         style={wrapperStyle}
         {...props}
       >

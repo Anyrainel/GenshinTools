@@ -12,7 +12,7 @@ test("dependency-cruiser rejects representative forbidden imports", () => {
   const config = structuredClone(
     createRequire(import.meta.url)("../.dependency-cruiser.cjs")
   );
-  config.options.tsConfig.fileName = path.join(root, "tsconfig.app.json");
+  config.options.webpackConfig.fileName = path.join(root, ".dependency-resolution.cjs");
   const cwd = mkdtempSync(path.join(tmpdir(), "genshintools-deps-"));
   const write = (name, source) => {
     const target = path.join(cwd, name);
@@ -51,6 +51,9 @@ test("dependency-cruiser rejects representative forbidden imports", () => {
     );
     write("src/lib/runtime.ts", 'import "../domain/model.ts";');
     write("src/domain/model.ts", "export const value = true;");
+    write("src/domain/contract.ts", "export interface Contract { id: string }");
+    write("src/lib/typeOnly.ts", 'import type { Contract } from "../domain/contract.ts"; export type Local = Contract;');
+    write("src/lib/namedTypeOnly.ts", 'import { type Contract } from "../domain/contract.ts"; export type Local = Contract;');
     write(
       "src/services/workflow.ts",
       'import "../components/shared/control.ts"; import "../stores/live.ts";'
@@ -60,7 +63,7 @@ test("dependency-cruiser rejects representative forbidden imports", () => {
       'import "../services/workflow.ts"; import "../providers/hoyolab/secret.ts";'
     );
     write("src/providers/hoyolab/secret.ts", "export const value = true;");
-    write("src/providers/bad.ts", 'import "../components/shared/control.ts"; import "cloudflare:test"; import "vitest";');
+    write("src/providers/bad.ts", 'import "../components/shared/control.ts"; import "cloudflare:workers"; import "vitest";');
     write("src/config/bad.ts", 'import "../services/workflow.ts";');
     write("src/providers/scanner/formats/bad.ts", 'import "../companion/client.ts";');
     write("src/providers/scanner/companion/client.ts", "export const value = true;");
@@ -74,7 +77,7 @@ test("dependency-cruiser rejects representative forbidden imports", () => {
       [
         path.join(
           root,
-          "node_modules/dependency-cruiser/bin/dependency-cruise.mjs"
+          "node_modules/dependency-cruiser/bin/dependency-cruiser.mjs"
         ),
         "src",
         "worker",
@@ -87,6 +90,7 @@ test("dependency-cruiser rejects representative forbidden imports", () => {
     );
     assert.ok(result.status > 0, result.stderr + result.stdout);
     const violations = result.stdout;
+    assert.doesNotMatch(violations, /libraries-use-domain-contracts-only: src\/lib\/(?:typeOnly|namedTypeOnly)\.ts/);
     assert.match(violations, /production-has-no-test-dependencies: src\/providers\/bad\.ts.*node_modules\/vitest\/dist\/index\.js/);
     for (const rule of [
       "domain-is-framework-free",
@@ -100,6 +104,7 @@ test("dependency-cruiser rejects representative forbidden imports", () => {
       "feature-components-are-isolated",
       "libraries-are-leaf-utilities",
       "libraries-use-domain-contracts-only",
+      "browser-has-no-worker-runtime-imports",
       "leaf-code-is-framework-free",
       "services-do-not-own-react-or-live-state",
       "stores-do-not-own-ui",

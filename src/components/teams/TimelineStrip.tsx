@@ -294,7 +294,7 @@ export function TimelineStrip({
           type="button"
           className={cn(
             "shrink-0 rounded-md border border-primary/70 bg-primary/80 hover:bg-primary",
-            "flex items-center justify-center text-primary-foreground shadow-sm",
+            "flex items-center justify-center text-primary-foreground shadow-xs",
             CHIP_H,
             actions.length === 0 ? "px-3 gap-1.5 text-xs" : "w-7"
           )}
@@ -335,7 +335,7 @@ export function TimelineStrip({
                   scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
               });
             }}
-            className="flex-1 text-xs px-2 py-1 rounded border border-rose-500/40 hover:border-rose-400/70 hover:bg-rose-500/10 text-rose-400"
+            className="flex-1 text-xs px-2 py-1 rounded-[4px] border border-rose-500/40 hover:border-rose-400/70 hover:bg-rose-500/10 text-rose-400"
           >
             {t.ui("erCalc.addEnemyOrb")}
           </button>
@@ -353,7 +353,7 @@ export function TimelineStrip({
                   scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
               });
             }}
-            className="flex-1 text-xs px-2 py-1 rounded border border-blue-500/40 hover:border-blue-400/70 hover:bg-blue-500/10 text-blue-400"
+            className="flex-1 text-xs px-2 py-1 rounded-[4px] border border-blue-500/40 hover:border-blue-400/70 hover:bg-blue-500/10 text-blue-400"
           >
             {t.ui("erCalc.addGrant")}
           </button>
@@ -470,7 +470,8 @@ export function TimelineStrip({
                     key={`col-${i}`}
                     className={cn(
                       "flex items-end shrink-0",
-                      isProcDropTarget && "ring-1 ring-emerald-400/40 rounded"
+                      isProcDropTarget &&
+                        "ring-1 ring-emerald-400/40 rounded-[4px]"
                     )}
                     onDragOver={(e) => handleColDragOver(e, i)}
                     onDrop={(e) => handleProcDrop(e, i)}
@@ -953,7 +954,7 @@ function MainChip({
                 type="checkbox"
                 checked={!!act.favoniusProc}
                 onChange={(e) => onToggleFavonius(e.target.checked)}
-                className="rounded border-border"
+                className="rounded-[4px] border-border"
               />
               <Zap className="w-3.5 h-3.5 text-sky-400" />
               <span>
@@ -974,7 +975,7 @@ function MainChip({
                 type="checkbox"
                 checked={!!act.reactionProc}
                 onChange={(e) => onToggleReaction(e.target.checked)}
-                className="rounded border-border mt-0.5"
+                className="rounded-[4px] border-border mt-0.5"
               />
               <Zap className="w-3.5 h-3.5 text-fuchsia-400 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
@@ -1008,7 +1009,7 @@ function MainChip({
                 type="checkbox"
                 checked={!!act.resonanceProc}
                 onChange={(e) => onToggleResonance(e.target.checked)}
-                className="rounded border-border mt-0.5"
+                className="rounded-[4px] border-border mt-0.5"
               />
               <Zap className="w-3.5 h-3.5 text-violet-400 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
@@ -1042,7 +1043,7 @@ function MainChip({
                     key={`${s.charId}-${trigger}`}
                     type="button"
                     onClick={() => onAddProc(s.charId, trigger)}
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded border border-border/30 hover:bg-accent"
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-border/30 hover:bg-accent"
                   >
                     <CharAvatar charId={s.charId} size={14} />
                     <span className="text-xs">{trigger}</span>
@@ -1262,7 +1263,7 @@ function GrantChip({
                         Number.parseFloat(e.target.value) || 0
                       )
                     }
-                    className="w-14 rounded border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
+                    className="w-14 rounded-[4px] border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
                     placeholder="0"
                     title={t.ui("erCalc.grantFlatTitle")}
                   />
@@ -1278,7 +1279,7 @@ function GrantChip({
                         Number.parseFloat(e.target.value) || 0
                       )
                     }
-                    className="w-12 rounded border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
+                    className="w-12 rounded-[4px] border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
                     placeholder="%"
                     title={t.ui("erCalc.grantPercentTitle")}
                   />
@@ -1385,7 +1386,7 @@ function EnemyOrbChip({
             step={1}
             value={orbCount || ""}
             onChange={(e) => setCount(Number.parseFloat(e.target.value) || 0)}
-            className="w-16 rounded border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
+            className="w-16 rounded-[4px] border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
             placeholder="0"
           />
         </div>
@@ -1457,7 +1458,7 @@ function QuickAddRow({
             type="button"
             onClick={() => onAdd(slot.charId, action)}
             className={cn(
-              "text-xs px-1.5 py-0.5 rounded border border-border",
+              "text-xs px-1.5 py-0.5 rounded-[4px] border border-border",
               isSkill
                 ? "border-emerald-500/40 text-emerald-400/80 hover:bg-emerald-500/10"
                 : isBurst

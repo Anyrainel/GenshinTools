@@ -202,7 +202,7 @@ export const TierLayout = forwardRef<
   return (
     <Tabs defaultValue={groups[0]} className="w-full flex flex-col h-full">
       {/* Group tabs header */}
-      <div className="flex-shrink-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 flex justify-center">
+      <div className="shrink-0 bg-background/95 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10 flex justify-center">
         <TabsList
           className={cn(
             "h-14 bg-transparent p-0 flex border-b",
@@ -224,7 +224,7 @@ export const TierLayout = forwardRef<
                 <img
                   src={getAssetUrl(config.iconPath)}
                   alt={getGroupName(group as keyof typeof groupConfig)}
-                  className="w-6 h-6 object-contain flex-shrink-0"
+                  className="w-6 h-6 object-contain shrink-0"
                 />
                 <span className="text-xs truncate w-full text-center">
                   {getGroupName(group as keyof typeof groupConfig)}

@@ -168,25 +168,23 @@ describe("Worker feedback API", () => {
     expect(db.feedbackSubmissions).toHaveLength(1);
   });
 
-  it.each([
-    "ZZZ",
-    "hsr",
-    null,
-    1,
-  ])("rejects unsupported game values: %s", async (game) => {
-    const { db, cookie } = await createFeedbackEnv();
-    const response = await handleFeedbackRequest(
-      feedbackRequest({ game, rating: 5, suggestion: "Feedback" }, cookie),
-      new URL("https://example.com/api/feedback/v1/submissions"),
-      { BACKUP_DB: db as unknown as D1Database } as FeedbackEnv
-    );
-    expect(response.status).toBe(422);
-    await expect(response.json()).resolves.toEqual({
-      error: "invalid_payload",
-      field: "game",
-    });
-    expect(db.feedbackSubmissions).toHaveLength(0);
-  });
+  it.each(["ZZZ", "hsr", null, 1])(
+    "rejects unsupported game values: %s",
+    async (game) => {
+      const { db, cookie } = await createFeedbackEnv();
+      const response = await handleFeedbackRequest(
+        feedbackRequest({ game, rating: 5, suggestion: "Feedback" }, cookie),
+        new URL("https://example.com/api/feedback/v1/submissions"),
+        { BACKUP_DB: db as unknown as D1Database } as FeedbackEnv
+      );
+      expect(response.status).toBe(422);
+      await expect(response.json()).resolves.toEqual({
+        error: "invalid_payload",
+        field: "game",
+      });
+      expect(db.feedbackSubmissions).toHaveLength(0);
+    }
+  );
 
   it("allows bearer-authenticated cross-site requests to preflight without cookies", async () => {
     const response = await handleFeedbackRequest(

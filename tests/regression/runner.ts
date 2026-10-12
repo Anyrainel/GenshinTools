@@ -1,6 +1,7 @@
 import { installNodeReferenceFetch } from "../../scripts/lib/nodeReferenceFetch.mjs";
 
 installNodeReferenceFetch();
+
 import "@/providers/reference/statLoaders";
 /**
  * Core runner for generator regression testing.

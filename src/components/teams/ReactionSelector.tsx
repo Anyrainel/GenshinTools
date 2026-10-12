@@ -174,9 +174,9 @@ export function ReactionSelector({
                   className={cn(
                     "transition-colors",
                     compact
-                      ? "h-6 px-2 text-[11px] rounded"
+                      ? "h-6 px-2 text-[11px] rounded-[4px]"
                       : "h-7 px-2.5 text-xs rounded-md",
-                    isActive && "shadow-sm"
+                    isActive && "shadow-xs"
                   )}
                 >
                   {t.reaction(reaction)}

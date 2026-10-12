@@ -87,7 +87,7 @@ export function TierCustomizationDialog({
         <div className="space-y-4 py-4 flex-1 overflow-y-auto px-1">
           <div className="p-4 border border-border rounded-lg bg-card">
             <div className="flex items-center gap-4">
-              <div className="flex-shrink-0 w-24">
+              <div className="shrink-0 w-24">
                 <Label
                   htmlFor="custom-title"
                   className="text-sm font-medium text-muted-foreground"
@@ -112,7 +112,7 @@ export function TierCustomizationDialog({
               className="p-4 border border-border rounded-lg bg-card"
             >
               <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                <div className="flex-shrink-0 sm:w-24">
+                <div className="shrink-0 sm:w-24">
                   <Label
                     htmlFor={`${tier}-name`}
                     className="text-sm font-medium text-muted-foreground"
@@ -133,7 +133,7 @@ export function TierCustomizationDialog({
                     className="w-full"
                   />
                 </div>
-                <div className="flex items-center space-x-2 flex-shrink-0">
+                <div className="flex items-center space-x-2 shrink-0">
                   <Checkbox
                     id={`${tier}-hidden`}
                     checked={customization[tier]?.hidden || false}

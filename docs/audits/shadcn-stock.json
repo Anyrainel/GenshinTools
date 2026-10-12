@@ -1,0 +1,220 @@
+{
+  "fetched": "2026-10-12",
+  "style": "new-york-v4",
+  "normalizations": [
+    "Map cn imports to @/lib/utils and registry UI imports to @/components/ui",
+    "Normalize CRLF to LF and use one trailing newline"
+  ],
+  "components": [
+    {
+      "name": "accordion",
+      "path": "src/components/ui/accordion.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/accordion.json",
+      "upstreamSha256": "99de242681eb43121969db02bbb102aeeb1865ef52c7635672508a58c5429085",
+      "sha256": "ced1e58a0cb6836ac3c2cceb48c8cd6def30b488d17da85d07cd16312d993228"
+    },
+    {
+      "name": "alert-dialog",
+      "path": "src/components/ui/alert-dialog.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/alert-dialog.json",
+      "upstreamSha256": "b3dfb83e54ed8c82071df5289e5149628bf573458fc2da2d62f93f8380041b28",
+      "sha256": "41b72a44c2e098b5590b05e1a61c9f6df3bb82790c73993e09f4b84da209e1b2"
+    },
+    {
+      "name": "alert",
+      "path": "src/components/ui/alert.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/alert.json",
+      "upstreamSha256": "d03dcae5cdb63c381c1144ca9a0c49ba0e46466967d7deb94662034042acb034",
+      "sha256": "afeb8ee000195794ccffbf82ab1860bf083e61d355cbe1385fc6ad73fdecfae8"
+    },
+    {
+      "name": "badge",
+      "path": "src/components/ui/badge.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/badge.json",
+      "upstreamSha256": "13a9380dfff853ee730c14a52df49f22aecd31f40f2998d7c1e7ec458b6e1650",
+      "sha256": "0311bb21a5dc8c1e3d70ffc35cccc375c90e2f08bb0f0dd943dad72c19ed45ff"
+    },
+    {
+      "name": "button",
+      "path": "src/components/ui/button.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/button.json",
+      "upstreamSha256": "79dd6f75f8136394442202d6b8b922fb269eaad0a5dba579397c9d5b41f893bb",
+      "sha256": "557e27d5d3159c338da761c5aec138dcd32d313b5a55774ea8001c3f3bfc620c"
+    },
+    {
+      "name": "card",
+      "path": "src/components/ui/card.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/card.json",
+      "upstreamSha256": "ef8305b12c3112dab42a4708b41b1ebcc042fa5ab4c20f039da8d45b09ed5059",
+      "sha256": "39480d5b63e46554f1cfcedaa91052c848bda5c45d7a5dda80fe91e7be604fb0"
+    },
+    {
+      "name": "checkbox",
+      "path": "src/components/ui/checkbox.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/checkbox.json",
+      "upstreamSha256": "ba0ac64064e2d8fa7299d53e9e84b9a4772fef8dd4cf6170c56d3030a1d69941",
+      "sha256": "a7068fe7b1840081a0dfdb62a29a39bda24e3cff6752a8788249301a8a79e331"
+    },
+    {
+      "name": "collapsible",
+      "path": "src/components/ui/collapsible.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/collapsible.json",
+      "upstreamSha256": "c6598e5584f4258b5d9fefadbc5ad6a66888ad58729f4b634a0bb2d9c513188b",
+      "sha256": "c6598e5584f4258b5d9fefadbc5ad6a66888ad58729f4b634a0bb2d9c513188b"
+    },
+    {
+      "name": "dialog",
+      "path": "src/components/ui/dialog.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/dialog.json",
+      "upstreamSha256": "2ade6074e5fad0a4eb171ead44c43d3301a3c83d186d7236fb1fdbea80ee556b",
+      "sha256": "0a85c31675f8269b3b1308fff0ab10d5cda1a090a550a1a74a8f7f439a92ea06"
+    },
+    {
+      "name": "drawer",
+      "path": "src/components/ui/drawer.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/drawer.json",
+      "upstreamSha256": "63f04fe50a4bf29b56b0f5e2944c6efe980b895f589923659cc2e8ecc90b16c6",
+      "sha256": "2190d08dca91983fd03eb15e52ac77f1ad0bb05c97ecf35191ecd7c1ef415654"
+    },
+    {
+      "name": "dropdown-menu",
+      "path": "src/components/ui/dropdown-menu.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/dropdown-menu.json",
+      "upstreamSha256": "d954efb735f13734751207ad22cb0cddd7f6ec53c59d16675d103dae08cb61fb",
+      "sha256": "c84b54bc6c8ae8f3ec5a8999000623b25776318739f2e91de3c70d85bb56e95a"
+    },
+    {
+      "name": "hover-card",
+      "path": "src/components/ui/hover-card.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/hover-card.json",
+      "upstreamSha256": "73f59aa759656501ed615604ac3f2c04ba564acaea4529288fe3a487ad934953",
+      "sha256": "d646141a4f5b9d6ed47cb6b1854a6afbfeacd0dbbc0520078077b2eeca116956"
+    },
+    {
+      "name": "input",
+      "path": "src/components/ui/input.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/input.json",
+      "upstreamSha256": "0c9457181f6ddc80969bcf854e92c362903a55b6e889fbef3fd85343ecc4af5b",
+      "sha256": "7bfd0eff6c53a38c99184394a09f55e7a86c725de12d6a300fa46b3765114091"
+    },
+    {
+      "name": "label",
+      "path": "src/components/ui/label.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/label.json",
+      "upstreamSha256": "344bde38b8531615dbf8e14af3895517c24d8ef6ce56ddeda7e2e6fe4b5d0c00",
+      "sha256": "db5dfcd98a78c5b7c3c01e0bb7726a3adbf0470f4d552e777ccf4751b51e6a56"
+    },
+    {
+      "name": "navigation-menu",
+      "path": "src/components/ui/navigation-menu.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/navigation-menu.json",
+      "upstreamSha256": "fbe81d7c358df0d21e49b03174ef53be7d66226a3dce1a97ff3d4a260ed833a3",
+      "sha256": "5c56bda25883e9c0f7e43f52f4037d3aff02478c38800db416eac44ede44748b"
+    },
+    {
+      "name": "popover",
+      "path": "src/components/ui/popover.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/popover.json",
+      "upstreamSha256": "3f99d3add6c9fa4f03721e81297ee10e1310785ee1d9d9d4c82a114d84ab0757",
+      "sha256": "5c20c50041dd3a0f689ca77054b10796802de07737ca6591873d01f73325f307"
+    },
+    {
+      "name": "progress",
+      "path": "src/components/ui/progress.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/progress.json",
+      "upstreamSha256": "e012e1f7e6e66d11229d1233eccf91954edcd9179b418ff1d114dc651b86fd35",
+      "sha256": "1f6eb12292b38dd1601319ff7d6fc7dfefb8b988813962d688b3a9782000980a"
+    },
+    {
+      "name": "radio-group",
+      "path": "src/components/ui/radio-group.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/radio-group.json",
+      "upstreamSha256": "cfc4f99ee68be2fbbd70de3ffad82e1462d5e8e0bb0aecfd190a4f5115325862",
+      "sha256": "f495c56ce09167fbdd3d463b3544cbc91874e5028cc6f8fbf165300dbb342a24"
+    },
+    {
+      "name": "scroll-area",
+      "path": "src/components/ui/scroll-area.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/scroll-area.json",
+      "upstreamSha256": "8b73bb9be51300079c7f561bafbe43ee10f6f464cf39c8c1b25123cd4edb94dd",
+      "sha256": "55264573642c8d9182c15434638a3007b6e03e9b929bf05fbb6db8b55d5fcd36"
+    },
+    {
+      "name": "select",
+      "path": "src/components/ui/select.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/select.json",
+      "upstreamSha256": "962830436bd0b7ee50e556f0747e277d6a86869ed27d167516346b15f26309d8",
+      "sha256": "a25676a80cb8ea9b90a1daad062dbbd84cafba68d72dd868f390c3bf487e230c"
+    },
+    {
+      "name": "sheet",
+      "path": "src/components/ui/sheet.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/sheet.json",
+      "upstreamSha256": "ea473d38a26a9b0b879e5a13139899ad45e9782e896b3fa205c7763a6c506876",
+      "sha256": "1431af1f2a0f4cd2623cf888241715fa312db1bc54af038d4518b0130b136993"
+    },
+    {
+      "name": "slider",
+      "path": "src/components/ui/slider.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/slider.json",
+      "upstreamSha256": "6a531f6182de6efec2c25d30a7626b66cbf11cf52d505e47f907124934f7188e",
+      "sha256": "9ff8523ba99a37b3ed9ec1e55969926e8c92d44e158bdddf04f0e409e43a4d72"
+    },
+    {
+      "name": "sonner",
+      "path": "src/components/ui/sonner.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/sonner.json",
+      "upstreamSha256": "13ccc9b0fe4248e622f83a1d3b2f0566b72b5e04162d7d0c8db8945ecc71b55f",
+      "sha256": "13ccc9b0fe4248e622f83a1d3b2f0566b72b5e04162d7d0c8db8945ecc71b55f"
+    },
+    {
+      "name": "switch",
+      "path": "src/components/ui/switch.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/switch.json",
+      "upstreamSha256": "743676f33f823ffa8008bbd5eb94cb68e227599447d60e132a202291a395f8e4",
+      "sha256": "62bd507d11a7abe5d0fc0b0bb805c794dcff5f75cff8c63e7dd58aec763d9cf5"
+    },
+    {
+      "name": "table",
+      "path": "src/components/ui/table.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/table.json",
+      "upstreamSha256": "bd1a9fc83a5a2149e504038e274bb7e5a0351af59f6896df52ac4d5b439695ac",
+      "sha256": "84be8055e88e5aebcc3f0d14ec68a03129b0eb65c7619e18866fe74a3a8b81e1"
+    },
+    {
+      "name": "tabs",
+      "path": "src/components/ui/tabs.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/tabs.json",
+      "upstreamSha256": "e1df6e2f95ece373ca909c1d54b8ba8cf4c47dd425c1784bbb9a01c38dd0936b",
+      "sha256": "bc6b1c115fcc9d63d8f14cecd4fcb43cd0b8b201a5d295419296fe9e0ba1623f"
+    },
+    {
+      "name": "textarea",
+      "path": "src/components/ui/textarea.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/textarea.json",
+      "upstreamSha256": "5cafcfeeee29534f449387a16b585f5923d2faab1a0cdc50a874416b175f59ce",
+      "sha256": "7c7122fc969c62228c691388aa1fe8b1eafe787ac25305a7a768f77d87d3c567"
+    },
+    {
+      "name": "toggle-group",
+      "path": "src/components/ui/toggle-group.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/toggle-group.json",
+      "upstreamSha256": "45186473eaa30a966adf16e2b0aa0d16522425fda0658e2c85b8dcb1b62956ef",
+      "sha256": "f9d2c8102caef32186085a6e60fac79af27e9566f429b3fac85ccbb8f02383c6"
+    },
+    {
+      "name": "toggle",
+      "path": "src/components/ui/toggle.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/toggle.json",
+      "upstreamSha256": "28ae7d72730890a3ba6c668fd511c63a358ad26534c2c25d5922748d47e1fa99",
+      "sha256": "05a7ea1345d08b6d61b78b95407ec67af9ede7cd090ecdf7736ddde5363a534d"
+    },
+    {
+      "name": "tooltip",
+      "path": "src/components/ui/tooltip.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/tooltip.json",
+      "upstreamSha256": "611e4305879b2773eafe76bf3c5caa69d8e47367fd97887a71634a27828f4433",
+      "sha256": "345bc589a285ece3622bf18f4c842107836cf6fc8a9055b0a604db0cf6c83551"
+    }
+  ]
+}

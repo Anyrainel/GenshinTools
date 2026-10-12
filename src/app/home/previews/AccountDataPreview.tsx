@@ -100,7 +100,7 @@ function CharactersContent({ t }: PreviewProps) {
           <span className="text-foreground font-bold leading-none not-italic text-sm">
             {t.ui("accountData.score")}
           </span>
-          <span className="italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent tracking-tighter leading-none font-black text-3xl pr-[2px]">
+          <span className="italic bg-linear-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent tracking-tighter leading-none font-black text-3xl pr-[2px]">
             268
           </span>
         </div>

@@ -25,7 +25,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "builds",
     includeInBackup: true,
     namespaces: ["builds"],
-    currentVersion: 2,
+    currentVersion: 3,
     conflictPolicy: "explicit-choice",
   },
   {

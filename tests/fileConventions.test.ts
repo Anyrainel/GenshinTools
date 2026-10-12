@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import ts from "typescript";
+import type { File, Statement } from "@babel/types";
 import { describe, expect, it } from "vitest";
+import { parseSourceAst, visitSourceAst } from "./helpers/sourceAst";
 
 // File-naming conventions enforced for src/:
 //   - types.ts     → only `type` / `interface` / `enum`
@@ -65,119 +66,121 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-function hasExportModifier(stmt: ts.Statement): boolean {
-  if (!ts.canHaveModifiers(stmt)) return false;
-  const mods = ts.getModifiers(stmt);
-  return mods?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false;
-}
-
-function classify(stmt: ts.Statement, importedNames: Set<string>): Kind | null {
-  if (ts.isExportDeclaration(stmt)) {
-    if (stmt.moduleSpecifier) return "re-export-from";
-    // `export { X }` without `from`: a true re-export only if any of the
-    // named items is an imported symbol. `export { LocalFoo }` where LocalFoo
-    // is declared in this file is just a late export — legitimate pattern
-    // (shadcn primitives, tests, etc.) and not flagged.
-    const clause = stmt.exportClause;
-    if (clause && ts.isNamedExports(clause)) {
-      for (const spec of clause.elements) {
-        const localName = (spec.propertyName ?? spec.name).text;
-        if (importedNames.has(localName)) return "re-export";
-      }
-    }
-    return null;
+const parsedFiles = new Map<string, { text: string; ast: File }>();
+function sourceFor(file: string) {
+  let result = parsedFiles.get(file);
+  if (!result) {
+    const text = fs.readFileSync(file, "utf8");
+    result = { text, ast: parseSourceAst(text, file) };
+    parsedFiles.set(file, result);
   }
-  if (ts.isExportAssignment(stmt)) return "default";
-  if (!hasExportModifier(stmt)) return null;
-  if (ts.isTypeAliasDeclaration(stmt)) return "type";
-  if (ts.isInterfaceDeclaration(stmt)) return "interface";
-  if (ts.isEnumDeclaration(stmt)) return "enum";
-  if (ts.isFunctionDeclaration(stmt)) return "function";
-  if (ts.isClassDeclaration(stmt)) return "class";
-  if (ts.isVariableStatement(stmt)) return "const";
-  if (ts.isModuleDeclaration(stmt)) return "namespace";
-  return "unknown";
+  return result;
 }
 
-/** Collect local binding names introduced by `import` statements in a file. */
-function collectImportedNames(sf: ts.SourceFile): Set<string> {
-  const names = new Set<string>();
-  for (const stmt of sf.statements) {
-    if (!ts.isImportDeclaration(stmt)) continue;
-    const clause = stmt.importClause;
-    if (!clause) continue;
-    if (clause.name) names.add(clause.name.text); // default import
-    const bindings = clause.namedBindings;
-    if (!bindings) continue;
-    if (ts.isNamespaceImport(bindings)) {
-      names.add(bindings.name.text); // `import * as NS`
-    } else if (ts.isNamedImports(bindings)) {
-      for (const spec of bindings.elements) names.add(spec.name.text);
-    }
-  }
-  return names;
+function collectImportedNames(ast: File): Set<string> {
+  return new Set(
+    ast.program.body.flatMap((statement) =>
+      statement.type === "ImportDeclaration"
+        ? statement.specifiers.map((specifier) => specifier.local.name)
+        : []
+    )
+  );
 }
 
-function describeExport(stmt: ts.Statement): string {
+function classify(
+  statement: Statement,
+  importedNames: Set<string>
+): Kind | null {
+  if (statement.type === "ExportAllDeclaration") return "re-export-from";
   if (
-    ts.isTypeAliasDeclaration(stmt) ||
-    ts.isInterfaceDeclaration(stmt) ||
-    ts.isEnumDeclaration(stmt) ||
-    ts.isFunctionDeclaration(stmt) ||
-    ts.isClassDeclaration(stmt)
-  ) {
-    return stmt.name?.text ?? "<anonymous>";
+    statement.type === "ExportDefaultDeclaration" ||
+    statement.type === "TSExportAssignment"
+  )
+    return "default";
+  if (statement.type !== "ExportNamedDeclaration") return null;
+  if (statement.source) return "re-export-from";
+  if (!statement.declaration) {
+    return statement.specifiers.some(
+      (specifier) =>
+        specifier.type === "ExportSpecifier" &&
+        importedNames.has(
+          specifier.local.type === "Identifier"
+            ? specifier.local.name
+            : specifier.local.value
+        )
+    )
+      ? "re-export"
+      : null;
   }
-  if (ts.isVariableStatement(stmt)) {
-    return stmt.declarationList.declarations
-      .map((d) => d.name.getText())
-      .join(", ");
+  const declaration = statement.declaration;
+  switch (declaration.type) {
+    case "TSTypeAliasDeclaration":
+      return "type";
+    case "TSInterfaceDeclaration":
+      return "interface";
+    case "TSEnumDeclaration":
+      return "enum";
+    case "FunctionDeclaration":
+      return "function";
+    case "ClassDeclaration":
+      return "class";
+    case "VariableDeclaration":
+      return declaration.kind === "const" ? "const" : "unknown";
+    case "TSModuleDeclaration":
+      return "namespace";
+    default:
+      return "unknown";
   }
-  if (ts.isExportDeclaration(stmt)) {
-    const clause = stmt.exportClause?.getText() ?? "*";
-    const from = stmt.moduleSpecifier
-      ? ` from ${stmt.moduleSpecifier.getText()}`
-      : "";
-    return `${clause}${from}`;
+}
+
+function describeExport(statement: Statement, source: string): string {
+  if (
+    statement.type === "ExportDefaultDeclaration" ||
+    statement.type === "TSExportAssignment"
+  )
+    return "default";
+  if (statement.type === "ExportNamedDeclaration" && statement.declaration) {
+    const declaration = statement.declaration;
+    if (declaration.type === "VariableDeclaration")
+      return declaration.declarations
+        .map(({ id }) => source.slice(id.start ?? 0, id.end ?? 0))
+        .join(", ");
+    if ("id" in declaration && declaration.id?.type === "Identifier")
+      return declaration.id.name;
   }
-  if (ts.isExportAssignment(stmt)) return "default";
-  return "<?>";
+  return source.slice(statement.start ?? 0, statement.end ?? 0);
 }
 
 function collectExports(file: string): ExportInfo[] {
-  const source = fs.readFileSync(file, "utf-8");
-  const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
-  const imported = collectImportedNames(sf);
-  const out: ExportInfo[] = [];
-  for (const stmt of sf.statements) {
-    const kind = classify(stmt, imported);
-    if (!kind) continue;
-    const { line } = sf.getLineAndCharacterOfPosition(stmt.getStart(sf));
-    out.push({ kind, name: describeExport(stmt), line: line + 1 });
-  }
-  return out;
+  const { text, ast } = sourceFor(file);
+  const imported = collectImportedNames(ast);
+  return ast.program.body.flatMap((statement) => {
+    const kind = classify(statement, imported);
+    return kind
+      ? [
+          {
+            kind,
+            name: describeExport(statement, text),
+            line: statement.loc?.start.line ?? 1,
+          },
+        ]
+      : [];
+  });
 }
 
-/**
- * Collect all import statements in a file. Used to enforce enums.ts'
- * zero-imports invariant — the file must be a self-contained leaf.
- */
 function collectImports(
   file: string
 ): { line: number; moduleSpecifier: string }[] {
-  const source = fs.readFileSync(file, "utf-8");
-  const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
-  const out: { line: number; moduleSpecifier: string }[] = [];
-  for (const stmt of sf.statements) {
-    if (ts.isImportDeclaration(stmt)) {
-      const { line } = sf.getLineAndCharacterOfPosition(stmt.getStart(sf));
-      out.push({
-        line: line + 1,
-        moduleSpecifier: stmt.moduleSpecifier.getText(sf),
-      });
-    }
-  }
-  return out;
+  return sourceFor(file).ast.program.body.flatMap((statement) =>
+    statement.type === "ImportDeclaration"
+      ? [
+          {
+            line: statement.loc?.start.line ?? 1,
+            moduleSpecifier: statement.source.value,
+          },
+        ]
+      : []
+  );
 }
 
 const allFiles = walk(SRC_ROOT);
@@ -193,17 +196,15 @@ const allTestFiles = walk(TESTS_ROOT);
  * module type, which is the standard idiom for `vi.mock`'s `importOriginal<T>`.
  */
 function findInlineImportTypes(file: string): { line: number; text: string }[] {
-  const source = fs.readFileSync(file, "utf-8");
-  const sf = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true);
+  const { text, ast } = sourceFor(file);
   const out: { line: number; text: string }[] = [];
-  const visit = (node: ts.Node) => {
-    if (ts.isImportTypeNode(node) && node.qualifier !== undefined) {
-      const { line } = sf.getLineAndCharacterOfPosition(node.getStart(sf));
-      out.push({ line: line + 1, text: node.getText(sf) });
-    }
-    ts.forEachChild(node, visit);
-  };
-  visit(sf);
+  visitSourceAst(ast, (node) => {
+    if (node.type === "TSImportType" && node.qualifier)
+      out.push({
+        line: node.loc?.start.line ?? 1,
+        text: text.slice(node.start ?? 0, node.end ?? 0),
+      });
+  });
   return out;
 }
 
@@ -236,6 +237,32 @@ function findFiles(basename: string): string[] {
 }
 
 describe("file conventions", () => {
+  it("keeps re-exports, local exports and declaration kinds distinct with the native compiler", () => {
+    const ast = parseSourceAst(
+      'import { value as imported } from "./other"; const local = 1; export { imported as alias }; export { local }; export type { Contract } from "./other"; export const count = 1; export let mutable = 2; export interface Shape { id: string };',
+      "fixture.ts"
+    );
+    const imported = collectImportedNames(ast);
+    expect(
+      ast.program.body
+        .map((statement) => classify(statement, imported))
+        .filter(Boolean)
+    ).toEqual(["re-export", "re-export-from", "const", "unknown", "interface"]);
+  });
+
+  it("parses TypeScript assertions, decorators and inline import types without confusing text with code", () => {
+    const ast = parseSourceAst(
+      'const value = <number>1; @register class Kit {} type Inline = import("./other").Contract; type Module = typeof import("./other"); const text = "import(\\"./other\\").Contract";',
+      "fixture.ts"
+    );
+    const qualified: string[] = [];
+    visitSourceAst(ast, (node) => {
+      if (node.type === "TSImportType" && node.qualifier)
+        qualified.push(node.qualifier.type);
+    });
+    expect(qualified).toEqual(["Identifier"]);
+  });
+
   for (const [basename, rule] of Object.entries(RULES)) {
     describe(`${basename} — ${rule.description}, no re-exports from other modules`, () => {
       const files = findFiles(basename);

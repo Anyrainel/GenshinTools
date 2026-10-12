@@ -170,7 +170,7 @@ function ArtifactStrip({
             ) : (
               <div
                 className={cn(
-                  "aspect-square rounded",
+                  "aspect-square rounded-[4px]",
                   emptyMode === "blank" && "invisible",
                   emptyMode === "placeholder" &&
                     "flex items-center justify-center border border-dashed border-border/30 bg-card/10 p-0.5"
@@ -713,7 +713,7 @@ function ScoreUpCardComponent({
                     className={cn(
                       "flex-1 flex items-center justify-center gap-0.5 text-xs font-semibold px-1.5 py-1 rounded-full transition-all",
                       activeView === mode
-                        ? "bg-primary/70 text-primary-foreground shadow-sm"
+                        ? "bg-primary/70 text-primary-foreground shadow-xs"
                         : "bg-white/5 text-foreground/80 hover:bg-white/10"
                     )}
                   >

@@ -72,7 +72,7 @@ export function BuildsDefaultPresetPrompt() {
           <div className="flex justify-center pt-2">
             <div className="relative">
               <div className="absolute inset-0 bg-green-500/15 rounded-2xl blur-xl scale-110" />
-              <div className="relative bg-gradient-to-br from-green-500/10 to-green-500/5 p-4 rounded-2xl border border-green-500/20 shadow-sm">
+              <div className="relative bg-linear-to-br from-green-500/10 to-green-500/5 p-4 rounded-2xl border border-green-500/20 shadow-xs">
                 <CheckCircle2 className="w-8 h-8 text-green-400" />
               </div>
             </div>

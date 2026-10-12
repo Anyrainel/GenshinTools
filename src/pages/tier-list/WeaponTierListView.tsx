@@ -83,7 +83,7 @@ const weaponGroupConfig: Record<WeaponType, TierGroupConfig> =
     weaponTypes.map((type) => [
       type,
       {
-        bgClass: "bg-cyan-900/70 backdrop-blur-sm",
+        bgClass: "bg-cyan-900/70 backdrop-blur-xs",
         iconPath: weaponResourcesByName[type].imagePath,
       },
     ])

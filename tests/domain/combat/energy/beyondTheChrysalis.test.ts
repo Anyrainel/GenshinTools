@@ -32,20 +32,21 @@ function run(actions: ERTimeline["actions"], refinement = 0) {
 }
 
 describe("Beyond the Chrysalis energy sequence", () => {
-  it.each([
-    0, 1, 2, 3, 4,
-  ])("restores the refinement amount on each third cast at refinement index %d", (refinement) => {
-    const result = run(
-      [
-        { char: "vesna", action: "E" },
-        { char: "vesna", action: "holdE" },
-        { char: "vesna", action: "specialE" },
-        { char: "vesna", action: "Q" },
-      ],
-      refinement
-    );
-    expect(result.qWindows?.[0].flatEnergy).toBe(5 + refinement * 0.5);
-  });
+  it.each([0, 1, 2, 3, 4])(
+    "restores the refinement amount on each third cast at refinement index %d",
+    (refinement) => {
+      const result = run(
+        [
+          { char: "vesna", action: "E" },
+          { char: "vesna", action: "holdE" },
+          { char: "vesna", action: "specialE" },
+          { char: "vesna", action: "Q" },
+        ],
+        refinement
+      );
+      expect(result.qWindows?.[0].flatEnergy).toBe(5 + refinement * 0.5);
+    }
+  );
 
   it("does not restore energy before the third cast", () => {
     expect(

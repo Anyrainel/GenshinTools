@@ -39,8 +39,8 @@ function useBossTranslations(bossData: LeylineBossData) {
 }
 
 const BOSS_ICON_SIZES = {
-  sm: { outer: "w-8 h-8 rounded", inner: "w-7 h-7" },
-  md: { outer: "w-10 h-10 rounded", inner: "w-9 h-9" },
+  sm: { outer: "w-8 h-8 rounded-[4px]", inner: "w-7 h-7" },
+  md: { outer: "w-10 h-10 rounded-[4px]", inner: "w-9 h-9" },
   lg: {
     outer: "w-14 h-14 rounded-lg p-0.5 shrink-0",
     inner: "w-full h-full",
@@ -245,7 +245,7 @@ function TierSelector({
           className={cn(
             "py-1.5 px-2 rounded-md text-sm font-medium transition-all whitespace-nowrap",
             selectedTier === tier
-              ? "bg-primary/50 text-foreground shadow-sm"
+              ? "bg-primary/50 text-foreground shadow-xs"
               : "text-muted-foreground hover:text-foreground"
           )}
         >
@@ -435,7 +435,7 @@ export function BossDetailPanel({
                     >
                       <span
                         className={cn(
-                          "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-primary/70 shadow transition-transform",
+                          "absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-primary/70 shadow-sm transition-transform",
                           showDetailedDesc && "translate-x-4"
                         )}
                       />

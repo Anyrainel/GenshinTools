@@ -1,6 +1,7 @@
 import { existsSync, statSync } from "node:fs";
 import path from "node:path";
-import * as ts from "typescript";
+import { parseSourceAst } from "../../../tests/helpers/sourceAst";
+import { runtimeAstModuleSpecifiers } from "./runtimeImports";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
   buildNoelleHexereiWeaponTeamSourceBindingFromWorkspace,
@@ -574,13 +575,8 @@ describe("Noelle Hexerei weapon/team source binding", () => {
     ]);
     expect(declared.size).toBe(16);
     for (const [sourcePath, exactImports] of expected) {
-      const sourceFile = ts.createSourceFile(
-        sourcePath,
-        requiredSourceFile(baseInput, sourcePath).text,
-        ts.ScriptTarget.Latest,
-        true,
-      );
-      const imports = runtimeStaticModuleSpecifiers(sourceFile)
+      const sourceFile = parseSourceAst(requiredSourceFile(baseInput, sourcePath).text, sourcePath);
+      const imports = runtimeAstModuleSpecifiers(sourceFile)
         .flatMap((specifier) => {
           const resolved = resolveFirstPartyModulePath(sourcePath, specifier);
           return resolved ? [resolved] : [];
@@ -776,51 +772,6 @@ function buildHighSliceInput(
       },
     ),
   };
-}
-
-function runtimeStaticModuleSpecifiers(sourceFile: ts.SourceFile): string[] {
-  const moduleSpecifiers: string[] = [];
-  function visit(node: ts.Node): void {
-    if (
-      ts.isImportDeclaration(node) &&
-      ts.isStringLiteral(node.moduleSpecifier) &&
-      !isTypeOnlyImportDeclaration(node)
-    ) {
-      moduleSpecifiers.push(node.moduleSpecifier.text);
-    }
-    if (
-      ts.isExportDeclaration(node) &&
-      node.moduleSpecifier &&
-      ts.isStringLiteral(node.moduleSpecifier) &&
-      !node.isTypeOnly
-    ) {
-      moduleSpecifiers.push(node.moduleSpecifier.text);
-    }
-    if (
-      ts.isCallExpression(node) &&
-      node.expression.kind === ts.SyntaxKind.ImportKeyword &&
-      node.arguments.length === 1 &&
-      ts.isStringLiteralLike(node.arguments[0])
-    ) {
-      moduleSpecifiers.push(node.arguments[0].text);
-    }
-    ts.forEachChild(node, visit);
-  }
-  visit(sourceFile);
-  return moduleSpecifiers;
-}
-
-function isTypeOnlyImportDeclaration(
-  declaration: ts.ImportDeclaration,
-): boolean {
-  const clause = declaration.importClause;
-  if (!clause) return false;
-  if (clause.isTypeOnly) return true;
-  if (clause.name) return false;
-  if (!clause.namedBindings || ts.isNamespaceImport(clause.namedBindings)) {
-    return false;
-  }
-  return clause.namedBindings.elements.every(({ isTypeOnly }) => isTypeOnly);
 }
 
 function resolveFirstPartyModulePath(

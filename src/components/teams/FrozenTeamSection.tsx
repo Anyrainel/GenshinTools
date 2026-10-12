@@ -147,8 +147,8 @@ export function FrozenTeamSection({
             className={cn(
               "gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md",
               swapGuideOpen
-                ? "border-primary/40 bg-primary/15 text-foreground ring-2 ring-primary/20 hover:!bg-primary/20"
-                : "border-primary/30 bg-primary/10 text-foreground ring-2 ring-primary/15 hover:!bg-primary/15 hover:ring-primary/25"
+                ? "border-primary/40 bg-primary/15 text-foreground ring-2 ring-primary/20 hover:bg-primary/20!"
+                : "border-primary/30 bg-primary/10 text-foreground ring-2 ring-primary/15 hover:bg-primary/15! hover:ring-primary/25"
             )}
           >
             {t.ui("teamComp.swapGuide")}
@@ -164,7 +164,7 @@ export function FrozenTeamSection({
               variant="outline"
               size="sm"
               onClick={onUnfreezeAll}
-              className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+              className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:bg-red-500/15! hover:text-red-200! hover:ring-red-400/40"
             >
               <Flame className="w-3 h-3 md:w-3.5 md:h-3.5" />
               {t.ui("teamComp.unfreezeAll")}
@@ -176,7 +176,7 @@ export function FrozenTeamSection({
               variant="outline"
               size="sm"
               onClick={onRefreezeAll}
-              className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40"
+              className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:bg-cyan-500/15! hover:text-cyan-200! hover:ring-cyan-400/40"
             >
               <Snowflake className="w-3 h-3 md:w-3.5 md:h-3.5" />
               {t.ui("teamComp.freezeTeam")}

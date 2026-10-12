@@ -1,7 +1,6 @@
 import { ArrowUpRight, CircleAlert, Info, TriangleAlert } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { PortalHoverCardContent as HoverCardContent } from "@/components/shared/PortalHoverCardContent";
 import {
   Drawer,
   DrawerContent,
@@ -9,7 +8,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { HoverCard, HoverCardTrigger } from "@/components/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
 import type { Slot } from "@/domain/enums";
@@ -128,7 +131,7 @@ export function ArtifactScoreHoverCard({
         <span className={labelCn}>{t.ui("accountData.score")}</span>
         <span
           className={cn(
-            "italic bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent tracking-tighter leading-none font-black pr-[2px]",
+            "italic bg-linear-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent tracking-tighter leading-none font-black pr-[2px]",
             compact ? "text-xl" : "text-2xl"
           )}
         >
@@ -385,7 +388,7 @@ function ArtifactScoreContent({
           return (
             <div
               key={slot}
-              className="text-center font-mono text-emerald-300 bg-emerald-500/10 rounded py-1 px-2"
+              className="text-center font-mono text-emerald-300 bg-emerald-500/10 rounded-[4px] py-1 px-2"
             >
               {normMainSlot > 0 ? `+${normMainSlot.toFixed(0)}` : "-"}
             </div>
@@ -414,7 +417,7 @@ function ArtifactScoreContent({
             <div
               key={slot}
               className={cn(
-                "text-center font-mono text-amber-200 bg-white/5 rounded py-1 px-2",
+                "text-center font-mono text-amber-200 bg-white/5 rounded-[4px] py-1 px-2",
                 fontWeight
               )}
             >
@@ -481,7 +484,7 @@ function ArtifactScoreContent({
                   {/* Score + Weight Col */}
                   <td className="text-right py-1 font-mono whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1.5">
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-white/10 text-muted-foreground">
+                      <span className="text-xs px-1.5 py-0.5 rounded-[4px] bg-white/10 text-muted-foreground">
                         {data.weight.toFixed(0)}
                       </span>
                       {data.subScore > 0 ? (

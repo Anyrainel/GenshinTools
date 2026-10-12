@@ -1,4 +1,4 @@
-import type { Content } from "@radix-ui/react-popover"
+import type { Popover as RadixPopover } from "radix-ui"
 import { XIcon } from "lucide-react"
 import { Link } from "react-router-dom"
 import * as React from "react"
@@ -50,10 +50,10 @@ interface Step {
     content: React.ReactNode
     nextRoute?: string
     previousRoute?: string
-    side?: React.ComponentProps<typeof Content>["side"]
-    sideOffset?: React.ComponentProps<typeof Content>["sideOffset"]
-    align?: React.ComponentProps<typeof Content>["align"]
-    alignOffset?: React.ComponentProps<typeof Content>["alignOffset"]
+    side?: React.ComponentProps<typeof RadixPopover.Content>["side"]
+    sideOffset?: React.ComponentProps<typeof RadixPopover.Content>["sideOffset"]
+    align?: React.ComponentProps<typeof RadixPopover.Content>["align"]
+    alignOffset?: React.ComponentProps<typeof RadixPopover.Content>["alignOffset"]
     className?: string
 }
 

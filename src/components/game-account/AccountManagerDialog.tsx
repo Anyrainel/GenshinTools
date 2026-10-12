@@ -219,7 +219,7 @@ export function AccountManagerDialog({
                               if (e.key === "Escape") setEditingId(null);
                             }}
                             placeholder="UID"
-                            className="flex h-8 w-32 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
+                            className="flex h-8 w-32 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-hidden focus:ring-1 focus:ring-primary"
                           />
                           <Button
                             size="icon"
@@ -364,7 +364,7 @@ export function AccountManagerDialog({
                     placeholder="UID"
                     value={newProfileUid}
                     onChange={(e) => setNewProfileUid(e.target.value)}
-                    className="flex h-8 w-40 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
+                    className="flex h-8 w-40 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-hidden focus:ring-1 focus:ring-primary"
                   />
                   {newProfileUid.trim() && !isValidUid(newProfileUid) && (
                     <span className="text-xs text-destructive">

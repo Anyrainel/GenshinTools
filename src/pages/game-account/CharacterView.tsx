@@ -311,7 +311,7 @@ interface VirtualGridProps {
   cardLayout: CardLayout;
   isSmallScreen: boolean;
   onEdit: (char: CharacterData) => void;
-  scrollRef: React.RefObject<HTMLDivElement>;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
 }
 
 /** Card min-width in px — matches CSS minmax(32rem, 1fr) = 512px */

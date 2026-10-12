@@ -198,7 +198,7 @@ export const TeamCard = memo(
               onUpdateComp({ ...teamComp, name: e.target.value })
             }
             placeholder={t.ui("teamComp.teamName")}
-            className="font-semibold !text-xs xl:!text-sm bg-transparent border-none px-1.5 xl:px-2 h-6 xl:h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
+            className="font-semibold text-xs! xl:text-sm! bg-transparent border-none px-1.5 xl:px-2 h-6 xl:h-7 focus-visible:ring-1 text-foreground placeholder:text-muted-foreground flex-1 min-w-0"
           />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -468,7 +468,7 @@ export const TeamCard = memo(
           {isFrozen && onUnfreeze && (
             <Button
               variant="outline"
-              className="flex-1 font-semibold h-8 xl:h-9 gap-1.5 xl:gap-2 text-xs xl:text-sm shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+              className="flex-1 font-semibold h-8 xl:h-9 gap-1.5 xl:gap-2 text-xs xl:text-sm shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:bg-red-500/15! hover:text-red-200! hover:ring-red-400/40"
               onClick={onUnfreeze}
             >
               <Flame className="w-3.5 h-3.5 xl:w-4 xl:h-4" />

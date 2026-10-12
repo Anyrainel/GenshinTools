@@ -1,0 +1,3795 @@
+diff --git a/src/components/ui/accordion.tsx b/src/components/ui/accordion.tsx
+index 2f55a32f..b3772293 100644
+--- a/src/components/ui/accordion.tsx
++++ b/src/components/ui/accordion.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as AccordionPrimitive from "@radix-ui/react-accordion"
+-import { ChevronDown } from "lucide-react"
+-
+@@ -7,0 +5,8 @@ import { cn } from "@/lib/utils"
++import { ChevronDownIcon } from "lucide-react"
++import { Accordion as AccordionPrimitive } from "radix-ui"
++
++function Accordion({
++  ...props
++}: React.ComponentProps<typeof AccordionPrimitive.Root>) {
++  return <AccordionPrimitive.Root data-slot="accordion" {...props} />
++}
+@@ -9 +14,12 @@ import { cn } from "@/lib/utils"
+-const Accordion = AccordionPrimitive.Root
++function AccordionItem({
++  className,
++  ...props
++}: React.ComponentProps<typeof AccordionPrimitive.Item>) {
++  return (
++    <AccordionPrimitive.Item
++      data-slot="accordion-item"
++      className={cn("border-b last:border-b-0", className)}
++      {...props}
++    />
++  )
++}
+@@ -11,11 +27,21 @@ const Accordion = AccordionPrimitive.Root
+-const AccordionItem = React.forwardRef<
+-  React.ElementRef<typeof AccordionPrimitive.Item>,
+-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
+->(({ className, ...props }, ref) => (
+-  <AccordionPrimitive.Item
+-    ref={ref}
+-    className={cn("border-b", className)}
+-    {...props}
+-  />
+-))
+-AccordionItem.displayName = "AccordionItem"
++function AccordionTrigger({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof AccordionPrimitive.Trigger>) {
++  return (
++    <AccordionPrimitive.Header className="flex">
++      <AccordionPrimitive.Trigger
++        data-slot="accordion-trigger"
++        className={cn(
++          "flex flex-1 items-start justify-between gap-4 rounded-md py-4 text-left text-sm font-medium transition-all outline-none hover:underline focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&[data-state=open]>svg]:rotate-180",
++          className
++        )}
++        {...props}
++      >
++        {children}
++        <ChevronDownIcon className="pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200" />
++      </AccordionPrimitive.Trigger>
++    </AccordionPrimitive.Header>
++  )
++}
+@@ -23,11 +49,9 @@ AccordionItem.displayName = "AccordionItem"
+-const AccordionTrigger = React.forwardRef<
+-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
+-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
+->(({ className, children, ...props }, ref) => (
+-  <AccordionPrimitive.Header className="flex">
+-    <AccordionPrimitive.Trigger
+-      ref={ref}
+-      className={cn(
+-        "flex flex-1 items-center justify-between py-4 text-sm font-medium transition-all hover:underline text-left [&[data-state=open]>svg]:rotate-180",
+-        className
+-      )}
++function AccordionContent({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
++  return (
++    <AccordionPrimitive.Content
++      data-slot="accordion-content"
++      className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+@@ -36,20 +60,4 @@ const AccordionTrigger = React.forwardRef<
+-      {children}
+-      <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200" />
+-    </AccordionPrimitive.Trigger>
+-  </AccordionPrimitive.Header>
+-))
+-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
+-
+-const AccordionContent = React.forwardRef<
+-  React.ElementRef<typeof AccordionPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Content>
+->(({ className, children, ...props }, ref) => (
+-  <AccordionPrimitive.Content
+-    ref={ref}
+-    className="overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down"
+-    {...props}
+-  >
+-    <div className={cn("pb-4 pt-0", className)}>{children}</div>
+-  </AccordionPrimitive.Content>
+-))
+-AccordionContent.displayName = AccordionPrimitive.Content.displayName
++      <div className={cn("pt-0 pb-4", className)}>{children}</div>
++    </AccordionPrimitive.Content>
++  )
++}
+diff --git a/src/components/ui/alert-dialog.tsx b/src/components/ui/alert-dialog.tsx
+index 57760f2e..0fe8db9e 100644
+--- a/src/components/ui/alert-dialog.tsx
++++ b/src/components/ui/alert-dialog.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
+-
+@@ -7 +5 @@ import { cn } from "@/lib/utils"
+-import { buttonVariants } from "@/components/ui/button"
++import { AlertDialog as AlertDialogPrimitive } from "radix-ui"
+@@ -9 +7 @@ import { buttonVariants } from "@/components/ui/button"
+-const AlertDialog = AlertDialogPrimitive.Root
++import { Button } from "@/components/ui/button"
+@@ -11 +9,21 @@ const AlertDialog = AlertDialogPrimitive.Root
+-const AlertDialogTrigger = AlertDialogPrimitive.Trigger
++function AlertDialog({
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
++  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
++}
++
++function AlertDialogTrigger({
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
++  return (
++    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
++  )
++}
++
++function AlertDialogPortal({
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
++  return (
++    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
++  )
++}
+@@ -13 +31,15 @@ const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+-const AlertDialogPortal = AlertDialogPrimitive.Portal
++function AlertDialogOverlay({
++  className,
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
++  return (
++    <AlertDialogPrimitive.Overlay
++      data-slot="alert-dialog-overlay"
++      className={cn(
++        "fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -15,14 +47,22 @@ const AlertDialogPortal = AlertDialogPrimitive.Portal
+-const AlertDialogOverlay = React.forwardRef<
+-  React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
+-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
+->(({ className, ...props }, ref) => (
+-  <AlertDialogPrimitive.Overlay
+-    className={cn(
+-      "fixed inset-0 z-50 bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+-      className
+-    )}
+-    {...props}
+-    ref={ref}
+-  />
+-))
+-AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
++function AlertDialogContent({
++  className,
++  size = "default",
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Content> & {
++  size?: "default" | "sm"
++}) {
++  return (
++    <AlertDialogPortal>
++      <AlertDialogOverlay />
++      <AlertDialogPrimitive.Content
++        data-slot="alert-dialog-content"
++        data-size={size}
++        className={cn(
++          "group/alert-dialog-content fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 data-[size=sm]:max-w-xs data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[size=default]:sm:max-w-lg",
++          className
++        )}
++        {...props}
++      />
++    </AlertDialogPortal>
++  )
++}
+@@ -30,8 +70,7 @@ AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
+-const AlertDialogContent = React.forwardRef<
+-  React.ElementRef<typeof AlertDialogPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
+->(({ className, ...props }, ref) => (
+-  <AlertDialogPortal>
+-    <AlertDialogOverlay />
+-    <AlertDialogPrimitive.Content
+-      ref={ref}
++function AlertDialogHeader({
++  className,
++  ...props
++}: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="alert-dialog-header"
+@@ -39 +78 @@ const AlertDialogContent = React.forwardRef<
+-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
++        "grid grid-rows-[auto_1fr] place-items-center gap-1.5 text-center has-data-[slot=alert-dialog-media]:grid-rows-[auto_auto_1fr] has-data-[slot=alert-dialog-media]:gap-x-6 sm:group-data-[size=default]/alert-dialog-content:place-items-start sm:group-data-[size=default]/alert-dialog-content:text-left sm:group-data-[size=default]/alert-dialog-content:has-data-[slot=alert-dialog-media]:grid-rows-[auto_1fr]",
+@@ -44,3 +83,2 @@ const AlertDialogContent = React.forwardRef<
+-  </AlertDialogPortal>
+-))
+-AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
++  )
++}
+@@ -48 +86 @@ AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
+-const AlertDialogHeader = ({
++function AlertDialogFooter({
+@@ -51,10 +89,12 @@ const AlertDialogHeader = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn(
+-      "flex flex-col space-y-2 text-center sm:text-left",
+-      className
+-    )}
+-    {...props}
+-  />
+-)
+-AlertDialogHeader.displayName = "AlertDialogHeader"
++}: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="alert-dialog-footer"
++      className={cn(
++        "flex flex-col-reverse gap-2 group-data-[size=sm]/alert-dialog-content:grid group-data-[size=sm]/alert-dialog-content:grid-cols-2 sm:flex-row sm:justify-end",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -62 +102 @@ AlertDialogHeader.displayName = "AlertDialogHeader"
+-const AlertDialogFooter = ({
++function AlertDialogTitle({
+@@ -65,10 +105,12 @@ const AlertDialogFooter = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn(
+-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+-      className
+-    )}
+-    {...props}
+-  />
+-)
+-AlertDialogFooter.displayName = "AlertDialogFooter"
++}: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
++  return (
++    <AlertDialogPrimitive.Title
++      data-slot="alert-dialog-title"
++      className={cn(
++        "text-lg font-semibold sm:group-data-[size=default]/alert-dialog-content:group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -76,11 +118,12 @@ AlertDialogFooter.displayName = "AlertDialogFooter"
+-const AlertDialogTitle = React.forwardRef<
+-  React.ElementRef<typeof AlertDialogPrimitive.Title>,
+-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
+->(({ className, ...props }, ref) => (
+-  <AlertDialogPrimitive.Title
+-    ref={ref}
+-    className={cn("text-lg font-semibold", className)}
+-    {...props}
+-  />
+-))
+-AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
++function AlertDialogDescription({
++  className,
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
++  return (
++    <AlertDialogPrimitive.Description
++      data-slot="alert-dialog-description"
++      className={cn("text-sm text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -88,12 +131,15 @@ AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
+-const AlertDialogDescription = React.forwardRef<
+-  React.ElementRef<typeof AlertDialogPrimitive.Description>,
+-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
+->(({ className, ...props }, ref) => (
+-  <AlertDialogPrimitive.Description
+-    ref={ref}
+-    className={cn("text-sm text-muted-foreground", className)}
+-    {...props}
+-  />
+-))
+-AlertDialogDescription.displayName =
+-  AlertDialogPrimitive.Description.displayName
++function AlertDialogMedia({
++  className,
++  ...props
++}: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="alert-dialog-media"
++      className={cn(
++        "mb-2 inline-flex size-16 items-center justify-center rounded-md bg-muted sm:group-data-[size=default]/alert-dialog-content:row-span-2 *:[svg:not([class*='size-'])]:size-8",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -101,11 +147,17 @@ AlertDialogDescription.displayName =
+-const AlertDialogAction = React.forwardRef<
+-  React.ElementRef<typeof AlertDialogPrimitive.Action>,
+-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
+->(({ className, ...props }, ref) => (
+-  <AlertDialogPrimitive.Action
+-    ref={ref}
+-    className={cn(buttonVariants(), className)}
+-    {...props}
+-  />
+-))
+-AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
++function AlertDialogAction({
++  className,
++  variant = "default",
++  size = "default",
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Action> &
++  Pick<React.ComponentProps<typeof Button>, "variant" | "size">) {
++  return (
++    <Button variant={variant} size={size} asChild>
++      <AlertDialogPrimitive.Action
++        data-slot="alert-dialog-action"
++        className={cn(className)}
++        {...props}
++      />
++    </Button>
++  )
++}
+@@ -113,15 +165,17 @@ AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
+-const AlertDialogCancel = React.forwardRef<
+-  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
+-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
+->(({ className, ...props }, ref) => (
+-  <AlertDialogPrimitive.Cancel
+-    ref={ref}
+-    className={cn(
+-      buttonVariants({ variant: "outline" }),
+-      "mt-2 sm:mt-0",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
++function AlertDialogCancel({
++  className,
++  variant = "outline",
++  size = "default",
++  ...props
++}: React.ComponentProps<typeof AlertDialogPrimitive.Cancel> &
++  Pick<React.ComponentProps<typeof Button>, "variant" | "size">) {
++  return (
++    <Button variant={variant} size={size} asChild>
++      <AlertDialogPrimitive.Cancel
++        data-slot="alert-dialog-cancel"
++        className={cn(className)}
++        {...props}
++      />
++    </Button>
++  )
++}
+@@ -131,3 +185,2 @@ export {
+-  AlertDialogPortal,
+-  AlertDialogOverlay,
+-  AlertDialogTrigger,
++  AlertDialogAction,
++  AlertDialogCancel,
+@@ -135 +188 @@ export {
+-  AlertDialogHeader,
++  AlertDialogDescription,
+@@ -136,0 +190,4 @@ export {
++  AlertDialogHeader,
++  AlertDialogMedia,
++  AlertDialogOverlay,
++  AlertDialogPortal,
+@@ -138,3 +195 @@ export {
+-  AlertDialogDescription,
+-  AlertDialogAction,
+-  AlertDialogCancel,
++  AlertDialogTrigger,
+diff --git a/src/components/ui/alert.tsx b/src/components/ui/alert.tsx
+index 5afd41d1..11ffb6ba 100644
+--- a/src/components/ui/alert.tsx
++++ b/src/components/ui/alert.tsx
+@@ -3 +2,0 @@ import { cva, type VariantProps } from "class-variance-authority"
+-
+@@ -7 +6 @@ const alertVariants = cva(
+-  "relative w-full rounded-lg border px-4 py-3 text-sm [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground [&>svg~*]:pl-7",
++  "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+@@ -11 +10 @@ const alertVariants = cva(
+-        default: "bg-background text-foreground",
++        default: "bg-card text-card-foreground",
+@@ -13 +12 @@ const alertVariants = cva(
+-          "border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive",
++          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+@@ -22,12 +21,14 @@ const alertVariants = cva(
+-const Alert = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
+->(({ className, variant, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    role="alert"
+-    className={cn(alertVariants({ variant }), className)}
+-    {...props}
+-  />
+-))
+-Alert.displayName = "Alert"
++function Alert({
++  className,
++  variant,
++  ...props
++}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
++  return (
++    <div
++      data-slot="alert"
++      role="alert"
++      className={cn(alertVariants({ variant }), className)}
++      {...props}
++    />
++  )
++}
+@@ -35,11 +36,12 @@ Alert.displayName = "Alert"
+-const AlertTitle = React.forwardRef<
+-  HTMLParagraphElement,
+-  React.HTMLAttributes<HTMLHeadingElement>
+->(({ className, ...props }, ref) => (
+-  <h5
+-    ref={ref}
+-    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
+-    {...props}
+-  />
+-))
+-AlertTitle.displayName = "AlertTitle"
++function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="alert-title"
++      className={cn(
++        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -47,11 +49,15 @@ AlertTitle.displayName = "AlertTitle"
+-const AlertDescription = React.forwardRef<
+-  HTMLParagraphElement,
+-  React.HTMLAttributes<HTMLParagraphElement>
+->(({ className, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    className={cn("text-sm [&_p]:leading-relaxed", className)}
+-    {...props}
+-  />
+-))
+-AlertDescription.displayName = "AlertDescription"
++function AlertDescription({
++  className,
++  ...props
++}: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="alert-description"
++      className={cn(
++        "col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground [&_p]:leading-relaxed",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/badge.tsx b/src/components/ui/badge.tsx
+index e87d62bf..2b41c16f 100644
+--- a/src/components/ui/badge.tsx
++++ b/src/components/ui/badge.tsx
+@@ -3 +2,0 @@ import { cva, type VariantProps } from "class-variance-authority"
+-
+@@ -4,0 +4 @@ import { cn } from "@/lib/utils"
++import { Slot } from "radix-ui"
+@@ -7 +7 @@ const badgeVariants = cva(
+-  "inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
++  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
+@@ -11,2 +11 @@ const badgeVariants = cva(
+-        default:
+-          "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
++        default: "bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+@@ -14 +13 @@ const badgeVariants = cva(
+-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
++          "bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+@@ -16,2 +15,5 @@ const badgeVariants = cva(
+-          "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
+-        outline: "text-foreground",
++          "bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
++        outline:
++          "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
++        ghost: "[a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
++        link: "text-primary underline-offset-4 [a&]:hover:underline",
+@@ -26,3 +28,8 @@ const badgeVariants = cva(
+-export interface BadgeProps
+-  extends React.HTMLAttributes<HTMLDivElement>,
+-    VariantProps<typeof badgeVariants> {}
++function Badge({
++  className,
++  variant = "default",
++  asChild = false,
++  ...props
++}: React.ComponentProps<"span"> &
++  VariantProps<typeof badgeVariants> & { asChild?: boolean }) {
++  const Comp = asChild ? Slot.Root : "span"
+@@ -30 +36,0 @@ export interface BadgeProps
+-function Badge({ className, variant, ...props }: BadgeProps) {
+@@ -32 +38,6 @@ function Badge({ className, variant, ...props }: BadgeProps) {
+-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
++    <Comp
++      data-slot="badge"
++      data-variant={variant}
++      className={cn(badgeVariants({ variant }), className)}
++      {...props}
++    />
+diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
+index 65d4fcd9..0d202d63 100644
+--- a/src/components/ui/button.tsx
++++ b/src/components/ui/button.tsx
+@@ -2 +1,0 @@ import * as React from "react"
+-import { Slot } from "@radix-ui/react-slot"
+@@ -4 +2,0 @@ import { cva, type VariantProps } from "class-variance-authority"
+-
+@@ -5,0 +4 @@ import { cn } from "@/lib/utils"
++import { Slot } from "radix-ui"
+@@ -8 +7 @@ const buttonVariants = cva(
+-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
++  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+@@ -12,2 +11 @@ const buttonVariants = cva(
+-        default:
+-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
++        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+@@ -15 +13 @@ const buttonVariants = cva(
+-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
++          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+@@ -17 +15 @@ const buttonVariants = cva(
+-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
++          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+@@ -19,2 +17,3 @@ const buttonVariants = cva(
+-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
+-        ghost: "hover:bg-accent hover:text-accent-foreground",
++          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
++        ghost:
++          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+@@ -24,4 +23,8 @@ const buttonVariants = cva(
+-        default: "h-9 px-4 py-2",
+-        sm: "h-8 rounded-md px-3 text-xs",
+-        lg: "h-10 rounded-md px-8",
+-        icon: "h-9 w-9",
++        default: "h-9 px-4 py-2 has-[>svg]:px-3",
++        xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
++        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
++        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
++        icon: "size-9",
++        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
++        "icon-sm": "size-8",
++        "icon-lg": "size-10",
+@@ -37,5 +40,11 @@ const buttonVariants = cva(
+-export interface ButtonProps
+-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+-    VariantProps<typeof buttonVariants> {
+-  asChild?: boolean
+-}
++function Button({
++  className,
++  variant = "default",
++  size = "default",
++  asChild = false,
++  ...props
++}: React.ComponentProps<"button"> &
++  VariantProps<typeof buttonVariants> & {
++    asChild?: boolean
++  }) {
++  const Comp = asChild ? Slot.Root : "button"
+@@ -43,13 +52,10 @@ export interface ButtonProps
+-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+-    const Comp = asChild ? Slot : "button"
+-    return (
+-      <Comp
+-        className={cn(buttonVariants({ variant, size, className }))}
+-        ref={ref}
+-        {...props}
+-      />
+-    )
+-  }
+-)
+-Button.displayName = "Button"
++  return (
++    <Comp
++      data-slot="button"
++      data-variant={variant}
++      data-size={size}
++      className={cn(buttonVariants({ variant, size, className }))}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/card.tsx b/src/components/ui/card.tsx
+index cabfbfc5..6c922ec2 100644
+--- a/src/components/ui/card.tsx
++++ b/src/components/ui/card.tsx
+@@ -2 +1,0 @@ import * as React from "react"
+-
+@@ -5,14 +4,25 @@ import { cn } from "@/lib/utils"
+-const Card = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement>
+->(({ className, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    className={cn(
+-      "rounded-xl border bg-card text-card-foreground shadow",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-Card.displayName = "Card"
++function Card({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card"
++      className={cn(
++        "flex flex-col gap-6 rounded-xl border bg-card py-6 text-card-foreground shadow-sm",
++        className
++      )}
++      {...props}
++    />
++  )
++}
++
++function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card-header"
++      className={cn(
++        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -20,11 +30,9 @@ Card.displayName = "Card"
+-const CardHeader = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement>
+->(({ className, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+-    {...props}
+-  />
+-))
+-CardHeader.displayName = "CardHeader"
++function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card-title"
++      className={cn("leading-none font-semibold", className)}
++      {...props}
++    />
++  )
++}
+@@ -32,11 +40,9 @@ CardHeader.displayName = "CardHeader"
+-const CardTitle = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement>
+->(({ className, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    className={cn("font-semibold leading-none tracking-tight", className)}
+-    {...props}
+-  />
+-))
+-CardTitle.displayName = "CardTitle"
++function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card-description"
++      className={cn("text-sm text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -44,11 +50,12 @@ CardTitle.displayName = "CardTitle"
+-const CardDescription = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement>
+->(({ className, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    className={cn("text-sm text-muted-foreground", className)}
+-    {...props}
+-  />
+-))
+-CardDescription.displayName = "CardDescription"
++function CardAction({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card-action"
++      className={cn(
++        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -56,7 +63,9 @@ CardDescription.displayName = "CardDescription"
+-const CardContent = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement>
+->(({ className, ...props }, ref) => (
+-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+-))
+-CardContent.displayName = "CardContent"
++function CardContent({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card-content"
++      className={cn("px-6", className)}
++      {...props}
++    />
++  )
++}
+@@ -64,11 +73,9 @@ CardContent.displayName = "CardContent"
+-const CardFooter = React.forwardRef<
+-  HTMLDivElement,
+-  React.HTMLAttributes<HTMLDivElement>
+->(({ className, ...props }, ref) => (
+-  <div
+-    ref={ref}
+-    className={cn("flex items-center p-6 pt-0", className)}
+-    {...props}
+-  />
+-))
+-CardFooter.displayName = "CardFooter"
++function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="card-footer"
++      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
++      {...props}
++    />
++  )
++}
+@@ -76 +83,9 @@ CardFooter.displayName = "CardFooter"
+-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
++export {
++  Card,
++  CardHeader,
++  CardFooter,
++  CardTitle,
++  CardAction,
++  CardDescription,
++  CardContent,
++}
+diff --git a/src/components/ui/checkbox.tsx b/src/components/ui/checkbox.tsx
+index 5d01cd0b..fe3d28c5 100644
+--- a/src/components/ui/checkbox.tsx
++++ b/src/components/ui/checkbox.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as CheckboxPrimitive from "@radix-ui/react-checkbox"
+-import { Check } from "lucide-react"
+-
+@@ -7,0 +5,2 @@ import { cn } from "@/lib/utils"
++import { CheckIcon } from "lucide-react"
++import { Checkbox as CheckboxPrimitive } from "radix-ui"
+@@ -9,14 +8,12 @@ import { cn } from "@/lib/utils"
+-const Checkbox = React.forwardRef<
+-  React.ElementRef<typeof CheckboxPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>
+->(({ className, ...props }, ref) => (
+-  <CheckboxPrimitive.Root
+-    ref={ref}
+-    className={cn(
+-      "grid place-content-center peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <CheckboxPrimitive.Indicator
+-      className={cn("grid place-content-center text-current")}
++function Checkbox({
++  className,
++  ...props
++}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
++  return (
++    <CheckboxPrimitive.Root
++      data-slot="checkbox"
++      className={cn(
++        "peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:data-[state=checked]:bg-primary",
++        className
++      )}
++      {...props}
+@@ -24,5 +21,9 @@ const Checkbox = React.forwardRef<
+-      <Check className="h-4 w-4" />
+-    </CheckboxPrimitive.Indicator>
+-  </CheckboxPrimitive.Root>
+-))
+-Checkbox.displayName = CheckboxPrimitive.Root.displayName
++      <CheckboxPrimitive.Indicator
++        data-slot="checkbox-indicator"
++        className="grid place-content-center text-current transition-none"
++      >
++        <CheckIcon className="size-3.5" />
++      </CheckboxPrimitive.Indicator>
++    </CheckboxPrimitive.Root>
++  )
++}
+diff --git a/src/components/ui/collapsible.tsx b/src/components/ui/collapsible.tsx
+index 9fa48946..2f7a4e7f 100644
+--- a/src/components/ui/collapsible.tsx
++++ b/src/components/ui/collapsible.tsx
+@@ -3 +3 @@
+-import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
++import { Collapsible as CollapsiblePrimitive } from "radix-ui"
+@@ -5 +5,5 @@ import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
+-const Collapsible = CollapsiblePrimitive.Root
++function Collapsible({
++  ...props
++}: React.ComponentProps<typeof CollapsiblePrimitive.Root>) {
++  return <CollapsiblePrimitive.Root data-slot="collapsible" {...props} />
++}
+@@ -7 +11,10 @@ const Collapsible = CollapsiblePrimitive.Root
+-const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger
++function CollapsibleTrigger({
++  ...props
++}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>) {
++  return (
++    <CollapsiblePrimitive.CollapsibleTrigger
++      data-slot="collapsible-trigger"
++      {...props}
++    />
++  )
++}
+@@ -9 +22,10 @@ const CollapsibleTrigger = CollapsiblePrimitive.CollapsibleTrigger
+-const CollapsibleContent = CollapsiblePrimitive.CollapsibleContent
++function CollapsibleContent({
++  ...props
++}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleContent>) {
++  return (
++    <CollapsiblePrimitive.CollapsibleContent
++      data-slot="collapsible-content"
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/dialog.tsx b/src/components/ui/dialog.tsx
+index 1647513e..92a3c49b 100644
+--- a/src/components/ui/dialog.tsx
++++ b/src/components/ui/dialog.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as DialogPrimitive from "@radix-ui/react-dialog"
+-import { X } from "lucide-react"
+-
+@@ -7,0 +5,2 @@ import { cn } from "@/lib/utils"
++import { XIcon } from "lucide-react"
++import { Dialog as DialogPrimitive } from "radix-ui"
+@@ -9 +8 @@ import { cn } from "@/lib/utils"
+-const Dialog = DialogPrimitive.Root
++import { Button } from "@/components/ui/button"
+@@ -11 +10,5 @@ const Dialog = DialogPrimitive.Root
+-const DialogTrigger = DialogPrimitive.Trigger
++function Dialog({
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Root>) {
++  return <DialogPrimitive.Root data-slot="dialog" {...props} />
++}
+@@ -13 +16,5 @@ const DialogTrigger = DialogPrimitive.Trigger
+-const DialogPortal = DialogPrimitive.Portal
++function DialogTrigger({
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
++  return <DialogPrimitive.Trigger data-slot="dialog-trigger" {...props} />
++}
+@@ -15 +22,5 @@ const DialogPortal = DialogPrimitive.Portal
+-const DialogClose = DialogPrimitive.Close
++function DialogPortal({
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
++  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
++}
+@@ -17,14 +28,5 @@ const DialogClose = DialogPrimitive.Close
+-const DialogOverlay = React.forwardRef<
+-  React.ElementRef<typeof DialogPrimitive.Overlay>,
+-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
+->(({ className, ...props }, ref) => (
+-  <DialogPrimitive.Overlay
+-    ref={ref}
+-    className={cn(
+-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
++function DialogClose({
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Close>) {
++  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />
++}
+@@ -32,8 +34,7 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
+-const DialogContent = React.forwardRef<
+-  React.ElementRef<typeof DialogPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+->(({ className, children, ...props }, ref) => (
+-  <DialogPortal>
+-    <DialogOverlay />
+-    <DialogPrimitive.Content
+-      ref={ref}
++function DialogOverlay({
++  className,
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Overlay>) {
++  return (
++    <DialogPrimitive.Overlay
++      data-slot="dialog-overlay"
+@@ -41 +42 @@ const DialogContent = React.forwardRef<
+-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
++        "fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
+@@ -45,10 +46,3 @@ const DialogContent = React.forwardRef<
+-    >
+-      {children}
+-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+-        <X className="h-4 w-4" />
+-        <span className="sr-only">Close</span>
+-      </DialogPrimitive.Close>
+-    </DialogPrimitive.Content>
+-  </DialogPortal>
+-))
+-DialogContent.displayName = DialogPrimitive.Content.displayName
++    />
++  )
++}
+@@ -56 +50 @@ DialogContent.displayName = DialogPrimitive.Content.displayName
+-const DialogHeader = ({
++function DialogContent({
+@@ -57,0 +52,2 @@ const DialogHeader = ({
++  children,
++  showCloseButton = true,
+@@ -59,10 +55,28 @@ const DialogHeader = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn(
+-      "flex flex-col space-y-1.5 text-center sm:text-left",
+-      className
+-    )}
+-    {...props}
+-  />
+-)
+-DialogHeader.displayName = "DialogHeader"
++}: React.ComponentProps<typeof DialogPrimitive.Content> & {
++  showCloseButton?: boolean
++}) {
++  return (
++    <DialogPortal data-slot="dialog-portal">
++      <DialogOverlay />
++      <DialogPrimitive.Content
++        data-slot="dialog-content"
++        className={cn(
++          "fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border bg-background p-6 shadow-lg duration-200 outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 sm:max-w-lg",
++          className
++        )}
++        {...props}
++      >
++        {children}
++        {showCloseButton && (
++          <DialogPrimitive.Close
++            data-slot="dialog-close"
++            className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
++          >
++            <XIcon />
++            <span className="sr-only">Close</span>
++          </DialogPrimitive.Close>
++        )}
++      </DialogPrimitive.Content>
++    </DialogPortal>
++  )
++}
+@@ -70 +84,11 @@ DialogHeader.displayName = "DialogHeader"
+-const DialogFooter = ({
++function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="dialog-header"
++      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
++      {...props}
++    />
++  )
++}
++
++function DialogFooter({
+@@ -71,0 +96,2 @@ const DialogFooter = ({
++  showCloseButton = false,
++  children,
+@@ -73,10 +99,21 @@ const DialogFooter = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn(
+-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+-      className
+-    )}
+-    {...props}
+-  />
+-)
+-DialogFooter.displayName = "DialogFooter"
++}: React.ComponentProps<"div"> & {
++  showCloseButton?: boolean
++}) {
++  return (
++    <div
++      data-slot="dialog-footer"
++      className={cn(
++        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
++        className
++      )}
++      {...props}
++    >
++      {children}
++      {showCloseButton && (
++        <DialogPrimitive.Close asChild>
++          <Button variant="outline">Close</Button>
++        </DialogPrimitive.Close>
++      )}
++    </div>
++  )
++}
+@@ -84,14 +121,12 @@ DialogFooter.displayName = "DialogFooter"
+-const DialogTitle = React.forwardRef<
+-  React.ElementRef<typeof DialogPrimitive.Title>,
+-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
+->(({ className, ...props }, ref) => (
+-  <DialogPrimitive.Title
+-    ref={ref}
+-    className={cn(
+-      "text-lg font-semibold leading-none tracking-tight",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-DialogTitle.displayName = DialogPrimitive.Title.displayName
++function DialogTitle({
++  className,
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Title>) {
++  return (
++    <DialogPrimitive.Title
++      data-slot="dialog-title"
++      className={cn("text-lg leading-none font-semibold", className)}
++      {...props}
++    />
++  )
++}
+@@ -99,11 +134,12 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName
+-const DialogDescription = React.forwardRef<
+-  React.ElementRef<typeof DialogPrimitive.Description>,
+-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
+->(({ className, ...props }, ref) => (
+-  <DialogPrimitive.Description
+-    ref={ref}
+-    className={cn("text-sm text-muted-foreground", className)}
+-    {...props}
+-  />
+-))
+-DialogDescription.displayName = DialogPrimitive.Description.displayName
++function DialogDescription({
++  className,
++  ...props
++}: React.ComponentProps<typeof DialogPrimitive.Description>) {
++  return (
++    <DialogPrimitive.Description
++      data-slot="dialog-description"
++      className={cn("text-sm text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -113,3 +148,0 @@ export {
+-  DialogPortal,
+-  DialogOverlay,
+-  DialogTrigger,
+@@ -118 +151 @@ export {
+-  DialogHeader,
++  DialogDescription,
+@@ -119,0 +153,3 @@ export {
++  DialogHeader,
++  DialogOverlay,
++  DialogPortal,
+@@ -121 +157 @@ export {
+-  DialogDescription,
++  DialogTrigger,
+diff --git a/src/components/ui/drawer.tsx b/src/components/ui/drawer.tsx
+index 6a0ef53d..ad3080e1 100644
+--- a/src/components/ui/drawer.tsx
++++ b/src/components/ui/drawer.tsx
+@@ -3,0 +4 @@ import * as React from "react"
++import { cn } from "@/lib/utils"
+@@ -6 +7,5 @@ import { Drawer as DrawerPrimitive } from "vaul"
+-import { cn } from "@/lib/utils"
++function Drawer({
++  ...props
++}: React.ComponentProps<typeof DrawerPrimitive.Root>) {
++  return <DrawerPrimitive.Root data-slot="drawer" {...props} />
++}
+@@ -8,2 +13 @@ import { cn } from "@/lib/utils"
+-const Drawer = ({
+-  shouldScaleBackground = true,
++function DrawerTrigger({
+@@ -11,7 +15,3 @@ const Drawer = ({
+-}: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
+-  <DrawerPrimitive.Root
+-    shouldScaleBackground={shouldScaleBackground}
+-    {...props}
+-  />
+-)
+-Drawer.displayName = "Drawer"
++}: React.ComponentProps<typeof DrawerPrimitive.Trigger>) {
++  return <DrawerPrimitive.Trigger data-slot="drawer-trigger" {...props} />
++}
+@@ -19 +19,5 @@ Drawer.displayName = "Drawer"
+-const DrawerTrigger = DrawerPrimitive.Trigger
++function DrawerPortal({
++  ...props
++}: React.ComponentProps<typeof DrawerPrimitive.Portal>) {
++  return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />
++}
+@@ -21 +25,5 @@ const DrawerTrigger = DrawerPrimitive.Trigger
+-const DrawerPortal = DrawerPrimitive.Portal
++function DrawerClose({
++  ...props
++}: React.ComponentProps<typeof DrawerPrimitive.Close>) {
++  return <DrawerPrimitive.Close data-slot="drawer-close" {...props} />
++}
+@@ -23 +31,15 @@ const DrawerPortal = DrawerPrimitive.Portal
+-const DrawerClose = DrawerPrimitive.Close
++function DrawerOverlay({
++  className,
++  ...props
++}: React.ComponentProps<typeof DrawerPrimitive.Overlay>) {
++  return (
++    <DrawerPrimitive.Overlay
++      data-slot="drawer-overlay"
++      className={cn(
++        "fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -25,11 +47,26 @@ const DrawerClose = DrawerPrimitive.Close
+-const DrawerOverlay = React.forwardRef<
+-  React.ElementRef<typeof DrawerPrimitive.Overlay>,
+-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Overlay>
+->(({ className, ...props }, ref) => (
+-  <DrawerPrimitive.Overlay
+-    ref={ref}
+-    className={cn("fixed inset-0 z-50 bg-black/80", className)}
+-    {...props}
+-  />
+-))
+-DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
++function DrawerContent({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof DrawerPrimitive.Content>) {
++  return (
++    <DrawerPortal data-slot="drawer-portal">
++      <DrawerOverlay />
++      <DrawerPrimitive.Content
++        data-slot="drawer-content"
++        className={cn(
++          "group/drawer-content fixed z-50 flex h-auto flex-col bg-background",
++          "data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-lg data-[vaul-drawer-direction=top]:border-b",
++          "data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-lg data-[vaul-drawer-direction=bottom]:border-t",
++          "data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:border-l data-[vaul-drawer-direction=right]:sm:max-w-sm",
++          "data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:border-r data-[vaul-drawer-direction=left]:sm:max-w-sm",
++          className
++        )}
++        {...props}
++      >
++        <div className="mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
++        {children}
++      </DrawerPrimitive.Content>
++    </DrawerPortal>
++  )
++}
+@@ -37,8 +74,4 @@ DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName
+-const DrawerContent = React.forwardRef<
+-  React.ElementRef<typeof DrawerPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
+->(({ className, children, ...props }, ref) => (
+-  <DrawerPortal>
+-    <DrawerOverlay />
+-    <DrawerPrimitive.Content
+-      ref={ref}
++function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="drawer-header"
+@@ -46 +79 @@ const DrawerContent = React.forwardRef<
+-        "fixed inset-x-0 bottom-0 z-50 mt-24 flex h-auto flex-col rounded-t-[10px] border bg-background",
++        "flex flex-col gap-0.5 p-4 group-data-[vaul-drawer-direction=bottom]/drawer-content:text-center group-data-[vaul-drawer-direction=top]/drawer-content:text-center md:gap-1.5 md:text-left",
+@@ -50,7 +83,13 @@ const DrawerContent = React.forwardRef<
+-    >
+-      <div className="mx-auto mt-4 h-2 w-[100px] rounded-full bg-muted" />
+-      {children}
+-    </DrawerPrimitive.Content>
+-  </DrawerPortal>
+-))
+-DrawerContent.displayName = "DrawerContent"
++    />
++  )
++}
++
++function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="drawer-footer"
++      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
++      {...props}
++    />
++  )
++}
+@@ -58 +97 @@ DrawerContent.displayName = "DrawerContent"
+-const DrawerHeader = ({
++function DrawerTitle({
+@@ -61,7 +100,9 @@ const DrawerHeader = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn("grid gap-1.5 p-4 text-center sm:text-left", className)}
+-    {...props}
+-  />
+-)
+-DrawerHeader.displayName = "DrawerHeader"
++}: React.ComponentProps<typeof DrawerPrimitive.Title>) {
++  return (
++    <DrawerPrimitive.Title
++      data-slot="drawer-title"
++      className={cn("font-semibold text-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -69 +110 @@ DrawerHeader.displayName = "DrawerHeader"
+-const DrawerFooter = ({
++function DrawerDescription({
+@@ -72,34 +113,9 @@ const DrawerFooter = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+-    {...props}
+-  />
+-)
+-DrawerFooter.displayName = "DrawerFooter"
+-
+-const DrawerTitle = React.forwardRef<
+-  React.ElementRef<typeof DrawerPrimitive.Title>,
+-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Title>
+->(({ className, ...props }, ref) => (
+-  <DrawerPrimitive.Title
+-    ref={ref}
+-    className={cn(
+-      "text-lg font-semibold leading-none tracking-tight",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-DrawerTitle.displayName = DrawerPrimitive.Title.displayName
+-
+-const DrawerDescription = React.forwardRef<
+-  React.ElementRef<typeof DrawerPrimitive.Description>,
+-  React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Description>
+->(({ className, ...props }, ref) => (
+-  <DrawerPrimitive.Description
+-    ref={ref}
+-    className={cn("text-sm text-muted-foreground", className)}
+-    {...props}
+-  />
+-))
+-DrawerDescription.displayName = DrawerPrimitive.Description.displayName
++}: React.ComponentProps<typeof DrawerPrimitive.Description>) {
++  return (
++    <DrawerPrimitive.Description
++      data-slot="drawer-description"
++      className={cn("text-sm text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/dropdown-menu.tsx b/src/components/ui/dropdown-menu.tsx
+index 5a20503b..3faa9f76 100644
+--- a/src/components/ui/dropdown-menu.tsx
++++ b/src/components/ui/dropdown-menu.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
+-import { Check, ChevronRight, Circle } from "lucide-react"
+-
+@@ -7,0 +5,139 @@ import { cn } from "@/lib/utils"
++import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
++import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
++
++function DropdownMenu({
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
++  return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
++}
++
++function DropdownMenuPortal({
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Portal>) {
++  return (
++    <DropdownMenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
++  )
++}
++
++function DropdownMenuTrigger({
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Trigger>) {
++  return (
++    <DropdownMenuPrimitive.Trigger
++      data-slot="dropdown-menu-trigger"
++      {...props}
++    />
++  )
++}
++
++function DropdownMenuContent({
++  className,
++  sideOffset = 4,
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
++  return (
++    <DropdownMenuPrimitive.Portal>
++      <DropdownMenuPrimitive.Content
++        data-slot="dropdown-menu-content"
++        sideOffset={sideOffset}
++        className={cn(
++          "z-50 max-h-(--radix-dropdown-menu-content-available-height) min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
++          className
++        )}
++        {...props}
++      />
++    </DropdownMenuPrimitive.Portal>
++  )
++}
++
++function DropdownMenuGroup({
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Group>) {
++  return (
++    <DropdownMenuPrimitive.Group data-slot="dropdown-menu-group" {...props} />
++  )
++}
++
++function DropdownMenuItem({
++  className,
++  inset,
++  variant = "default",
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Item> & {
++  inset?: boolean
++  variant?: "default" | "destructive"
++}) {
++  return (
++    <DropdownMenuPrimitive.Item
++      data-slot="dropdown-menu-item"
++      data-inset={inset}
++      data-variant={variant}
++      className={cn(
++        "relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:*:[svg]:text-destructive!",
++        className
++      )}
++      {...props}
++    />
++  )
++}
++
++function DropdownMenuCheckboxItem({
++  className,
++  children,
++  checked,
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>) {
++  return (
++    <DropdownMenuPrimitive.CheckboxItem
++      data-slot="dropdown-menu-checkbox-item"
++      className={cn(
++        "relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        className
++      )}
++      checked={checked}
++      {...props}
++    >
++      <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
++        <DropdownMenuPrimitive.ItemIndicator>
++          <CheckIcon className="size-4" />
++        </DropdownMenuPrimitive.ItemIndicator>
++      </span>
++      {children}
++    </DropdownMenuPrimitive.CheckboxItem>
++  )
++}
++
++function DropdownMenuRadioGroup({
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.RadioGroup>) {
++  return (
++    <DropdownMenuPrimitive.RadioGroup
++      data-slot="dropdown-menu-radio-group"
++      {...props}
++    />
++  )
++}
++
++function DropdownMenuRadioItem({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>) {
++  return (
++    <DropdownMenuPrimitive.RadioItem
++      data-slot="dropdown-menu-radio-item"
++      className={cn(
++        "relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        className
++      )}
++      {...props}
++    >
++      <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
++        <DropdownMenuPrimitive.ItemIndicator>
++          <CircleIcon className="size-2 fill-current" />
++        </DropdownMenuPrimitive.ItemIndicator>
++      </span>
++      {children}
++    </DropdownMenuPrimitive.RadioItem>
++  )
++}
+@@ -9,58 +145,11 @@ import { cn } from "@/lib/utils"
+-const DropdownMenu = DropdownMenuPrimitive.Root
+-
+-const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
+-
+-const DropdownMenuGroup = DropdownMenuPrimitive.Group
+-
+-const DropdownMenuPortal = DropdownMenuPrimitive.Portal
+-
+-const DropdownMenuSub = DropdownMenuPrimitive.Sub
+-
+-const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
+-
+-const DropdownMenuSubTrigger = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
+-    inset?: boolean
+-  }
+->(({ className, inset, children, ...props }, ref) => (
+-  <DropdownMenuPrimitive.SubTrigger
+-    ref={ref}
+-    className={cn(
+-      "flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent data-[state=open]:bg-accent [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+-      inset && "pl-8",
+-      className
+-    )}
+-    {...props}
+-  >
+-    {children}
+-    <ChevronRight className="ml-auto" />
+-  </DropdownMenuPrimitive.SubTrigger>
+-))
+-DropdownMenuSubTrigger.displayName =
+-  DropdownMenuPrimitive.SubTrigger.displayName
+-
+-const DropdownMenuSubContent = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
+->(({ className, ...props }, ref) => (
+-  <DropdownMenuPrimitive.SubContent
+-    ref={ref}
+-    className={cn(
+-      "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-DropdownMenuSubContent.displayName =
+-  DropdownMenuPrimitive.SubContent.displayName
+-
+-const DropdownMenuContent = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content>
+->(({ className, sideOffset = 4, ...props }, ref) => (
+-  <DropdownMenuPrimitive.Portal>
+-    <DropdownMenuPrimitive.Content
+-      ref={ref}
+-      sideOffset={sideOffset}
++function DropdownMenuLabel({
++  className,
++  inset,
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Label> & {
++  inset?: boolean
++}) {
++  return (
++    <DropdownMenuPrimitive.Label
++      data-slot="dropdown-menu-label"
++      data-inset={inset}
+@@ -68,2 +157 @@ const DropdownMenuContent = React.forwardRef<
+-        "z-50 max-h-[var(--radix-dropdown-menu-content-available-height)] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-dropdown-menu-content-transform-origin]",
++        "px-2 py-1.5 text-sm font-medium data-[inset]:pl-8",
+@@ -74,99 +162,4 @@ const DropdownMenuContent = React.forwardRef<
+-  </DropdownMenuPrimitive.Portal>
+-))
+-DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
+-
+-const DropdownMenuItem = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.Item>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+-    inset?: boolean
+-  }
+->(({ className, inset, ...props }, ref) => (
+-  <DropdownMenuPrimitive.Item
+-    ref={ref}
+-    className={cn(
+-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
+-      inset && "pl-8",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName
+-
+-const DropdownMenuCheckboxItem = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
+->(({ className, children, checked, ...props }, ref) => (
+-  <DropdownMenuPrimitive.CheckboxItem
+-    ref={ref}
+-    className={cn(
+-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+-      className
+-    )}
+-    checked={checked}
+-    {...props}
+-  >
+-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+-      <DropdownMenuPrimitive.ItemIndicator>
+-        <Check className="h-4 w-4" />
+-      </DropdownMenuPrimitive.ItemIndicator>
+-    </span>
+-    {children}
+-  </DropdownMenuPrimitive.CheckboxItem>
+-))
+-DropdownMenuCheckboxItem.displayName =
+-  DropdownMenuPrimitive.CheckboxItem.displayName
+-
+-const DropdownMenuRadioItem = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
+->(({ className, children, ...props }, ref) => (
+-  <DropdownMenuPrimitive.RadioItem
+-    ref={ref}
+-    className={cn(
+-      "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+-      <DropdownMenuPrimitive.ItemIndicator>
+-        <Circle className="h-2 w-2 fill-current" />
+-      </DropdownMenuPrimitive.ItemIndicator>
+-    </span>
+-    {children}
+-  </DropdownMenuPrimitive.RadioItem>
+-))
+-DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
+-
+-const DropdownMenuLabel = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.Label>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
+-    inset?: boolean
+-  }
+->(({ className, inset, ...props }, ref) => (
+-  <DropdownMenuPrimitive.Label
+-    ref={ref}
+-    className={cn(
+-      "px-2 py-1.5 text-sm font-semibold",
+-      inset && "pl-8",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-DropdownMenuLabel.displayName = DropdownMenuPrimitive.Label.displayName
+-
+-const DropdownMenuSeparator = React.forwardRef<
+-  React.ElementRef<typeof DropdownMenuPrimitive.Separator>,
+-  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator>
+->(({ className, ...props }, ref) => (
+-  <DropdownMenuPrimitive.Separator
+-    ref={ref}
+-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+-    {...props}
+-  />
+-))
+-DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
+-
+-const DropdownMenuShortcut = ({
++  )
++}
++
++function DropdownMenuSeparator({
+@@ -175 +168,14 @@ const DropdownMenuShortcut = ({
+-}: React.HTMLAttributes<HTMLSpanElement>) => {
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
++  return (
++    <DropdownMenuPrimitive.Separator
++      data-slot="dropdown-menu-separator"
++      className={cn("-mx-1 my-1 h-px bg-border", className)}
++      {...props}
++    />
++  )
++}
++
++function DropdownMenuShortcut({
++  className,
++  ...props
++}: React.ComponentProps<"span">) {
+@@ -178 +184,51 @@ const DropdownMenuShortcut = ({
+-      className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
++      data-slot="dropdown-menu-shortcut"
++      className={cn(
++        "ml-auto text-xs tracking-widest text-muted-foreground",
++        className
++      )}
++      {...props}
++    />
++  )
++}
++
++function DropdownMenuSub({
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.Sub>) {
++  return <DropdownMenuPrimitive.Sub data-slot="dropdown-menu-sub" {...props} />
++}
++
++function DropdownMenuSubTrigger({
++  className,
++  inset,
++  children,
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.SubTrigger> & {
++  inset?: boolean
++}) {
++  return (
++    <DropdownMenuPrimitive.SubTrigger
++      data-slot="dropdown-menu-sub-trigger"
++      data-inset={inset}
++      className={cn(
++        "flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[inset]:pl-8 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
++        className
++      )}
++      {...props}
++    >
++      {children}
++      <ChevronRightIcon className="ml-auto size-4" />
++    </DropdownMenuPrimitive.SubTrigger>
++  )
++}
++
++function DropdownMenuSubContent({
++  className,
++  ...props
++}: React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>) {
++  return (
++    <DropdownMenuPrimitive.SubContent
++      data-slot="dropdown-menu-sub-content"
++      className={cn(
++        "z-50 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
++        className
++      )}
+@@ -183 +238,0 @@ const DropdownMenuShortcut = ({
+-DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
+@@ -186,0 +242 @@ export {
++  DropdownMenuPortal,
+@@ -188,0 +245,2 @@ export {
++  DropdownMenuGroup,
++  DropdownMenuLabel,
+@@ -190,0 +249 @@ export {
++  DropdownMenuRadioGroup,
+@@ -192 +250,0 @@ export {
+-  DropdownMenuLabel,
+@@ -195,2 +252,0 @@ export {
+-  DropdownMenuGroup,
+-  DropdownMenuPortal,
+@@ -198 +253,0 @@ export {
+-  DropdownMenuSubContent,
+@@ -200 +255 @@ export {
+-  DropdownMenuRadioGroup,
++  DropdownMenuSubContent,
+diff --git a/src/components/ui/hover-card.tsx b/src/components/ui/hover-card.tsx
+index 74efa6be..97240916 100644
+--- a/src/components/ui/hover-card.tsx
++++ b/src/components/ui/hover-card.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as HoverCardPrimitive from "@radix-ui/react-hover-card"
+-
+@@ -6,0 +5 @@ import { cn } from "@/lib/utils"
++import { HoverCard as HoverCardPrimitive } from "radix-ui"
+@@ -8 +7,5 @@ import { cn } from "@/lib/utils"
+-const HoverCard = HoverCardPrimitive.Root
++function HoverCard({
++  ...props
++}: React.ComponentProps<typeof HoverCardPrimitive.Root>) {
++  return <HoverCardPrimitive.Root data-slot="hover-card" {...props} />
++}
+@@ -10 +13,7 @@ const HoverCard = HoverCardPrimitive.Root
+-const HoverCardTrigger = HoverCardPrimitive.Trigger
++function HoverCardTrigger({
++  ...props
++}: React.ComponentProps<typeof HoverCardPrimitive.Trigger>) {
++  return (
++    <HoverCardPrimitive.Trigger data-slot="hover-card-trigger" {...props} />
++  )
++}
+@@ -12,16 +21,21 @@ const HoverCardTrigger = HoverCardPrimitive.Trigger
+-const HoverCardContent = React.forwardRef<
+-  React.ElementRef<typeof HoverCardPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
+->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+-  <HoverCardPrimitive.Content
+-    ref={ref}
+-    align={align}
+-    sideOffset={sideOffset}
+-    className={cn(
+-      "z-50 w-64 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-hover-card-content-transform-origin]",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-HoverCardContent.displayName = HoverCardPrimitive.Content.displayName
++function HoverCardContent({
++  className,
++  align = "center",
++  sideOffset = 4,
++  ...props
++}: React.ComponentProps<typeof HoverCardPrimitive.Content>) {
++  return (
++    <HoverCardPrimitive.Portal data-slot="hover-card-portal">
++      <HoverCardPrimitive.Content
++        data-slot="hover-card-content"
++        align={align}
++        sideOffset={sideOffset}
++        className={cn(
++          "z-50 w-64 origin-(--radix-hover-card-content-transform-origin) rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
++          className
++        )}
++        {...props}
++      />
++    </HoverCardPrimitive.Portal>
++  )
++}
+diff --git a/src/components/ui/input.tsx b/src/components/ui/input.tsx
+index 69b64fb2..1e3b9328 100644
+--- a/src/components/ui/input.tsx
++++ b/src/components/ui/input.tsx
+@@ -2 +1,0 @@ import * as React from "react"
+-
+@@ -5,16 +4,15 @@ import { cn } from "@/lib/utils"
+-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+-  ({ className, type, ...props }, ref) => {
+-    return (
+-      <input
+-        type={type}
+-        className={cn(
+-          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+-          className
+-        )}
+-        ref={ref}
+-        {...props}
+-      />
+-    )
+-  }
+-)
+-Input.displayName = "Input"
++function Input({ className, type, ...props }: React.ComponentProps<"input">) {
++  return (
++    <input
++      type={type}
++      data-slot="input"
++      className={cn(
++        "h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:bg-input/30",
++        "focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
++        "aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/label.tsx b/src/components/ui/label.tsx
+index 53418217..b60fe2f4 100644
+--- a/src/components/ui/label.tsx
++++ b/src/components/ui/label.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as LabelPrimitive from "@radix-ui/react-label"
+-import { cva, type VariantProps } from "class-variance-authority"
+-
+@@ -7,0 +5 @@ import { cn } from "@/lib/utils"
++import { Label as LabelPrimitive } from "radix-ui"
+@@ -9,16 +7,15 @@ import { cn } from "@/lib/utils"
+-const labelVariants = cva(
+-  "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+-)
+-
+-const Label = React.forwardRef<
+-  React.ElementRef<typeof LabelPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+-    VariantProps<typeof labelVariants>
+->(({ className, ...props }, ref) => (
+-  <LabelPrimitive.Root
+-    ref={ref}
+-    className={cn(labelVariants(), className)}
+-    {...props}
+-  />
+-))
+-Label.displayName = LabelPrimitive.Root.displayName
++function Label({
++  className,
++  ...props
++}: React.ComponentProps<typeof LabelPrimitive.Root>) {
++  return (
++    <LabelPrimitive.Root
++      data-slot="label"
++      className={cn(
++        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/navigation-menu.tsx b/src/components/ui/navigation-menu.tsx
+index 056354bf..65b562ac 100644
+--- a/src/components/ui/navigation-menu.tsx
++++ b/src/components/ui/navigation-menu.tsx
+@@ -2 +1,0 @@ import * as React from "react"
+-import * as NavigationMenuPrimitive from "@radix-ui/react-navigation-menu"
+@@ -4,2 +2,0 @@ import { cva } from "class-variance-authority"
+-import { ChevronDown } from "lucide-react"
+-
+@@ -6,0 +4,2 @@ import { cn } from "@/lib/utils"
++import { ChevronDownIcon } from "lucide-react"
++import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui"
+@@ -8,17 +7,23 @@ import { cn } from "@/lib/utils"
+-const NavigationMenu = React.forwardRef<
+-  React.ElementRef<typeof NavigationMenuPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Root>
+->(({ className, children, ...props }, ref) => (
+-  <NavigationMenuPrimitive.Root
+-    ref={ref}
+-    className={cn(
+-      "relative z-10 flex max-w-max flex-1 items-center justify-center",
+-      className
+-    )}
+-    {...props}
+-  >
+-    {children}
+-    <NavigationMenuViewport />
+-  </NavigationMenuPrimitive.Root>
+-))
+-NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
++function NavigationMenu({
++  className,
++  children,
++  viewport = true,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Root> & {
++  viewport?: boolean
++}) {
++  return (
++    <NavigationMenuPrimitive.Root
++      data-slot="navigation-menu"
++      data-viewport={viewport}
++      className={cn(
++        "group/navigation-menu relative flex max-w-max flex-1 items-center justify-center",
++        className
++      )}
++      {...props}
++    >
++      {children}
++      {viewport && <NavigationMenuViewport />}
++    </NavigationMenuPrimitive.Root>
++  )
++}
+@@ -26,14 +31,15 @@ NavigationMenu.displayName = NavigationMenuPrimitive.Root.displayName
+-const NavigationMenuList = React.forwardRef<
+-  React.ElementRef<typeof NavigationMenuPrimitive.List>,
+-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.List>
+->(({ className, ...props }, ref) => (
+-  <NavigationMenuPrimitive.List
+-    ref={ref}
+-    className={cn(
+-      "group flex flex-1 list-none items-center justify-center space-x-1",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
++function NavigationMenuList({
++  className,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.List>) {
++  return (
++    <NavigationMenuPrimitive.List
++      data-slot="navigation-menu-list"
++      className={cn(
++        "group flex flex-1 list-none items-center justify-center gap-1",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -41 +47,12 @@ NavigationMenuList.displayName = NavigationMenuPrimitive.List.displayName
+-const NavigationMenuItem = NavigationMenuPrimitive.Item
++function NavigationMenuItem({
++  className,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Item>) {
++  return (
++    <NavigationMenuPrimitive.Item
++      data-slot="navigation-menu-item"
++      className={cn("relative", className)}
++      {...props}
++    />
++  )
++}
+@@ -44 +61 @@ const navigationMenuTriggerStyle = cva(
+-  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[state=open]:text-accent-foreground data-[state=open]:bg-accent/50 data-[state=open]:hover:bg-accent data-[state=open]:focus:bg-accent"
++  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-[color,box-shadow] outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground data-[state=open]:hover:bg-accent data-[state=open]:focus:bg-accent"
+@@ -47,17 +64,19 @@ const navigationMenuTriggerStyle = cva(
+-const NavigationMenuTrigger = React.forwardRef<
+-  React.ElementRef<typeof NavigationMenuPrimitive.Trigger>,
+-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Trigger>
+->(({ className, children, ...props }, ref) => (
+-  <NavigationMenuPrimitive.Trigger
+-    ref={ref}
+-    className={cn(navigationMenuTriggerStyle(), "group", className)}
+-    {...props}
+-  >
+-    {children}{" "}
+-    <ChevronDown
+-      className="relative top-[1px] ml-1 h-3 w-3 transition duration-300 group-data-[state=open]:rotate-180"
+-      aria-hidden="true"
+-    />
+-  </NavigationMenuPrimitive.Trigger>
+-))
+-NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
++function NavigationMenuTrigger({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Trigger>) {
++  return (
++    <NavigationMenuPrimitive.Trigger
++      data-slot="navigation-menu-trigger"
++      className={cn(navigationMenuTriggerStyle(), "group", className)}
++      {...props}
++    >
++      {children}{" "}
++      <ChevronDownIcon
++        className="relative top-[1px] ml-1 size-3 transition duration-300 group-data-[state=open]:rotate-180"
++        aria-hidden="true"
++      />
++    </NavigationMenuPrimitive.Trigger>
++  )
++}
+@@ -65,14 +84,16 @@ NavigationMenuTrigger.displayName = NavigationMenuPrimitive.Trigger.displayName
+-const NavigationMenuContent = React.forwardRef<
+-  React.ElementRef<typeof NavigationMenuPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Content>
+->(({ className, ...props }, ref) => (
+-  <NavigationMenuPrimitive.Content
+-    ref={ref}
+-    className={cn(
+-      "left-0 top-0 w-full data-[motion^=from-]:animate-in data-[motion^=to-]:animate-out data-[motion^=from-]:fade-in data-[motion^=to-]:fade-out data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 md:absolute md:w-auto ",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
++function NavigationMenuContent({
++  className,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Content>) {
++  return (
++    <NavigationMenuPrimitive.Content
++      data-slot="navigation-menu-content"
++      className={cn(
++        "top-0 left-0 w-full p-2 pr-2.5 data-[motion=from-end]:slide-in-from-right-52 data-[motion=from-start]:slide-in-from-left-52 data-[motion=to-end]:slide-out-to-right-52 data-[motion=to-start]:slide-out-to-left-52 data-[motion^=from-]:animate-in data-[motion^=from-]:fade-in data-[motion^=to-]:animate-out data-[motion^=to-]:fade-out md:absolute md:w-auto",
++        "group-data-[viewport=false]/navigation-menu:top-full group-data-[viewport=false]/navigation-menu:mt-1.5 group-data-[viewport=false]/navigation-menu:overflow-hidden group-data-[viewport=false]/navigation-menu:rounded-md group-data-[viewport=false]/navigation-menu:border group-data-[viewport=false]/navigation-menu:bg-popover group-data-[viewport=false]/navigation-menu:text-popover-foreground group-data-[viewport=false]/navigation-menu:shadow group-data-[viewport=false]/navigation-menu:duration-200 **:data-[slot=navigation-menu-link]:focus:ring-0 **:data-[slot=navigation-menu-link]:focus:outline-none group-data-[viewport=false]/navigation-menu:data-[state=closed]:animate-out group-data-[viewport=false]/navigation-menu:data-[state=closed]:fade-out-0 group-data-[viewport=false]/navigation-menu:data-[state=closed]:zoom-out-95 group-data-[viewport=false]/navigation-menu:data-[state=open]:animate-in group-data-[viewport=false]/navigation-menu:data-[state=open]:fade-in-0 group-data-[viewport=false]/navigation-menu:data-[state=open]:zoom-in-95",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -80 +101,21 @@ NavigationMenuContent.displayName = NavigationMenuPrimitive.Content.displayName
+-const NavigationMenuLink = NavigationMenuPrimitive.Link
++function NavigationMenuViewport({
++  className,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Viewport>) {
++  return (
++    <div
++      className={cn(
++        "absolute top-full left-0 isolate z-50 flex justify-center"
++      )}
++    >
++      <NavigationMenuPrimitive.Viewport
++        data-slot="navigation-menu-viewport"
++        className={cn(
++          "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
++          className
++        )}
++        {...props}
++      />
++    </div>
++  )
++}
+@@ -82,6 +123,7 @@ const NavigationMenuLink = NavigationMenuPrimitive.Link
+-const NavigationMenuViewport = React.forwardRef<
+-  React.ElementRef<typeof NavigationMenuPrimitive.Viewport>,
+-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Viewport>
+->(({ className, ...props }, ref) => (
+-  <div className={cn("absolute left-0 top-full flex justify-center")}>
+-    <NavigationMenuPrimitive.Viewport
++function NavigationMenuLink({
++  className,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Link>) {
++  return (
++    <NavigationMenuPrimitive.Link
++      data-slot="navigation-menu-link"
+@@ -89 +131 @@ const NavigationMenuViewport = React.forwardRef<
+-        "origin-top-center relative mt-1.5 h-[var(--radix-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-popover text-popover-foreground shadow data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--radix-navigation-menu-viewport-width)]",
++        "flex flex-col gap-1 rounded-sm p-2 text-sm transition-all outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground data-[active=true]:hover:bg-accent data-[active=true]:focus:bg-accent [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+@@ -92 +133,0 @@ const NavigationMenuViewport = React.forwardRef<
+-      ref={ref}
+@@ -95,4 +136,2 @@ const NavigationMenuViewport = React.forwardRef<
+-  </div>
+-))
+-NavigationMenuViewport.displayName =
+-  NavigationMenuPrimitive.Viewport.displayName
++  )
++}
+@@ -100,17 +139,17 @@ NavigationMenuViewport.displayName =
+-const NavigationMenuIndicator = React.forwardRef<
+-  React.ElementRef<typeof NavigationMenuPrimitive.Indicator>,
+-  React.ComponentPropsWithoutRef<typeof NavigationMenuPrimitive.Indicator>
+->(({ className, ...props }, ref) => (
+-  <NavigationMenuPrimitive.Indicator
+-    ref={ref}
+-    className={cn(
+-      "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+-  </NavigationMenuPrimitive.Indicator>
+-))
+-NavigationMenuIndicator.displayName =
+-  NavigationMenuPrimitive.Indicator.displayName
++function NavigationMenuIndicator({
++  className,
++  ...props
++}: React.ComponentProps<typeof NavigationMenuPrimitive.Indicator>) {
++  return (
++    <NavigationMenuPrimitive.Indicator
++      data-slot="navigation-menu-indicator"
++      className={cn(
++        "top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:animate-in data-[state=visible]:fade-in",
++        className
++      )}
++      {...props}
++    >
++      <div className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
++    </NavigationMenuPrimitive.Indicator>
++  )
++}
+@@ -119 +157,0 @@ export {
+-  navigationMenuTriggerStyle,
+@@ -127,0 +166 @@ export {
++  navigationMenuTriggerStyle,
+diff --git a/src/components/ui/popover.tsx b/src/components/ui/popover.tsx
+index 70a28f66..e641fe41 100644
+--- a/src/components/ui/popover.tsx
++++ b/src/components/ui/popover.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as PopoverPrimitive from "@radix-ui/react-popover"
+-
+@@ -6,0 +5,61 @@ import { cn } from "@/lib/utils"
++import { Popover as PopoverPrimitive } from "radix-ui"
++
++function Popover({
++  ...props
++}: React.ComponentProps<typeof PopoverPrimitive.Root>) {
++  return <PopoverPrimitive.Root data-slot="popover" {...props} />
++}
++
++function PopoverTrigger({
++  ...props
++}: React.ComponentProps<typeof PopoverPrimitive.Trigger>) {
++  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
++}
++
++function PopoverContent({
++  className,
++  align = "center",
++  sideOffset = 4,
++  ...props
++}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
++  return (
++    <PopoverPrimitive.Portal>
++      <PopoverPrimitive.Content
++        data-slot="popover-content"
++        align={align}
++        sideOffset={sideOffset}
++        className={cn(
++          "z-50 w-72 origin-(--radix-popover-content-transform-origin) rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-hidden data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
++          className
++        )}
++        {...props}
++      />
++    </PopoverPrimitive.Portal>
++  )
++}
++
++function PopoverAnchor({
++  ...props
++}: React.ComponentProps<typeof PopoverPrimitive.Anchor>) {
++  return <PopoverPrimitive.Anchor data-slot="popover-anchor" {...props} />
++}
++
++function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="popover-header"
++      className={cn("flex flex-col gap-1 text-sm", className)}
++      {...props}
++    />
++  )
++}
++
++function PopoverTitle({ className, ...props }: React.ComponentProps<"h2">) {
++  return (
++    <div
++      data-slot="popover-title"
++      className={cn("font-medium", className)}
++      {...props}
++    />
++  )
++}
+@@ -8,19 +67,8 @@ import { cn } from "@/lib/utils"
+-const Popover = PopoverPrimitive.Root
+-
+-const PopoverTrigger = PopoverPrimitive.Trigger
+-
+-const PopoverAnchor = PopoverPrimitive.Anchor
+-
+-const PopoverContent = React.forwardRef<
+-  React.ElementRef<typeof PopoverPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
+->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+-  <PopoverPrimitive.Portal>
+-    <PopoverPrimitive.Content
+-      ref={ref}
+-      align={align}
+-      sideOffset={sideOffset}
+-      className={cn(
+-        "z-50 w-72 rounded-md border bg-popover p-4 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-popover-content-transform-origin]",
+-        className
+-      )}
++function PopoverDescription({
++  className,
++  ...props
++}: React.ComponentProps<"p">) {
++  return (
++    <p
++      data-slot="popover-description"
++      className={cn("text-muted-foreground", className)}
+@@ -29,3 +77,2 @@ const PopoverContent = React.forwardRef<
+-  </PopoverPrimitive.Portal>
+-))
+-PopoverContent.displayName = PopoverPrimitive.Content.displayName
++  )
++}
+@@ -33 +80,9 @@ PopoverContent.displayName = PopoverPrimitive.Content.displayName
+-export { Popover, PopoverTrigger, PopoverContent, PopoverAnchor }
++export {
++  Popover,
++  PopoverTrigger,
++  PopoverContent,
++  PopoverAnchor,
++  PopoverHeader,
++  PopoverTitle,
++  PopoverDescription,
++}
+diff --git a/src/components/ui/progress.tsx b/src/components/ui/progress.tsx
+index 4fc3b473..09d5766e 100644
+--- a/src/components/ui/progress.tsx
++++ b/src/components/ui/progress.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as ProgressPrimitive from "@radix-ui/react-progress"
+-
+@@ -6,0 +5 @@ import { cn } from "@/lib/utils"
++import { Progress as ProgressPrimitive } from "radix-ui"
+@@ -8,19 +7,22 @@ import { cn } from "@/lib/utils"
+-const Progress = React.forwardRef<
+-  React.ElementRef<typeof ProgressPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
+->(({ className, value, ...props }, ref) => (
+-  <ProgressPrimitive.Root
+-    ref={ref}
+-    className={cn(
+-      "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <ProgressPrimitive.Indicator
+-      className="h-full w-full flex-1 bg-primary transition-all"
+-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+-    />
+-  </ProgressPrimitive.Root>
+-))
+-Progress.displayName = ProgressPrimitive.Root.displayName
++function Progress({
++  className,
++  value,
++  ...props
++}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
++  return (
++    <ProgressPrimitive.Root
++      data-slot="progress"
++      className={cn(
++        "relative h-2 w-full overflow-hidden rounded-full bg-primary/20",
++        className
++      )}
++      {...props}
++    >
++      <ProgressPrimitive.Indicator
++        data-slot="progress-indicator"
++        className="h-full w-full flex-1 bg-primary transition-all"
++        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
++      />
++    </ProgressPrimitive.Root>
++  )
++}
+diff --git a/src/components/ui/radio-group.tsx b/src/components/ui/radio-group.tsx
+index 0bdf6853..1ebccab6 100644
+--- a/src/components/ui/radio-group.tsx
++++ b/src/components/ui/radio-group.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
+-import { Circle } from "lucide-react"
+-
+@@ -7,0 +5,2 @@ import { cn } from "@/lib/utils"
++import { CircleIcon } from "lucide-react"
++import { RadioGroup as RadioGroupPrimitive } from "radix-ui"
+@@ -9,4 +8,4 @@ import { cn } from "@/lib/utils"
+-const RadioGroup = React.forwardRef<
+-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
+->(({ className, ...props }, ref) => {
++function RadioGroup({
++  className,
++  ...props
++}: React.ComponentProps<typeof RadioGroupPrimitive.Root>) {
+@@ -15 +14,2 @@ const RadioGroup = React.forwardRef<
+-      className={cn("grid gap-2", className)}
++      data-slot="radio-group"
++      className={cn("grid gap-3", className)}
+@@ -17 +16,0 @@ const RadioGroup = React.forwardRef<
+-      ref={ref}
+@@ -20,2 +19 @@ const RadioGroup = React.forwardRef<
+-})
+-RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
++}
+@@ -23,4 +21,4 @@ RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
+-const RadioGroupItem = React.forwardRef<
+-  React.ElementRef<typeof RadioGroupPrimitive.Item>,
+-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
+->(({ className, ...props }, ref) => {
++function RadioGroupItem({
++  className,
++  ...props
++}: React.ComponentProps<typeof RadioGroupPrimitive.Item>) {
+@@ -29 +27 @@ const RadioGroupItem = React.forwardRef<
+-      ref={ref}
++      data-slot="radio-group-item"
+@@ -31 +29 @@ const RadioGroupItem = React.forwardRef<
+-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary shadow focus:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
++        "aspect-square size-4 shrink-0 rounded-full border border-input text-primary shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+@@ -36,2 +34,5 @@ const RadioGroupItem = React.forwardRef<
+-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
+-        <Circle className="h-3.5 w-3.5 fill-primary" />
++      <RadioGroupPrimitive.Indicator
++        data-slot="radio-group-indicator"
++        className="relative flex items-center justify-center"
++      >
++        <CircleIcon className="absolute top-1/2 left-1/2 size-2 -translate-x-1/2 -translate-y-1/2 fill-primary" />
+@@ -41,2 +42 @@ const RadioGroupItem = React.forwardRef<
+-})
+-RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
++}
+diff --git a/src/components/ui/scroll-area.tsx b/src/components/ui/scroll-area.tsx
+index 0b4a48d8..07c408b0 100644
+--- a/src/components/ui/scroll-area.tsx
++++ b/src/components/ui/scroll-area.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
+-
+@@ -6,0 +5 @@ import { cn } from "@/lib/utils"
++import { ScrollArea as ScrollAreaPrimitive } from "radix-ui"
+@@ -8,17 +7,22 @@ import { cn } from "@/lib/utils"
+-const ScrollArea = React.forwardRef<
+-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
+->(({ className, children, ...props }, ref) => (
+-  <ScrollAreaPrimitive.Root
+-    ref={ref}
+-    className={cn("relative overflow-hidden", className)}
+-    {...props}
+-  >
+-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+-      {children}
+-    </ScrollAreaPrimitive.Viewport>
+-    <ScrollBar />
+-    <ScrollAreaPrimitive.Corner />
+-  </ScrollAreaPrimitive.Root>
+-))
+-ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
++function ScrollArea({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof ScrollAreaPrimitive.Root>) {
++  return (
++    <ScrollAreaPrimitive.Root
++      data-slot="scroll-area"
++      className={cn("relative", className)}
++      {...props}
++    >
++      <ScrollAreaPrimitive.Viewport
++        data-slot="scroll-area-viewport"
++        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
++      >
++        {children}
++      </ScrollAreaPrimitive.Viewport>
++      <ScrollBar />
++      <ScrollAreaPrimitive.Corner />
++    </ScrollAreaPrimitive.Root>
++  )
++}
+@@ -26,21 +30,26 @@ ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
+-const ScrollBar = React.forwardRef<
+-  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
+-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
+->(({ className, orientation = "vertical", ...props }, ref) => (
+-  <ScrollAreaPrimitive.ScrollAreaScrollbar
+-    ref={ref}
+-    orientation={orientation}
+-    className={cn(
+-      "flex touch-none select-none transition-colors",
+-      orientation === "vertical" &&
+-        "h-full w-2.5 border-l border-l-transparent p-[1px]",
+-      orientation === "horizontal" &&
+-        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+-  </ScrollAreaPrimitive.ScrollAreaScrollbar>
+-))
+-ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
++function ScrollBar({
++  className,
++  orientation = "vertical",
++  ...props
++}: React.ComponentProps<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>) {
++  return (
++    <ScrollAreaPrimitive.ScrollAreaScrollbar
++      data-slot="scroll-area-scrollbar"
++      orientation={orientation}
++      className={cn(
++        "flex touch-none p-px transition-colors select-none",
++        orientation === "vertical" &&
++          "h-full w-2.5 border-l border-l-transparent",
++        orientation === "horizontal" &&
++          "h-2.5 flex-col border-t border-t-transparent",
++        className
++      )}
++      {...props}
++    >
++      <ScrollAreaPrimitive.ScrollAreaThumb
++        data-slot="scroll-area-thumb"
++        className="relative flex-1 rounded-full bg-border"
++      />
++    </ScrollAreaPrimitive.ScrollAreaScrollbar>
++  )
++}
+diff --git a/src/components/ui/select.tsx b/src/components/ui/select.tsx
+index 6e637f7d..18b30558 100644
+--- a/src/components/ui/select.tsx
++++ b/src/components/ui/select.tsx
+@@ -4,3 +3,0 @@ import * as React from "react"
+-import * as SelectPrimitive from "@radix-ui/react-select"
+-import { Check, ChevronDown, ChevronUp } from "lucide-react"
+-
+@@ -7,0 +5,2 @@ import { cn } from "@/lib/utils"
++import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
++import { Select as SelectPrimitive } from "radix-ui"
+@@ -9,25 +8,5 @@ import { cn } from "@/lib/utils"
+-const Select = SelectPrimitive.Root
+-
+-const SelectGroup = SelectPrimitive.Group
+-
+-const SelectValue = SelectPrimitive.Value
+-
+-const SelectTrigger = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.Trigger>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
+->(({ className, children, ...props }, ref) => (
+-  <SelectPrimitive.Trigger
+-    ref={ref}
+-    className={cn(
+-      "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+-      className
+-    )}
+-    {...props}
+-  >
+-    {children}
+-    <SelectPrimitive.Icon asChild>
+-      <ChevronDown className="h-4 w-4 opacity-50" />
+-    </SelectPrimitive.Icon>
+-  </SelectPrimitive.Trigger>
+-))
+-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
++function Select({
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Root>) {
++  return <SelectPrimitive.Root data-slot="select" {...props} />
++}
+@@ -35,16 +14,5 @@ SelectTrigger.displayName = SelectPrimitive.Trigger.displayName
+-const SelectScrollUpButton = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.ScrollUpButton>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollUpButton>
+->(({ className, ...props }, ref) => (
+-  <SelectPrimitive.ScrollUpButton
+-    ref={ref}
+-    className={cn(
+-      "flex cursor-default items-center justify-center py-1",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <ChevronUp className="h-4 w-4" />
+-  </SelectPrimitive.ScrollUpButton>
+-))
+-SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
++function SelectGroup({
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Group>) {
++  return <SelectPrimitive.Group data-slot="select-group" {...props} />
++}
+@@ -52,17 +20,5 @@ SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName
+-const SelectScrollDownButton = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.ScrollDownButton>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.ScrollDownButton>
+->(({ className, ...props }, ref) => (
+-  <SelectPrimitive.ScrollDownButton
+-    ref={ref}
+-    className={cn(
+-      "flex cursor-default items-center justify-center py-1",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <ChevronDown className="h-4 w-4" />
+-  </SelectPrimitive.ScrollDownButton>
+-))
+-SelectScrollDownButton.displayName =
+-  SelectPrimitive.ScrollDownButton.displayName
++function SelectValue({
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Value>) {
++  return <SelectPrimitive.Value data-slot="select-value" {...props} />
++}
+@@ -70,7 +26,12 @@ SelectScrollDownButton.displayName =
+-const SelectContent = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
+->(({ className, children, position = "popper", ...props }, ref) => (
+-  <SelectPrimitive.Portal>
+-    <SelectPrimitive.Content
+-      ref={ref}
++function SelectTrigger({
++  className,
++  size = "default",
++  children,
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Trigger> & {
++  size?: "sm" | "default"
++}) {
++  return (
++    <SelectPrimitive.Trigger
++      data-slot="select-trigger"
++      data-size={size}
+@@ -78,3 +39 @@ const SelectContent = React.forwardRef<
+-        "relative z-50 max-h-[--radix-select-content-available-height] min-w-[8rem] overflow-y-auto overflow-x-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-select-content-transform-origin]",
+-        position === "popper" &&
+-          "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
++        "flex w-fit items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[placeholder]:text-muted-foreground data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 dark:bg-input/30 dark:hover:bg-input/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground",
+@@ -83 +41,0 @@ const SelectContent = React.forwardRef<
+-      position={position}
+@@ -86,2 +44,19 @@ const SelectContent = React.forwardRef<
+-      <SelectScrollUpButton />
+-      <SelectPrimitive.Viewport
++      {children}
++      <SelectPrimitive.Icon asChild>
++        <ChevronDownIcon className="size-4 opacity-50" />
++      </SelectPrimitive.Icon>
++    </SelectPrimitive.Trigger>
++  )
++}
++
++function SelectContent({
++  className,
++  children,
++  position = "item-aligned",
++  align = "center",
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Content>) {
++  return (
++    <SelectPrimitive.Portal>
++      <SelectPrimitive.Content
++        data-slot="select-content"
+@@ -89 +64 @@ const SelectContent = React.forwardRef<
+-          "p-1",
++          "relative z-50 max-h-(--radix-select-content-available-height) min-w-[8rem] origin-(--radix-select-content-transform-origin) overflow-x-hidden overflow-y-auto rounded-md border bg-popover text-popover-foreground shadow-md data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+@@ -91 +66,2 @@ const SelectContent = React.forwardRef<
+-            "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]"
++            "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
++          className
+@@ -92,0 +69,3 @@ const SelectContent = React.forwardRef<
++        position={position}
++        align={align}
++        {...props}
+@@ -94,7 +73,15 @@ const SelectContent = React.forwardRef<
+-        {children}
+-      </SelectPrimitive.Viewport>
+-      <SelectScrollDownButton />
+-    </SelectPrimitive.Content>
+-  </SelectPrimitive.Portal>
+-))
+-SelectContent.displayName = SelectPrimitive.Content.displayName
++        <SelectScrollUpButton />
++        <SelectPrimitive.Viewport
++          className={cn(
++            "p-1",
++            position === "popper" &&
++              "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)] scroll-my-1"
++          )}
++        >
++          {children}
++        </SelectPrimitive.Viewport>
++        <SelectScrollDownButton />
++      </SelectPrimitive.Content>
++    </SelectPrimitive.Portal>
++  )
++}
+@@ -102,11 +89,12 @@ SelectContent.displayName = SelectPrimitive.Content.displayName
+-const SelectLabel = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.Label>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Label>
+->(({ className, ...props }, ref) => (
+-  <SelectPrimitive.Label
+-    ref={ref}
+-    className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+-    {...props}
+-  />
+-))
+-SelectLabel.displayName = SelectPrimitive.Label.displayName
++function SelectLabel({
++  className,
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Label>) {
++  return (
++    <SelectPrimitive.Label
++      data-slot="select-label"
++      className={cn("px-2 py-1.5 text-xs text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -114,21 +102,26 @@ SelectLabel.displayName = SelectPrimitive.Label.displayName
+-const SelectItem = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.Item>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>
+->(({ className, children, ...props }, ref) => (
+-  <SelectPrimitive.Item
+-    ref={ref}
+-    className={cn(
+-      "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+-      <SelectPrimitive.ItemIndicator>
+-        <Check className="h-4 w-4" />
+-      </SelectPrimitive.ItemIndicator>
+-    </span>
+-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+-  </SelectPrimitive.Item>
+-))
+-SelectItem.displayName = SelectPrimitive.Item.displayName
++function SelectItem({
++  className,
++  children,
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Item>) {
++  return (
++    <SelectPrimitive.Item
++      data-slot="select-item"
++      className={cn(
++        "relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
++        className
++      )}
++      {...props}
++    >
++      <span
++        data-slot="select-item-indicator"
++        className="absolute right-2 flex size-3.5 items-center justify-center"
++      >
++        <SelectPrimitive.ItemIndicator>
++          <CheckIcon className="size-4" />
++        </SelectPrimitive.ItemIndicator>
++      </span>
++      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
++    </SelectPrimitive.Item>
++  )
++}
+@@ -136,11 +129,48 @@ SelectItem.displayName = SelectPrimitive.Item.displayName
+-const SelectSeparator = React.forwardRef<
+-  React.ElementRef<typeof SelectPrimitive.Separator>,
+-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>
+->(({ className, ...props }, ref) => (
+-  <SelectPrimitive.Separator
+-    ref={ref}
+-    className={cn("-mx-1 my-1 h-px bg-muted", className)}
+-    {...props}
+-  />
+-))
+-SelectSeparator.displayName = SelectPrimitive.Separator.displayName
++function SelectSeparator({
++  className,
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.Separator>) {
++  return (
++    <SelectPrimitive.Separator
++      data-slot="select-separator"
++      className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
++      {...props}
++    />
++  )
++}
++
++function SelectScrollUpButton({
++  className,
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.ScrollUpButton>) {
++  return (
++    <SelectPrimitive.ScrollUpButton
++      data-slot="select-scroll-up-button"
++      className={cn(
++        "flex cursor-default items-center justify-center py-1",
++        className
++      )}
++      {...props}
++    >
++      <ChevronUpIcon className="size-4" />
++    </SelectPrimitive.ScrollUpButton>
++  )
++}
++
++function SelectScrollDownButton({
++  className,
++  ...props
++}: React.ComponentProps<typeof SelectPrimitive.ScrollDownButton>) {
++  return (
++    <SelectPrimitive.ScrollDownButton
++      data-slot="select-scroll-down-button"
++      className={cn(
++        "flex cursor-default items-center justify-center py-1",
++        className
++      )}
++      {...props}
++    >
++      <ChevronDownIcon className="size-4" />
++    </SelectPrimitive.ScrollDownButton>
++  )
++}
+@@ -150,3 +179,0 @@ export {
+-  SelectGroup,
+-  SelectValue,
+-  SelectTrigger,
+@@ -154 +181 @@ export {
+-  SelectLabel,
++  SelectGroup,
+@@ -156,2 +183 @@ export {
+-  SelectSeparator,
+-  SelectScrollUpButton,
++  SelectLabel,
+@@ -158,0 +185,4 @@ export {
++  SelectScrollUpButton,
++  SelectSeparator,
++  SelectTrigger,
++  SelectValue,
+diff --git a/src/components/ui/sheet.tsx b/src/components/ui/sheet.tsx
+index 272cb721..ce2be06d 100644
+--- a/src/components/ui/sheet.tsx
++++ b/src/components/ui/sheet.tsx
+@@ -4,4 +3,0 @@ import * as React from "react"
+-import * as SheetPrimitive from "@radix-ui/react-dialog"
+-import { cva, type VariantProps } from "class-variance-authority"
+-import { X } from "lucide-react"
+-
+@@ -8,0 +5,2 @@ import { cn } from "@/lib/utils"
++import { XIcon } from "lucide-react"
++import { Dialog as SheetPrimitive } from "radix-ui"
+@@ -10 +8,3 @@ import { cn } from "@/lib/utils"
+-const Sheet = SheetPrimitive.Root
++function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
++  return <SheetPrimitive.Root data-slot="sheet" {...props} />
++}
+@@ -12 +12,5 @@ const Sheet = SheetPrimitive.Root
+-const SheetTrigger = SheetPrimitive.Trigger
++function SheetTrigger({
++  ...props
++}: React.ComponentProps<typeof SheetPrimitive.Trigger>) {
++  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
++}
+@@ -14 +18,5 @@ const SheetTrigger = SheetPrimitive.Trigger
+-const SheetClose = SheetPrimitive.Close
++function SheetClose({
++  ...props
++}: React.ComponentProps<typeof SheetPrimitive.Close>) {
++  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
++}
+@@ -16 +24,5 @@ const SheetClose = SheetPrimitive.Close
+-const SheetPortal = SheetPrimitive.Portal
++function SheetPortal({
++  ...props
++}: React.ComponentProps<typeof SheetPrimitive.Portal>) {
++  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
++}
+@@ -18,14 +30,15 @@ const SheetPortal = SheetPrimitive.Portal
+-const SheetOverlay = React.forwardRef<
+-  React.ElementRef<typeof SheetPrimitive.Overlay>,
+-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Overlay>
+->(({ className, ...props }, ref) => (
+-  <SheetPrimitive.Overlay
+-    className={cn(
+-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+-      className
+-    )}
+-    {...props}
+-    ref={ref}
+-  />
+-))
+-SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
++function SheetOverlay({
++  className,
++  ...props
++}: React.ComponentProps<typeof SheetPrimitive.Overlay>) {
++  return (
++    <SheetPrimitive.Overlay
++      data-slot="sheet-overlay"
++      className={cn(
++        "fixed inset-0 z-50 bg-black/50 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -33,18 +46,40 @@ SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
+-const sheetVariants = cva(
+-  "fixed z-50 gap-4 bg-background p-6 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out",
+-  {
+-    variants: {
+-      side: {
+-        top: "inset-x-0 top-0 border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
+-        bottom:
+-          "inset-x-0 bottom-0 border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
+-        left: "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
+-        right:
+-          "inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
+-      },
+-    },
+-    defaultVariants: {
+-      side: "right",
+-    },
+-  }
+-)
++function SheetContent({
++  className,
++  children,
++  side = "right",
++  showCloseButton = true,
++  ...props
++}: React.ComponentProps<typeof SheetPrimitive.Content> & {
++  side?: "top" | "right" | "bottom" | "left"
++  showCloseButton?: boolean
++}) {
++  return (
++    <SheetPortal>
++      <SheetOverlay />
++      <SheetPrimitive.Content
++        data-slot="sheet-content"
++        className={cn(
++          "fixed z-50 flex flex-col gap-4 bg-background shadow-lg transition ease-in-out data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:animate-in data-[state=open]:duration-500",
++          side === "right" &&
++            "inset-y-0 right-0 h-full w-3/4 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right sm:max-w-sm",
++          side === "left" &&
++            "inset-y-0 left-0 h-full w-3/4 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left sm:max-w-sm",
++          side === "top" &&
++            "inset-x-0 top-0 h-auto border-b data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top",
++          side === "bottom" &&
++            "inset-x-0 bottom-0 h-auto border-t data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom",
++          className
++        )}
++        {...props}
++      >
++        {children}
++        {showCloseButton && (
++          <SheetPrimitive.Close className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none data-[state=open]:bg-secondary">
++            <XIcon className="size-4" />
++            <span className="sr-only">Close</span>
++          </SheetPrimitive.Close>
++        )}
++      </SheetPrimitive.Content>
++    </SheetPortal>
++  )
++}
+@@ -52,3 +87,9 @@ const sheetVariants = cva(
+-interface SheetContentProps
+-  extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
+-    VariantProps<typeof sheetVariants> {}
++function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="sheet-header"
++      className={cn("flex flex-col gap-1.5 p-4", className)}
++      {...props}
++    />
++  )
++}
+@@ -56,9 +97,5 @@ interface SheetContentProps
+-const SheetContent = React.forwardRef<
+-  React.ElementRef<typeof SheetPrimitive.Content>,
+-  SheetContentProps
+->(({ side = "right", className, children, ...props }, ref) => (
+-  <SheetPortal>
+-    <SheetOverlay />
+-    <SheetPrimitive.Content
+-      ref={ref}
+-      className={cn(sheetVariants({ side }), className)}
++function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
++  return (
++    <div
++      data-slot="sheet-footer"
++      className={cn("mt-auto flex flex-col gap-2 p-4", className)}
+@@ -66,10 +103,3 @@ const SheetContent = React.forwardRef<
+-    >
+-      <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+-        <X className="h-4 w-4" />
+-        <span className="sr-only">Close</span>
+-      </SheetPrimitive.Close>
+-      {children}
+-    </SheetPrimitive.Content>
+-  </SheetPortal>
+-))
+-SheetContent.displayName = SheetPrimitive.Content.displayName
++    />
++  )
++}
+@@ -77 +107 @@ SheetContent.displayName = SheetPrimitive.Content.displayName
+-const SheetHeader = ({
++function SheetTitle({
+@@ -80,10 +110,9 @@ const SheetHeader = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn(
+-      "flex flex-col space-y-2 text-center sm:text-left",
+-      className
+-    )}
+-    {...props}
+-  />
+-)
+-SheetHeader.displayName = "SheetHeader"
++}: React.ComponentProps<typeof SheetPrimitive.Title>) {
++  return (
++    <SheetPrimitive.Title
++      data-slot="sheet-title"
++      className={cn("font-semibold text-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -91 +120 @@ SheetHeader.displayName = "SheetHeader"
+-const SheetFooter = ({
++function SheetDescription({
+@@ -94,34 +123,9 @@ const SheetFooter = ({
+-}: React.HTMLAttributes<HTMLDivElement>) => (
+-  <div
+-    className={cn(
+-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+-      className
+-    )}
+-    {...props}
+-  />
+-)
+-SheetFooter.displayName = "SheetFooter"
+-
+-const SheetTitle = React.forwardRef<
+-  React.ElementRef<typeof SheetPrimitive.Title>,
+-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Title>
+->(({ className, ...props }, ref) => (
+-  <SheetPrimitive.Title
+-    ref={ref}
+-    className={cn("text-lg font-semibold text-foreground", className)}
+-    {...props}
+-  />
+-))
+-SheetTitle.displayName = SheetPrimitive.Title.displayName
+-
+-const SheetDescription = React.forwardRef<
+-  React.ElementRef<typeof SheetPrimitive.Description>,
+-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Description>
+->(({ className, ...props }, ref) => (
+-  <SheetPrimitive.Description
+-    ref={ref}
+-    className={cn("text-sm text-muted-foreground", className)}
+-    {...props}
+-  />
+-))
+-SheetDescription.displayName = SheetPrimitive.Description.displayName
++}: React.ComponentProps<typeof SheetPrimitive.Description>) {
++  return (
++    <SheetPrimitive.Description
++      data-slot="sheet-description"
++      className={cn("text-sm text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+@@ -131,2 +134,0 @@ export {
+-  SheetPortal,
+-  SheetOverlay,
+diff --git a/src/components/ui/slider.tsx b/src/components/ui/slider.tsx
+index ab19d576..754c4e50 100644
+--- a/src/components/ui/slider.tsx
++++ b/src/components/ui/slider.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as SliderPrimitive from "@radix-ui/react-slider"
+-
+@@ -6,0 +5,19 @@ import { cn } from "@/lib/utils"
++import { Slider as SliderPrimitive } from "radix-ui"
++
++function Slider({
++  className,
++  defaultValue,
++  value,
++  min = 0,
++  max = 100,
++  ...props
++}: React.ComponentProps<typeof SliderPrimitive.Root>) {
++  const _values = React.useMemo(
++    () =>
++      Array.isArray(value)
++        ? value
++        : Array.isArray(defaultValue)
++          ? defaultValue
++          : [min, max],
++    [value, defaultValue, min, max]
++  )
+@@ -8,19 +25,36 @@ import { cn } from "@/lib/utils"
+-const Slider = React.forwardRef<
+-  React.ElementRef<typeof SliderPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
+->(({ className, ...props }, ref) => (
+-  <SliderPrimitive.Root
+-    ref={ref}
+-    className={cn(
+-      "relative flex w-full touch-none select-none items-center",
+-      className
+-    )}
+-    {...props}
+-  >
+-    <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20">
+-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
+-    </SliderPrimitive.Track>
+-    <SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+-  </SliderPrimitive.Root>
+-))
+-Slider.displayName = SliderPrimitive.Root.displayName
++  return (
++    <SliderPrimitive.Root
++      data-slot="slider"
++      defaultValue={defaultValue}
++      value={value}
++      min={min}
++      max={max}
++      className={cn(
++        "relative flex w-full touch-none items-center select-none data-[disabled]:opacity-50 data-[orientation=vertical]:h-full data-[orientation=vertical]:min-h-44 data-[orientation=vertical]:w-auto data-[orientation=vertical]:flex-col",
++        className
++      )}
++      {...props}
++    >
++      <SliderPrimitive.Track
++        data-slot="slider-track"
++        className={cn(
++          "relative grow overflow-hidden rounded-full bg-muted data-[orientation=horizontal]:h-1.5 data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-1.5"
++        )}
++      >
++        <SliderPrimitive.Range
++          data-slot="slider-range"
++          className={cn(
++            "absolute bg-primary data-[orientation=horizontal]:h-full data-[orientation=vertical]:w-full"
++          )}
++        />
++      </SliderPrimitive.Track>
++      {Array.from({ length: _values.length }, (_, index) => (
++        <SliderPrimitive.Thumb
++          data-slot="slider-thumb"
++          key={index}
++          className="block size-4 shrink-0 rounded-full border border-primary bg-white shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
++        />
++      ))}
++    </SliderPrimitive.Root>
++  )
++}
+diff --git a/src/components/ui/sonner.tsx b/src/components/ui/sonner.tsx
+index 452f4d9f..9b20afe2 100644
+--- a/src/components/ui/sonner.tsx
++++ b/src/components/ui/sonner.tsx
+@@ -2,0 +3,7 @@
++import {
++  CircleCheckIcon,
++  InfoIcon,
++  Loader2Icon,
++  OctagonXIcon,
++  TriangleAlertIcon,
++} from "lucide-react"
+@@ -4,3 +11 @@ import { useTheme } from "next-themes"
+-import { Toaster as Sonner } from "sonner"
+-
+-type ToasterProps = React.ComponentProps<typeof Sonner>
++import { Toaster as Sonner, type ToasterProps } from "sonner"
+@@ -15,10 +20,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
+-      toastOptions={{
+-        classNames: {
+-          toast:
+-            "group toast group-[.toaster]:bg-background group-[.toaster]:text-foreground group-[.toaster]:border-border group-[.toaster]:shadow-lg",
+-          description: "group-[.toast]:text-muted-foreground",
+-          actionButton:
+-            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground",
+-          cancelButton:
+-            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground",
+-        },
++      icons={{
++        success: <CircleCheckIcon className="size-4" />,
++        info: <InfoIcon className="size-4" />,
++        warning: <TriangleAlertIcon className="size-4" />,
++        error: <OctagonXIcon className="size-4" />,
++        loading: <Loader2Icon className="size-4 animate-spin" />,
+@@ -25,0 +27,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
++      style={
++        {
++          "--normal-bg": "var(--popover)",
++          "--normal-text": "var(--popover-foreground)",
++          "--normal-border": "var(--border)",
++          "--border-radius": "var(--radius)",
++        } as React.CSSProperties
++      }
+diff --git a/src/components/ui/switch.tsx b/src/components/ui/switch.tsx
+index 5f4117f0..4da3efcf 100644
+--- a/src/components/ui/switch.tsx
++++ b/src/components/ui/switch.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as SwitchPrimitives from "@radix-ui/react-switch"
+-
+@@ -6,0 +5 @@ import { cn } from "@/lib/utils"
++import { Switch as SwitchPrimitive } from "radix-ui"
+@@ -8,13 +7,11 @@ import { cn } from "@/lib/utils"
+-const Switch = React.forwardRef<
+-  React.ElementRef<typeof SwitchPrimitives.Root>,
+-  React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root>
+->(({ className, ...props }, ref) => (
+-  <SwitchPrimitives.Root
+-    className={cn(
+-      "peer inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+-      className
+-    )}
+-    {...props}
+-    ref={ref}
+-  >
+-    <SwitchPrimitives.Thumb
++function Switch({
++  className,
++  size = "default",
++  ...props
++}: React.ComponentProps<typeof SwitchPrimitive.Root> & {
++  size?: "sm" | "default"
++}) {
++  return (
++    <SwitchPrimitive.Root
++      data-slot="switch"
++      data-size={size}
+@@ -22 +19,2 @@ const Switch = React.forwardRef<
+-        "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0"
++        "peer group/switch inline-flex shrink-0 items-center rounded-full border border-transparent shadow-xs transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-[1.15rem] data-[size=default]:w-8 data-[size=sm]:h-3.5 data-[size=sm]:w-6 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80",
++        className
+@@ -24,4 +22,11 @@ const Switch = React.forwardRef<
+-    />
+-  </SwitchPrimitives.Root>
+-))
+-Switch.displayName = SwitchPrimitives.Root.displayName
++      {...props}
++    >
++      <SwitchPrimitive.Thumb
++        data-slot="switch-thumb"
++        className={cn(
++          "pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0 dark:data-[state=checked]:bg-primary-foreground dark:data-[state=unchecked]:bg-foreground"
++        )}
++      />
++    </SwitchPrimitive.Root>
++  )
++}
+diff --git a/src/components/ui/table.tsx b/src/components/ui/table.tsx
+index c0df655c..c707725e 100644
+--- a/src/components/ui/table.tsx
++++ b/src/components/ui/table.tsx
+@@ -1 +1 @@
+-import * as React from "react"
++"use client"
+@@ -2,0 +3 @@ import * as React from "react"
++import * as React from "react"
+@@ -5,8 +6,20 @@ import { cn } from "@/lib/utils"
+-const Table = React.forwardRef<
+-  HTMLTableElement,
+-  React.HTMLAttributes<HTMLTableElement>
+->(({ className, ...props }, ref) => (
+-  <div className="relative w-full overflow-auto">
+-    <table
+-      ref={ref}
+-      className={cn("w-full caption-bottom text-sm", className)}
++function Table({ className, ...props }: React.ComponentProps<"table">) {
++  return (
++    <div
++      data-slot="table-container"
++      className="relative w-full overflow-x-auto"
++    >
++      <table
++        data-slot="table"
++        className={cn("w-full caption-bottom text-sm", className)}
++        {...props}
++      />
++    </div>
++  )
++}
++
++function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
++  return (
++    <thead
++      data-slot="table-header"
++      className={cn("[&_tr]:border-b", className)}
+@@ -15,11 +28,2 @@ const Table = React.forwardRef<
+-  </div>
+-))
+-Table.displayName = "Table"
+-
+-const TableHeader = React.forwardRef<
+-  HTMLTableSectionElement,
+-  React.HTMLAttributes<HTMLTableSectionElement>
+->(({ className, ...props }, ref) => (
+-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+-))
+-TableHeader.displayName = "TableHeader"
++  )
++}
+@@ -27,11 +31,9 @@ TableHeader.displayName = "TableHeader"
+-const TableBody = React.forwardRef<
+-  HTMLTableSectionElement,
+-  React.HTMLAttributes<HTMLTableSectionElement>
+->(({ className, ...props }, ref) => (
+-  <tbody
+-    ref={ref}
+-    className={cn("[&_tr:last-child]:border-0", className)}
+-    {...props}
+-  />
+-))
+-TableBody.displayName = "TableBody"
++function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
++  return (
++    <tbody
++      data-slot="table-body"
++      className={cn("[&_tr:last-child]:border-0", className)}
++      {...props}
++    />
++  )
++}
+@@ -39,14 +41,12 @@ TableBody.displayName = "TableBody"
+-const TableFooter = React.forwardRef<
+-  HTMLTableSectionElement,
+-  React.HTMLAttributes<HTMLTableSectionElement>
+->(({ className, ...props }, ref) => (
+-  <tfoot
+-    ref={ref}
+-    className={cn(
+-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TableFooter.displayName = "TableFooter"
++function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
++  return (
++    <tfoot
++      data-slot="table-footer"
++      className={cn(
++        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -54,14 +54,12 @@ TableFooter.displayName = "TableFooter"
+-const TableRow = React.forwardRef<
+-  HTMLTableRowElement,
+-  React.HTMLAttributes<HTMLTableRowElement>
+->(({ className, ...props }, ref) => (
+-  <tr
+-    ref={ref}
+-    className={cn(
+-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TableRow.displayName = "TableRow"
++function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
++  return (
++    <tr
++      data-slot="table-row"
++      className={cn(
++        "border-b transition-colors hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -69,14 +67,12 @@ TableRow.displayName = "TableRow"
+-const TableHead = React.forwardRef<
+-  HTMLTableCellElement,
+-  React.ThHTMLAttributes<HTMLTableCellElement>
+->(({ className, ...props }, ref) => (
+-  <th
+-    ref={ref}
+-    className={cn(
+-      "h-10 px-2 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TableHead.displayName = "TableHead"
++function TableHead({ className, ...props }: React.ComponentProps<"th">) {
++  return (
++    <th
++      data-slot="table-head"
++      className={cn(
++        "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -84,14 +80,12 @@ TableHead.displayName = "TableHead"
+-const TableCell = React.forwardRef<
+-  HTMLTableCellElement,
+-  React.TdHTMLAttributes<HTMLTableCellElement>
+->(({ className, ...props }, ref) => (
+-  <td
+-    ref={ref}
+-    className={cn(
+-      "p-2 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TableCell.displayName = "TableCell"
++function TableCell({ className, ...props }: React.ComponentProps<"td">) {
++  return (
++    <td
++      data-slot="table-cell"
++      className={cn(
++        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -99,11 +93,12 @@ TableCell.displayName = "TableCell"
+-const TableCaption = React.forwardRef<
+-  HTMLTableCaptionElement,
+-  React.HTMLAttributes<HTMLTableCaptionElement>
+->(({ className, ...props }, ref) => (
+-  <caption
+-    ref={ref}
+-    className={cn("mt-4 text-sm text-muted-foreground", className)}
+-    {...props}
+-  />
+-))
+-TableCaption.displayName = "TableCaption"
++function TableCaption({
++  className,
++  ...props
++}: React.ComponentProps<"caption">) {
++  return (
++    <caption
++      data-slot="table-caption"
++      className={cn("mt-4 text-sm text-muted-foreground", className)}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/tabs.tsx b/src/components/ui/tabs.tsx
+index 0f4caebb..27365d8b 100644
+--- a/src/components/ui/tabs.tsx
++++ b/src/components/ui/tabs.tsx
+@@ -4,2 +4 @@ import * as React from "react"
+-import * as TabsPrimitive from "@radix-ui/react-tabs"
+-
++import { cva, type VariantProps } from "class-variance-authority"
+@@ -6,0 +6,20 @@ import { cn } from "@/lib/utils"
++import { Tabs as TabsPrimitive } from "radix-ui"
++
++function Tabs({
++  className,
++  orientation = "horizontal",
++  ...props
++}: React.ComponentProps<typeof TabsPrimitive.Root>) {
++  return (
++    <TabsPrimitive.Root
++      data-slot="tabs"
++      data-orientation={orientation}
++      orientation={orientation}
++      className={cn(
++        "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -8 +27,14 @@ import { cn } from "@/lib/utils"
+-const Tabs = TabsPrimitive.Root
++const tabsListVariants = cva(
++  "group/tabs-list inline-flex w-fit items-center justify-center rounded-lg p-[3px] text-muted-foreground group-data-[orientation=horizontal]/tabs:h-9 group-data-[orientation=vertical]/tabs:h-fit group-data-[orientation=vertical]/tabs:flex-col data-[variant=line]:rounded-none",
++  {
++    variants: {
++      variant: {
++        default: "bg-muted",
++        line: "gap-1 bg-transparent",
++      },
++    },
++    defaultVariants: {
++      variant: "default",
++    },
++  }
++)
+@@ -10,14 +42,15 @@ const Tabs = TabsPrimitive.Root
+-const TabsList = React.forwardRef<
+-  React.ElementRef<typeof TabsPrimitive.List>,
+-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
+->(({ className, ...props }, ref) => (
+-  <TabsPrimitive.List
+-    ref={ref}
+-    className={cn(
+-      "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TabsList.displayName = TabsPrimitive.List.displayName
++function TabsList({
++  className,
++  variant = "default",
++  ...props
++}: React.ComponentProps<typeof TabsPrimitive.List> &
++  VariantProps<typeof tabsListVariants>) {
++  return (
++    <TabsPrimitive.List
++      data-slot="tabs-list"
++      data-variant={variant}
++      className={cn(tabsListVariants({ variant }), className)}
++      {...props}
++    />
++  )
++}
+@@ -25,14 +58,18 @@ TabsList.displayName = TabsPrimitive.List.displayName
+-const TabsTrigger = React.forwardRef<
+-  React.ElementRef<typeof TabsPrimitive.Trigger>,
+-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+->(({ className, ...props }, ref) => (
+-  <TabsPrimitive.Trigger
+-    ref={ref}
+-    className={cn(
+-      "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
++function TabsTrigger({
++  className,
++  ...props
++}: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
++  return (
++    <TabsPrimitive.Trigger
++      data-slot="tabs-trigger"
++      className={cn(
++        "relative inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap text-foreground/60 transition-all group-data-[orientation=vertical]/tabs:w-full group-data-[orientation=vertical]/tabs:justify-start hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-50 group-data-[variant=default]/tabs-list:data-[state=active]:shadow-sm group-data-[variant=line]/tabs-list:data-[state=active]:shadow-none dark:text-muted-foreground dark:hover:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent dark:group-data-[variant=line]/tabs-list:data-[state=active]:border-transparent dark:group-data-[variant=line]/tabs-list:data-[state=active]:bg-transparent",
++        "data-[state=active]:bg-background data-[state=active]:text-foreground dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 dark:data-[state=active]:text-foreground",
++        "after:absolute after:bg-foreground after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-[state=active]:after:opacity-100",
++        className
++      )}
++      {...props}
++    />
++  )
++}
+@@ -40,14 +77,12 @@ TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+-const TabsContent = React.forwardRef<
+-  React.ElementRef<typeof TabsPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
+->(({ className, ...props }, ref) => (
+-  <TabsPrimitive.Content
+-    ref={ref}
+-    className={cn(
+-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+-      className
+-    )}
+-    {...props}
+-  />
+-))
+-TabsContent.displayName = TabsPrimitive.Content.displayName
++function TabsContent({
++  className,
++  ...props
++}: React.ComponentProps<typeof TabsPrimitive.Content>) {
++  return (
++    <TabsPrimitive.Content
++      data-slot="tabs-content"
++      className={cn("flex-1 outline-none", className)}
++      {...props}
++    />
++  )
++}
+@@ -55 +90 @@ TabsContent.displayName = TabsPrimitive.Content.displayName
+-export { Tabs, TabsList, TabsTrigger, TabsContent }
++export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+diff --git a/src/components/ui/textarea.tsx b/src/components/ui/textarea.tsx
+index e56b0aff..8d02e03e 100644
+--- a/src/components/ui/textarea.tsx
++++ b/src/components/ui/textarea.tsx
+@@ -2 +1,0 @@ import * as React from "react"
+-
+@@ -5,4 +4 @@ import { cn } from "@/lib/utils"
+-const Textarea = React.forwardRef<
+-  HTMLTextAreaElement,
+-  React.ComponentProps<"textarea">
+->(({ className, ...props }, ref) => {
++function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+@@ -10,0 +7 @@ const Textarea = React.forwardRef<
++      data-slot="textarea"
+@@ -12 +9 @@ const Textarea = React.forwardRef<
+-        "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
++        "flex field-sizing-content min-h-16 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:ring-destructive/40",
+@@ -15 +11,0 @@ const Textarea = React.forwardRef<
+-      ref={ref}
+@@ -19,2 +15 @@ const Textarea = React.forwardRef<
+-})
+-Textarea.displayName = "Textarea"
++}
+diff --git a/src/components/ui/toggle-group.tsx b/src/components/ui/toggle-group.tsx
+index 1c876bbe..1f8a0ae5 100644
+--- a/src/components/ui/toggle-group.tsx
++++ b/src/components/ui/toggle-group.tsx
+@@ -4 +3,0 @@ import * as React from "react"
+-import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
+@@ -6 +4,0 @@ import { type VariantProps } from "class-variance-authority"
+-
+@@ -7,0 +6,2 @@ import { cn } from "@/lib/utils"
++import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui"
++
+@@ -11 +11,3 @@ const ToggleGroupContext = React.createContext<
+-  VariantProps<typeof toggleVariants>
++  VariantProps<typeof toggleVariants> & {
++    spacing?: number
++  }
+@@ -14,0 +17 @@ const ToggleGroupContext = React.createContext<
++  spacing: 0,
+@@ -17,17 +20,30 @@ const ToggleGroupContext = React.createContext<
+-const ToggleGroup = React.forwardRef<
+-  React.ElementRef<typeof ToggleGroupPrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> &
+-    VariantProps<typeof toggleVariants>
+->(({ className, variant, size, children, ...props }, ref) => (
+-  <ToggleGroupPrimitive.Root
+-    ref={ref}
+-    className={cn("flex items-center justify-center gap-1", className)}
+-    {...props}
+-  >
+-    <ToggleGroupContext.Provider value={{ variant, size }}>
+-      {children}
+-    </ToggleGroupContext.Provider>
+-  </ToggleGroupPrimitive.Root>
+-))
+-
+-ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName
++function ToggleGroup({
++  className,
++  variant,
++  size,
++  spacing = 0,
++  children,
++  ...props
++}: React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
++  VariantProps<typeof toggleVariants> & {
++    spacing?: number
++  }) {
++  return (
++    <ToggleGroupPrimitive.Root
++      data-slot="toggle-group"
++      data-variant={variant}
++      data-size={size}
++      data-spacing={spacing}
++      style={{ "--gap": spacing } as React.CSSProperties}
++      className={cn(
++        "group/toggle-group flex w-fit items-center gap-[--spacing(var(--gap))] rounded-md data-[spacing=default]:data-[variant=outline]:shadow-xs",
++        className
++      )}
++      {...props}
++    >
++      <ToggleGroupContext.Provider value={{ variant, size, spacing }}>
++        {children}
++      </ToggleGroupContext.Provider>
++    </ToggleGroupPrimitive.Root>
++  )
++}
+@@ -35,5 +51,8 @@ ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName
+-const ToggleGroupItem = React.forwardRef<
+-  React.ElementRef<typeof ToggleGroupPrimitive.Item>,
+-  React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item> &
+-    VariantProps<typeof toggleVariants>
+->(({ className, children, variant, size, ...props }, ref) => {
++function ToggleGroupItem({
++  className,
++  children,
++  variant,
++  size,
++  ...props
++}: React.ComponentProps<typeof ToggleGroupPrimitive.Item> &
++  VariantProps<typeof toggleVariants>) {
+@@ -44 +63,4 @@ const ToggleGroupItem = React.forwardRef<
+-      ref={ref}
++      data-slot="toggle-group-item"
++      data-variant={context.variant || variant}
++      data-size={context.size || size}
++      data-spacing={context.spacing}
+@@ -49,0 +72,2 @@ const ToggleGroupItem = React.forwardRef<
++        "w-auto min-w-0 shrink-0 px-3 focus:z-10 focus-visible:z-10",
++        "data-[spacing=0]:rounded-none data-[spacing=0]:shadow-none data-[spacing=0]:first:rounded-l-md data-[spacing=0]:last:rounded-r-md data-[spacing=0]:data-[variant=outline]:border-l-0 data-[spacing=0]:data-[variant=outline]:first:border-l",
+@@ -57,3 +81 @@ const ToggleGroupItem = React.forwardRef<
+-})
+-
+-ToggleGroupItem.displayName = ToggleGroupPrimitive.Item.displayName
++}
+diff --git a/src/components/ui/toggle.tsx b/src/components/ui/toggle.tsx
+index db35d78b..d2775684 100644
+--- a/src/components/ui/toggle.tsx
++++ b/src/components/ui/toggle.tsx
+@@ -4 +3,0 @@ import * as React from "react"
+-import * as TogglePrimitive from "@radix-ui/react-toggle"
+@@ -6 +4,0 @@ import { cva, type VariantProps } from "class-variance-authority"
+-
+@@ -7,0 +6 @@ import { cn } from "@/lib/utils"
++import { Toggle as TogglePrimitive } from "radix-ui"
+@@ -10 +9 @@ const toggleVariants = cva(
+-  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
++  "inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-[color,box-shadow] outline-none hover:bg-muted hover:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+@@ -16 +15 @@ const toggleVariants = cva(
+-          "border border-input bg-transparent shadow-sm hover:bg-accent hover:text-accent-foreground",
++          "border border-input bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
+@@ -19,3 +18,3 @@ const toggleVariants = cva(
+-        default: "h-9 px-2 min-w-9",
+-        sm: "h-8 px-1.5 min-w-8",
+-        lg: "h-10 px-2.5 min-w-10",
++        default: "h-9 min-w-9 px-2",
++        sm: "h-8 min-w-8 px-1.5",
++        lg: "h-10 min-w-10 px-2.5",
+@@ -31,13 +30,15 @@ const toggleVariants = cva(
+-const Toggle = React.forwardRef<
+-  React.ElementRef<typeof TogglePrimitive.Root>,
+-  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
+-    VariantProps<typeof toggleVariants>
+->(({ className, variant, size, ...props }, ref) => (
+-  <TogglePrimitive.Root
+-    ref={ref}
+-    className={cn(toggleVariants({ variant, size, className }))}
+-    {...props}
+-  />
+-))
+-
+-Toggle.displayName = TogglePrimitive.Root.displayName
++function Toggle({
++  className,
++  variant,
++  size,
++  ...props
++}: React.ComponentProps<typeof TogglePrimitive.Root> &
++  VariantProps<typeof toggleVariants>) {
++  return (
++    <TogglePrimitive.Root
++      data-slot="toggle"
++      className={cn(toggleVariants({ variant, size, className }))}
++      {...props}
++    />
++  )
++}
+diff --git a/src/components/ui/tooltip.tsx b/src/components/ui/tooltip.tsx
+index 28e19183..d10e766a 100644
+--- a/src/components/ui/tooltip.tsx
++++ b/src/components/ui/tooltip.tsx
+@@ -4,2 +3,0 @@ import * as React from "react"
+-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+-
+@@ -6,0 +5 @@ import { cn } from "@/lib/utils"
++import { Tooltip as TooltipPrimitive } from "radix-ui"
+@@ -8 +7,12 @@ import { cn } from "@/lib/utils"
+-const TooltipProvider = TooltipPrimitive.Provider
++function TooltipProvider({
++  delayDuration = 0,
++  ...props
++}: React.ComponentProps<typeof TooltipPrimitive.Provider>) {
++  return (
++    <TooltipPrimitive.Provider
++      data-slot="tooltip-provider"
++      delayDuration={delayDuration}
++      {...props}
++    />
++  )
++}
+@@ -10 +20,5 @@ const TooltipProvider = TooltipPrimitive.Provider
+-const Tooltip = TooltipPrimitive.Root
++function Tooltip({
++  ...props
++}: React.ComponentProps<typeof TooltipPrimitive.Root>) {
++  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
++}
+@@ -12 +26,5 @@ const Tooltip = TooltipPrimitive.Root
+-const TooltipTrigger = TooltipPrimitive.Trigger
++function TooltipTrigger({
++  ...props
++}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
++  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
++}
+@@ -14,17 +32,23 @@ const TooltipTrigger = TooltipPrimitive.Trigger
+-const TooltipContent = React.forwardRef<
+-  React.ElementRef<typeof TooltipPrimitive.Content>,
+-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
+->(({ className, sideOffset = 4, ...props }, ref) => (
+-  <TooltipPrimitive.Portal>
+-    <TooltipPrimitive.Content
+-      ref={ref}
+-      sideOffset={sideOffset}
+-      className={cn(
+-        "z-50 overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 origin-[--radix-tooltip-content-transform-origin]",
+-        className
+-      )}
+-      {...props}
+-    />
+-  </TooltipPrimitive.Portal>
+-))
+-TooltipContent.displayName = TooltipPrimitive.Content.displayName
++function TooltipContent({
++  className,
++  sideOffset = 0,
++  children,
++  ...props
++}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
++  return (
++    <TooltipPrimitive.Portal>
++      <TooltipPrimitive.Content
++        data-slot="tooltip-content"
++        sideOffset={sideOffset}
++        className={cn(
++          "z-50 w-fit origin-(--radix-tooltip-content-transform-origin) animate-in rounded-md bg-foreground px-3 py-1.5 text-xs text-balance text-background fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
++          className
++        )}
++        {...props}
++      >
++        {children}
++        <TooltipPrimitive.Arrow className="z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px] bg-foreground fill-foreground" />
++      </TooltipPrimitive.Content>
++    </TooltipPrimitive.Portal>
++  )
++}

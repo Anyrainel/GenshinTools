@@ -441,7 +441,7 @@ function WeaponEntryRow({
       disabled={!hasDetail}
       aria-label={detailLabel}
       className={cn(
-        "flex w-full items-center gap-1 px-1 py-1.5 text-left text-xs md:text-sm lg:gap-1.5 lg:px-2 lg:text-xs xl:text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary",
+        "flex w-full items-center gap-1 px-1 py-1.5 text-left text-xs md:text-sm lg:gap-1.5 lg:px-2 lg:text-xs xl:text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary",
         isTop
           ? "bg-primary/10 border border-primary/30"
           : "border border-transparent",

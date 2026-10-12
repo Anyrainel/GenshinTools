@@ -47,60 +47,61 @@ function flagshipConfigs(constellation: number): TeamSlotConfig[] {
 }
 
 describe("Vesna default-team AutoTune", () => {
-  it.each([
-    0, 1, 6,
-  ])("prefers ATK and CRIT over triple EM at C%d", (constellation) => {
-    const configs = flagshipConfigs(constellation);
-    const team = new TeamBuild(configs);
-    const formulas = Object.entries(team.catalog.getCombo("vesna")).map(
-      ([formulaId, count]) => ({ formulaId, count })
-    );
-    const result = autoTuneTeam({
-      characterId: "vesna",
-      configs,
-      opts: {},
-      formulas,
-      label: "Vesna flagship",
-      teamIndex: 0,
-      element: "Anemo",
-    });
-    const output = aggregateTeamResults([result], "vesna", "Anemo");
-    expect(output.sandsWeights[0].stat).toBe("atk%");
-    expect(output.gobletWeights[0].stat).toBe("atk%");
-    expect(["cr", "cd"]).toContain(output.circletWeights[0].stat);
-    const tripleEm = result.teamBreakdown.combos.find((combo) =>
-      Object.values(combo.mainStats).every((stat) => stat === "em")
-    );
-    expect(tripleEm).toBeDefined();
-    expect(tripleEm!.damageRatio).toBeLessThan(0.96);
+  it.each([0, 1, 6])(
+    "prefers ATK and CRIT over triple EM at C%d",
+    (constellation) => {
+      const configs = flagshipConfigs(constellation);
+      const team = new TeamBuild(configs);
+      const formulas = Object.entries(team.catalog.getCombo("vesna")).map(
+        ([formulaId, count]) => ({ formulaId, count })
+      );
+      const result = autoTuneTeam({
+        characterId: "vesna",
+        configs,
+        opts: {},
+        formulas,
+        label: "Vesna flagship",
+        teamIndex: 0,
+        element: "Anemo",
+      });
+      const output = aggregateTeamResults([result], "vesna", "Anemo");
+      expect(output.sandsWeights[0].stat).toBe("atk%");
+      expect(output.gobletWeights[0].stat).toBe("atk%");
+      expect(["cr", "cd"]).toContain(output.circletWeights[0].stat);
+      const tripleEm = result.teamBreakdown.combos.find((combo) =>
+        Object.values(combo.mainStats).every((stat) => stat === "em")
+      );
+      expect(tripleEm).toBeDefined();
+      expect(tripleEm!.damageRatio).toBeLessThan(0.96);
 
-    // AutoTune's compiled objective must agree with the displayed combo engine.
-    const sheets = Object.fromEntries(
-      configs.map((config) => [
-        config.charId,
-        new StatSheet([
-          { key: "hp", value: 4780 },
-          { key: "atk", value: 311 },
-        ]),
-      ])
-    );
-    sheets.vesna = buildSheetFromMainAndSubs(
-      {
-        flower: "hp",
-        plume: "atk",
-        sands: "atk%",
-        goblet: "atk%",
-        circlet: "cd",
-      },
-      emptySubRolls(),
-      getRollValues()
-    );
-    const evalDamage = compileAutoTuneEval(team, "vesna", formulas, sheets);
-    const displayed = team.getComboDamageResult(
-      buildAutoTuneCombo("vesna", formulas),
-      sheets,
-      { ...DEFAULT_CALC_CTX, enemyRes: 0.1 }
-    );
-    expect(evalDamage(sheets)).toBeCloseTo(displayed.totalDamage, 2);
-  });
+      // AutoTune's compiled objective must agree with the displayed combo engine.
+      const sheets = Object.fromEntries(
+        configs.map((config) => [
+          config.charId,
+          new StatSheet([
+            { key: "hp", value: 4780 },
+            { key: "atk", value: 311 },
+          ]),
+        ])
+      );
+      sheets.vesna = buildSheetFromMainAndSubs(
+        {
+          flower: "hp",
+          plume: "atk",
+          sands: "atk%",
+          goblet: "atk%",
+          circlet: "cd",
+        },
+        emptySubRolls(),
+        getRollValues()
+      );
+      const evalDamage = compileAutoTuneEval(team, "vesna", formulas, sheets);
+      const displayed = team.getComboDamageResult(
+        buildAutoTuneCombo("vesna", formulas),
+        sheets,
+        { ...DEFAULT_CALC_CTX, enemyRes: 0.1 }
+      );
+      expect(evalDamage(sheets)).toBeCloseTo(displayed.totalDamage, 2);
+    }
+  );
 });

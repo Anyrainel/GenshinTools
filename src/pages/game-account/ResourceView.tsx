@@ -374,7 +374,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
                 aria-pressed={activeSetId === null}
                 onClick={() => setSelectedSetId(null)}
                 className={cn(
-                  "inline-flex h-8 shrink-0 items-center rounded-full border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "inline-flex h-8 shrink-0 items-center rounded-full border px-3 text-xs font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
                   activeSetId === null
                     ? "border-primary bg-primary/15 text-foreground"
                     : "border-border bg-background/40 text-foreground hover:bg-muted/50"
@@ -394,7 +394,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
                       setSelectedSetId(isActive ? null : summary.setId)
                     }
                     className={cn(
-                      "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border pl-1 pr-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                      "inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full border pl-1 pr-2.5 text-xs font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring",
                       isActive
                         ? "border-primary bg-primary/15 text-foreground"
                         : "border-border bg-background/40 text-foreground hover:bg-muted/50"

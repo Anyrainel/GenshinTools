@@ -39,7 +39,7 @@ export function FormulaLabel({
       {minC > 0 && (
         <span
           className={cn(
-            "text-[10px] font-semibold px-1 rounded shrink-0",
+            "text-[10px] font-semibold px-1 rounded-[4px] shrink-0",
             isLocked
               ? "text-amber-400/50 bg-amber-400/10"
               : "text-amber-400 bg-amber-400/15"

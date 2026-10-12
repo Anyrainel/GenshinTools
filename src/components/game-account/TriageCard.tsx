@@ -169,7 +169,7 @@ function TierBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center justify-center h-5 px-1 rounded text-[10px] font-bold border shrink-0",
+        "inline-flex items-center justify-center h-5 px-1 rounded-[4px] text-[10px] font-bold border shrink-0",
         getTriageTierColor(resolvedColorTier, "badge")
       )}
     >

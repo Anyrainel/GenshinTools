@@ -26,7 +26,7 @@ export function ImportMethodItem({
       value={value}
       className="rounded-xl border border-border bg-card text-card-foreground transition-colors data-[state=open]:border-primary/50 data-[state=open]:bg-primary/5 [&>[role=region]]:motion-reduce:animate-none"
     >
-      <AccordionTrigger className="min-w-0 gap-3 rounded-xl px-4 text-left hover:bg-accent/50 hover:no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&>svg]:text-foreground">
+      <AccordionTrigger className="min-w-0 gap-3 rounded-xl px-4 text-left hover:bg-accent/50 hover:no-underline focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background [&>svg]:text-foreground">
         <span className="flex min-w-0 items-center gap-3">
           <span className="shrink-0 rounded-lg bg-primary/10 p-2 text-primary">
             <Icon className="h-5 w-5" aria-hidden />

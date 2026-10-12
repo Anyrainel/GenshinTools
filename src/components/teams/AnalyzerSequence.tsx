@@ -157,7 +157,7 @@ export function AnalyzerSequence({ result, charIds }: AnalyzerSequenceProps) {
                   }}
                   title={tooltip}
                   className={cn(
-                    "flex items-center gap-1 p-1 rounded border text-xs leading-none whitespace-nowrap",
+                    "flex items-center gap-1 p-1 rounded-[4px] border text-xs leading-none whitespace-nowrap",
                     node.isBest
                       ? "border-amber-600 bg-card"
                       : "border-muted-foreground bg-card"

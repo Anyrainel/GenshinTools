@@ -274,7 +274,7 @@ export function CharacterFilterSidebar({
                     <img
                       src={getElementImagePath(element)}
                       alt={element}
-                      className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0"
+                      className="w-4 h-4 xl:w-5 xl:h-5 shrink-0"
                     />
                     <span className="truncate">{t.element(element)}</span>
                   </Label>
@@ -367,7 +367,7 @@ export function CharacterFilterSidebar({
                     <img
                       src={getWeaponImagePath(weapon)}
                       alt={weapon}
-                      className="w-4 h-4 xl:w-5 xl:h-5 flex-shrink-0"
+                      className="w-4 h-4 xl:w-5 xl:h-5 shrink-0"
                     />
                     <span className="truncate">{t.weaponType(weapon)}</span>
                   </Label>

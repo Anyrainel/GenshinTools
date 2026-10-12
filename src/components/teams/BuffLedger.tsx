@@ -95,7 +95,7 @@ function BuffChip({
               {source.triggers?.map((trig) => (
                 <span
                   key={trig}
-                  className="bg-primary/10 text-primary text-xs p-1 rounded font-medium tracking-tight leading-none"
+                  className="bg-primary/10 text-primary text-xs p-1 rounded-[4px] font-medium tracking-tight leading-none"
                 >
                   {trig}
                 </span>
@@ -106,7 +106,7 @@ function BuffChip({
 
         <span
           className={cn(
-            "text-[10px] lg:text-xs font-bold uppercase px-1 md:px-1.5 py-0.5 rounded shrink-0",
+            "text-[10px] lg:text-xs font-bold uppercase px-1 md:px-1.5 py-0.5 rounded-[4px] shrink-0",
             getReceiverColor(target.receiver, !!target.charId)
           )}
         >
@@ -130,7 +130,7 @@ function BuffChip({
               className="flex items-center flex-wrap gap-x-1 lg:gap-x-2 text-xs md:text-sm bg-black/5 pl-1"
             >
               {buff.bespokeLabel && (
-                <span className="bg-violet-500/15 text-violet-300 text-[10px] md:text-xs px-1 rounded font-medium leading-none">
+                <span className="bg-violet-500/15 text-violet-300 text-[10px] md:text-xs px-1 rounded-[4px] font-medium leading-none">
                   {t.resolveLabel(buff.bespokeLabel)}
                 </span>
               )}
@@ -180,7 +180,7 @@ function BuffChip({
               {isLast && (
                 <span className="ml-auto flex items-center gap-1">
                   {source.maxStacks != null && (
-                    <span className="text-[11px] lg:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
+                    <span className="text-[11px] lg:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded-[4px]">
                       {buff.bespokeLabel
                         ? t.format("teamComp.nTimes", 1)
                         : t.format("teamComp.nStacks", source.maxStacks)}
@@ -237,7 +237,7 @@ export function BuffLedger({ buffs, characters, t, formulas }: Props) {
           <span className="text-xs md:text-sm font-bold">
             {t.ui("teamComp.buffsLedger")}
           </span>
-          <span className="bg-black/20 font-mono px-1.5 md:px-2 py-0.5 rounded text-[10px] md:text-xs text-muted-foreground">
+          <span className="bg-black/20 font-mono px-1.5 md:px-2 py-0.5 rounded-[4px] text-[10px] md:text-xs text-muted-foreground">
             {activeCount} / {buffs.length}
           </span>
           <div
@@ -271,7 +271,7 @@ export function BuffLedger({ buffs, characters, t, formulas }: Props) {
                 <span className="text-xs md:text-sm font-bold text-foreground uppercase tracking-widest">
                   {t.ui("teamComp.teamResonance")}
                 </span>
-                <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
+                <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded-[4px]">
                   {resonanceBuffs.filter((b) => b.active).length}/
                   {
                     buffs.filter(
@@ -315,7 +315,7 @@ export function BuffLedger({ buffs, characters, t, formulas }: Props) {
                     <span className="text-xs md:text-sm font-bold text-foreground truncate">
                       {t.character(charId)}
                     </span>
-                    <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded">
+                    <span className="text-xs font-black text-muted-foreground bg-black/10 px-1 md:px-1.5 py-0.5 rounded-[4px]">
                       {charBuffs.filter((b) => b.active).length}/
                       {buffs.filter((b) => b.providerCharId === charId).length}
                     </span>

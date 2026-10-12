@@ -1,4 +1,9 @@
 import { expect, type Page, test } from "@playwright/test";
+import type { BuildDelta } from "@/domain/build/buildDeltas";
+import type { AccountState } from "@/domain/game-account/types";
+import type { TeamCompDelta } from "@/domain/team/teamDeltas";
+import type { BackupHeadResponse } from "@/providers/backup/apiClient";
+import type { E2eDomainState } from "../tests/e2e/browserHarness";
 
 const APP_URL = process.env.E2E_BASE_URL ?? "http://localhost:5174";
 const BACKUP_ROUTE = `${APP_URL}/account/cloud-backup`;
@@ -8,52 +13,6 @@ type E2eUser = {
   sub: string;
   name: string;
   email: string;
-};
-
-type E2eState = {
-  accounts?: Record<string, unknown>;
-  activeAccountId?: number | null;
-  builds?: {
-    deltas?: unknown[];
-    characterWeapons?: Record<string, string[]>;
-    author?: string;
-    description?: string;
-    updatedAt?: number;
-  };
-  teams?: {
-    compDeltas?: unknown[];
-    configsByTeamId?: Record<string, unknown>;
-    author?: string;
-    description?: string;
-    updatedAt?: number;
-  };
-  characterTiers?: {
-    tierLists?: Record<string, unknown>;
-    activeTierListId?: number;
-    nextId?: number;
-    updatedAt?: number;
-  };
-  weaponTiers?: {
-    tierLists?: Record<string, unknown>;
-    activeTierListId?: number;
-    nextId?: number;
-    updatedAt?: number;
-  };
-  artifactTiers?: {
-    tierLists?: Record<string, unknown>;
-    activeTierListId?: number;
-    nextId?: number;
-    updatedAt?: number;
-  };
-};
-
-type BackupHeadResponse = {
-  changed: boolean;
-  headSetRev: string;
-  heads: Array<{
-    partitionKey: string;
-    metadata: { records: Array<{ kind: string; count: number }> };
-  }>;
 };
 
 type DomainPart = "account" | "builds" | "teams" | "tiers";
@@ -67,8 +26,8 @@ test.describe("account cloud backup E2E", () => {
       "stateful account backup coverage runs once on desktop"
     );
     await openBackupPage(page);
-    await page.evaluate(() => {
-      window.__ggE2E.signOut();
+    await page.evaluate(async () => {
+      await window.__ggE2E.signOut();
       window.__ggE2E.clearDomainData();
     });
   });
@@ -77,8 +36,8 @@ test.describe("account cloud backup E2E", () => {
     await expect(
       page.getByText("Sign in before using manual cloud backup.")
     ).toBeVisible();
-    await expect(page.getByRole("button", { name: "Back Up" })).toBeDisabled();
-    await expect(page.getByRole("button", { name: "Restore" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Upload" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "Download" })).toBeDisabled();
   });
 
   test("uploads and restores all backed-up data in a separate browser session", async ({
@@ -98,6 +57,14 @@ test.describe("account cloud backup E2E", () => {
       "teams/all",
       "tiers/all",
     ]);
+    await expect
+      .poll(() => readCloudPayloadsByPartition(page))
+      .toMatchObject({
+        "builds/all": {
+          author: "Build author source",
+          deltas: source.builds?.deltas,
+        },
+      });
 
     const restoreContext = await browser.newContext();
     const restorePage = await restoreContext.newPage();
@@ -333,9 +300,9 @@ test.describe("account cloud backup E2E", () => {
           choices: [],
         });
 
-      await newDevicePage.getByRole("button", { name: "Restore" }).click();
+      await newDevicePage.getByRole("button", { name: "Download" }).click();
       await expect(
-        newDevicePage.getByRole("dialog", { name: "Restore" })
+        newDevicePage.getByRole("dialog", { name: "Download" })
       ).not.toBeVisible();
       await expect
         .poll(() => readConflictIds(newDevicePage), {
@@ -411,13 +378,13 @@ test.describe("account cloud backup E2E", () => {
           ],
         });
 
-      await secondPage.getByRole("button", { name: "Restore" }).click();
+      await secondPage.getByRole("button", { name: "Download" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Restore" })
+        secondPage.getByRole("dialog", { name: "Download" })
       ).toBeVisible();
       await secondPage
-        .getByRole("dialog", { name: "Restore" })
-        .getByRole("button", { name: "Restore" })
+        .getByRole("dialog", { name: "Download" })
+        .getByRole("button", { name: "Download" })
         .click();
 
       await expect
@@ -459,7 +426,16 @@ test.describe("account cloud backup E2E", () => {
     try {
       await openBackupPage(secondPage);
       await signIn(secondPage, user);
-      await seedDomainData(secondPage, makeDomainState("local", 342));
+      // Even empty build/tier defaults have cloud heads after the first upload.
+      // Establish their sync history, then change them only in this browser.
+      await restoreAllCloudData(secondPage);
+      await replaceDomainData(secondPage, makeDomainState("local", 342));
+      // Teams change on both devices, so that category still needs a choice.
+      await replaceDomainData(page, makeTeamsOnlyState("remote", 343));
+      await clickBackupAndWaitForHeads(page, ["teams/all"]);
+      await expect
+        .poll(() => teamAuthorFromHead(page))
+        .toBe("Team author remote");
 
       await expect
         .poll(() => previewManualPlan(secondPage, "upload"))
@@ -480,13 +456,13 @@ test.describe("account cloud backup E2E", () => {
           ],
         });
 
-      await secondPage.getByRole("button", { name: "Back Up" }).click();
+      await secondPage.getByRole("button", { name: "Upload" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Back Up" })
+        secondPage.getByRole("dialog", { name: "Upload" })
       ).toBeVisible();
       await secondPage
-        .getByRole("dialog", { name: "Back Up" })
-        .getByRole("button", { name: "Back Up" })
+        .getByRole("dialog", { name: "Upload" })
+        .getByRole("button", { name: "Upload" })
         .click();
 
       await expect
@@ -501,7 +477,7 @@ test.describe("account cloud backup E2E", () => {
             characters: [{ key: "amber", level: 80 }],
           },
           "builds/all": { author: "Build author local" },
-          "teams/all": { author: "Team author source" },
+          "teams/all": { author: "Team author remote" },
           "tiers/all": {
             character: {
               lists: [{ title: "Character tiers local" }],
@@ -509,14 +485,14 @@ test.describe("account cloud backup E2E", () => {
           },
         });
 
-      await secondPage.getByRole("button", { name: "Back Up" }).click();
+      await secondPage.getByRole("button", { name: "Upload" }).click();
       await secondPage
-        .getByRole("dialog", { name: "Back Up" })
+        .getByRole("dialog", { name: "Upload" })
         .getByLabel("Custom Teams, Team configs")
         .check();
       await secondPage
-        .getByRole("dialog", { name: "Back Up" })
-        .getByRole("button", { name: "Back Up" })
+        .getByRole("dialog", { name: "Upload" })
+        .getByRole("button", { name: "Upload" })
         .click();
       await expect
         .poll(() => readCloudPayloadsByPartition(secondPage))
@@ -569,7 +545,7 @@ test.describe("account cloud backup E2E", () => {
       await restoreAllCloudData(secondPage);
 
       await replaceDomainData(page, accountEdit);
-      await page.getByRole("button", { name: "Back Up" }).click();
+      await page.getByRole("button", { name: "Upload" }).click();
       await expect
         .poll(() => readCloudPayloadsByPartition(page))
         .toMatchObject({
@@ -586,9 +562,9 @@ test.describe("account cloud backup E2E", () => {
           choices: [],
         });
 
-      await secondPage.getByRole("button", { name: "Restore" }).click();
+      await secondPage.getByRole("button", { name: "Download" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Restore" })
+        secondPage.getByRole("dialog", { name: "Download" })
       ).not.toBeVisible();
       await expect
         .poll(() => readLocalPayloadsByPartition(secondPage), {
@@ -610,9 +586,9 @@ test.describe("account cloud backup E2E", () => {
           automaticPartitionIds: ["teams/all"],
           choices: [],
         });
-      await secondPage.getByRole("button", { name: "Back Up" }).click();
+      await secondPage.getByRole("button", { name: "Upload" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Back Up" })
+        secondPage.getByRole("dialog", { name: "Upload" })
       ).not.toBeVisible();
       await expect
         .poll(() => readCloudPayloadsByPartition(secondPage), {
@@ -670,7 +646,7 @@ test.describe("account cloud backup E2E", () => {
       await restoreAllCloudData(secondPage);
 
       await replaceDomainData(page, teamEdit);
-      await page.getByRole("button", { name: "Back Up" }).click();
+      await page.getByRole("button", { name: "Upload" }).click();
       await expect
         .poll(() => readCloudPayloadsByPartition(page))
         .toMatchObject({
@@ -687,9 +663,9 @@ test.describe("account cloud backup E2E", () => {
           choices: [],
         });
 
-      await secondPage.getByRole("button", { name: "Back Up" }).click();
+      await secondPage.getByRole("button", { name: "Upload" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Back Up" })
+        secondPage.getByRole("dialog", { name: "Upload" })
       ).not.toBeVisible();
       await expect
         .poll(() => readCloudPayloadsByPartition(secondPage), {
@@ -708,9 +684,9 @@ test.describe("account cloud backup E2E", () => {
           automaticPartitionIds: ["teams/all"],
           choices: [],
         });
-      await secondPage.getByRole("button", { name: "Restore" }).click();
+      await secondPage.getByRole("button", { name: "Download" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Restore" })
+        secondPage.getByRole("dialog", { name: "Download" })
       ).not.toBeVisible();
       await expect
         .poll(() => readLocalPayloadsByPartition(secondPage), {
@@ -735,7 +711,7 @@ test.describe("account cloud backup E2E", () => {
     await clickBackupAndWaitForHeads(page, ["profile.game/600000001"]);
     const firstHead = await readStableBackupHead(page);
 
-    await page.getByRole("button", { name: "Back Up" }).click();
+    await page.getByRole("button", { name: "Upload" }).click();
     await expect(
       page.getByText(
         "No local changes are available to upload for this account."
@@ -743,10 +719,10 @@ test.describe("account cloud backup E2E", () => {
     ).toBeVisible();
     await expect.poll(() => readStableBackupHead(page)).toEqual(firstHead);
 
-    await page.getByRole("button", { name: "Restore" }).click();
+    await page.getByRole("button", { name: "Download" }).click();
     await expect(
       page.getByText(
-        "No cloud changes are available to restore for this account."
+        "No cloud changes are available to download for this account."
       )
     ).toBeVisible();
     await expect.poll(() => readStableBackupHead(page)).toEqual(firstHead);
@@ -770,44 +746,44 @@ test.describe("account cloud backup E2E", () => {
       await seedDomainData(secondPage, makeDomainState("local", 402));
 
       await replaceDomainData(page, makeDomainState("remote", 403));
-      await page.getByRole("button", { name: "Back Up" }).click();
+      await page.getByRole("button", { name: "Upload" }).click();
       await expect
         .poll(() => teamAuthorFromHead(page))
         .toBe("Team author remote");
 
-      await secondPage.getByRole("button", { name: "Back Up" }).click();
+      await secondPage.getByRole("button", { name: "Upload" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Back Up" })
+        secondPage.getByRole("dialog", { name: "Upload" })
       ).toBeVisible();
       await expect(
         secondPage.getByLabel("Custom Teams, Team configs")
       ).toBeVisible();
       await expect(
         secondPage
-          .getByText("Keep this browser and the cloud backup as they are.")
-          .first()
-      ).toBeVisible();
+          .getByRole("dialog", { name: "Upload" })
+          .getByLabel("Custom Teams, Team configs")
+      ).not.toBeChecked();
       await secondPage
-        .getByRole("dialog", { name: "Back Up" })
-        .getByRole("button", { name: "Back Up" })
+        .getByRole("dialog", { name: "Upload" })
+        .getByRole("button", { name: "Upload" })
         .click();
       await expect(
         secondPage.getByText(
-          "No data groups were included, so both sides were left unchanged."
+          "No data categories were included, so both sides were left unchanged."
         )
       ).toBeVisible();
       await expect
         .poll(() => teamAuthorFromHead(page))
         .toBe("Team author remote");
 
-      await secondPage.getByRole("button", { name: "Back Up" }).click();
+      await secondPage.getByRole("button", { name: "Upload" }).click();
       await secondPage
-        .getByRole("dialog", { name: "Back Up" })
+        .getByRole("dialog", { name: "Upload" })
         .getByLabel("Custom Teams, Team configs")
         .check();
       await secondPage
-        .getByRole("dialog", { name: "Back Up" })
-        .getByRole("button", { name: "Back Up" })
+        .getByRole("dialog", { name: "Upload" })
+        .getByRole("button", { name: "Upload" })
         .click();
       await expect
         .poll(() => teamAuthorFromHead(page))
@@ -834,30 +810,30 @@ test.describe("account cloud backup E2E", () => {
       await seedDomainData(secondPage, makeDomainState("local", 502));
 
       await replaceDomainData(page, makeDomainState("remote", 503));
-      await page.getByRole("button", { name: "Back Up" }).click();
+      await page.getByRole("button", { name: "Upload" }).click();
       await expect
         .poll(() => teamAuthorFromHead(page))
         .toBe("Team author remote");
 
-      await secondPage.getByRole("button", { name: "Restore" }).click();
+      await secondPage.getByRole("button", { name: "Download" }).click();
       await expect(
-        secondPage.getByRole("dialog", { name: "Restore" })
+        secondPage.getByRole("dialog", { name: "Download" })
       ).toBeVisible();
       await expect(
         secondPage.getByLabel("Custom Teams, Team configs")
       ).toBeVisible();
       await expect(
         secondPage
-          .getByText("Keep this browser and the cloud backup as they are.")
-          .first()
-      ).toBeVisible();
+          .getByRole("dialog", { name: "Download" })
+          .getByLabel("Custom Teams, Team configs")
+      ).not.toBeChecked();
       await secondPage
-        .getByRole("dialog", { name: "Restore" })
-        .getByRole("button", { name: "Restore" })
+        .getByRole("dialog", { name: "Download" })
+        .getByRole("button", { name: "Download" })
         .click();
       await expect(
         secondPage.getByText(
-          "No data groups were included, so both sides were left unchanged."
+          "No data categories were included, so both sides were left unchanged."
         )
       ).toBeVisible();
       await expect
@@ -866,14 +842,14 @@ test.describe("account cloud backup E2E", () => {
           "teams/all": { author: "Team author local" },
         });
 
-      await secondPage.getByRole("button", { name: "Restore" }).click();
+      await secondPage.getByRole("button", { name: "Download" }).click();
       await secondPage
-        .getByRole("dialog", { name: "Restore" })
+        .getByRole("dialog", { name: "Download" })
         .getByLabel("Custom Teams, Team configs")
         .check();
       await secondPage
-        .getByRole("dialog", { name: "Restore" })
-        .getByRole("button", { name: "Restore" })
+        .getByRole("dialog", { name: "Download" })
+        .getByRole("button", { name: "Download" })
         .click();
       await expect
         .poll(() => readLocalPayloadsByPartition(secondPage))
@@ -893,31 +869,31 @@ test.describe("account cloud backup E2E", () => {
     await clickBackupAndWaitForHeads(page, ["profile.game/600000001"]);
 
     await replaceDomainData(page, makeEmptyDomainState());
-    await page.getByRole("button", { name: "Back Up" }).click();
-    await expect(page.getByRole("dialog", { name: "Back Up" })).toBeVisible();
+    await page.getByRole("button", { name: "Upload" }).click();
+    await expect(page.getByRole("dialog", { name: "Upload" })).toBeVisible();
     await expect(
       page.getByLabel("Characters, Weapons [600000001]")
     ).toBeVisible();
 
     await page
-      .getByRole("dialog", { name: "Back Up" })
-      .getByRole("button", { name: "Back Up" })
+      .getByRole("dialog", { name: "Upload" })
+      .getByRole("button", { name: "Upload" })
       .click();
     await expect
       .poll(() => readBackupPartitionKeys(page))
       .toContain("profile.game/600000001");
 
-    await page.getByRole("button", { name: "Back Up" }).click();
-    const dialog = page.getByRole("dialog", { name: "Back Up" });
+    await page.getByRole("button", { name: "Upload" }).click();
+    const dialog = page.getByRole("dialog", { name: "Upload" });
     await dialog.getByLabel("Characters, Weapons [600000001]").check();
     await dialog.getByLabel("Artifacts [600000001]").check();
     await page
-      .getByRole("dialog", { name: "Back Up" })
-      .getByLabel("Frozen loadouts, Profile settings [600000001]")
+      .getByRole("dialog", { name: "Upload" })
+      .getByLabel("Saved Loadouts, Profile settings [600000001]")
       .check();
     await page
-      .getByRole("dialog", { name: "Back Up" })
-      .getByRole("button", { name: "Back Up" })
+      .getByRole("dialog", { name: "Upload" })
+      .getByRole("button", { name: "Upload" })
       .click();
     await expect
       .poll(() => readBackupPartitionKeys(page))
@@ -932,7 +908,21 @@ test.describe("account cloud backup E2E", () => {
 });
 
 async function openBackupPage(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    // Welcome/update journeys have their own public E2E coverage.
+    localStorage.setItem("app_language", "en");
+    localStorage.setItem(
+      "greeting-storage",
+      JSON.stringify({
+        version: 1,
+        state: { onboardingCompleted: true, lastSeenUpdate: "2099-01-01" },
+      })
+    );
+  });
   await page.goto(BACKUP_ROUTE);
+  await page.waitForFunction(() => Boolean(window.__ggE2E));
+  await page.evaluate(() => window.__ggE2E.clearDomainData());
+  await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => Boolean(window.__ggE2E));
   await dismissBlockingDialogs(page);
 }
@@ -942,7 +932,7 @@ async function signIn(page: Page, user: E2eUser): Promise<void> {
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => Boolean(window.__ggE2E));
   await dismissBlockingDialogs(page);
-  await expect(page.getByRole("button", { name: "Back Up" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Upload" })).toBeEnabled();
 }
 
 async function signOut(page: Page): Promise<void> {
@@ -950,18 +940,24 @@ async function signOut(page: Page): Promise<void> {
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.waitForFunction(() => Boolean(window.__ggE2E));
   await dismissBlockingDialogs(page);
-  await expect(page.getByRole("button", { name: "Back Up" })).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Restore" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Upload" })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Download" })).toBeDisabled();
 }
 
-async function seedDomainData(page: Page, state: E2eState): Promise<void> {
+async function seedDomainData(
+  page: Page,
+  state: E2eDomainState
+): Promise<void> {
   await page.evaluate(
     (nextState) => window.__ggE2E.seedDomainData(nextState),
     state
   );
 }
 
-async function replaceDomainData(page: Page, state: E2eState): Promise<void> {
+async function replaceDomainData(
+  page: Page,
+  state: E2eDomainState
+): Promise<void> {
   await page.evaluate(
     (nextState) => window.__ggE2E.replaceDomainData(nextState),
     state
@@ -969,9 +965,7 @@ async function replaceDomainData(page: Page, state: E2eState): Promise<void> {
 }
 
 async function readBackupHead(page: Page): Promise<BackupHeadResponse> {
-  return page.evaluate(() =>
-    window.__ggE2E.readBackupHead()
-  ) as Promise<BackupHeadResponse>;
+  return page.evaluate(() => window.__ggE2E.readBackupHead());
 }
 
 async function readStableBackupHead(page: Page): Promise<{
@@ -1004,9 +998,9 @@ async function readBackupRecordCounts(
 async function readLocalPayloadsByPartition(
   page: Page
 ): Promise<Record<string, unknown>> {
-  const partitions = (await page.evaluate(() =>
+  const partitions = await page.evaluate(() =>
     window.__ggE2E.readLocalPartitions()
-  )) as Array<{ namespace: string; partitionKey: string; payload: unknown }>;
+  );
   return Object.fromEntries(
     partitions.map((partition) => [
       `${partition.namespace}/${partition.partitionKey}`,
@@ -1018,9 +1012,14 @@ async function readLocalPayloadsByPartition(
 async function readCloudPayloadsByPartition(
   page: Page
 ): Promise<Record<string, unknown>> {
-  const partitions = (await page.evaluate(() =>
+  // Wait for the UI commit before reading a head and its objects separately.
+  // Otherwise a replacing commit can invalidate that head between requests.
+  await expect(
+    page.getByRole("button", { name: "Upload", exact: true })
+  ).toBeEnabled();
+  const partitions = await page.evaluate(() =>
     window.__ggE2E.readCloudPartitions()
-  )) as Array<{ namespace: string; partitionKey: string; payload: unknown }>;
+  );
   return Object.fromEntries(
     partitions.map((partition) => [
       `${partition.namespace}/${partition.partitionKey}`,
@@ -1034,9 +1033,9 @@ async function restoreAllCloudData(page: Page): Promise<void> {
 }
 
 async function readConflictIds(page: Page): Promise<string[]> {
-  const metadata = (await page.evaluate(() =>
+  const metadata = await page.evaluate(() =>
     window.__ggE2E.readCloudMetadata()
-  )) as { conflictsById: Record<string, unknown> };
+  );
   return Object.keys(metadata.conflictsById).sort();
 }
 
@@ -1070,7 +1069,8 @@ async function clickBackupAndWaitForHeads(
   page: Page,
   expectedPartitionKeys: string[]
 ): Promise<void> {
-  await page.getByRole("button", { name: "Back Up" }).click();
+  await page.getByRole("button", { name: "Upload" }).click();
+  await expect(page.getByRole("button", { name: "Upload" })).toBeEnabled();
   await expect
     .poll(() => readBackupPartitionKeys(page), {
       message: `cloud head should contain ${expectedPartitionKeys.join(", ")}`,
@@ -1079,14 +1079,12 @@ async function clickBackupAndWaitForHeads(
 }
 
 async function dismissBlockingDialogs(page: Page): Promise<void> {
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const closeButton = page.getByRole("button", { name: "Close" }).last();
-    if (await closeButton.isVisible().catch(() => false)) {
-      await closeButton.click();
-      await expect(page.getByRole("dialog")).not.toBeVisible();
-      return;
-    }
-    await page.waitForTimeout(300);
+  // Fresh contexts reload after the harness persists the onboarding flag.
+  // Only dismiss an existing dialog; no delayed preset prompt can start here.
+  const closeButton = page.getByRole("button", { name: "Close" }).last();
+  if (await closeButton.isVisible()) {
+    await closeButton.click();
+    await expect(page.getByRole("dialog")).not.toBeVisible();
   }
 }
 
@@ -1111,7 +1109,7 @@ function userFor(
   };
 }
 
-function makeEmptyDomainState(): E2eState {
+function makeEmptyDomainState(): E2eDomainState {
   return {
     accounts: {},
     activeAccountId: null,
@@ -1126,7 +1124,7 @@ function makeEmptyDomainState(): E2eState {
   };
 }
 
-function makeDomainState(marker: string, updatedAt: number): E2eState {
+function makeDomainState(marker: string, updatedAt: number): E2eDomainState {
   return {
     accounts: {
       [PROFILE_ID]: makeAccount(marker, updatedAt),
@@ -1142,7 +1140,10 @@ function makeDomainState(marker: string, updatedAt: number): E2eState {
     teams: {
       compDeltas: [teamDelta(marker)],
       configsByTeamId: {
-        [`team-${marker}`]: { combatOptions: {}, charConfigs: {} },
+        [`team-${marker}`]: {
+          combatOptions: {},
+          charConfigs: { amber: { minEr: 1.2 } },
+        },
       },
       author: `Team author ${marker}`,
       description: `Team description ${marker}`,
@@ -1190,7 +1191,7 @@ function makeDomainState(marker: string, updatedAt: number): E2eState {
   };
 }
 
-function makeTeamsOnlyState(marker: string, updatedAt: number): E2eState {
+function makeTeamsOnlyState(marker: string, updatedAt: number): E2eDomainState {
   const empty = makeEmptyDomainState();
   const full = makeDomainState(marker, updatedAt);
   return {
@@ -1205,7 +1206,7 @@ function makeStateWithChangedParts(
   changedMarker: string,
   changedUpdatedAt: number,
   changedParts: DomainPart[]
-): E2eState {
+): E2eDomainState {
   const base = makeDomainState(baseMarker, baseUpdatedAt);
   const changed = makeDomainState(changedMarker, changedUpdatedAt);
   return {
@@ -1228,7 +1229,7 @@ function makeStateWithChangedParts(
   };
 }
 
-function makeAccount(marker: string, updatedAt: number) {
+function makeAccount(marker: string, updatedAt: number): AccountState {
   return {
     id: PROFILE_ID,
     name: `Account ${marker}`,
@@ -1275,7 +1276,7 @@ function makeAccount(marker: string, updatedAt: number) {
   };
 }
 
-function buildDelta(marker: string) {
+function buildDelta(marker: string): BuildDelta {
   return {
     kind: "custom",
     id: `build-${marker}`,
@@ -1296,7 +1297,7 @@ function buildDelta(marker: string) {
   };
 }
 
-function teamDelta(marker: string) {
+function teamDelta(marker: string): TeamCompDelta {
   return {
     kind: "custom",
     id: `team-${marker}`,

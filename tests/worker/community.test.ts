@@ -1,4 +1,4 @@
-import { env } from "cloudflare:test";
+import { env } from "cloudflare:workers";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import authSchema from "../../migrations/0002_auth.sql?raw";
 import sessionsSchema from "../../migrations/0003_auth_sessions.sql?raw";

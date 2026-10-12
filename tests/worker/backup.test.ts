@@ -1,4 +1,4 @@
-import { SELF } from "cloudflare:test";
+import { exports } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   type BackupEnv,
@@ -6,6 +6,7 @@ import {
   runBackupCleanup,
 } from "../../worker/backup";
 import { createTestJwt } from "./jwtTestUtils";
+import { mockJwks } from "./network";
 
 type UserStateRecord = {
   user_id: string;
@@ -110,19 +111,17 @@ describe("Worker backup API", () => {
       expiresIn: "5y",
     });
     accessToken = token;
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => Response.json(jwks))
-    );
+    mockJwks(logtoIssuer, jwks);
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.unstubAllGlobals();
   });
 
   it("rejects backup requests without a bearer token", async () => {
-    const response = await SELF.fetch("https://example.com/api/backup/v1/head");
+    const response = await exports.default.fetch(
+      "https://example.com/api/backup/v1/head"
+    );
 
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({

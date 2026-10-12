@@ -37,12 +37,12 @@ export function AutoTuneTeamRow({
 
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is a controlled component inside the label
-    <label className="flex items-start gap-2 px-1.5 py-1.5 rounded border border-border/30 hover:bg-muted/20 cursor-pointer w-fit">
+    <label className="flex items-start gap-2 px-1.5 py-1.5 rounded-[4px] border border-border/30 hover:bg-muted/20 cursor-pointer w-fit">
       {!hideCheckbox && (
         <Checkbox
           checked={enabled}
           onCheckedChange={(checked) => onToggle(!!checked)}
-          className="mt-0.5 flex-shrink-0"
+          className="mt-0.5 shrink-0"
         />
       )}
       <div className="flex-1 min-w-0">
@@ -61,7 +61,9 @@ export function AutoTuneTeamRow({
             return (
               <div
                 key={`c${idx}`}
-                className={isTarget ? "ring-1 ring-primary/50 rounded" : ""}
+                className={
+                  isTarget ? "ring-1 ring-primary/50 rounded-[4px]" : ""
+                }
               >
                 {charRes ? (
                   <ItemIcon
@@ -70,7 +72,7 @@ export function AutoTuneTeamRow({
                     badge={constellation}
                   />
                 ) : (
-                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
+                  <div className="w-[40px] h-[40px] rounded-[4px] bg-muted/40 border border-dashed border-border/30" />
                 )}
               </div>
             );
@@ -86,7 +88,7 @@ export function AutoTuneTeamRow({
                 {wpnRes ? (
                   <ItemIcon weaponId={weaponId!} size="xs" badge={refinement} />
                 ) : (
-                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
+                  <div className="w-[40px] h-[40px] rounded-[4px] bg-muted/40 border border-dashed border-border/30" />
                 )}
               </div>
             );
@@ -100,7 +102,7 @@ export function AutoTuneTeamRow({
                 ) : artConfig?.type === "2pc+2pc" ? (
                   <ItemIcon halfSetIds={artConfig.halfSetIds} size="xs" />
                 ) : (
-                  <div className="w-[40px] h-[40px] rounded bg-muted/40 border border-dashed border-border/30" />
+                  <div className="w-[40px] h-[40px] rounded-[4px] bg-muted/40 border border-dashed border-border/30" />
                 )}
               </div>
             );

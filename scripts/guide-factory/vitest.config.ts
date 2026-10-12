@@ -5,6 +5,7 @@ import { defineConfig } from "vitest/config";
 const factoryRoot = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
+  oxc: { decorator: { legacy: true } },
   resolve: {
     alias: {
       "@": path.resolve(factoryRoot, "../../src"),

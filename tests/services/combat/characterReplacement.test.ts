@@ -156,58 +156,58 @@ async function run(input: CharacterReplacementRequest) {
 }
 
 describe("selected-team character replacement", () => {
-  it.each([
-    "none",
-    "sameChar",
-    "forceReuse",
-  ] as const)("honors cross-team %s artifact reuse for a replacement character", async (reuseMode) => {
-    const input = request();
-    const fischl = input.accountData!.characters.find(
-      (char) => char.key === "fischl"
-    )!;
-    const bennett = input.accountData!.characters.find(
-      (char) => char.key === "bennett"
-    )!;
-    const saved = Object.fromEntries(
-      allSlots.map((slot) => [slot, fischl.artifacts[slot] ?? null])
-    ) as Record<(typeof allSlots)[number], ArtifactData | null>;
-    input.inventoryReservations = {
-      teams: {
-        other: {
-          frozenCharIds: ["fischl"],
-          artifactsByChar: { fischl: saved },
+  it.each(["none", "sameChar", "forceReuse"] as const)(
+    "honors cross-team %s artifact reuse for a replacement character",
+    async (reuseMode) => {
+      const input = request();
+      const fischl = input.accountData!.characters.find(
+        (char) => char.key === "fischl"
+      )!;
+      const bennett = input.accountData!.characters.find(
+        (char) => char.key === "bennett"
+      )!;
+      const saved = Object.fromEntries(
+        allSlots.map((slot) => [slot, fischl.artifacts[slot] ?? null])
+      ) as Record<(typeof allSlots)[number], ArtifactData | null>;
+      input.inventoryReservations = {
+        teams: {
+          other: {
+            frozenCharIds: ["fischl"],
+            artifactsByChar: { fischl: saved },
+          },
         },
-      },
-      reuseMode,
-      standaloneIds: Object.values(bennett.artifacts).map(
-        (artifact) => artifact.id
-      ),
-    };
-    const outcome = await run(input);
-    if (reuseMode === "none") {
-      expect(outcome).toMatchObject({ type: "error", reason: "no-results" });
-      return;
-    }
-    expect(outcome.type).toBe("result");
-    if (outcome.type !== "result") return;
-    for (const result of outcome.results) {
-      expect(
-        Object.values(result.artifactsByChar.fischl)
-          .map((artifact) => artifact!.id)
-          .sort()
-      ).toEqual(
-        Object.values(saved)
-          .map((artifact) => artifact!.id)
-          .sort()
-      );
-      expect(
-        Object.entries(result.artifactsByChar)
-          .filter(([id]) => id !== "fischl")
-          .flatMap(([, slots]) => Object.values(slots))
-          .some((artifact) => artifact?.id.startsWith("fischl-"))
-      ).toBe(false);
-    }
-  }, 30000);
+        reuseMode,
+        standaloneIds: Object.values(bennett.artifacts).map(
+          (artifact) => artifact.id
+        ),
+      };
+      const outcome = await run(input);
+      if (reuseMode === "none") {
+        expect(outcome).toMatchObject({ type: "error", reason: "no-results" });
+        return;
+      }
+      expect(outcome.type).toBe("result");
+      if (outcome.type !== "result") return;
+      for (const result of outcome.results) {
+        expect(
+          Object.values(result.artifactsByChar.fischl)
+            .map((artifact) => artifact!.id)
+            .sort()
+        ).toEqual(
+          Object.values(saved)
+            .map((artifact) => artifact!.id)
+            .sort()
+        );
+        expect(
+          Object.entries(result.artifactsByChar)
+            .filter(([id]) => id !== "fischl")
+            .flatMap(([, slots]) => Object.values(slots))
+            .some((artifact) => artifact?.id.startsWith("fischl-"))
+        ).toBe(false);
+      }
+    },
+    30000
+  );
   it("can replace every unowned member of a full preset team", async () => {
     const input = request();
     input.teamComp = teamCompInputToComp({
@@ -275,59 +275,63 @@ describe("selected-team character replacement", () => {
     { replaceSlots: [3] },
     { replaceSlots: [1, 3] },
     { replaceSlots: [1, 2, 3] },
-  ])("finds complete distinct owned allocations replacing slots $replaceSlots", async ({
-    replaceSlots,
-  }) => {
-    const input = request();
-    input.settings.replaceSlots = replaceSlots;
-    const outcome = await run(input);
-    expect(outcome.type).toBe("result");
-    if (outcome.type !== "result") return;
-    for (const result of outcome.results) {
-      expect(result.configs).toHaveLength(4);
-      expect(new Set(result.configs.map((config) => config.charId)).size).toBe(
-        4
-      );
-      expect(new Set(result.weaponInstanceIds).size).toBe(4);
-      expect(result.weaponInstanceIds.every(Boolean)).toBe(true);
-      const artifacts = Object.values(result.artifactsByChar).flatMap((slots) =>
-        Object.values(slots)
-      );
-      expect(artifacts).toHaveLength(20);
-      expect(artifacts.every(Boolean)).toBe(true);
-      expect(new Set(artifacts.map((artifact) => artifact!.id)).size).toBe(20);
-      expect(
-        result.combo.lines.find(
-          (line) => line.formulaId === input.objective.lines[0].formulaId
-        )?.count
-      ).toBe(37);
-      const team = new TeamBuild(
-        result.configs,
-        input.setupConfig.combatOptions,
-        input.setupConfig.damage?.enemyAura,
-        [],
-        undefined,
-        input.calcContext
-      );
-      const sheets = Object.fromEntries(
-        result.configs.map((config) => [
-          config.charId,
-          StatSheet.fromArtifacts(
-            Object.values(result.artifactsByChar[config.charId]).filter(
-              (artifact) => artifact !== null
-            )
-          ),
-        ])
-      );
-      expect(
-        team.getComboDamageResult(result.combo, sheets, input.calcContext)
-          .totalDamage
-      ).toBeCloseTo(result.damage, 7);
-      expect(
-        team.catalog.formulaIndex.has(result.combo.lines[0].formulaId)
-      ).toBe(true);
-    }
-  }, 30000);
+  ])(
+    "finds complete distinct owned allocations replacing slots $replaceSlots",
+    async ({ replaceSlots }) => {
+      const input = request();
+      input.settings.replaceSlots = replaceSlots;
+      const outcome = await run(input);
+      expect(outcome.type).toBe("result");
+      if (outcome.type !== "result") return;
+      for (const result of outcome.results) {
+        expect(result.configs).toHaveLength(4);
+        expect(
+          new Set(result.configs.map((config) => config.charId)).size
+        ).toBe(4);
+        expect(new Set(result.weaponInstanceIds).size).toBe(4);
+        expect(result.weaponInstanceIds.every(Boolean)).toBe(true);
+        const artifacts = Object.values(result.artifactsByChar).flatMap(
+          (slots) => Object.values(slots)
+        );
+        expect(artifacts).toHaveLength(20);
+        expect(artifacts.every(Boolean)).toBe(true);
+        expect(new Set(artifacts.map((artifact) => artifact!.id)).size).toBe(
+          20
+        );
+        expect(
+          result.combo.lines.find(
+            (line) => line.formulaId === input.objective.lines[0].formulaId
+          )?.count
+        ).toBe(37);
+        const team = new TeamBuild(
+          result.configs,
+          input.setupConfig.combatOptions,
+          input.setupConfig.damage?.enemyAura,
+          [],
+          undefined,
+          input.calcContext
+        );
+        const sheets = Object.fromEntries(
+          result.configs.map((config) => [
+            config.charId,
+            StatSheet.fromArtifacts(
+              Object.values(result.artifactsByChar[config.charId]).filter(
+                (artifact) => artifact !== null
+              )
+            ),
+          ])
+        );
+        expect(
+          team.getComboDamageResult(result.combo, sheets, input.calcContext)
+            .totalDamage
+        ).toBeCloseTo(result.damage, 7);
+        expect(
+          team.catalog.formulaIndex.has(result.combo.lines[0].formulaId)
+        ).toBe(true);
+      }
+    },
+    30000
+  );
 
   it("drops removed formulas and preserves unchanged authored counts/reactions", () => {
     const input = request();

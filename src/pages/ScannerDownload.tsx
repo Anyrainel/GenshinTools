@@ -104,7 +104,7 @@ export default function ScannerDownload() {
                     "flex flex-col rounded-2xl bg-gradient-card p-6 sm:p-7",
                     edition.recommended
                       ? "border-2 border-primary shadow-lg"
-                      : "border border-border shadow-sm"
+                      : "border border-border shadow-xs"
                   )}
                 >
                   <div className="mb-4 flex items-center justify-between gap-3">

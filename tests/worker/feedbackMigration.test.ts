@@ -1,13 +1,12 @@
-import { env } from "cloudflare:test";
-import { afterEach, expect, it, vi } from "vitest";
+import { env } from "cloudflare:workers";
+import { expect, it } from "vitest";
 import authSchema from "../../migrations/0002_auth.sql?raw";
 import oldSchema from "../../migrations/0005_feedback.sql?raw";
 import gameMigration from "../../migrations/0006_feedback_game.sql?raw";
 import publicMigration from "../../migrations/0008_public_feedback.sql?raw";
 import { type FeedbackEnv, handleFeedbackRequest } from "../../worker/feedback";
 import { createTestJwt } from "./jwtTestUtils";
-
-afterEach(() => vi.unstubAllGlobals());
+import { mockJwks } from "./network";
 
 it("preserves pre-game feedback as GI and accepts only supported game sites", async () => {
   const db = env.BACKUP_DB;
@@ -70,10 +69,7 @@ it("preserves pre-game feedback as GI and accepts only supported game sites", as
     audience,
     subject: "hsr-feedback-user",
   });
-  vi.stubGlobal(
-    "fetch",
-    vi.fn(async () => Response.json(jwks))
-  );
+  mockJwks(issuer, jwks);
   const url = new URL("https://ggartifact.com/api/feedback/v1/submissions");
   const feedbackEnv = {
     ...env,

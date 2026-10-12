@@ -37,14 +37,14 @@ export const ArtifactCard = memo(
     return (
       <div className="bg-card border border-border rounded-lg overflow-hidden flex flex-col group">
         {/* Header: Icons */}
-        <div className="bg-gradient-to-b from-accent/50 to-transparent px-4 pt-3 pb-1 sm:pt-4 sm:pb-1 flex gap-1 sm:gap-2 justify-center items-center">
+        <div className="bg-linear-to-b from-accent/50 to-transparent px-4 pt-3 pb-1 sm:pt-4 sm:pb-1 flex gap-1 sm:gap-2 justify-center items-center">
           {allSlots.map((slot) => {
             const imgPath = artifact.imagePaths[slot];
             if (!imgPath) return null;
             return (
               <div
                 key={slot}
-                className="w-12 h-12 sm:w-14 sm:h-14 relative flex-shrink-0"
+                className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0"
               >
                 <img
                   src={getAssetUrl(imgPath)}
@@ -80,7 +80,7 @@ export const ArtifactCard = memo(
                 )}
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded text-xs leading-none align-middle mr-1.5">
+                <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded-[4px] text-xs leading-none align-middle mr-1.5">
                   {t.ui("accountData.twoPiece")}
                 </span>
                 <span
@@ -89,7 +89,7 @@ export const ArtifactCard = memo(
                 />
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded text-xs leading-none align-middle mr-1.5">
+                <span className="text-amber-400 font-semibold px-1.5 py-0.5 bg-amber-400/10 rounded-[4px] text-xs leading-none align-middle mr-1.5">
                   {t.ui("accountData.fourPiece")}
                 </span>
                 <span
@@ -107,7 +107,7 @@ export const ArtifactCard = memo(
                 className={cn(
                   "w-full flex items-center justify-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground pb-1",
                   !expanded &&
-                    "absolute bottom-0 left-0 right-0 pt-8 pb-1 bg-gradient-to-t from-accent/50 via-accent/30 to-transparent rounded-b-lg"
+                    "absolute bottom-0 left-0 right-0 pt-8 pb-1 bg-linear-to-t from-accent/50 via-accent/30 to-transparent rounded-b-lg"
                 )}
               >
                 <ChevronDown

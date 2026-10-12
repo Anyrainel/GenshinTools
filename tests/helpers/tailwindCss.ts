@@ -1,8 +1,8 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import postcss from "postcss";
-import tailwindcss from "tailwindcss";
-import config from "../../tailwind.config";
+import { build } from "vite";
 
 /** Compile the real source scan, so absent dynamic utilities fail the tests. */
 export async function buildUiCss(): Promise<string> {
@@ -10,13 +10,24 @@ export async function buildUiCss(): Promise<string> {
     path.dirname(fileURLToPath(import.meta.url)),
     "../.."
   );
-  const result = await postcss([
-    tailwindcss({
-      ...config,
-      content: [path.join(root, "src/**/*.{ts,tsx}").replaceAll("\\", "/")],
-    }),
-  ]).process("@tailwind utilities;", { from: undefined });
-  return result.css;
+  const result = await build({
+    root,
+    configFile: false,
+    logLevel: "silent",
+    plugins: [tailwindcss({ optimize: false })],
+    build: {
+      write: false,
+      cssMinify: false,
+      rolldownOptions: { input: path.join(root, "src/index.css") },
+    },
+  });
+  if ("output" in result) {
+    const css = result.output.find(
+      (file) => file.type === "asset" && file.fileName.endsWith(".css")
+    );
+    if (css?.type === "asset") return String(css.source);
+  }
+  throw new Error("Vite did not emit the UI stylesheet.");
 }
 
 export function utilityDeclarations(
@@ -27,7 +38,10 @@ export function utilityDeclarations(
   const values: Record<string, string> = {};
   postcss.parse(css).walkRules(selector, (rule) => {
     rule.walkDecls((declaration) => {
-      values[declaration.prop] = declaration.value;
+      values[declaration.prop] = declaration.value
+        .replace(/\s+/g, " ")
+        .replace(/\( /g, "(")
+        .replace(/ \)/g, ")");
     });
   });
   return values;

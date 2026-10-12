@@ -282,7 +282,7 @@ export const AccountImportControl = forwardRef<
                 placeholder={t.ui("import.optionalUid")}
                 value={localUidInput}
                 onChange={(e) => setLocalUidInput(e.target.value)}
-                className="flex h-9 w-32 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:w-36"
+                className="flex h-9 w-32 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 sm:w-36"
                 disabled={isBusy}
               />
               {localUidInput.trim() && !isValidUid(localUidInput) && (
@@ -302,7 +302,7 @@ export const AccountImportControl = forwardRef<
                   {t.ui("scannerDownload.menu")}
                 </a>
               </Button>
-              <label className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-within:outline-none focus-within:ring-2 focus-within:ring-ring has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50">
+              <label className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 focus-within:outline-hidden focus-within:ring-2 focus-within:ring-ring has-[:disabled]:pointer-events-none has-[:disabled]:opacity-50">
                 <FileJson className="size-4" aria-hidden />
                 {t.ui("import.goodFileButton")}
                 <input
@@ -335,7 +335,7 @@ export const AccountImportControl = forwardRef<
                   placeholder={t.ui("import.uidPlaceholder") || "UID"}
                   value={uidInput}
                   onChange={(e) => setUidInput(e.target.value)}
-                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isBusy}
                   onKeyDown={(e) => e.key === "Enter" && handleUidImport()}
                 />
@@ -360,7 +360,7 @@ export const AccountImportControl = forwardRef<
                   variant="secondary"
                   onClick={handleUidImport}
                   disabled={!uidInput || !isValidUid(uidInput) || isBusy}
-                  className="flex-grow sm:flex-1 lg:ml-6 border-2 border-primary bg-primary/15 text-foreground font-semibold"
+                  className="grow sm:flex-1 lg:ml-6 border-2 border-primary bg-primary/15 text-foreground font-semibold"
                 >
                   {isBusy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -409,7 +409,7 @@ export const AccountImportControl = forwardRef<
                   value={hoyolabLtuidV2}
                   onChange={(e) => setHoyolabLtuidV2(e.target.value)}
                   disabled={isBusy}
-                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 <input
                   type="text"
@@ -417,7 +417,7 @@ export const AccountImportControl = forwardRef<
                   value={hoyolabLtmidV2}
                   onChange={(e) => setHoyolabLtmidV2(e.target.value)}
                   disabled={isBusy}
-                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
                 <input
                   type="password"
@@ -425,7 +425,7 @@ export const AccountImportControl = forwardRef<
                   value={hoyolabLtokenV2}
                   onChange={(e) => setHoyolabLtokenV2(e.target.value)}
                   disabled={isBusy}
-                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="h-9 rounded-md border border-input bg-transparent px-3 py-1 text-xs font-mono shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                 />
               </div>
 
@@ -435,7 +435,7 @@ export const AccountImportControl = forwardRef<
                   placeholder={t.ui("import.uidPlaceholder") || "UID"}
                   value={uidInput}
                   onChange={(e) => setUidInput(e.target.value)}
-                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-32 sm:w-36 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isBusy}
                 />
                 <div className="flex items-center space-x-1.5 shrink-0">
@@ -465,7 +465,7 @@ export const AccountImportControl = forwardRef<
                     !hoyolabCookieReady ||
                     isBusy
                   }
-                  className="flex-grow sm:flex-1 lg:ml-6 border-2 border-primary bg-primary/15 text-foreground font-semibold"
+                  className="grow sm:flex-1 lg:ml-6 border-2 border-primary bg-primary/15 text-foreground font-semibold"
                 >
                   {isBusy ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

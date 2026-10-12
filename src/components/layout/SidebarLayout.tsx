@@ -23,7 +23,7 @@ interface SidebarLayoutProps {
    * is true so the layout can forward wheel events from margin areas.
    * When `contentScrollsInternally` is false, the layout creates its own ref.
    */
-  contentScrollRef?: RefObject<HTMLDivElement>;
+  contentScrollRef?: RefObject<HTMLDivElement | null>;
   /**
    * When true, render children directly without the outer scroll container.
    * Use this when children manage their own scrolling (e.g., virtualized lists).

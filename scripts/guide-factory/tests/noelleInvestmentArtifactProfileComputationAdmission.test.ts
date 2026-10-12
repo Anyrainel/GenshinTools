@@ -2,7 +2,12 @@ import { currentSourceLocation } from "../src/sourceLocations";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import * as ts from "typescript";
+import * as b from "@babel/types";
+import {
+  parseSourceAst,
+  visitSourceAst,
+} from "../../../tests/helpers/sourceAst";
+import { runtimeAstModuleSpecifiers } from "./runtimeImports";
 import { beforeAll, describe, expect, it } from "vitest";
 import { buildNoelleInvestmentArtifactProfileComputationAdmissionFromWorkspace } from "../src/assemble-noelle-investment-artifact-profile-computation-admission";
 import { readJson, sha256File, sha256Text, stableJson } from "../src/io";
@@ -50,10 +55,8 @@ const NOELLE_MANUAL_SNAPSHOT_PATH = path.join(
 );
 const LOWER_PROFILE_ID = "noelle-lower-investment-artifact-profile-v1";
 const HIGH_PROFILE_ID = "noelle-high-investment-artifact-profile-v1";
-const LOWER_SOURCE_RECORD_ID =
-  "noelle-c0-c5-talent-9-artifact-stats-luna-viii";
-const HIGH_SOURCE_RECORD_ID =
-  "noelle-c6-or-talent-10-artifact-stats-luna-viii";
+const LOWER_SOURCE_RECORD_ID = "noelle-c0-c5-talent-9-artifact-stats-luna-viii";
+const HIGH_SOURCE_RECORD_ID = "noelle-c6-or-talent-10-artifact-stats-luna-viii";
 const HUSK_SOURCE_RECORD_ID = "noelle-general-husk-luna-viii";
 const TEAM_SOURCE_RECORD_ID =
   "noelle-durin-nicole-xilonen-hexerei-example-luna-viii";
@@ -101,7 +104,9 @@ describe("Noelle investment artifact-profile computation admission", () => {
         await buildNoelleInvestmentArtifactProfileComputationAdmissionFromWorkspace(),
       ),
     ).toBe(stableJson(report));
-    expect(report.validationStatus).toBe("authenticated-representation-blocked");
+    expect(report.validationStatus).toBe(
+      "authenticated-representation-blocked",
+    );
     expect(
       report.sourceProfilesComparedWithPinnedComputationRepresentation,
     ).toBe(true);
@@ -159,7 +164,9 @@ describe("Noelle investment artifact-profile computation admission", () => {
     ]);
     expect(
       baseInput.sourceFiles.map(({ path: sourcePath }) => sourcePath),
-    ).toEqual(baseInput.generatedFrom.map(({ path: sourcePath }) => sourcePath));
+    ).toEqual(
+      baseInput.generatedFrom.map(({ path: sourcePath }) => sourcePath),
+    );
     expect(report.generatedFrom).toEqual(baseInput.generatedFrom);
     expect(
       new Set(report.generatedFrom.map(({ path: sourcePath }) => sourcePath))
@@ -254,7 +261,9 @@ describe("Noelle investment artifact-profile computation admission", () => {
       circlet: [["cr", "cd"], ["def%"]],
     });
     expect(
-      high.mainStats.goblet.options.map(({ conditionStatus }) => conditionStatus),
+      high.mainStats.goblet.options.map(
+        ({ conditionStatus }) => conditionStatus,
+      ),
     ).toEqual([
       "branch-condition-authenticated",
       "additional-source-guard-unresolved",
@@ -318,9 +327,7 @@ describe("Noelle investment artifact-profile computation admission", () => {
         artifactOrdering: "unranked",
         artifactRecommendations: [
           {
-            artifacts: [
-              { type: "4pc", setId: "husk_of_opulent_dreams" },
-            ],
+            artifacts: [{ type: "4pc", setId: "husk_of_opulent_dreams" }],
             grouping: "single",
             classification: "default",
             conditions: [],
@@ -368,8 +375,7 @@ describe("Noelle investment artifact-profile computation admission", () => {
       for (const [index, group] of profile.substatPriority.groups.entries()) {
         expect(group.sourceConditions).toEqual([condition]);
         expect(group.sourceOccurrence).toEqual({
-          occurrenceId:
-            `kqm:character_guide:${sourceRecordId}:recommendation.substats[${index}].conditions`,
+          occurrenceId: `kqm:character_guide:${sourceRecordId}:recommendation.substats[${index}].conditions`,
           conditionsSha256,
           upstreamSliceDisposition: "holdout",
           upstreamBindingAuthored: false,
@@ -418,8 +424,16 @@ describe("Noelle investment artifact-profile computation admission", () => {
     ).toEqual(expected);
 
     for (const [sourceRecordId, repositoryRecordId, kind] of expected) {
-      const manual = requiredRecord(snapshot.records, "sourceRecordId", sourceRecordId);
-      const consolidated = requiredRecord(repository.records, "id", repositoryRecordId);
+      const manual = requiredRecord(
+        snapshot.records,
+        "sourceRecordId",
+        sourceRecordId,
+      );
+      const consolidated = requiredRecord(
+        repository.records,
+        "id",
+        repositoryRecordId,
+      );
       const row = parity.records.find(
         (candidate) => candidate.sourceRecordId === sourceRecordId,
       );
@@ -439,7 +453,10 @@ describe("Noelle investment artifact-profile computation admission", () => {
               manual.recommendation,
               (consolidated.recommendations as unknown[])[0],
             ]
-          : [manualTeamParityPayload(manual), repositoryTeamParityPayload(consolidated)];
+          : [
+              manualTeamParityPayload(manual),
+              repositoryTeamParityPayload(consolidated),
+            ];
       expect(stableJson(manualPayload)).toBe(stableJson(repositoryPayload));
       const payloadSha256 = sha256Text(stableJson(manualPayload));
       expect(row?.manualPayloadSha256).toBe(payloadSha256);
@@ -535,7 +552,8 @@ describe("Noelle investment artifact-profile computation admission", () => {
       "Each noelle-na count necessarily contributes one N4",
     );
 
-    const aggregate = admission.calculatorObservation.aggregateHitVectorPerCount;
+    const aggregate =
+      admission.calculatorObservation.aggregateHitVectorPerCount;
     for (const target of [
       { n1: 1, n2: 1, n3: 1, n4: 0 },
       { n1: 1, n2: 1, n3: 0, n4: 0 },
@@ -600,13 +618,8 @@ describe("Noelle investment artifact-profile computation admission", () => {
     expect(declared.size).toBe(23);
     for (const [implementationPath, expected] of expectedImports) {
       const source = requiredSourceFile(baseInput, implementationPath);
-      const sourceFile = ts.createSourceFile(
-        implementationPath,
-        source.text,
-        ts.ScriptTarget.Latest,
-        true,
-      );
-      const resolved = runtimeStaticModuleSpecifiers(sourceFile)
+      const sourceFile = parseSourceAst(source.text, implementationPath);
+      const resolved = runtimeAstModuleSpecifiers(sourceFile)
         .flatMap((moduleSpecifier) => {
           const importedPath = resolveFirstPartyModulePath(
             implementationPath,
@@ -616,92 +629,101 @@ describe("Noelle investment artifact-profile computation admission", () => {
         })
         .sort(compareText);
       expect(resolved).toEqual(expected);
-      expect(
-        resolved.every((importedPath) => declared.has(importedPath)),
-      ).toBe(true);
+      expect(resolved.every((importedPath) => declared.has(importedPath))).toBe(
+        true,
+      );
     }
   });
 
   it("independently AST-authenticates the exact four-part noelle-na entry and default combo", () => {
-    const sourceFile = ts.createSourceFile(
-      NOELLE_IMPLEMENTATION_RELATIVE_PATH,
+    const sourceFile = parseSourceAst(
       baseInput.implementationFile.text,
-      ts.ScriptTarget.Latest,
-      true,
+      NOELLE_IMPLEMENTATION_RELATIVE_PATH,
     );
     const normalEntries = descendants(sourceFile).filter(
-      (node): node is ts.PropertyAssignment =>
-        ts.isPropertyAssignment(node) && propertyNameText(node.name) === "noelle-na",
+      (node): node is b.ObjectProperty =>
+        b.isObjectProperty(node) &&
+        !node.computed &&
+        propertyNameText(node.key) === "noelle-na",
     );
     expect(normalEntries).toHaveLength(1);
     const normalEntry = normalEntries[0]!;
-    expect(ts.isObjectLiteralExpression(normalEntry.initializer)).toBe(true);
-    const normalObject = normalEntry.initializer as ts.ObjectLiteralExpression;
-    expect(normalObject.properties.map(({ name }) => propertyNameText(name!))).toEqual([
-      "label",
-      "parts",
-    ]);
+    expect(b.isObjectExpression(normalEntry.value)).toBe(true);
+    const normalObject = normalEntry.value as b.ObjectExpression;
+    expect(objectPropertyNames(normalObject)).toEqual(["label", "parts"]);
 
     const label = requiredObjectProperty(normalObject, "label");
-    expect(ts.isObjectLiteralExpression(label.initializer)).toBe(true);
+    expect(b.isObjectExpression(label.value)).toBe(true);
     const englishLabel = requiredObjectProperty(
-      label.initializer as ts.ObjectLiteralExpression,
+      label.value as b.ObjectExpression,
       "en",
     );
-    expect(ts.isStringLiteral(englishLabel.initializer)).toBe(true);
-    expect((englishLabel.initializer as ts.StringLiteral).text).toBe(
+    expect(b.isStringLiteral(englishLabel.value)).toBe(true);
+    expect((englishLabel.value as b.StringLiteral).value).toBe(
       "Q Normal (4-hit)",
     );
 
     const parts = requiredObjectProperty(normalObject, "parts");
-    expect(ts.isArrayLiteralExpression(parts.initializer)).toBe(true);
-    const partElements = (parts.initializer as ts.ArrayLiteralExpression).elements;
+    expect(b.isArrayExpression(parts.value)).toBe(true);
+    const partElements = (parts.value as b.ArrayExpression).elements;
     expect(partElements).toHaveLength(4);
     const paramIndexes = partElements.map((element) => {
-      expect(ts.isObjectLiteralExpression(element)).toBe(true);
-      const part = element as ts.ObjectLiteralExpression;
-      expect(part.properties.map(({ name }) => propertyNameText(name!))).toEqual([
-        "formula",
-      ]);
+      expect(b.isObjectExpression(element)).toBe(true);
+      const part = element as b.ObjectExpression;
+      expect(objectPropertyNames(part)).toEqual(["formula"]);
       const formula = requiredObjectProperty(part, "formula");
-      expect(ts.isNewExpression(formula.initializer)).toBe(true);
-      const constructor = formula.initializer as ts.NewExpression;
-      expect(constructor.expression.getText(sourceFile)).toBe("DirectFormula");
+      expect(b.isNewExpression(formula.value)).toBe(true);
+      const constructor = formula.value as b.NewExpression;
+      expect(
+        b.isIdentifier(constructor.callee, { name: "DirectFormula" }),
+      ).toBe(true);
+      expect(
+        sourceNodeText(baseInput.implementationFile.text, constructor.callee),
+      ).toBe("DirectFormula");
       const param = constructor.arguments?.[0];
-      expect(param && ts.isCallExpression(param)).toBe(true);
-      const call = param as ts.CallExpression;
-      expect(call.expression.getText(sourceFile)).toBe("this.param");
+      expect(param && b.isCallExpression(param)).toBe(true);
+      const call = param as b.CallExpression;
+      expect(
+        b.isMemberExpression(call.callee) &&
+          !call.callee.computed &&
+          b.isThisExpression(call.callee.object) &&
+          b.isIdentifier(call.callee.property, { name: "param" }),
+      ).toBe(true);
+      expect(
+        sourceNodeText(baseInput.implementationFile.text, call.callee),
+      ).toBe("this.param");
       expect(call.arguments).toHaveLength(2);
-      expect(ts.isStringLiteral(call.arguments[0]!)).toBe(true);
-      expect((call.arguments[0] as ts.StringLiteral).text).toBe("A");
-      expect(ts.isNumericLiteral(call.arguments[1]!)).toBe(true);
-      return Number((call.arguments[1] as ts.NumericLiteral).text);
+      expect(b.isStringLiteral(call.arguments[0]!)).toBe(true);
+      expect((call.arguments[0] as b.StringLiteral).value).toBe("A");
+      expect(b.isNumericLiteral(call.arguments[1]!)).toBe(true);
+      return (call.arguments[1] as b.NumericLiteral).value;
     });
     expect(paramIndexes).toEqual([1, 2, 3, 4]);
 
-    const noelleClass = nearestClass(normalEntry);
+    const noelleClass = nearestClass(normalEntry, sourceFile);
     const comboAccessors = descendants(noelleClass).filter(
-      (node): node is ts.GetAccessorDeclaration =>
-        ts.isGetAccessorDeclaration(node) &&
-        propertyNameText(node.name) === "comboDescriptor",
+      (node): node is b.ClassMethod =>
+        b.isClassMethod(node) &&
+        node.kind === "get" &&
+        !node.computed &&
+        propertyNameText(node.key) === "comboDescriptor",
     );
     expect(comboAccessors).toHaveLength(1);
-    const returns = descendants(comboAccessors[0]!).filter(ts.isReturnStatement);
+    const returns = descendants(comboAccessors[0]!).filter(
+      (node): node is b.ReturnStatement => b.isReturnStatement(node),
+    );
     expect(returns).toHaveLength(1);
-    const combo = returns[0]!.expression;
-    expect(combo && ts.isArrayLiteralExpression(combo)).toBe(true);
-    const comboElements = (combo as ts.ArrayLiteralExpression).elements;
+    const combo = returns[0]!.argument;
+    expect(combo && b.isArrayExpression(combo)).toBe(true);
+    const comboElements = (combo as b.ArrayExpression).elements;
     expect(comboElements).toHaveLength(1);
-    expect(ts.isObjectLiteralExpression(comboElements[0]!)).toBe(true);
-    const comboObject = comboElements[0] as ts.ObjectLiteralExpression;
-    expect(comboObject.properties.map(({ name }) => propertyNameText(name!))).toEqual([
-      "id",
-      "count",
-    ]);
-    const comboId = requiredObjectProperty(comboObject, "id").initializer;
-    const comboCount = requiredObjectProperty(comboObject, "count").initializer;
-    expect(ts.isStringLiteral(comboId) && comboId.text).toBe("noelle-charge");
-    expect(ts.isNumericLiteral(comboCount) && Number(comboCount.text)).toBe(3);
+    expect(b.isObjectExpression(comboElements[0]!)).toBe(true);
+    const comboObject = comboElements[0] as b.ObjectExpression;
+    expect(objectPropertyNames(comboObject)).toEqual(["id", "count"]);
+    const comboId = requiredObjectProperty(comboObject, "id").value;
+    const comboCount = requiredObjectProperty(comboObject, "count").value;
+    expect(b.isStringLiteral(comboId) && comboId.value).toBe("noelle-charge");
+    expect(b.isNumericLiteral(comboCount) && comboCount.value).toBe(3);
   });
 
   it("rejects the representation gate with no replay, numeric result, selection, build, claim, rank, damage, or ER output", () => {
@@ -760,10 +782,14 @@ describe("Noelle investment artifact-profile computation admission", () => {
     const swapped = fixture();
     const highReport = swapped.highSliceReport;
     const highInput = swapped.highSliceInput;
-    swapped.highSliceReport = swapped.lowerSliceReport as unknown as NoelleSourceLocalHighInvestmentSliceReport;
-    swapped.highSliceInput = swapped.lowerSliceInput as unknown as BuildNoelleSourceLocalHighInvestmentSliceInput;
-    swapped.lowerSliceReport = highReport as unknown as NoelleSourceLocalLowerInvestmentSliceReport;
-    swapped.lowerSliceInput = highInput as unknown as BuildNoelleSourceLocalLowerInvestmentSliceInput;
+    swapped.highSliceReport =
+      swapped.lowerSliceReport as unknown as NoelleSourceLocalHighInvestmentSliceReport;
+    swapped.highSliceInput =
+      swapped.lowerSliceInput as unknown as BuildNoelleSourceLocalHighInvestmentSliceInput;
+    swapped.lowerSliceReport =
+      highReport as unknown as NoelleSourceLocalLowerInvestmentSliceReport;
+    swapped.lowerSliceInput =
+      highInput as unknown as BuildNoelleSourceLocalLowerInvestmentSliceInput;
 
     expect(() =>
       buildNoelleInvestmentArtifactProfileComputationAdmissionReport(swapped),
@@ -927,7 +953,9 @@ describe("Noelle investment artifact-profile computation admission", () => {
   });
 
   it("rejects serialized report mutation even when every canonical input remains valid", () => {
-    const tampered = structuredClone(report) as NoelleInvestmentArtifactProfileComputationAdmissionReport & {
+    const tampered = structuredClone(
+      report,
+    ) as NoelleInvestmentArtifactProfileComputationAdmissionReport & {
       summary: { sourceMainStatOptionCount: number };
     };
     tampered.summary.sourceMainStatOptionCount = 7;
@@ -941,7 +969,9 @@ describe("Noelle investment artifact-profile computation admission", () => {
 });
 
 function requiredProfile(profileId: string): NoelleSourceBackedArtifactProfile {
-  const matches = report.profiles.filter((profile) => profile.profileId === profileId);
+  const matches = report.profiles.filter(
+    (profile) => profile.profileId === profileId,
+  );
   expect(matches).toHaveLength(1);
   return matches[0]!;
 }
@@ -1048,91 +1078,57 @@ function repositoryTeamParityPayload(
   };
 }
 
-function descendants(root: ts.Node): ts.Node[] {
-  const nodes: ts.Node[] = [];
-  function visit(node: ts.Node): void {
-    nodes.push(node);
-    ts.forEachChild(node, visit);
-  }
-  ts.forEachChild(root, visit);
+function descendants(root: b.Node): b.Node[] {
+  const nodes: b.Node[] = [];
+  visitSourceAst(root, (node) => {
+    if (node !== root) nodes.push(node);
+  });
   return nodes;
 }
 
-function propertyNameText(name: ts.PropertyName): string | null {
-  if (
-    ts.isIdentifier(name) ||
-    ts.isStringLiteral(name) ||
-    ts.isNumericLiteral(name)
-  ) {
-    return name.text;
-  }
+function propertyNameText(name: b.Node): string | null {
+  if (b.isIdentifier(name)) return name.name;
+  if (b.isStringLiteral(name) || b.isNumericLiteral(name))
+    return String(name.value);
   return null;
 }
 
+function objectPropertyNames(object: b.ObjectExpression): Array<string | null> {
+  return object.properties.map((property) =>
+    "key" in property && !property.computed
+      ? propertyNameText(property.key)
+      : null,
+  );
+}
+
+function sourceNodeText(source: string, node: b.Node): string {
+  expect(node.start).not.toBeNull();
+  expect(node.end).not.toBeNull();
+  return source.slice(node.start!, node.end!);
+}
+
 function requiredObjectProperty(
-  object: ts.ObjectLiteralExpression,
+  object: b.ObjectExpression,
   name: string,
-): ts.PropertyAssignment {
+): b.ObjectProperty {
   const matches = object.properties.filter(
-    (property): property is ts.PropertyAssignment =>
-      ts.isPropertyAssignment(property) && propertyNameText(property.name) === name,
+    (property): property is b.ObjectProperty =>
+      b.isObjectProperty(property) &&
+      !property.computed &&
+      propertyNameText(property.key) === name,
   );
   expect(matches).toHaveLength(1);
   return matches[0]!;
 }
 
-function nearestClass(node: ts.Node): ts.ClassDeclaration {
-  let ancestor: ts.Node | undefined = node.parent;
-  while (ancestor && !ts.isClassDeclaration(ancestor)) {
-    ancestor = ancestor.parent;
-  }
-  expect(ancestor && ts.isClassDeclaration(ancestor)).toBe(true);
-  return ancestor as ts.ClassDeclaration;
-}
-
-function runtimeStaticModuleSpecifiers(sourceFile: ts.SourceFile): string[] {
-  const moduleSpecifiers: string[] = [];
-  function visit(node: ts.Node): void {
-    if (
-      ts.isImportDeclaration(node) &&
-      ts.isStringLiteral(node.moduleSpecifier) &&
-      !isTypeOnlyImportDeclaration(node)
-    ) {
-      moduleSpecifiers.push(node.moduleSpecifier.text);
-    }
-    if (
-      ts.isExportDeclaration(node) &&
-      node.moduleSpecifier &&
-      ts.isStringLiteral(node.moduleSpecifier) &&
-      !node.isTypeOnly
-    ) {
-      moduleSpecifiers.push(node.moduleSpecifier.text);
-    }
-    if (
-      ts.isCallExpression(node) &&
-      node.expression.kind === ts.SyntaxKind.ImportKeyword &&
-      node.arguments.length === 1 &&
-      ts.isStringLiteralLike(node.arguments[0])
-    ) {
-      moduleSpecifiers.push(node.arguments[0].text);
-    }
-    ts.forEachChild(node, visit);
-  }
-  visit(sourceFile);
-  return moduleSpecifiers;
-}
-
-function isTypeOnlyImportDeclaration(
-  declaration: ts.ImportDeclaration,
-): boolean {
-  const clause = declaration.importClause;
-  if (!clause) return false;
-  if (clause.isTypeOnly) return true;
-  if (clause.name) return false;
-  if (!clause.namedBindings || ts.isNamespaceImport(clause.namedBindings)) {
-    return false;
-  }
-  return clause.namedBindings.elements.every(({ isTypeOnly }) => isTypeOnly);
+function nearestClass(node: b.Node, root: b.Node): b.ClassDeclaration {
+  const ancestors = descendants(root).filter(
+    (candidate): candidate is b.ClassDeclaration =>
+      b.isClassDeclaration(candidate) && descendants(candidate).includes(node),
+  );
+  ancestors.sort((left, right) => (right.start ?? 0) - (left.start ?? 0));
+  expect(ancestors.length).toBeGreaterThan(0);
+  return ancestors[0]!;
 }
 
 function resolveFirstPartyModulePath(
@@ -1209,7 +1205,9 @@ function synchronizeManualSnapshotRawClosure(
         sourcePath === NOELLE_MANUAL_SNAPSHOT_RELATIVE_PATH,
     );
     if (!source || !generated) {
-      throw new Error("Missing Noelle manual snapshot from test slice fixture.");
+      throw new Error(
+        "Missing Noelle manual snapshot from test slice fixture.",
+      );
     }
     source.text = text;
     generated.sha256 = sha256;
@@ -1347,7 +1345,9 @@ async function readGeneratedFrom(paths: readonly string[]) {
   return Promise.all(
     paths.map(async (relativePath) => ({
       path: relativePath,
-      sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
+      sha256: await sha256File(
+        currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
+      ),
     })),
   );
 }

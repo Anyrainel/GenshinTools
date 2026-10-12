@@ -225,7 +225,7 @@ describe("cloud sync client", () => {
       heads: [
         {
           ...remoteHead("builds/all", "rev-newer", await getContentHash({})),
-          schemaVersion: 3,
+          schemaVersion: 4,
         },
       ],
     });

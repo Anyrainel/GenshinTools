@@ -201,7 +201,7 @@ export function CharacterBuildView({
 
 interface CharacterListProps {
   characters: typeof allCharacters;
-  scrollRef: React.RefObject<HTMLDivElement>;
+  scrollRef: React.RefObject<HTMLDivElement | null>;
   layout: BuildCardLayout;
 }
 

@@ -485,7 +485,7 @@ export function StatSheetPanel({
               )}
             >
               {failReasons?.[charId] ? (
-                <div className="flex items-center gap-2 px-2 py-2 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+                <div className="flex items-center gap-2 px-2 py-2 bg-amber-500/10 border border-amber-500/20 rounded-[4px] text-xs text-amber-400 font-medium">
                   <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
                   <span>{formatFailReason(failReasons[charId], t)}</span>
                 </div>
@@ -529,7 +529,7 @@ export function StatSheetPanel({
                       "flex-1 flex items-center justify-center text-[9px] md:text-[11px] xl:text-xs font-semibold px-1 md:px-1.5 py-0.5 md:py-1 rounded-full transition-all",
                       showChevrons && "gap-0.5",
                       activeView === mode
-                        ? "bg-primary/50 text-primary-foreground shadow-sm"
+                        ? "bg-primary/50 text-primary-foreground shadow-xs"
                         : "bg-white/5 text-foreground/80 hover:bg-white/10"
                     )}
                   >
@@ -547,7 +547,7 @@ export function StatSheetPanel({
 
             {/* Set Mismatch Warning */}
             {hasMismatch && activeView != null && (
-              <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded text-xs text-amber-400 font-medium">
+              <div className="flex items-center gap-2 mx-2 mt-2 px-2.5 py-1.5 bg-amber-500/10 border border-amber-500/20 rounded-[4px] text-xs text-amber-400 font-medium">
                 <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
                 <span>{t.ui("teamComp.setMismatch")}</span>
               </div>
@@ -632,7 +632,7 @@ function MainStatFilterPopover({
           disabled={disabled}
           aria-label={t.ui("teamComp.mainStatFilter")}
           className={cn(
-            "shrink-0 flex items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors",
+            "shrink-0 flex items-center justify-center w-4 h-4 md:w-5 md:h-5 rounded-[4px] text-muted-foreground hover:text-foreground hover:bg-white/5 transition-colors",
             hasAny && "text-primary",
             disabled &&
               "opacity-40 cursor-not-allowed hover:bg-transparent hover:text-muted-foreground"
@@ -735,7 +735,7 @@ function MarginalView({
                 : ""
             )}
           >
-            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded-[4px] border border-border/10 opacity-70">
               +1
             </span>
             <span
@@ -788,7 +788,7 @@ function MarginalView({
                 : ""
             )}
           >
-            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded border border-border/10 opacity-70">
+            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded-[4px] border border-border/10 opacity-70">
               Lv
             </span>
             <span

@@ -15,7 +15,9 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [],
       localMeta: [],
-      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud")],
+      remoteHeads: [
+        { ...remote("builds", "all", "rev-1", "hash-cloud"), schemaVersion: 3 },
+      ],
     });
 
     expect(plan.downloads).toHaveLength(1);
@@ -23,6 +25,7 @@ describe("cloud sync planner", () => {
       action: "download",
       reason: "remote-only",
       remoteRev: "rev-1",
+      schemaVersion: 3,
     });
   });
 
@@ -149,15 +152,15 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [],
       localMeta: [],
-      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 3)],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 4)],
     });
 
     expect(plan.unsupported).toHaveLength(1);
     expect(plan.unsupported[0]).toMatchObject({
       action: "unsupported",
       reason: "newer-cloud-schema",
-      remoteSchemaVersion: 3,
-      supportedSchemaVersion: 2,
+      remoteSchemaVersion: 4,
+      supportedSchemaVersion: 3,
     });
   });
 

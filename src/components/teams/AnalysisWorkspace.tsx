@@ -1386,7 +1386,7 @@ export function AnalysisWorkspace({
             <ArrowLeft className="w-4 h-4 mr-1" />
             {t.ui("teamComp.switchTeam")}
           </Button>
-          <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
+          <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
             {teamComp.name || t.ui("teamComp.teamOptimization")}
             <span
               className="inline-block ml-1.5 align-baseline cursor-pointer"

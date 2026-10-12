@@ -442,7 +442,7 @@ function QWindowBlock({
             {sourceLabel ?? `@${w.qIndex}`}
           </span>
           {w.isBinding && (
-            <span className="ml-1.5 px-1 rounded bg-primary/20 text-primary text-[10px] uppercase tracking-wide">
+            <span className="ml-1.5 px-1 rounded-[4px] bg-primary/20 text-primary text-[10px] uppercase tracking-wide">
               {tUi("erCalc.qWindowBinding")}
             </span>
           )}

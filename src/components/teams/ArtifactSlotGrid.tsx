@@ -45,7 +45,7 @@ export function ArtifactSlotGrid({
           return (
             <div
               key={slot}
-              className="aspect-square rounded border border-dashed border-border/30 flex items-center justify-center bg-card/10 p-0.5"
+              className="aspect-square rounded-[4px] border border-dashed border-border/30 flex items-center justify-center bg-card/10 p-0.5"
             >
               <span className="text-[10px] text-muted-foreground font-medium leading-tight text-center">
                 {t.ui("accountData.unequipped")}
@@ -66,7 +66,7 @@ export function ArtifactSlotGrid({
                 type="button"
                 onClick={() => onSwap(slot, art)}
                 className={cn(
-                  "relative group/swap rounded transition-all cursor-pointer w-fit",
+                  "relative group/swap rounded-[4px] transition-all cursor-pointer w-fit",
                   "hover:bg-primary/10"
                 )}
               >
@@ -79,7 +79,7 @@ export function ArtifactSlotGrid({
                   badge={art.astralMark ? "⭐" : undefined}
                   size={compact ? "xs" : "md"}
                 />
-                <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded">
+                <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center bg-black/50 opacity-0 group-hover/swap:opacity-100 transition-opacity rounded-[4px]">
                   <ArrowRightLeft className="w-4 h-4 text-primary" />
                 </div>
               </button>

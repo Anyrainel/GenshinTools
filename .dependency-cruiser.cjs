@@ -2,6 +2,12 @@
 module.exports = {
   forbidden: [
     {
+      name: "browser-has-no-worker-runtime-imports",
+      severity: "error",
+      from: { path: "^src/" },
+      to: { path: "^cloudflare:" },
+    },
+    {
       name: "scanner-formats-do-not-depend-on-companion",
       severity: "error",
       from: { path: "^src/providers/scanner/formats/" },
@@ -138,7 +144,7 @@ module.exports = {
       name: "no-unresolved-imports",
       severity: "error",
       from: {},
-      to: { couldNotResolve: true, pathNot: "^cloudflare:test$" },
+      to: { couldNotResolve: true, pathNot: "^cloudflare:workers$" },
     },
     {
       name: "domain-is-framework-free",
@@ -187,8 +193,8 @@ module.exports = {
   ],
   options: {
     doNotFollow: { path: "node_modules" },
-    tsConfig: { fileName: "tsconfig.app.json" },
-    tsPreCompilationDeps: true,
+    parser: "swc",
+    webpackConfig: { fileName: ".dependency-resolution.cjs" },
     enhancedResolveOptions: {
       exportsFields: ["exports"],
       conditionNames: ["import", "require", "node", "default"],

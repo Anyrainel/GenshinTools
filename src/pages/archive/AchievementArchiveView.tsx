@@ -155,7 +155,7 @@ function AchievementSeriesCard({
                       achievement.name
                     )}
                     title={t.format("archive.searchYouTube", achievement.name)}
-                    className="group flex h-10 w-[4.5rem] items-center justify-center rounded-md px-1 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    className="group flex h-10 w-[4.5rem] items-center justify-center rounded-md px-1 outline-hidden transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <img
                       src={getAssetUrl("assets/brands/youtube.webp")}
@@ -176,7 +176,7 @@ function AchievementSeriesCard({
                       achievement.name
                     )}
                     title={t.format("archive.searchBilibili", achievement.name)}
-                    className="group flex h-10 w-[4.5rem] items-center justify-center rounded-md px-1 outline-none transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    className="group flex h-10 w-[4.5rem] items-center justify-center rounded-md px-1 outline-hidden transition-transform hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <img
                       src={getAssetUrl("assets/brands/bilibili.webp")}
@@ -210,7 +210,7 @@ function AchievementSeriesCard({
                     onClick={() =>
                       onStatusChange(seriesIds, achievement.id, !finished)
                     }
-                    className="group flex size-10 items-center justify-center rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                    className="group flex size-10 items-center justify-center rounded-md outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                   >
                     <span
                       className={cn(
@@ -250,7 +250,7 @@ function CategoryProgressBanner({
 
   return (
     <div className="sticky top-0 z-20 pb-2">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border-2 border-primary bg-[color-mix(in_hsl,hsl(var(--card))_75%,hsl(var(--primary))_25%)] px-3 py-2 shadow-sm">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border-2 border-primary bg-[color-mix(in_hsl,hsl(var(--card))_75%,hsl(var(--primary))_25%)] px-3 py-2 shadow-xs">
         <h2 className="shrink-0 whitespace-nowrap text-base font-semibold leading-tight sm:text-lg">
           {category.name}
         </h2>

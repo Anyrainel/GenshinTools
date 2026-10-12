@@ -94,67 +94,69 @@ describe("Skirk C2 stance-only ATK bonus", () => {
     ];
     if (constellation === 6)
       formulas.push("skirk-c6-burst-coord", "skirk-c6-normal-coord");
-    it.each(
-      formulas
-    )(`C${constellation} scopes C2 ATK correctly for %s in both evaluators`, (formulaId) => {
-      const { build, sheets, excluded } = setup(constellation);
-      const entry = build.catalog.formulaIndex.get(formulaId)!;
-      // Independent reference: remove only C2's ATK, retaining subtlety and
-      // all other constellation effects. Restore 70% base ATK only in stance.
-      const withoutC2 = build.teamStats.getPostStats(
-        "skirk",
-        "skirk",
-        excluded
-      );
-      const inStance = !formulaId.includes("burst");
-      const tag = entry.parts[0].formula.tag;
-      const atkRatio =
-        constellation >= 2 && inStance
-          ? 1 +
-            (0.7 * withoutC2.get("baseAtk", null)) / withoutC2.get("atk", tag)
-          : 1;
-      const expected =
-        entry.parts.reduce(
-          (sum, part) =>
-            sum + part.formula.calc(withoutC2, 90, CTX) * (part.hits ?? 1),
-          0
-        ) * atkRatio;
-      expect(expected).toBeGreaterThan(0);
-      expect(
-        build.getDamageResult("skirk", formulaId, CTX).totalDamage
-      ).toBeCloseTo(expected, 6);
-      expect(
-        compiledDamage(build, sheets, singleFormulaCombo("skirk", formulaId))
-      ).toBeCloseTo(expected, 6);
-    });
+    it.each(formulas)(
+      `C${constellation} scopes C2 ATK correctly for %s in both evaluators`,
+      (formulaId) => {
+        const { build, sheets, excluded } = setup(constellation);
+        const entry = build.catalog.formulaIndex.get(formulaId)!;
+        // Independent reference: remove only C2's ATK, retaining subtlety and
+        // all other constellation effects. Restore 70% base ATK only in stance.
+        const withoutC2 = build.teamStats.getPostStats(
+          "skirk",
+          "skirk",
+          excluded
+        );
+        const inStance = !formulaId.includes("burst");
+        const tag = entry.parts[0].formula.tag;
+        const atkRatio =
+          constellation >= 2 && inStance
+            ? 1 +
+              (0.7 * withoutC2.get("baseAtk", null)) / withoutC2.get("atk", tag)
+            : 1;
+        const expected =
+          entry.parts.reduce(
+            (sum, part) =>
+              sum + part.formula.calc(withoutC2, 90, CTX) * (part.hits ?? 1),
+            0
+          ) * atkRatio;
+        expect(expected).toBeGreaterThan(0);
+        expect(
+          build.getDamageResult("skirk", formulaId, CTX).totalDamage
+        ).toBeCloseTo(expected, 6);
+        expect(
+          compiledDamage(build, sheets, singleFormulaCombo("skirk", formulaId))
+        ).toBeCloseTo(expected, 6);
+      }
+    );
   }
 
-  it.each([
-    2, 6,
-  ])("keeps stance ATK from leaking across a mixed C%s combo", (constellation) => {
-    const { build, sheets } = setup(constellation);
-    const combo: ComboFormula = {
-      id: "mixed-skirk",
-      label: { en: "Mixed Skirk", zh: "丝柯克混合伤害" },
-      lines: [
-        { charId: "skirk", formulaId: "skirk-e-normal-2", count: 2 },
-        { charId: "skirk", formulaId: "skirk-e-charge", count: 1 },
-        { charId: "skirk", formulaId: "skirk-burst", count: 1 },
-        ...(constellation === 6
-          ? [{ charId: "skirk", formulaId: "skirk-c6-burst-coord", count: 1 }]
-          : []),
-      ],
-    };
-    const expected = combo.lines.reduce(
-      (sum, line) =>
-        sum +
-        line.count *
-          build.getDamageResult("skirk", line.formulaId, CTX).totalDamage,
-      0
-    );
-    expect(
-      build.getComboDamageResult(combo, sheets, CTX).totalDamage
-    ).toBeCloseTo(expected, 6);
-    expect(compiledDamage(build, sheets, combo)).toBeCloseTo(expected, 6);
-  });
+  it.each([2, 6])(
+    "keeps stance ATK from leaking across a mixed C%s combo",
+    (constellation) => {
+      const { build, sheets } = setup(constellation);
+      const combo: ComboFormula = {
+        id: "mixed-skirk",
+        label: { en: "Mixed Skirk", zh: "丝柯克混合伤害" },
+        lines: [
+          { charId: "skirk", formulaId: "skirk-e-normal-2", count: 2 },
+          { charId: "skirk", formulaId: "skirk-e-charge", count: 1 },
+          { charId: "skirk", formulaId: "skirk-burst", count: 1 },
+          ...(constellation === 6
+            ? [{ charId: "skirk", formulaId: "skirk-c6-burst-coord", count: 1 }]
+            : []),
+        ],
+      };
+      const expected = combo.lines.reduce(
+        (sum, line) =>
+          sum +
+          line.count *
+            build.getDamageResult("skirk", line.formulaId, CTX).totalDamage,
+        0
+      );
+      expect(
+        build.getComboDamageResult(combo, sheets, CTX).totalDamage
+      ).toBeCloseTo(expected, 6);
+      expect(compiledDamage(build, sheets, combo)).toBeCloseTo(expected, 6);
+    }
+  );
 });

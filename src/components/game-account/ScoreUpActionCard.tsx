@@ -203,7 +203,7 @@ function ScoreUpActionCardComponent({
         )}
 
         {inline ? (
-          <span className="text-lg italic font-extrabold tracking-tighter leading-none bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+          <span className="text-lg italic font-extrabold tracking-tighter leading-none bg-linear-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-xs">
             {rec.slotScoreDiff > 0 ? "+" : ""}
             {rec.slotScoreDiff.toFixed(1)}
           </span>
@@ -213,7 +213,7 @@ function ScoreUpActionCardComponent({
               {t.character(rec.characterId)}
             </span>
             {rec.slotScoreDiff > 0 && (
-              <span className="text-base italic font-extrabold tracking-tighter bg-gradient-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-sm">
+              <span className="text-base italic font-extrabold tracking-tighter bg-linear-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-xs">
                 +{rec.slotScoreDiff.toFixed(1)}
               </span>
             )}

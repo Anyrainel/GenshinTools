@@ -306,7 +306,7 @@ export function CharacterEditDialog({
     if (view.kind === "overview")
       return (
         <span className="flex items-center gap-2.5">
-          <ItemIcon characterId={char.key} size="sm" className="shadow-sm" />
+          <ItemIcon characterId={char.key} size="sm" className="shadow-xs" />
           <span>{t.character(char.key)}</span>
         </span>
       );
@@ -325,7 +325,7 @@ export function CharacterEditDialog({
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
       <ResponsiveDialogContent className="md:max-w-xl lg:max-w-2xl gap-0 p-0 overflow-hidden bg-background">
         {canGoBack ? (
-          <ResponsiveDialogHeader className="p-4 md:p-5 lg:p-6 pb-4 border-b bg-card/50 backdrop-blur-sm z-10 shrink-0 flex-row items-center gap-2 space-y-0 relative text-left">
+          <ResponsiveDialogHeader className="p-4 md:p-5 lg:p-6 pb-4 border-b bg-card/50 backdrop-blur-xs z-10 shrink-0 flex-row items-center gap-2 space-y-0 relative text-left">
             <Button
               variant="ghost"
               size="icon"
@@ -468,7 +468,7 @@ function OverviewPanel({
   return (
     <div className="space-y-5 pb-2">
       {/* ── Row 1 & 2: Character Attributes ── */}
-      <div className="rounded-xl border bg-card/50 backdrop-blur-sm p-4 shadow-sm flex flex-col gap-4">
+      <div className="rounded-xl border bg-card/50 backdrop-blur-xs p-4 shadow-xs flex flex-col gap-4">
         {/* Row 1 */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-[140px] flex-1">
@@ -552,7 +552,7 @@ function OverviewPanel({
       <hr className="border-border/40" />
 
       {/* ── Row 3: Equipment (Weapon) ── */}
-      <div className="rounded-xl border bg-card/50 backdrop-blur-sm p-4 shadow-sm">
+      <div className="rounded-xl border bg-card/50 backdrop-blur-xs p-4 shadow-xs">
         {weapon && weaponInfo ? (
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-[140px] flex-1">
@@ -630,7 +630,7 @@ function OverviewPanel({
       <hr className="border-border/40" />
 
       {/* ── Row 4: Artifacts ── */}
-      <div className="rounded-xl border bg-card/50 backdrop-blur-sm p-3 shadow-sm">
+      <div className="rounded-xl border bg-card/50 backdrop-blur-xs p-3 shadow-xs">
         {/* Slots Row */}
         <div className="flex justify-between gap-1 overflow-x-auto pb-1 scrollbar-hide">
           {allSlots.map((slot) => {
@@ -644,7 +644,7 @@ function OverviewPanel({
                 className={cn(
                   "relative flex flex-col items-center flex-1 py-3 px-1 rounded-xl border",
                   isSelected
-                    ? "bg-accent border-primary/40 shadow-sm ring-1 ring-primary/20"
+                    ? "bg-accent border-primary/40 shadow-xs ring-1 ring-primary/20"
                     : "bg-transparent border-transparent hover:bg-accent/50"
                 )}
               >
@@ -829,7 +829,7 @@ function ArtifactEditor({
         <div className="space-y-1.5 flex-[2]">
           <FieldLabel>{t.ui("charEdit.mainStat")}</FieldLabel>
           {isFixedMainStat || !isNew ? (
-            <div className="h-9 lg:h-10 flex items-center px-3 rounded-md border border-input bg-muted/40 text-xs lg:text-sm font-semibold text-muted-foreground shadow-sm">
+            <div className="h-9 lg:h-10 flex items-center px-3 rounded-md border border-input bg-muted/40 text-xs lg:text-sm font-semibold text-muted-foreground shadow-xs">
               {t.stat(art.mainStatKey)}
             </div>
           ) : (
@@ -1116,7 +1116,14 @@ function SubstatRow({
       )}
     >
       {isEditable ? (
-        <Select value={statKey} onValueChange={onChangeKey}>
+        <Select
+          value={statKey}
+          onValueChange={(value) => {
+            const key = ALL_SUBSTATS.find((key) => key === value);
+            if (!key) throw new Error(`Unknown substat selection: ${value}`);
+            onChangeKey(key);
+          }}
+        >
           <SelectTrigger className="w-auto h-9 lg:h-10 font-medium text-xs lg:text-sm px-2.5 bg-background/50">
             <SelectValue />
           </SelectTrigger>
@@ -1131,7 +1138,7 @@ function SubstatRow({
           </SelectContent>
         </Select>
       ) : (
-        <div className="h-9 lg:h-10 flex items-center px-3 rounded-md border border-input bg-muted/40 text-xs lg:text-sm font-medium text-muted-foreground shadow-sm">
+        <div className="h-9 lg:h-10 flex items-center px-3 rounded-md border border-input bg-muted/40 text-xs lg:text-sm font-medium text-muted-foreground shadow-xs">
           {t.stat(statKey)}
         </div>
       )}
@@ -1424,7 +1431,7 @@ function ArtifactPickPanel({
                     size="sm"
                   >
                     {owner && (
-                      <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full border border-border bg-background shadow-sm overflow-hidden z-20">
+                      <div className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full border border-border bg-background shadow-xs overflow-hidden z-20">
                         <img
                           src={
                             charactersById[owner]?.imagePath
@@ -1560,7 +1567,7 @@ const PickerItem = forwardRef<
       ref={ref}
       type="button"
       onClick={onClick}
-      className="flex flex-col items-center p-2 rounded-xl border border-transparent hover:border-border hover:bg-accent/40 focus-visible:outline-none focus:bg-accent ring-1 ring-transparent focus:ring-primary/20 gap-2 group w-full"
+      className="flex flex-col items-center p-2 rounded-xl border border-transparent hover:border-border hover:bg-accent/40 focus-visible:outline-hidden focus:bg-accent ring-1 ring-transparent focus:ring-primary/20 gap-2 group w-full"
       {...props}
     >
       <div className="group-hover:scale-105">{children}</div>

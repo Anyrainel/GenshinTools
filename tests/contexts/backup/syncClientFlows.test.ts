@@ -21,6 +21,11 @@ import type {
   BackupObjectDownloadResponse,
   BackupWriteMode,
 } from "@/providers/backup/apiClient";
+import {
+  type BuildsCloudSnapshot,
+  buildsFromCloud,
+  buildsToCloud,
+} from "@/services/backup/adapters/buildsAdapter";
 import { teamToCloud } from "@/services/backup/adapters/teamAdapter";
 import {
   bytesToArrayBuffer,
@@ -39,11 +44,41 @@ describe("cloud sync client multi-device flows", () => {
     const remote = new StatefulBackupApi();
     const deviceA = createMemoryMetadataStore("device-a");
     const deviceB = createMemoryMetadataStore("device-b");
+    const snapshot: BuildsCloudSnapshot = {
+      activePresetId: "user-preset",
+      deltas: [
+        {
+          kind: "custom",
+          id: "amber-custom",
+          value: {
+            id: "amber-custom",
+            characterId: "amber",
+            visible: true,
+            name: "Saved build",
+            composition: "4pc",
+            artifactSet: "gladiators_finale",
+            substats: [],
+            sandsWeights: [],
+            gobletWeights: [],
+            circletWeights: [],
+            normalizer: 0,
+          },
+        },
+      ],
+      characterWeapons: { amber: ["black_tassel"] },
+      computeOptions: { normalizeFlatStats: true },
+      artifactScore: { global: { flatAtk: 1, flatHp: 2, flatDef: 3 } },
+      author: "Saved author",
+      description: "Saved description",
+      updatedAt: 100,
+    };
+    const sourcePartitions = buildsToCloud(snapshot);
+    expect(sourcePartitions[0].schemaVersion).toBe(3);
 
     await runCloudSyncOnce({
       apiClient: remote,
       metadataStore: deviceA.store,
-      buildPartitions: () => [buildsPartition({ builds: ["from-cloud"] })],
+      buildPartitions: () => sourcePartitions,
       createIdempotencyKey: () => "sync_restore_source",
     });
 
@@ -62,12 +97,12 @@ describe("cloud sync client multi-device flows", () => {
     const downloaded = await downloadCloudSyncRestorePlan({
       apiClient: remote,
       syncResult: preview,
-      buildRestorePlan: (partitions) => ({ builds: partitions[0]?.payload }),
+      buildRestorePlan: (partitions) => ({
+        builds: buildsFromCloud(partitions),
+      }),
     });
 
-    expect(downloaded.restorePlan.builds).toEqual({
-      builds: ["from-cloud"],
-    });
+    expect(downloaded.restorePlan.builds).toMatchObject(snapshot);
     expect(remote.commit).toHaveBeenCalledTimes(1);
   });
 

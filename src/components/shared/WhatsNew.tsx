@@ -458,7 +458,7 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
             onMouseLeave={() => {
               hoveredRef.current = false;
             }}
-            className="absolute z-30 cursor-pointer text-[11px] font-bold text-primary-foreground bg-primary px-2 py-0.5 rounded shadow-md whitespace-nowrap"
+            className="absolute z-30 cursor-pointer text-[11px] font-bold text-primary-foreground bg-primary px-2 py-0.5 rounded-[4px] shadow-md whitespace-nowrap"
             style={{ writingMode: "horizontal-tb" }}
           >
             {t.ui("whatsNew.title")}
@@ -472,7 +472,7 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
             onMouseLeave={() => {
               hoveredRef.current = false;
             }}
-            className="absolute z-30 cursor-pointer text-[11px] font-bold text-primary-foreground bg-primary py-2 px-0.5 rounded shadow-md whitespace-nowrap tracking-[0.15em]"
+            className="absolute z-30 cursor-pointer text-[11px] font-bold text-primary-foreground bg-primary py-2 px-0.5 rounded-[4px] shadow-md whitespace-nowrap tracking-[0.15em]"
             style={{ writingMode: "vertical-rl", display: "none" }}
           >
             {t.ui("whatsNew.title")}

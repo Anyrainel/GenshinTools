@@ -2,7 +2,7 @@
 
 ## Project Snapshot
 
-React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tailwind CSS 3, shadcn/ui, Radix primitives, Vaul drawers, Lucide icons, and Sonner toasts. State is Zustand 5 with Immer and persist middleware. Cloudflare Workers use `worker/`, `dist/`, and Wrangler for deployment.
+React 19 + TypeScript 7 + Vite 8 app for Genshin Impact player tools, using Node 24 LTS. UI uses Tailwind CSS 4, shadcn/ui, radix-ui primitives, Vaul drawers, Lucide icons, and Sonner toasts. State is Zustand 5 with Immer and persist middleware. Cloudflare Workers use `worker/`, `dist/`, and Wrangler for deployment.
 
 ## Common Commands
 
@@ -73,9 +73,9 @@ general folder descriptions. Read it before reorganizing modules.
 
 | Need | Source of truth |
 | --- | --- |
-| Theme colors and surfaces | `tailwind.config.ts`, `src/lib/theme/generator.ts`: use `bg-background`, `text-foreground`, `bg-primary`, `bg-gradient-card`, `bg-gradient-select` |
+| Theme colors and surfaces | `src/index.css`, `src/lib/theme/generator.ts`: use `bg-background`, `text-foreground`, `bg-primary`, `bg-gradient-card`, `bg-gradient-select` |
 | Dynamic element, rarity, Tier and status classes | `src/components/shared/colors.ts`: `getElementColor(element, "text")`, `getRarityColor(rarity, "gradient")`, `getTierColor(tier, "header")`; compose with `cn()` |
-| Raw colors for charts/canvas and game palettes | `src/config/gameColors.ts`, `src/lib/game/colors.ts`; edit color values in the palette, not in callers or Tailwind config |
+| Raw colors for charts/canvas and game palettes | `src/config/gameColors.ts`, `src/lib/game/colors.ts`; edit color values in the palette, then run `npm run styles:generate` |
 | Item identity and filter controls | `src/components/shared/ItemIcon.tsx`, `CharAvatar.tsx`, `FilterChip.tsx`, `FilterChipGroup.tsx` |
 | Page structure | `src/components/layout/{PageLayout,SidebarLayout,WideLayout,ScrollLayout,SidebarDetailLayout}.tsx`; inspect a sibling page before creating a scroll shell |
 | Responsive dialogs | `src/components/ui/responsive-dialog.tsx`; inspect its callers and `src/components/shared/ItemPicker.tsx` |

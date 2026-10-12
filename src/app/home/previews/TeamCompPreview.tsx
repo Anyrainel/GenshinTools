@@ -92,16 +92,20 @@ function DamageContent({ t }: PreviewProps) {
           className="w-6 h-6 rounded-full bg-black/20"
           draggable={false}
         />
-        <span className="text-amber-400 font-semibold px-1 rounded bg-amber-400/15 text-[10px]">
+        <span className="text-amber-400 font-semibold px-1 rounded-[4px] bg-amber-400/15 text-[10px]">
           {t.format("common.constellationFormat", 1)}
         </span>
         <span className="font-semibold text-foreground">
           {t.resolveLabel(PREVIEW_FORMULA_LABEL)}
         </span>
         <span className="inline-flex items-center gap-1 text-[11px] font-mono text-muted-foreground">
-          <span className="px-1 rounded bg-muted border border-border">−</span>
+          <span className="px-1 rounded-[4px] bg-muted border border-border">
+            −
+          </span>
           <span className="font-bold text-foreground">5</span>
-          <span className="px-1 rounded bg-muted border border-border">+</span>
+          <span className="px-1 rounded-[4px] bg-muted border border-border">
+            +
+          </span>
         </span>
       </div>
       <div
@@ -120,7 +124,7 @@ function DamageContent({ t }: PreviewProps) {
             {t.ui("teamComp.totalDamage")}
           </div>
         </div>
-        <div className="text-foreground font-[math] font-black drop-shadow-sm text-3xl">
+        <div className="text-foreground font-[math] font-black drop-shadow-xs text-3xl">
           10,427,853
         </div>
       </div>
@@ -308,7 +312,7 @@ function InvestmentContent({ t }: PreviewProps) {
                   else nodeRefs.current.delete(node.id);
                 }}
                 className={cn(
-                  "flex items-center gap-1 p-1 rounded border text-xs leading-none whitespace-nowrap",
+                  "flex items-center gap-1 p-1 rounded-[4px] border text-xs leading-none whitespace-nowrap",
                   node.isBest
                     ? "border-amber-600 bg-card"
                     : "border-muted-foreground bg-card"

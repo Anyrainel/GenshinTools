@@ -41,37 +41,40 @@ describe("7.1 released swords", () => {
     [3, 0.88, 0.54],
     [4, 1.04, 0.63],
     [5, 1.2, 0.72],
-  ])("Beyond the Chrysalis R%i scopes both buffs to the active wearer", (refinement, cd, reactionDmg) => {
-    const weapon = createWeapon(
-      "beyond_the_chrysalis",
-      refinement,
-      "vesna",
-      new TeamMeta(["vesna", "qiqi"])
-    );
-    const sheet = passiveSheet(weapon);
-    expect(sheet.get("cd", null)).toBeCloseTo(cd);
-    expect(
-      sheet.get("reactionDmg%", {
-        element: "Cryo",
-        ability: "skill",
-        reaction: "stellarSwirl",
-      })
-    ).toBeCloseTo(reactionDmg);
-    for (const reaction of ["stellarConduct", "swirl"] as const) {
+  ])(
+    "Beyond the Chrysalis R%i scopes both buffs to the active wearer",
+    (refinement, cd, reactionDmg) => {
+      const weapon = createWeapon(
+        "beyond_the_chrysalis",
+        refinement,
+        "vesna",
+        new TeamMeta(["vesna", "qiqi"])
+      );
+      const sheet = passiveSheet(weapon);
+      expect(sheet.get("cd", null)).toBeCloseTo(cd);
       expect(
         sheet.get("reactionDmg%", {
           element: "Cryo",
           ability: "skill",
-          reaction,
+          reaction: "stellarSwirl",
         })
-      ).toBe(0);
+      ).toBeCloseTo(reactionDmg);
+      for (const reaction of ["stellarConduct", "swirl"] as const) {
+        expect(
+          sheet.get("reactionDmg%", {
+            element: "Cryo",
+            ability: "skill",
+            reaction,
+          })
+        ).toBe(0);
+      }
+      expect(passiveSheet(weapon, false).get("cd", null)).toBe(0);
+      for (const buff of weapon.buffs) {
+        expect(buff.isApplicable("vesna", "qiqi", true)).toBe(false);
+        expect(buff.source.triggers).toEqual(["E", "Q"]);
+      }
     }
-    expect(passiveSheet(weapon, false).get("cd", null)).toBe(0);
-    for (const buff of weapon.buffs) {
-      expect(buff.isApplicable("vesna", "qiqi", true)).toBe(false);
-      expect(buff.source.triggers).toEqual(["E", "Q"]);
-    }
-  });
+  );
 
   it.each([
     [1, 0.12, 60, 0.18, 0.24],
@@ -79,34 +82,37 @@ describe("7.1 released swords", () => {
     [3, 0.18, 90, 0.27, 0.36],
     [4, 0.21, 105, 0.315, 0.42],
     [5, 0.24, 120, 0.36, 0.48],
-  ])("New Bough R%i replaces EM with Stellar damage in Radiance", (refinement, atk, em, radianceAtk, reactionDmg) => {
-    const team = new TeamMeta(["vesna", "qiqi"]);
-    const base = createWeapon("new_bough", refinement, "qiqi", team);
-    expect(passiveValue(base, "atk%")).toBeCloseTo(atk);
-    expect(passiveValue(base, "em")).toBe(em);
-    expect(passiveValue(base, "reactionDmg%")).toBe(0);
-    const radiance = createWeapon("new_bough", refinement, "qiqi", team, {
-      new_bough: "on",
-    });
-    expect(passiveValue(radiance, "atk%")).toBeCloseTo(radianceAtk);
-    expect(passiveValue(radiance, "em")).toBe(0);
-    for (const reaction of ["stellarConduct", "stellarSwirl"] as const) {
+  ])(
+    "New Bough R%i replaces EM with Stellar damage in Radiance",
+    (refinement, atk, em, radianceAtk, reactionDmg) => {
+      const team = new TeamMeta(["vesna", "qiqi"]);
+      const base = createWeapon("new_bough", refinement, "qiqi", team);
+      expect(passiveValue(base, "atk%")).toBeCloseTo(atk);
+      expect(passiveValue(base, "em")).toBe(em);
+      expect(passiveValue(base, "reactionDmg%")).toBe(0);
+      const radiance = createWeapon("new_bough", refinement, "qiqi", team, {
+        new_bough: "on",
+      });
+      expect(passiveValue(radiance, "atk%")).toBeCloseTo(radianceAtk);
+      expect(passiveValue(radiance, "em")).toBe(0);
+      for (const reaction of ["stellarConduct", "stellarSwirl"] as const) {
+        expect(
+          passiveSheet(radiance, false).get("reactionDmg%", {
+            element: "Cryo",
+            ability: "skill",
+            reaction,
+          })
+        ).toBeCloseTo(reactionDmg);
+      }
       expect(
-        passiveSheet(radiance, false).get("reactionDmg%", {
+        passiveSheet(radiance).get("reactionDmg%", {
           element: "Cryo",
           ability: "skill",
-          reaction,
+          reaction: "superconduct",
         })
-      ).toBeCloseTo(reactionDmg);
+      ).toBe(0);
     }
-    expect(
-      passiveSheet(radiance).get("reactionDmg%", {
-        element: "Cryo",
-        ability: "skill",
-        reaction: "superconduct",
-      })
-    ).toBe(0);
-  });
+  );
 
   it("New Bough falls back to ATK and EM when Radiance cannot be enabled", () => {
     const weapon = createWeapon(
@@ -127,20 +133,23 @@ describe("7.1 released swords", () => {
     [3, 156],
     [4, 182],
     [5, 208],
-  ])("Silver Light R%i grants two skill stacks to its wearer off-field", (refinement, em) => {
-    const weapon = createWeapon(
-      "silver_light",
-      refinement,
-      "kaedehara_kazuha",
-      new TeamMeta(["kaedehara_kazuha", "bennett"])
-    );
-    expect(passiveSheet(weapon, false).get("em", null)).toBe(em);
-    expect(weapon.buffs[0].source.triggers).toEqual(["E"]);
-    expect(
-      weapon.buffs[0].isApplicable("kaedehara_kazuha", "bennett", true)
-    ).toBe(false);
-    expect(
-      weapon.stats.some((entry) => entry.key === "em" && entry.value === em)
-    ).toBe(false);
-  });
+  ])(
+    "Silver Light R%i grants two skill stacks to its wearer off-field",
+    (refinement, em) => {
+      const weapon = createWeapon(
+        "silver_light",
+        refinement,
+        "kaedehara_kazuha",
+        new TeamMeta(["kaedehara_kazuha", "bennett"])
+      );
+      expect(passiveSheet(weapon, false).get("em", null)).toBe(em);
+      expect(weapon.buffs[0].source.triggers).toEqual(["E"]);
+      expect(
+        weapon.buffs[0].isApplicable("kaedehara_kazuha", "bennett", true)
+      ).toBe(false);
+      expect(
+        weapon.stats.some((entry) => entry.key === "em" && entry.value === em)
+      ).toBe(false);
+    }
+  );
 });

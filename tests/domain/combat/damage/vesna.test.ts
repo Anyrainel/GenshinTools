@@ -32,33 +32,34 @@ describe("released Vesna", () => {
     expect(c2?.staticBuffs).toEqual([{ key: "atk%", value: 0.4 }]);
   });
 
-  it.each([
-    "on",
-    "off",
-  ])("keeps Lv. 1 ordinary and changes only the blade portions with Radiance %s", (radiance) => {
-    const character = createCharacter("vesna", 90, 6, team, {
-      vesna: radiance,
-    });
-    const lv1 = character.getFormulaEntry("vesna-blade-pierce")?.parts;
-    const lv2 = character.getFormulaEntry("vesna-blade-plunge")?.parts;
-    const transpose = character.getFormulaEntry("vesna-c6-tread")?.parts;
-    expect(lv1).toHaveLength(1);
-    expect(lv1?.[0].formula).toBeInstanceOf(DirectFormula);
-    expect(lv1?.[0].formula.tag.reaction).toBe("none");
-    expect(lv1?.[0].bespokeBuffs).toBeUndefined();
-    expect(lv2?.[0].formula.tag.reaction).toBe("none");
-    const bladeClass = radiance === "on" ? StellarDirectFormula : DirectFormula;
-    expect(lv2?.[1].formula).toBeInstanceOf(bladeClass);
-    expect(transpose).toHaveLength(3);
-    expect(transpose?.[0].formula.talentMultiplier).toBe(1.5);
-    expect(transpose?.[1].formula).toBeInstanceOf(bladeClass);
-    expect(transpose?.[1].formula.talentMultiplier).toBe(2);
-    expect(transpose?.[2].formula.talentMultiplier).toBe(
-      character.getFormulaEntry("vesna-feather")?.parts[0].formula
-        .talentMultiplier
-    );
-    expect(transpose?.[2].formula.tag.reaction).toBe("none");
-  });
+  it.each(["on", "off"])(
+    "keeps Lv. 1 ordinary and changes only the blade portions with Radiance %s",
+    (radiance) => {
+      const character = createCharacter("vesna", 90, 6, team, {
+        vesna: radiance,
+      });
+      const lv1 = character.getFormulaEntry("vesna-blade-pierce")?.parts;
+      const lv2 = character.getFormulaEntry("vesna-blade-plunge")?.parts;
+      const transpose = character.getFormulaEntry("vesna-c6-tread")?.parts;
+      expect(lv1).toHaveLength(1);
+      expect(lv1?.[0].formula).toBeInstanceOf(DirectFormula);
+      expect(lv1?.[0].formula.tag.reaction).toBe("none");
+      expect(lv1?.[0].bespokeBuffs).toBeUndefined();
+      expect(lv2?.[0].formula.tag.reaction).toBe("none");
+      const bladeClass =
+        radiance === "on" ? StellarDirectFormula : DirectFormula;
+      expect(lv2?.[1].formula).toBeInstanceOf(bladeClass);
+      expect(transpose).toHaveLength(3);
+      expect(transpose?.[0].formula.talentMultiplier).toBe(1.5);
+      expect(transpose?.[1].formula).toBeInstanceOf(bladeClass);
+      expect(transpose?.[1].formula.talentMultiplier).toBe(2);
+      expect(transpose?.[2].formula.talentMultiplier).toBe(
+        character.getFormulaEntry("vesna-feather")?.parts[0].formula
+          .talentMultiplier
+      );
+      expect(transpose?.[2].formula.tag.reaction).toBe("none");
+    }
+  );
 
   it.each([
     [0, 0.1, 0.4, 0.2],
@@ -80,36 +81,37 @@ describe("released Vesna", () => {
     }
   });
 
-  it.each([
-    0, 1, 6,
-  ])("funds every default sword cast with attainable pinions at C%d", (c) => {
-    const character = createCharacter("vesna", 90, c, team);
-    const counts = character.combo;
-    const transposePinions =
-      (counts["vesna-c6-tread"] ?? 0) *
-      (character.getFormulaEntry("vesna-c6-tread")?.parts[2].hits ?? 0);
-    const totalPinions = counts["vesna-feather"] + transposePinions;
-    const swords =
-      counts["vesna-blade-pierce"] +
-      counts["vesna-blade-plunge"] +
-      counts["vesna-blade-dance"];
-    expect(totalPinions).toBe(12);
-    expect(
-      2 + counts["vesna-burst"] + totalPinions / 6 + (c >= 1 ? 1 : 0)
-    ).toBe(swords);
-    expect(counts["vesna-normal-1"]).toBe(c === 6 ? 1 : 4);
-    expect(counts["vesna-charge"]).toBe(counts["vesna-normal-1"]);
-    expect(counts["vesna-normal"] ?? 0).toBe(0);
-    expect(counts["vesna-blade-pierce"]).toBe(1);
-    expect(counts["vesna-blade-plunge"]).toBe(1);
-    expect(counts["vesna-blade-dance"]).toBe(c >= 1 ? 4 : 3);
-    expect(counts["vesna-burst"]).toBe(1);
-    expect(
-      character
-        .getFormulaEntry("vesna-blade-dance")
-        ?.parts.map((p) => p.hits ?? 1)
-    ).toEqual([4, 1]);
-  });
+  it.each([0, 1, 6])(
+    "funds every default sword cast with attainable pinions at C%d",
+    (c) => {
+      const character = createCharacter("vesna", 90, c, team);
+      const counts = character.combo;
+      const transposePinions =
+        (counts["vesna-c6-tread"] ?? 0) *
+        (character.getFormulaEntry("vesna-c6-tread")?.parts[2].hits ?? 0);
+      const totalPinions = counts["vesna-feather"] + transposePinions;
+      const swords =
+        counts["vesna-blade-pierce"] +
+        counts["vesna-blade-plunge"] +
+        counts["vesna-blade-dance"];
+      expect(totalPinions).toBe(12);
+      expect(
+        2 + counts["vesna-burst"] + totalPinions / 6 + (c >= 1 ? 1 : 0)
+      ).toBe(swords);
+      expect(counts["vesna-normal-1"]).toBe(c === 6 ? 1 : 4);
+      expect(counts["vesna-charge"]).toBe(counts["vesna-normal-1"]);
+      expect(counts["vesna-normal"] ?? 0).toBe(0);
+      expect(counts["vesna-blade-pierce"]).toBe(1);
+      expect(counts["vesna-blade-plunge"]).toBe(1);
+      expect(counts["vesna-blade-dance"]).toBe(c >= 1 ? 4 : 3);
+      expect(counts["vesna-burst"]).toBe(1);
+      expect(
+        character
+          .getFormulaEntry("vesna-blade-dance")
+          ?.parts.map((p) => p.hits ?? 1)
+      ).toEqual([4, 1]);
+    }
+  );
 
   it("matches ATK-scaled direct Stellar damage with CRIT and additive EM/reaction bonuses", () => {
     const character = createCharacter("vesna", 90, 0, team);

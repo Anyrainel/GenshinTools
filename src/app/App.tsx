@@ -1,5 +1,5 @@
 import "@/providers/reference/statLoaders";
-import { lazy, Suspense, useEffect } from "react";
+import { type CSSProperties, lazy, Suspense, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { GreetingGate } from "@/app/home/GreetingGate";
 import { useTourLabels, useTours } from "@/app/tourConfig";
@@ -144,7 +144,16 @@ function App() {
               </Routes>
             </Suspense>
           </main>
-          <Toaster />
+          <Toaster
+            style={
+              {
+                "--normal-bg": "hsl(var(--popover))",
+                "--normal-text": "hsl(var(--popover-foreground))",
+                "--normal-border": "hsl(var(--border))",
+                "--border-radius": "var(--radius)",
+              } as CSSProperties
+            }
+          />
           {!isScannerDownloadPage && <GreetingGate />}
         </div>
       </TourProvider>

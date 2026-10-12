@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import ts from "typescript";
 import { expect, it } from "vitest";
+import { parseSourceAst } from "../helpers/sourceAst";
 
 const root = process.cwd();
 it("keeps executable source under an explicit architecture owner", () => {
@@ -44,17 +44,21 @@ it("keeps executable loaders and transforms out of generated data", () => {
         continue;
       }
       if (!entry.name.endsWith(".ts")) continue;
-      const source = ts.createSourceFile(
-        file,
+      const source = parseSourceAst(
         readFileSync(path.join(root, "src", file), "utf8"),
-        ts.ScriptTarget.Latest,
-        true
+        file
       );
       if (
-        source.statements.some(
+        source.program.body.some(
           (statement) =>
-            ts.isFunctionDeclaration(statement) ||
-            ts.isClassDeclaration(statement)
+            statement.type === "FunctionDeclaration" ||
+            statement.type === "ClassDeclaration" ||
+            (statement.type === "ExportNamedDeclaration" &&
+              (statement.declaration?.type === "FunctionDeclaration" ||
+                statement.declaration?.type === "ClassDeclaration")) ||
+            (statement.type === "ExportDefaultDeclaration" &&
+              (statement.declaration.type === "FunctionDeclaration" ||
+                statement.declaration.type === "ClassDeclaration"))
         )
       )
         violations.push(file);

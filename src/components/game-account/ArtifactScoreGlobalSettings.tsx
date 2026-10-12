@@ -85,7 +85,7 @@ function ScoreExplanationDialog() {
               <p className="text-slate-300 text-xs leading-relaxed">
                 {t.ui("scoreExplanation.normalization.description")}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-slate-400 text-xs font-mono bg-slate-900/50 p-3 rounded border border-white/5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2 text-slate-400 text-xs font-mono bg-slate-900/50 p-3 rounded-[4px] border border-white/5">
                 <div className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500/50" />
                   {t.ui("scoreExplanation.factors.cr")}

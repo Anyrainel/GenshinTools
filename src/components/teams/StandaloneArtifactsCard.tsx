@@ -37,7 +37,7 @@ export function StandaloneArtifactsCard({
           variant="outline"
           size="sm"
           onClick={onFreezeClick}
-          className="ml-auto gap-1.5 font-bold text-xs h-7 px-3 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40"
+          className="ml-auto gap-1.5 font-bold text-xs h-7 px-3 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:bg-cyan-500/15! hover:text-cyan-200! hover:ring-cyan-400/40"
         >
           <Plus className="w-3.5 h-3.5" />
           {t.ui("teamComp.freezeArtifact")}

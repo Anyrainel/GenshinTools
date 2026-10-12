@@ -135,7 +135,7 @@ export function TriageHelpDialog({
                         <span
                           key={key}
                           className={cn(
-                            "text-[10px] leading-none px-1.5 py-0.5 rounded border",
+                            "text-[10px] leading-none px-1.5 py-0.5 rounded-[4px] border",
                             cls
                           )}
                         >
@@ -160,7 +160,7 @@ export function TriageHelpDialog({
                 {/* Row 1: full rarity spectrum */}
                 <div className="flex items-center gap-1.5">
                   <span className="shrink-0 w-14" />
-                  <div className="flex-1 flex h-6 rounded overflow-hidden">
+                  <div className="flex-1 flex h-6 rounded-[4px] overflow-hidden">
                     <div className="flex-[2] bg-amber-500/25 text-amber-300 flex items-center justify-center">
                       {t.ui("triage.tier.prime")}
                     </div>
@@ -180,7 +180,7 @@ export function TriageHelpDialog({
                   <span className="shrink-0 w-14 text-right text-foreground">
                     {t.ui("triage.help.supplyOver")}
                   </span>
-                  <div className="relative flex-1 h-6 rounded overflow-hidden bg-zinc-500/10">
+                  <div className="relative flex-1 h-6 rounded-[4px] overflow-hidden bg-zinc-500/10">
                     <div
                       className="absolute inset-y-0 left-0 bg-green-500/20 text-green-300 flex items-center justify-center"
                       style={{ width: "39.286%" }}
@@ -217,7 +217,7 @@ export function TriageHelpDialog({
                   <span className="shrink-0 w-14 text-right text-foreground">
                     {t.ui("triage.help.supplyUnder")}
                   </span>
-                  <div className="relative flex-1 h-6 rounded overflow-hidden bg-zinc-500/10">
+                  <div className="relative flex-1 h-6 rounded-[4px] overflow-hidden bg-zinc-500/10">
                     <div
                       className="absolute inset-y-0 left-0 bg-green-500/20 text-green-300 flex items-center justify-center"
                       style={{ width: "50%" }}

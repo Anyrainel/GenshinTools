@@ -118,7 +118,7 @@ const ResourceSuggestionCardBody = forwardRef<
             {t.slot(suggestion.slot)}
           </span>
           {suggestion.kind === "reroll" ? (
-            <Search className="w-4 h-4 text-foreground/80 shrink-0 border border-border rounded p-0.5" />
+            <Search className="w-4 h-4 text-foreground/80 shrink-0 border border-border rounded-[4px] p-0.5" />
           ) : null}
         </div>
         <div className="text-xs text-foreground truncate">

@@ -130,7 +130,7 @@ export function SimpleTierListManagerDialog({
                           if (e.key === "Enter") handleRenameSave(tl.id);
                           if (e.key === "Escape") setEditingId(null);
                         }}
-                        className="flex h-8 w-40 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-none focus:ring-1 focus:ring-primary"
+                        className="flex h-8 w-40 rounded-md border border-input bg-transparent px-2 py-1 text-sm outline-hidden focus:ring-1 focus:ring-primary"
                       />
                       <Button
                         size="icon"

@@ -54,69 +54,72 @@ describe("persisted bundled preset identities", () => {
     ).toBe(10);
   });
 
-  it.each([
-    22, 23,
-  ])("hydrates a v%s team selection through the public store boundary", async (version) => {
-    localStorage.setItem(
-      "team-builder-storage",
-      JSON.stringify({
-        version,
-        state: {
-          activePresetId: oldTeamId,
-          compDeltas: [],
-          configsByTeamId: {},
-          author: "Saved team author",
-          description: "Saved team description",
-          updatedAt: 2345,
-        },
-      })
-    );
-    await useTeamStore.persist.rehydrate();
-    expect(useTeamStore.getState()).toMatchObject({
-      activePresetId: BUILTIN_TEAM_PRESET_ID,
-      author: "Saved team author",
-      updatedAt: 2345,
-    });
-    const preset = await loadTeamPreset(BUILTIN_TEAM_PRESET_ID);
-    useTeamStore.getState().hydratePreset(BUILTIN_TEAM_PRESET_ID, preset);
-    expect(useTeamStore.getState().teamComps.length).toBeGreaterThan(0);
-  });
-
-  it.each([
-    1, 2, 3,
-  ])("restores build cloud schema v%s with the same selection", (schemaVersion) => {
-    expect(
-      buildsFromCloud([
-        {
-          namespace: "builds",
-          partitionKey: "all",
-          schemaVersion,
-          conflictPolicy: "explicit-choice",
-          payload: { activePresetId: oldBuildId, deltas: [] },
-        },
-      ]).activePresetId
-    ).toBe(BUILTIN_BUILD_PRESET_ID);
-  });
-
-  it.each([
-    1, 2, 3, 4, 5,
-  ])("restores team cloud schema v%s with the same selection", (schemaVersion) => {
-    expect(
-      teamFromCloud([
-        {
-          namespace: "teams",
-          partitionKey: "all",
-          schemaVersion,
-          conflictPolicy: "explicit-choice",
-          payload: {
+  it.each([22, 23])(
+    "hydrates a v%s team selection through the public store boundary",
+    async (version) => {
+      localStorage.setItem(
+        "team-builder-storage",
+        JSON.stringify({
+          version,
+          state: {
             activePresetId: oldTeamId,
             compDeltas: [],
             configsByTeamId: {},
+            author: "Saved team author",
+            description: "Saved team description",
+            updatedAt: 2345,
           },
-        },
-      ]).activePresetId
-    ).toBe(BUILTIN_TEAM_PRESET_ID);
-  });
+        })
+      );
+      await useTeamStore.persist.rehydrate();
+      expect(useTeamStore.getState()).toMatchObject({
+        activePresetId: BUILTIN_TEAM_PRESET_ID,
+        author: "Saved team author",
+        updatedAt: 2345,
+      });
+      const preset = await loadTeamPreset(BUILTIN_TEAM_PRESET_ID);
+      useTeamStore.getState().hydratePreset(BUILTIN_TEAM_PRESET_ID, preset);
+      expect(useTeamStore.getState().teamComps.length).toBeGreaterThan(0);
+    }
+  );
+
+  it.each([1, 2, 3])(
+    "restores build cloud schema v%s with the same selection",
+    (schemaVersion) => {
+      expect(
+        buildsFromCloud([
+          {
+            namespace: "builds",
+            partitionKey: "all",
+            schemaVersion,
+            conflictPolicy: "explicit-choice",
+            payload: { activePresetId: oldBuildId, deltas: [] },
+          },
+        ]).activePresetId
+      ).toBe(BUILTIN_BUILD_PRESET_ID);
+    }
+  );
+
+  it.each([1, 2, 3, 4, 5])(
+    "restores team cloud schema v%s with the same selection",
+    (schemaVersion) => {
+      expect(
+        teamFromCloud([
+          {
+            namespace: "teams",
+            partitionKey: "all",
+            schemaVersion,
+            conflictPolicy: "explicit-choice",
+            payload: {
+              activePresetId: oldTeamId,
+              compDeltas: [],
+              configsByTeamId: {},
+            },
+          },
+        ]).activePresetId
+      ).toBe(BUILTIN_TEAM_PRESET_ID);
+    }
+  );
 
   it.each([
     null,

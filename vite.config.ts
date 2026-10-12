@@ -1,14 +1,15 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cloudflare } from "@cloudflare/vite-plugin";
-import react from "@vitejs/plugin-react-swc";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { exportJWK, generateKeyPair, SignJWT } from "jose";
 import { defineConfig } from "vite";
-import { presetWatcher } from "./scripts/dev/vite-plugin-preset-watcher";
+import { presetWatcher } from "./scripts/dev/vite-plugin-preset-watcher.ts";
 
 // Chunk assignment shared between the main app graph and each worker graph.
-// Workers have their own Rollup build rooted at the worker entry, so this
-// function runs independently per graph — the output filenames will differ,
+// Workers have their own Rolldown build rooted at the worker entry, so the
+// rules run independently per graph — the output filenames will differ,
 // but each graph receives the same splitting rules.
 //
 // Goal is cache-lifespan: group modules by change frequency so one patch or
@@ -18,11 +19,14 @@ const chunkAssignments: Array<[(id: string) => boolean, string]> = [
   [
     (id) =>
       id.includes("node_modules") &&
-      /[\\/]react(-dom|-router-dom)?[\\/]/.test(id),
+      /[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/.test(
+        id
+      ),
     "vendor-react",
   ],
   [
-    (id) => id.includes("node_modules") && id.includes("@radix-ui"),
+    (id) =>
+      id.includes("node_modules") && /[\\/](@radix-ui|radix-ui)[\\/]/.test(id),
     "vendor-radix",
   ],
   [
@@ -36,22 +40,29 @@ const chunkAssignments: Array<[(id: string) => boolean, string]> = [
     "team-comp-impl",
   ],
   [(id) => /[\\/]src[\\/]domain[\\/]combat[\\/]/.test(id), "team-comp-engine"],
-  [(id) => /[\\/]src[\\/]generated[\\/]i18n-/.test(id), "i18n-data"],
+  [
+    (id) => /[\\/]src[\\/]generated[\\/]translations[\\/]i18n-/.test(id),
+    "i18n-data",
+  ],
   // Skip raw JSON assets here so Vite's json-plugin handles them via its own
   // rules (glob-lazy imports stay as standalone chunks; static imports stay
-  // with their importer). Only intercept ``*.ts`` source files under data/.
-  [(id) => /[\\/]src[\\/]data[\\/][^\\/]+\.ts$/.test(id), "game-data"],
+  // with their importer). Only intercept generated catalog TypeScript files.
+  [
+    (id) => /[\\/]src[\\/]generated[\\/]catalog[\\/][^\\/]+\.ts$/.test(id),
+    "game-data",
+  ],
 ];
 
 const localDevPort = Number(process.env.VITE_DEV_PORT ?? 5173);
 const localDevOrigin = `http://127.0.0.1:${localDevPort}`;
 
-function manualChunks(id: string): string | undefined {
-  for (const [predicate, chunk] of chunkAssignments) {
-    if (predicate(id)) return chunk;
-  }
-  return undefined;
-}
+const codeSplitting = {
+  groups: chunkAssignments.map(([test, name], index) => ({
+    test,
+    name,
+    priority: chunkAssignments.length - index,
+  })),
+};
 
 const localBackupBindings = {
   vars: {
@@ -86,7 +97,8 @@ export default defineConfig(({ command }) => {
 
   return {
     plugins: [
-      react({ tsDecorators: true }),
+      react(),
+      tailwindcss(),
       {
         name: "e2e-browser-harness",
         transformIndexHtml: () =>
@@ -118,7 +130,7 @@ export default defineConfig(({ command }) => {
 
             try {
               const template = await fs.readFile(
-                path.resolve(__dirname, "index.html"),
+                path.resolve(import.meta.dirname, "index.html"),
                 "utf-8"
               );
               const html = await server.transformIndexHtml(
@@ -136,6 +148,7 @@ export default defineConfig(({ command }) => {
         },
       },
       cloudflare({
+        remoteBindings: false,
         config: command === "serve" ? () => localBackupBindings : undefined,
         persistState: fakeLogtoForE2e
           ? { path: ".wrangler/e2e-state" }
@@ -144,6 +157,7 @@ export default defineConfig(({ command }) => {
       presetWatcher(),
       {
         name: "e2e-fake-logto",
+        enforce: "pre",
         apply: "serve",
         configureServer(server) {
           if (!fakeLogtoForE2e) return;
@@ -208,11 +222,11 @@ export default defineConfig(({ command }) => {
     ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@": path.resolve(import.meta.dirname, "./src"),
         ...(fakeLogtoForE2e
           ? {
               "@logto/react": path.resolve(
-                __dirname,
+                import.meta.dirname,
                 "./tests/e2e/fakeLogto.tsx"
               ),
             }
@@ -221,10 +235,11 @@ export default defineConfig(({ command }) => {
     },
     worker: {
       format: "es",
-      rollupOptions: {
-        output: { manualChunks },
+      rolldownOptions: {
+        output: { codeSplitting },
       },
     },
+    oxc: { decorator: { legacy: true } },
     build: {
       // Beta game-data files (``*.json.gz``) must ship as standalone gzipped
       // assets — never inlined as base64 data URIs in JS chunks. Inlining would
@@ -232,8 +247,8 @@ export default defineConfig(({ command }) => {
       // would also bloat the main JS bundle with opaque blobs on every build.
       assetsInlineLimit: (filePath) =>
         filePath.endsWith(".json.gz") ? false : undefined,
-      rollupOptions: {
-        output: { manualChunks },
+      rolldownOptions: {
+        output: { codeSplitting },
       },
     },
     server: {

@@ -68,7 +68,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
         )}
       >
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/60 to-transparent pointer-events-none" />
 
         <div className="relative z-10 flex-1">
           <h3 className="font-bold text-lg leading-tight text-white mb-2 drop-shadow-md">
@@ -82,7 +82,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
           </h3>
           <div className="flex items-center gap-2 text-xs text-white/90 font-medium flex-wrap">
             {meta.element != null && (
-              <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+              <span className="bg-black/30 px-2 py-1 rounded-[4px] backdrop-blur-xs flex items-center gap-1">
                 <img
                   src={getAssetUrl(
                     `/element/${meta.element.toLowerCase()}.webp`
@@ -94,7 +94,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
               </span>
             )}
             {meta.weaponType != null && (
-              <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm flex items-center gap-1">
+              <span className="bg-black/30 px-2 py-1 rounded-[4px] backdrop-blur-xs flex items-center gap-1">
                 <img
                   src={getAssetUrl(
                     `/weapontype/${meta.weaponType.toLowerCase()}.webp`
@@ -106,7 +106,7 @@ export function CharacterTooltip({ characterId }: CharacterTooltipProps) {
               </span>
             )}
             {region && (
-              <span className="bg-black/30 px-2 py-1 rounded backdrop-blur-sm">
+              <span className="bg-black/30 px-2 py-1 rounded-[4px] backdrop-blur-xs">
                 {region}
               </span>
             )}

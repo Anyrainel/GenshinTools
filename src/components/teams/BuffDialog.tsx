@@ -143,7 +143,7 @@ function FormulaBlock({
           {formulaLabel ? t.resolveLabel(formulaLabel) : formulaKey}
         </span>
         {comboCount != null && comboCount > 1 && (
-          <span className="text-[10px] md:text-xs font-bold text-primary bg-primary/10 px-1 rounded leading-none">
+          <span className="text-[10px] md:text-xs font-bold text-primary bg-primary/10 px-1 rounded-[4px] leading-none">
             ×{comboCount}
           </span>
         )}
@@ -365,7 +365,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
     <>
       <button
         type="button"
-        className="p-0.5 rounded hover:bg-muted/50 transition-colors shrink-0"
+        className="p-0.5 rounded-[4px] hover:bg-muted/50 transition-colors shrink-0"
         aria-label={t.ui("teamComp.buffActivation")}
         onClick={(e) => {
           e.stopPropagation();
@@ -400,21 +400,21 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                     {name}
                   </span>
                   {buff.source.origin && (
-                    <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded leading-none">
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-[4px] leading-none">
                       {t.origin(buff.source.origin)}
                     </span>
                   )}
                   {buff.source.triggers?.map((trig) => (
                     <span
                       key={trig}
-                      className="text-xs font-medium text-primary bg-primary/10 px-1 py-0.5 rounded leading-none"
+                      className="text-xs font-medium text-primary bg-primary/10 px-1 py-0.5 rounded-[4px] leading-none"
                     >
                       {trig}
                     </span>
                   ))}
                   <span
                     className={cn(
-                      "ml-auto text-[10px] md:text-xs font-bold uppercase px-1.5 py-0.5 rounded shrink-0",
+                      "ml-auto text-[10px] md:text-xs font-bold uppercase px-1.5 py-0.5 rounded-[4px] shrink-0",
                       getReceiverColor(
                         buff.target.receiver,
                         !!buff.target.charId
@@ -443,7 +443,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                     <StatEntryRow key={i} entry={entry} />
                   ))}
                   {buff.source.maxStacks != null && (
-                    <span className="text-[11px] md:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded">
+                    <span className="text-[11px] md:text-xs font-medium text-teal-400 bg-teal-500/15 px-1.5 py-0.5 rounded-[4px]">
                       {buff.bespokeLabel
                         ? t.format("teamComp.nTimes", 1)
                         : t.format("teamComp.nStacks", buff.source.maxStacks)}

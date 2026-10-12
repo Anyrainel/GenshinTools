@@ -66,15 +66,15 @@ const ARTIFACT_RARITIES = [5, 4] as const;
 
 const artifactGroupConfig: Record<ArtifactTierGroup, TierGroupConfig> = {
   dps: {
-    bgClass: "bg-indigo-900/70 backdrop-blur-sm",
+    bgClass: "bg-indigo-900/70 backdrop-blur-xs",
     iconPath: artifactsById.gladiators_finale?.imagePaths.flower ?? "",
   },
   support: {
-    bgClass: "bg-emerald-900/70 backdrop-blur-sm",
+    bgClass: "bg-emerald-900/70 backdrop-blur-xs",
     iconPath: artifactsById.noblesse_oblige?.imagePaths.flower ?? "",
   },
   other: {
-    bgClass: "bg-slate-800/70 backdrop-blur-sm",
+    bgClass: "bg-slate-800/70 backdrop-blur-xs",
     iconPath: artifactsById.retracing_bolide?.imagePaths.flower ?? "",
   },
 };

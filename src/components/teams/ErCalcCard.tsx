@@ -835,7 +835,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                 <button
                   type="button"
                   onClick={handleAddStartup}
-                  className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                  className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
                   title={t.ui("erCalc.addStartupTitle")}
                 >
                   {t.ui("erCalc.addStartup")}
@@ -844,7 +844,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   <button
                     type="button"
                     onClick={handleCloneLoopToStartup}
-                    className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                    className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
                     title={t.ui("erCalc.cloneLoopTitle")}
                   >
                     {t.ui("erCalc.cloneLoop")}
@@ -909,7 +909,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                       return (
                         <div
                           key={member.charId}
-                          className="p-3 bg-card border border-border rounded-lg space-y-3 shadow-sm"
+                          className="p-3 bg-card border border-border rounded-lg space-y-3 shadow-xs"
                         >
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-semibold text-foreground">
@@ -943,7 +943,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                                     Math.max(0, Number(e.target.value))
                                   )
                                 }
-                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
                               />
                             </div>
                             <div className="space-y-1">
@@ -961,7 +961,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                                     Math.max(0, Number(e.target.value))
                                   )
                                 }
-                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
                               />
                             </div>
                           </div>
@@ -982,7 +982,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                                     Math.max(0, Number(e.target.value))
                                   )
                                 }
-                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
                               />
                             </div>
                           )}
@@ -1037,7 +1037,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                       </span>
                       <select
                         id={`funnel-source-${teamComp.id}`}
-                        className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
+                        className="w-full h-8 px-2 bg-card border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40"
                       >
                         {erTeam.map((m) => (
                           <option key={m.charId} value={m.charId}>
@@ -1057,7 +1057,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                       </span>
                       <select
                         id={`funnel-target-${teamComp.id}`}
-                        className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
+                        className="w-full h-8 px-2 bg-card border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40"
                       >
                         {erTeam.map((m) => (
                           <option key={m.charId} value={m.charId}>
@@ -1093,7 +1093,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                           }
                         }
                       }}
-                      className="h-8 px-3 bg-primary hover:bg-primary/95 text-primary-foreground font-medium rounded flex items-center justify-center gap-1 transition shadow-sm"
+                      className="h-8 px-3 bg-primary hover:bg-primary/95 text-primary-foreground font-medium rounded-[4px] flex items-center justify-center gap-1 transition shadow-xs"
                     >
                       <Plus className="w-4 h-4" />
                       {t.ui("erCalc.addFunnel")}
@@ -1106,7 +1106,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   <button
                     type="button"
                     onClick={handleCompileRotation}
-                    className="py-2 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg flex items-center gap-1.5 transition-colors shadow-sm text-sm"
+                    className="py-2 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg flex items-center gap-1.5 transition-colors shadow-xs text-sm"
                   >
                     <Sparkles className="w-4 h-4" />
                     {t.ui("erCalc.compileRotation")}
@@ -1163,7 +1163,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   <button
                     type="button"
                     onClick={() => handleRemoveTimeline(tlIdx)}
-                    className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded border border-border/30 hover:border-destructive/40"
+                    className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded-[4px] border border-border/30 hover:border-destructive/40"
                     title={t.ui("erCalc.removeStartupTitle")}
                   >
                     {t.ui("erCalc.remove")}
@@ -1219,7 +1219,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                       <button
                         type="button"
                         onClick={handleResetFavDefaults}
-                        className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded border border-border/30 hover:border-border"
+                        className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
                         title={t.ui("erCalc.resetFavDefaultsTitle")}
                       >
                         {t.ui("erCalc.resetFavDefaults")}

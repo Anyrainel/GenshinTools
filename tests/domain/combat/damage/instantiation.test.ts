@@ -191,43 +191,52 @@ describe("Preset Validation", () => {
 });
 
 describe("Entity Instantiation", () => {
-  describe.each([
-    2, 6,
-  ] as const)("Characters C%i (preset teams)", (constellation) => {
-    it.each(
-      presetCases
-    )("%s > %s", (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
-      try {
-        const team = new TeamMeta(characters, {}, artifactSets);
-        const char = createCharacter(charId, 100, constellation, team, opts);
-        char.buffs;
-      } catch (e) {
-        rethrowIfUnexpected(
-          e,
-          "No character registered",
-          "No character stats for"
-        );
-      }
-    });
-  });
+  describe.each([2, 6] as const)(
+    "Characters C%i (preset teams)",
+    (constellation) => {
+      it.each(presetCases)(
+        "%s > %s",
+        (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
+          try {
+            const team = new TeamMeta(characters, {}, artifactSets);
+            const char = createCharacter(
+              charId,
+              100,
+              constellation,
+              team,
+              opts
+            );
+            char.buffs;
+          } catch (e) {
+            rethrowIfUnexpected(
+              e,
+              "No character registered",
+              "No character stats for"
+            );
+          }
+        }
+      );
+    }
+  );
 
-  describe.each([
-    2, 6,
-  ] as const)("Characters C%i (no preset)", (constellation) => {
-    it.each(nonPresetCharIds)("%s", (charId) => {
-      try {
-        const team = new TeamMeta([charId]);
-        const char = createCharacter(charId, 100, constellation, team);
-        char.buffs;
-      } catch (e) {
-        rethrowIfUnexpected(
-          e,
-          "No character registered",
-          "No character stats for"
-        );
-      }
-    });
-  });
+  describe.each([2, 6] as const)(
+    "Characters C%i (no preset)",
+    (constellation) => {
+      it.each(nonPresetCharIds)("%s", (charId) => {
+        try {
+          const team = new TeamMeta([charId]);
+          const char = createCharacter(charId, 100, constellation, team);
+          char.buffs;
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No character registered",
+            "No character stats for"
+          );
+        }
+      });
+    }
+  );
 
   describe("Characters with options", () => {
     const cases = Object.keys(charactersById).flatMap((charId) => {
@@ -361,17 +370,18 @@ describe("Entity Instantiation", () => {
       }
     });
 
-    it.each(
-      Object.keys(artifactsById)
-    )("artifact set %s has no direct 4pc stat entries", (artifactId) => {
-      try {
-        const team = new TeamMeta(["amber"]);
-        const artifactSet = createArtifactSet(artifactId, "amber", team);
-        expect(artifactSet.stats).toEqual([]);
-      } catch (e) {
-        rethrowIfUnexpected(e, "No artifact set registered");
+    it.each(Object.keys(artifactsById))(
+      "artifact set %s has no direct 4pc stat entries",
+      (artifactId) => {
+        try {
+          const team = new TeamMeta(["amber"]);
+          const artifactSet = createArtifactSet(artifactId, "amber", team);
+          expect(artifactSet.stats).toEqual([]);
+        } catch (e) {
+          rethrowIfUnexpected(e, "No artifact set registered");
+        }
       }
-    });
+    );
 
     it.each(Object.keys(artifactHalfSetsById))("artifact half-set %s", (id) => {
       try {
@@ -491,23 +501,24 @@ describe("Entity Instantiation", () => {
       return violations;
     }
 
-    it.each(
-      presetCases
-    )("%s > %s", (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
-      try {
-        const team = new TeamMeta(characters, {}, artifactSets);
-        const char = createCharacter(charId, 100, 6, team, opts);
-        const violations = checkBuffs(char.buffs, generousStats);
-        if (violations.length > 0)
-          throw new Error(`Buff values ≥ 1000%:\n${violations.join("\n")}`);
-      } catch (e) {
-        rethrowIfUnexpected(
-          e,
-          "No character registered",
-          "No character stats for"
-        );
+    it.each(presetCases)(
+      "%s > %s",
+      (_teamLabel, _testLabel, charId, characters, artifactSets, opts) => {
+        try {
+          const team = new TeamMeta(characters, {}, artifactSets);
+          const char = createCharacter(charId, 100, 6, team, opts);
+          const violations = checkBuffs(char.buffs, generousStats);
+          if (violations.length > 0)
+            throw new Error(`Buff values ≥ 1000%:\n${violations.join("\n")}`);
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No character registered",
+            "No character stats for"
+          );
+        }
       }
-    });
+    );
 
     it.each(nonPresetCharIds)("%s", (charId) => {
       try {
@@ -545,39 +556,40 @@ describe("Entity Instantiation", () => {
     // Known exceptions: xiphos_moonlight (EM → ER to self + other)
     const KNOWN_WEAPON_SCALING_ER_CR = new Set(["xiphos_moonlight"]);
 
-    it.each(
-      Object.keys(weaponsById)
-    )("%s: no scaling ER/CR buffs", (weaponId) => {
-      if (KNOWN_WEAPON_SCALING_ER_CR.has(weaponId)) return;
-      try {
-        const team = new TeamMeta(["amber"]);
-        const weapon = createWeapon(weaponId, 5, "amber", team);
-        const violations: string[] = [];
-        for (const buff of weapon.buffs) {
-          const label = `${buff.source.id} ${buff.source.origin ?? ""}`;
-          if ("outputKey" in buff) {
-            const outputKey = (buff as Record<string, unknown>)
-              .outputKey as string;
-            if (outputKey === "er" || outputKey === "cr") {
-              violations.push(
-                `${label}: scaling buff with outputKey="${outputKey}" (receiver="${buff.target.receiver}")`
-              );
+    it.each(Object.keys(weaponsById))(
+      "%s: no scaling ER/CR buffs",
+      (weaponId) => {
+        if (KNOWN_WEAPON_SCALING_ER_CR.has(weaponId)) return;
+        try {
+          const team = new TeamMeta(["amber"]);
+          const weapon = createWeapon(weaponId, 5, "amber", team);
+          const violations: string[] = [];
+          for (const buff of weapon.buffs) {
+            const label = `${buff.source.id} ${buff.source.origin ?? ""}`;
+            if ("outputKey" in buff) {
+              const outputKey = (buff as Record<string, unknown>)
+                .outputKey as string;
+              if (outputKey === "er" || outputKey === "cr") {
+                violations.push(
+                  `${label}: scaling buff with outputKey="${outputKey}" (receiver="${buff.target.receiver}")`
+                );
+              }
             }
           }
-        }
-        if (violations.length > 0)
-          throw new Error(
-            `Scaling ER/CR buff violations:\n${violations.join("\n")}`
+          if (violations.length > 0)
+            throw new Error(
+              `Scaling ER/CR buff violations:\n${violations.join("\n")}`
+            );
+        } catch (e) {
+          rethrowIfUnexpected(
+            e,
+            "No weapon registered",
+            "No weapon stats for",
+            "No L90 weapon stats for"
           );
-      } catch (e) {
-        rethrowIfUnexpected(
-          e,
-          "No weapon registered",
-          "No weapon stats for",
-          "No L90 weapon stats for"
-        );
+        }
       }
-    });
+    );
   });
 
   describe("Artifact Sets", () => {

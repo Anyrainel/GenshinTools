@@ -392,7 +392,7 @@ function BuildCardComponent({
             <Switch
               checked={build.visible}
               onCheckedChange={handleToggleVisibility}
-              className="data-[state=checked]:bg-primary/70 flex-shrink-0"
+              className="data-[state=checked]:bg-primary/70 shrink-0"
             />
             {!isMobile && (
               <div className="flex-1 min-w-0">
@@ -406,7 +406,7 @@ function BuildCardComponent({
               </div>
             )}
             {labelsRow}
-            <div className="flex items-center gap-1 md:gap-2 flex-shrink-0">
+            <div className="flex items-center gap-1 md:gap-2 shrink-0">
               <ValidationPopover
                 isValid={validation.isValid}
                 message={
@@ -505,7 +505,7 @@ function BuildCardComponent({
                 "artifact-build-details flex items-center justify-center gap-2 md:gap-3"
               )}
             >
-              <div className={cn("flex-shrink-0 md:pl-1")}>
+              <div className={cn("shrink-0 md:pl-1")}>
                 <div className="h-full flex items-center justify-center">
                   <ItemPicker
                     type="artifact"
@@ -669,7 +669,7 @@ function ValidationPopover({
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex-shrink-0 cursor-pointer"
+          className="shrink-0 cursor-pointer"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleClick}

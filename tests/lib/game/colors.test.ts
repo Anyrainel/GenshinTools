@@ -16,19 +16,19 @@ beforeAll(async () => {
 describe("game colors in compiled Tailwind CSS", () => {
   it("preserves item badge and level strip colors", () => {
     expect(utilityDeclarations(css, "bg-item-badge")["background-color"]).toBe(
-      "rgb(74 59 42 / var(--tw-bg-opacity, 1))"
+      "#4a3b2a"
     );
     expect(utilityDeclarations(css, "text-item-badge-foreground").color).toBe(
-      "rgb(236 207 131 / var(--tw-text-opacity, 1))"
+      "#eccf83"
     );
     expect(utilityDeclarations(css, "bg-item-level")["background-color"]).toBe(
-      "rgb(245 240 230 / var(--tw-bg-opacity, 1))"
+      "#f5f0e6"
     );
     expect(utilityDeclarations(css, "text-item-level-foreground").color).toBe(
-      "rgb(61 61 61 / var(--tw-text-opacity, 1))"
+      "#3d3d3d"
     );
     expect(utilityDeclarations(css, "bg-item-mixed")["background-color"]).toBe(
-      "rgb(58 45 19 / var(--tw-bg-opacity, 1))"
+      "#3a2d13"
     );
   });
   it("merges gradient images independently of solid backgrounds", () => {
@@ -59,35 +59,26 @@ describe("game colors in compiled Tailwind CSS", () => {
       "#b58f35",
       "#669423",
     ];
-    const rgb = [
-      "184 72 63",
-      "34 114 143",
-      "143 112 170",
-      "122 168 184",
-      "61 155 106",
-      "181 143 53",
-      "102 148 35",
-    ];
     elements.forEach((element, index) => {
       expect(getElementHex(element)).toBe(hex[index]);
       expect(
         utilityDeclarations(css, getElementColor(element, "text")).color
-      ).toBe(`rgb(${rgb[index]} / var(--tw-text-opacity, 1))`);
+      ).toBe(hex[index]);
       expect(
         utilityDeclarations(css, getElementColor(element, "bg"))[
           "background-color"
         ]
-      ).toBe(`rgb(${rgb[index]} / 0.6)`);
+      ).toBe(`color-mix(in oklab, ${hex[index]} 60%, transparent)`);
       expect(
         utilityDeclarations(css, getElementColor(element, "border"))[
           "border-color"
         ]
-      ).toBe(`rgb(${rgb[index]} / 0.4)`);
+      ).toBe(`color-mix(in oklab, ${hex[index]} 40%, transparent)`);
       expect(
         utilityDeclarations(css, getElementColor(element, "bgSubtle"))[
           "background-color"
         ]
-      ).toBe(`rgb(${rgb[index]} / 0.2)`);
+      ).toBe(`color-mix(in oklab, ${hex[index]} 20%, transparent)`);
     });
     expect(getElementHex("unknown")).toBeUndefined();
     expect(getElementHex("toString")).toBeUndefined();
@@ -113,32 +104,67 @@ describe("game colors in compiled Tailwind CSS", () => {
     });
   });
 
+  it("preserves runtime theme surfaces, sidebar widths and custom animations", () => {
+    expect(utilityDeclarations(css, "bg-background")["background-color"]).toBe(
+      "hsl(var(--background))"
+    );
+    expect(utilityDeclarations(css, "text-primary").color).toBe(
+      "hsl(var(--primary))"
+    );
+    for (const surface of ["page", "card", "select"]) {
+      expect(
+        utilityDeclarations(css, `bg-gradient-${surface}`)["background-image"]
+      ).toBe(`var(--gradient-${surface})`);
+    }
+    expect(utilityDeclarations(css, "xl:w-sidebar").width).toBe("17.5rem");
+    expect(utilityDeclarations(css, "w-sidebar-narrow").width).toBe("15rem");
+    expect(utilityDeclarations(css, "rounded-sm")["border-radius"]).toBe(
+      "calc(var(--radius) - 4px)"
+    );
+    expect(utilityDeclarations(css, "rounded-[4px]")["border-radius"]).toBe(
+      "4px"
+    );
+    expect(utilityDeclarations(css, "animate-card-enter").animation).toBe(
+      "card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both"
+    );
+    expect(utilityDeclarations(css, "animate-text-shimmer").animation).toBe(
+      "text-shimmer 3s linear infinite"
+    );
+    expect(utilityDeclarations(css, "animate-tab-progress").animation).toBe(
+      "tab-progress linear forwards"
+    );
+    expect(css).toContain("height: var(--radix-accordion-content-height)");
+    expect(css).toContain("animation: var(--animate-accordion-down)");
+    expect(css).toContain("animation: var(--animate-accordion-up)");
+    expect(css).toContain("animation: ice-shimmer 6s ease-in-out infinite");
+  });
+
   it("preserves every Tier header and cell opacity", () => {
     const headers = [
-      "185 47 58",
-      "221 133 89",
-      "230 180 77",
-      "67 173 139",
-      "74 133 205",
-      "117 117 117",
+      "#b92f3a",
+      "#dd8559",
+      "#e6b44d",
+      "#43ad8b",
+      "#4a85cd",
+      "#757575",
     ];
     const backgrounds = [
-      "46 12 15",
-      "55 33 22",
-      "58 45 19",
-      "17 43 35",
-      "19 33 51",
-      "29 29 29",
+      "#2e0c0f",
+      "#372116",
+      "#3a2d13",
+      "#112b23",
+      "#132133",
+      "#1d1d1d",
     ];
     (["S", "A", "B", "C", "D", "Pool"] as const).forEach((tier, index) => {
       expect(
         utilityDeclarations(css, getTierColor(tier, "header"))[
           "background-color"
         ]
-      ).toBe(`rgb(${headers[index]} / 0.7)`);
+      ).toBe(`color-mix(in oklab, ${headers[index]} 70%, transparent)`);
       expect(
         utilityDeclarations(css, getTierColor(tier, "bg"))["background-color"]
-      ).toBe(`rgb(${backgrounds[index]} / 0.4)`);
+      ).toBe(`color-mix(in oklab, ${backgrounds[index]} 40%, transparent)`);
     });
   });
 });

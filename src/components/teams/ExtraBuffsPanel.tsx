@@ -285,7 +285,7 @@ export function ExtraBuffsPanel({
                           <img
                             src={getAssetUrl(food.imagePath)}
                             alt={food.id}
-                            className="w-7 h-7 rounded object-contain shrink-0"
+                            className="w-7 h-7 rounded-[4px] object-contain shrink-0"
                           />
                         )}
                         <div className="flex flex-col min-w-0">
@@ -496,7 +496,7 @@ function PresetSection({
                 <img
                   src={getAssetUrl(preset.imagePath)}
                   alt={preset.id}
-                  className="w-7 h-7 rounded object-contain shrink-0"
+                  className="w-7 h-7 rounded-[4px] object-contain shrink-0"
                 />
               )}
               <div className="flex flex-col min-w-0">

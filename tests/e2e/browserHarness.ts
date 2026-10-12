@@ -17,7 +17,10 @@ import type {
 } from "@/domain/models";
 import type { TeamCompDelta } from "@/domain/team/teamDeltas";
 import type { TeamSetupConfig } from "@/domain/team/types";
-import { BackupApiClient } from "@/providers/backup/apiClient";
+import {
+  BackupApiClient,
+  type BackupHeadResponse,
+} from "@/providers/backup/apiClient";
 import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
@@ -104,8 +107,8 @@ const DOMAIN_STORAGE_KEYS = [
 declare global {
   interface Window {
     __ggE2E: {
-      signIn: (user: E2eUser) => void;
-      signOut: () => void;
+      signIn: (user: E2eUser) => Promise<void>;
+      signOut: () => Promise<void>;
       clearDomainData: () => void;
       seedDomainData: (state: E2eDomainState) => void;
       replaceDomainData: (state: E2eDomainState) => void;
@@ -119,7 +122,7 @@ declare global {
         automaticPartitionIds: string[];
         choices: Array<{ id: string; kind: string; reason: string }>;
       }>;
-      readBackupHead: () => Promise<unknown>;
+      readBackupHead: () => Promise<BackupHeadResponse>;
       readCloudPartitions: () => Promise<
         Array<{ namespace: string; partitionKey: string; payload: unknown }>
       >;
@@ -134,11 +137,19 @@ declare global {
 }
 
 window.__ggE2E = {
-  signIn(user) {
+  async signIn(user) {
     window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
     window.dispatchEvent(new Event("gg-e2e-logto-change"));
+    await ensureAppSession();
   },
-  signOut() {
+  async signOut() {
+    const response = await fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "same-origin",
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to clear E2E app session: ${response.status}`);
+    }
     window.localStorage.removeItem(AUTH_STORAGE_KEY);
     window.dispatchEvent(new Event("gg-e2e-logto-change"));
   },
@@ -290,6 +301,9 @@ function resetStores(): void {
   useAccountStore.setState({ accounts: {}, activeAccountId: null });
   useAccountScoreCacheStore.getState().clearAllScores();
   useBuildsStore.getState().clearAll();
+  // Backup fixtures choose their own builds. Persist this before reloading so
+  // the delayed first-visit preset loader cannot overwrite seeded/restored data.
+  useBuildsStore.getState().setHasPromptedForPreset(true);
   useArtifactScoreStore
     .getState()
     .replaceConfig({ global: DEFAULT_GLOBAL_STAT_WEIGHTS });
@@ -388,6 +402,14 @@ async function readAccessToken(): Promise<string> {
   const tokenResponse = await fetch(
     `/__e2e__/token?${new URLSearchParams({ sub: user.sub })}`
   );
+  if (
+    !tokenResponse.ok ||
+    !tokenResponse.headers.get("Content-Type")?.includes("application/json")
+  ) {
+    throw new Error(
+      `E2E token fixture must return JSON with HTTP 200; received ${tokenResponse.status}`
+    );
+  }
   const tokenBody = (await tokenResponse.json()) as { accessToken?: string };
   if (!tokenBody.accessToken) {
     throw new Error("E2E token fixture returned no token");

@@ -13,8 +13,8 @@ import { type RefObject, useEffect } from "react";
  * @param sidebarSelector - CSS selector for the sidebar element (default: 'aside')
  */
 export function useGlobalScroll(
-  containerRef: RefObject<HTMLElement>,
-  mainScrollRef: RefObject<HTMLElement> | undefined,
+  containerRef: RefObject<HTMLElement | null>,
+  mainScrollRef: RefObject<HTMLElement | null> | undefined,
   sidebarSelector = "aside"
 ) {
   useEffect(() => {

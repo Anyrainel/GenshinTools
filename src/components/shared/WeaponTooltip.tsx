@@ -59,7 +59,7 @@ export function WeaponTooltip({
         )}
       >
         {/* Background gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-linear-to-r from-black/70 to-transparent pointer-events-none" />
 
         {showIcon && inventoryWeapon && (
           <ItemIcon
@@ -85,7 +85,7 @@ export function WeaponTooltip({
 
           <div className="flex flex-wrap items-center gap-2 text-xs text-white/95 font-medium">
             {meta.type != null && (
-              <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10 flex items-center gap-1">
+              <span className="bg-black/40 px-2 py-1 rounded-[4px] backdrop-blur-xs border border-white/10 flex items-center gap-1">
                 <img
                   src={getAssetUrl(
                     `/weapontype/${meta.type.toLowerCase()}.webp`
@@ -99,10 +99,10 @@ export function WeaponTooltip({
 
             {inventoryWeapon && (
               <>
-                <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10">
+                <span className="bg-black/40 px-2 py-1 rounded-[4px] backdrop-blur-xs border border-white/10">
                   {t.ui("common.level")} {inventoryWeapon.level}
                 </span>
-                <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10">
+                <span className="bg-black/40 px-2 py-1 rounded-[4px] backdrop-blur-xs border border-white/10">
                   {t.format(
                     "common.refinementFormat",
                     inventoryWeapon.refinement
@@ -112,7 +112,7 @@ export function WeaponTooltip({
             )}
 
             {level90 != null && (
-              <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10 flex items-center gap-1">
+              <span className="bg-black/40 px-2 py-1 rounded-[4px] backdrop-blur-xs border border-white/10 flex items-center gap-1">
                 <span className="text-gray-300">
                   {t.format("accountData.maxLevelStat", t.stat("atk"))}:
                 </span>
@@ -121,7 +121,7 @@ export function WeaponTooltip({
             )}
 
             {statName && meta.secondaryStat != null && level90 != null && (
-              <span className="bg-black/40 px-2 py-1 rounded backdrop-blur-sm border border-white/10 flex items-center gap-1">
+              <span className="bg-black/40 px-2 py-1 rounded-[4px] backdrop-blur-xs border border-white/10 flex items-center gap-1">
                 <span className="text-white/90">
                   {t.format("accountData.maxLevelStat", statName)}:
                 </span>

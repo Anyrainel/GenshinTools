@@ -2,6 +2,7 @@
 import { installNodeReferenceFetch } from "../../scripts/lib/nodeReferenceFetch.mjs";
 
 installNodeReferenceFetch();
+
 import "@/providers/reference/statLoaders";
 /**
  * Diagnostic: Compare compiled ER check vs getTeamStats ER for a constraint-failing team.

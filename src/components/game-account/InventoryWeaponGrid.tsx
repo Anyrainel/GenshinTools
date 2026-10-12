@@ -76,7 +76,7 @@ export function InventoryWeaponGrid({
               />
               {w.count > 1 && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="bg-black/60 text-white font-bold text-lg px-2 py-0.5 rounded-full shadow-sm backdrop-blur-[2px]">
+                  <div className="bg-black/60 text-white font-bold text-lg px-2 py-0.5 rounded-full shadow-xs backdrop-blur-[2px]">
                     x{w.count}
                   </div>
                 </div>

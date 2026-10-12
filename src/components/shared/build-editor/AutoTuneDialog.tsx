@@ -595,7 +595,7 @@ function ConfigPhase({
             {discoveredFormulas.map((formula) => (
               <div
                 key={formula.formulaId}
-                className="px-2 py-1.5 rounded bg-muted/30"
+                className="px-2 py-1.5 rounded-[4px] bg-muted/30"
               >
                 <span className="text-sm font-medium flex flex-wrap items-baseline gap-x-1">
                   <span>{t.resolveLabel(formula.label)}</span>
@@ -654,7 +654,7 @@ function ConfigPhase({
       )}
 
       {error && (
-        <div className="text-sm text-destructive bg-destructive/10 rounded px-3 py-2">
+        <div className="text-sm text-destructive bg-destructive/10 rounded-[4px] px-3 py-2">
           {t.ui("buildCard.autoTuneError")}: {error}
         </div>
       )}
@@ -675,7 +675,7 @@ function CountStepper({
     <div className="flex items-center gap-0.5">
       <button
         type="button"
-        className="w-6 h-6 rounded flex items-center justify-center hover:bg-muted text-muted-foreground disabled:opacity-30"
+        className="w-6 h-6 rounded-[4px] flex items-center justify-center hover:bg-muted text-muted-foreground disabled:opacity-30"
         disabled={count <= 0}
         onClick={() =>
           dispatch({ type: "setLineCount", lineKey, count: count - 1 })
@@ -690,7 +690,7 @@ function CountStepper({
       </span>
       <button
         type="button"
-        className="w-6 h-6 rounded flex items-center justify-center hover:bg-muted text-muted-foreground disabled:opacity-30"
+        className="w-6 h-6 rounded-[4px] flex items-center justify-center hover:bg-muted text-muted-foreground disabled:opacity-30"
         disabled={count >= 99}
         onClick={() =>
           dispatch({ type: "setLineCount", lineKey, count: count + 1 })

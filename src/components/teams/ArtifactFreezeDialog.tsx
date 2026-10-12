@@ -271,14 +271,14 @@ export function ArtifactFreezeDialog({
                               ? "opacity-50 cursor-not-allowed border-sky-800/30 bg-sky-950/10"
                               : "hover:bg-white/5 cursor-pointer",
                             isSelected && !isFrozen
-                              ? "border-cyan-400 bg-cyan-500/10 shadow-sm"
+                              ? "border-cyan-400 bg-cyan-500/10 shadow-xs"
                               : !isFrozen && "border-border/20 bg-black/10"
                           )}
                         >
                           {/* Selection indicator */}
                           <div
                             className={cn(
-                              "shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-colors",
+                              "shrink-0 w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-colors",
                               isFrozen
                                 ? "bg-sky-800/50 border-sky-700/50"
                                 : isSelected

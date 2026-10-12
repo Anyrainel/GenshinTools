@@ -356,7 +356,7 @@ function ComboBreakdown({
                   </div>
                 </div>
                 <div
-                  className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl select-text cursor-text"
+                  className="text-foreground font-[math] font-black drop-shadow-xs text-2xl md:text-3xl xl:text-4xl select-text cursor-text"
                   onClick={(e) => e.stopPropagation()}
                 >
                   {fmtDamage(totalLineDamage)}
@@ -898,7 +898,7 @@ function SingleResultView({
                       </div>
                     </div>
                     <div
-                      className="text-foreground font-[math] font-black drop-shadow-sm text-2xl md:text-3xl xl:text-4xl select-text cursor-text"
+                      className="text-foreground font-[math] font-black drop-shadow-xs text-2xl md:text-3xl xl:text-4xl select-text cursor-text"
                       onClick={(e) => e.stopPropagation()}
                     >
                       {fmtDamage(totalDamage)}
@@ -1933,7 +1933,7 @@ export function DamageCard({
                   variant="outline"
                   size="sm"
                   onClick={onRestoreOriginal}
-                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:!bg-amber-500/15 hover:!text-amber-200 hover:ring-amber-400/40"
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-amber-400/40 bg-amber-500/10 text-amber-300 ring-2 ring-amber-400/20 hover:bg-amber-500/15! hover:text-amber-200! hover:ring-amber-400/40"
                 >
                   <Undo2 className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   {t.ui("teamComp.swapRestore")}
@@ -1949,7 +1949,7 @@ export function DamageCard({
                     (teamResult?.done && teamResult.bestDamage <= 0) ||
                     !hasActiveFormula
                   }
-                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:!bg-cyan-500/15 hover:!text-cyan-200 hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:bg-cyan-500/15! hover:text-cyan-200! hover:ring-cyan-400/40 disabled:opacity-40 disabled:text-cyan-300/50 disabled:ring-0"
                 >
                   <Snowflake className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   {t.ui("teamComp.freezeTeam")}
@@ -1960,7 +1960,7 @@ export function DamageCard({
                   variant="outline"
                   size="sm"
                   onClick={onUnfreezeAll}
-                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:!bg-red-500/15 hover:!text-red-200 hover:ring-red-400/40"
+                  className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:bg-red-500/15! hover:text-red-200! hover:ring-red-400/40"
                 >
                   <Flame className="w-3 h-3 md:w-3.5 md:h-3.5" />
                   {t.ui("teamComp.unfreezeAll")}

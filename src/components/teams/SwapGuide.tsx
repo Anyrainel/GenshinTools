@@ -198,7 +198,7 @@ export function SwapGuide({
       <CollapsibleTrigger className="flex justify-between items-center w-full px-2 py-2 md:px-4 md:py-3 hover:bg-white/5 transition-colors">
         <div className="text-xs md:text-sm font-bold flex items-center gap-1.5 md:gap-2">
           {t.ui("teamComp.swapGuide")}
-          <span className="bg-black/20 font-mono px-1.5 md:px-2 py-0.5 rounded text-[10px] md:text-xs text-muted-foreground">
+          <span className="bg-black/20 font-mono px-1.5 md:px-2 py-0.5 rounded-[4px] text-[10px] md:text-xs text-muted-foreground">
             {changeCount}{" "}
             {changeCount === 1
               ? t.ui("teamComp.swapGuideChange")
@@ -393,7 +393,7 @@ export function SlotRow({
               className="flex items-center gap-0.5 lg:gap-1 2xl:gap-2 text-[10px] md:text-xs lg:text-sm text-gray-200 leading-snug"
             >
               <span className="truncate">{t.statMin(key)}</span>
-              <span className="text-[10px] md:text-[11px] lg:text-xs px-0.5 rounded bg-white/10 text-amber-200/80 font-mono tabular-nums shrink-0">
+              <span className="text-[10px] md:text-[11px] lg:text-xs px-0.5 rounded-[4px] bg-white/10 text-amber-200/80 font-mono tabular-nums shrink-0">
                 {rollCount.toFixed(1)}
               </span>
               <span className="ml-auto font-mono tabular-nums shrink-0">

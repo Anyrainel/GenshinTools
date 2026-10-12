@@ -43,7 +43,7 @@ function ScoreChangeDialog({
             <span className="text-sm text-foreground">
               {t.ui("accountData.scoreRevamp.headline")}
             </span>
-            <span className="text-4xl font-black tracking-tighter bg-gradient-to-b from-amber-200 via-orange-300 to-amber-500 bg-clip-text text-transparent leading-none select-none">
+            <span className="text-4xl font-black tracking-tighter bg-linear-to-b from-amber-200 via-orange-300 to-amber-500 bg-clip-text text-transparent leading-none select-none">
               300
             </span>
           </div>

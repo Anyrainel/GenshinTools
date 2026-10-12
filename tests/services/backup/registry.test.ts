@@ -26,6 +26,9 @@ describe("cloud backup registry", () => {
       "explicit-choice",
     ]);
     expect(
+      included.find((descriptor) => descriptor.id === "builds")
+    ).toMatchObject({ currentVersion: 3 });
+    expect(
       included.find((descriptor) => descriptor.id === "teams")
     ).toMatchObject({ currentVersion: 5 });
   });

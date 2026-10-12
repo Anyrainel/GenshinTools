@@ -1,7 +1,8 @@
 #!/usr/bin/env sh
 
 # Per-file lint & format (Biome for TS, Ruff for Python)
-npx lint-staged --no-stash || exit 1
+# Keep batches below Windows cmd.exe's command-line limit.
+npx lint-staged --no-stash --max-arg-length 7000 || exit 1
 
 echo "Checking types and dependency boundaries..."
 npm run type-check || exit 1
