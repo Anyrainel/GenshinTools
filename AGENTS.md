@@ -69,10 +69,7 @@ general folder descriptions. Read it before reorganizing modules.
 
 ## UI Rules
 
-- Do not add unsolicited card subtitles, explanatory paragraphs around mode selectors, or ownership notices to roster member cards. Prefer concise control labels; essential clarification belongs in an existing tooltip/popover. Existing deliberately authored descriptions are not permission to add new ones elsewhere.
-- Similar calculator cards must reuse the existing Artifacts mode-selection pattern (`OptionButtonRow`, `OptionButtonCell`, `OptionButton`) and existing control components. Do not invent alternate tabs or use native HTML selects when shared Select controls exist.
-- Calculator cards follow mode selection, visible calculation settings, run action, then results. Do not put run actions in card titles or collapse primary settings by default.
-- Keep character-specific additional settings in the existing per-character grid, using compact inputs and popovers. Reuse the roster's constellation/refinement Select pattern; use static labels and absolute player-facing values rather than internal deltas.
+For new surfaces or substantial UI redesigns, read [docs/frontend-design.md](docs/frontend-design.md). It contains the compact reuse, copy and visual acceptance rules; explicit edits should follow the user's instruction and the existing pattern.
 
 ### Shared UI Entry Points
 
