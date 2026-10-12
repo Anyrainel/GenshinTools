@@ -7,6 +7,7 @@ interface GreetingState {
   lastSeenUpdate: string | null;
 
   completeOnboarding: (latestDate: string) => void;
+  skipOnboarding: () => void;
   dismissNews: (date: string) => void;
 }
 
@@ -18,6 +19,7 @@ export const useGreetingStore = create<GreetingState>()(
 
       completeOnboarding: (latestDate) =>
         set({ onboardingCompleted: true, lastSeenUpdate: latestDate }),
+      skipOnboarding: () => set({ onboardingCompleted: true }),
 
       dismissNews: (date) => set({ lastSeenUpdate: date }),
     }),

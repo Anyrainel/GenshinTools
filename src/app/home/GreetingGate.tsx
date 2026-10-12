@@ -1,7 +1,7 @@
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { newsMap } from "@/components/shared/WhatsNew";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
+import { useAccountStore } from "@/stores/useAccountStore";
 import { useGreetingStore } from "@/stores/useGreetingStore";
 
 // Lazy-load the heavy dialog components
@@ -14,10 +14,16 @@ function useGreetingMode(): { mode: GreetingMode; latestDate: string } {
   const { language } = useLanguage();
   const onboardingCompleted = useGreetingStore((s) => s.onboardingCompleted);
   const lastSeenUpdate = useGreetingStore((s) => s.lastSeenUpdate);
-  const hasAccountData = useAccountStore((s) => {
-    const active = getActiveAccount(s);
-    return !!active;
-  });
+  const skipOnboarding = useGreetingStore((s) => s.skipOnboarding);
+  const hasAccountData = useAccountStore(
+    (s) => Object.keys(s.accounts).length > 0
+  );
+
+  // Existing accounts have already passed the first-use workflow. Remember this
+  // so deleting the last account cannot turn an existing user into a new one.
+  useEffect(() => {
+    if (hasAccountData && !onboardingCompleted) skipOnboarding();
+  }, [hasAccountData, onboardingCompleted, skipOnboarding]);
 
   const latestDate = useMemo(() => {
     const news = newsMap[language];
