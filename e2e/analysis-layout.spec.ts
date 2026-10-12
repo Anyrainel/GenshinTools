@@ -61,7 +61,9 @@ test("reserved inventory and its picker remain usable in a narrow loadout view",
   await picker
     .getByRole("button", { name: "Reserve selected", exact: true })
     .click();
-  await expect(picker.getByText("Saved loadout", { exact: true })).toBeVisible();
+  await expect(
+    picker.getByText("Saved loadout", { exact: true })
+  ).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(picker).toBeHidden();
   await expect(
