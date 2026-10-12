@@ -27,9 +27,9 @@ export function StandaloneArtifactsCard({
   const { t } = useLanguage();
 
   return (
-    <div className="bg-black/15 border border-border rounded-lg overflow-hidden">
-      <div className="flex items-center gap-3 px-3 py-2.5 bg-black/20 border-b border-border">
-        <Snowflake className="w-4 h-4 text-cyan-400 shrink-0" />
+    <div className="overflow-hidden rounded-xl border border-foreground/20 bg-gradient-card">
+      <div className="flex flex-wrap items-center gap-2 border-b border-foreground/15 bg-gradient-select px-3 py-2">
+        <Snowflake className="h-4 w-4 shrink-0 text-primary" />
         <span className="font-bold text-sm text-foreground">
           {t.ui("teamComp.standaloneArtifacts")}
         </span>
@@ -37,7 +37,7 @@ export function StandaloneArtifactsCard({
           variant="outline"
           size="sm"
           onClick={onFreezeClick}
-          className="ml-auto gap-1.5 font-bold text-xs h-7 px-3 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:bg-cyan-500/15! hover:text-cyan-200! hover:ring-cyan-400/40"
+          className="ml-auto h-8 gap-1.5 border-primary/40 bg-primary/10 px-3 text-xs font-semibold text-foreground hover:bg-primary/20"
         >
           <Plus className="w-3.5 h-3.5" />
           {t.ui("teamComp.freezeArtifact")}
@@ -70,7 +70,7 @@ export function StandaloneArtifactsCard({
               <button
                 type="button"
                 onClick={() => onClearArtifact(art.id)}
-                className="flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-bold border border-red-400/30 text-red-400/70 hover:text-red-300 hover:border-red-400/60 hover:bg-red-500/15 transition-colors cursor-pointer"
+                className="flex cursor-pointer items-center gap-1 rounded-md border border-destructive/40 px-2 py-1 text-xs font-semibold text-destructive transition-colors hover:bg-destructive/10"
               >
                 <X className="w-2.5 h-2.5" />
                 {t.ui("common.clear")}

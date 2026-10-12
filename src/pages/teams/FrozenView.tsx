@@ -379,11 +379,11 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
         <div className="flex flex-col gap-4 py-2">
           {/* Empty state — above controls so it introduces the feature */}
           {isEmpty && (
-            <div className="mb-6 md:mb-9 lg:mb-12">
+            <div>
               <EmptyState
                 icon={Snowflake}
-                iconColor="text-cyan-500"
-                glowColor="bg-cyan-500/20"
+                iconColor="text-primary"
+                glowColor="bg-primary/15"
                 title={t.ui("teamComp.tabLoadouts")}
                 description={t.ui("teamComp.frozenEmptyDesc")}
                 action={{

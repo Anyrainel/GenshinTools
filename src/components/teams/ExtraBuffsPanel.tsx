@@ -204,7 +204,7 @@ export function ExtraBuffsPanel({
         >
           <div className="max-h-[calc(var(--radix-popover-content-available-height,60vh)-16px)] overflow-y-auto py-3">
             {/* Enemy Element Aura */}
-            <div className="border-b border-border/20 px-3 py-1">
+            <div className="border-b border-foreground/20 px-3 py-1">
               <div className="flex items-center gap-2 mb-0.5">
                 <Swords className="w-4 h-4 text-red-400" />
                 <span className="text-sm font-bold">
@@ -219,7 +219,7 @@ export function ExtraBuffsPanel({
                     "flex items-center gap-1.5 px-2 py-1 rounded-md border cursor-pointer transition-colors text-sm font-medium",
                     !enemyAura
                       ? "border-primary/50 bg-primary/10"
-                      : "border-border/30 bg-black/5 hover:bg-black/10"
+                      : "border-foreground/25 bg-black/5 hover:bg-black/10"
                   )}
                 >
                   {t.ui("common.none")}
@@ -233,7 +233,7 @@ export function ExtraBuffsPanel({
                       "flex items-center gap-1.5 px-2 py-1 rounded-md border cursor-pointer transition-colors",
                       enemyAura === el
                         ? "border-primary/50 bg-primary/10"
-                        : "border-border/30 bg-black/5 hover:bg-black/10"
+                        : "border-foreground/25 bg-black/5 hover:bg-black/10"
                     )}
                   >
                     <img
@@ -255,7 +255,7 @@ export function ExtraBuffsPanel({
             </div>
 
             {/* Food (one per slot, stackable across slots) */}
-            <div className="border-b border-border/20 px-3 py-1">
+            <div className="border-b border-foreground/20 px-3 py-1">
               <div className="flex items-center gap-2 mb-0.5">
                 <ChefHat className="w-4 h-4 text-orange-400" />
                 <span className="text-sm font-bold">
@@ -313,7 +313,7 @@ export function ExtraBuffsPanel({
             />
 
             {/* Status (per-character) */}
-            <div className="border-b border-border/20 px-3 py-1">
+            <div className="border-b border-foreground/20 px-3 py-1">
               <div className="flex items-center gap-2 mb-0.5">
                 <Wand2 className="w-4 h-4 text-purple-400" />
                 <span className="text-sm font-bold">
@@ -354,7 +354,7 @@ export function ExtraBuffsPanel({
                                   "flex items-center gap-1.5 px-2 py-1 rounded-md border cursor-pointer transition-colors",
                                   checked
                                     ? "border-primary/50 bg-primary/10"
-                                    : "border-border/30 bg-black/5 hover:bg-black/10"
+                                    : "border-foreground/25 bg-black/5 hover:bg-black/10"
                                 )}
                               >
                                 <Checkbox
@@ -403,7 +403,7 @@ export function ExtraBuffsPanel({
                     .map((buff) => (
                       <span
                         key={buff.id}
-                        className="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full border border-border/40 bg-black/5 text-xs"
+                        className="inline-flex items-center gap-1 pl-2 pr-1 py-0.5 rounded-full border border-foreground/25 bg-black/5 text-xs"
                       >
                         {formatBuffStats(buff.stats, t)}
                         <span className="text-muted-foreground">
@@ -470,7 +470,7 @@ function PresetSection({
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
-    <div className="border-b border-border/20 px-3 py-1">
+    <div className="border-b border-foreground/20 px-3 py-1">
       <div className="flex items-center gap-2 mb-0.5">
         {icon}
         <span className="text-sm font-bold">{title}</span>

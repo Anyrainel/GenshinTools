@@ -56,7 +56,7 @@ function MathZone({
         "p-1 gap-1 md:gap-2",
         highlight
           ? "border-primary/60 bg-primary/10 ring-1 ring-primary/40"
-          : "border-border/40 hover:border-border/60"
+          : "border-foreground/25 hover:border-foreground/25"
       )}
     >
       <div className="flex items-baseline gap-1 md:gap-2">
@@ -404,7 +404,7 @@ function ParenGroup({
 }) {
   if (!enabled) return children;
   return (
-    <div className="flex h-[48px] md:h-[72px] items-center bg-card/5 border border-border/20 rounded-md">
+    <div className="flex h-[48px] md:h-[72px] items-center bg-card/5 border border-foreground/20 rounded-md">
       <span className="mt-6">
         <Paren char="(" />
       </span>

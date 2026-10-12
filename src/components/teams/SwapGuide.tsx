@@ -103,7 +103,7 @@ export function SwapGuide({
   if (changeCount === 0 && !alwaysOpen) return null;
 
   const content = (
-    <div className="border-t border-border/10 bg-black/5">
+    <div className="border-t border-foreground/15 bg-black/5">
       {/* Download button — hidden when no changes */}
       {changeCount > 0 && (
         <div className="flex justify-end gap-2 px-2 pt-1.5">
@@ -193,7 +193,7 @@ export function SwapGuide({
     <Collapsible
       open={open}
       onOpenChange={setOpen}
-      className="bg-black/15 border border-border/20 rounded-lg overflow-hidden"
+      className="bg-black/15 border border-foreground/20 rounded-lg overflow-hidden"
     >
       <CollapsibleTrigger className="flex justify-between items-center w-full px-2 py-2 md:px-4 md:py-3 hover:bg-white/5 transition-colors">
         <div className="text-xs md:text-sm font-bold flex items-center gap-1.5 md:gap-2">
@@ -236,7 +236,7 @@ function CharacterSwapColumn({
   const char = charactersById[charId];
 
   return (
-    <div className="flex flex-col bg-black/15 border border-border/10 rounded-lg overflow-hidden">
+    <div className="flex flex-col bg-black/15 border border-foreground/15 rounded-lg overflow-hidden">
       {/* Character header */}
       <div className="flex items-center gap-2 px-2 py-1 md:py-2 bg-black/20">
         <img

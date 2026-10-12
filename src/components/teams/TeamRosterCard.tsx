@@ -214,12 +214,12 @@ export function TeamRosterCard({
     return (
       <div
         key={entityId}
-        className="flex items-center flex-wrap min-w-0 gap-0.5 p-0.5 md:gap-1 md:p-1 rounded-md bg-black/10 border border-border/30"
+        className="flex items-center flex-wrap min-w-0 gap-0.5 p-0.5 md:gap-1 md:p-1 rounded-md bg-background/25 border border-foreground/25"
       >
         <img
           src={getAssetUrl(imagePath)}
           alt={entityId.replace(/^infusion:/, "")}
-          className="w-5 h-5 xl:w-7 xl:h-7 object-contain rounded-full bg-secondary/40 shrink-0 border border-border/30"
+          className="w-5 h-5 xl:w-7 xl:h-7 object-contain rounded-full bg-secondary/40 shrink-0 border border-foreground/25"
         />
         <span className="font-bold text-foreground/80 text-xs md:text-sm lg:text-xs xl:text-sm min-w-0 truncate">
           {t.resolveLabel(schema.label)}
@@ -235,7 +235,7 @@ export function TeamRosterCard({
               value={value}
               onValueChange={(v) => handleOptionChange(entityId, v)}
             >
-              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-white/5 border-border/30 w-24 md:w-32 lg:w-28 xl:w-36 h-6 xl:h-8 text-[10px] md:text-sm lg:text-[11px] xl:text-sm">
+              <LightweightSelectTrigger className="font-bold [&>span]:text-center [&>span]:w-full bg-background/40 border-foreground/25 w-24 md:w-32 lg:w-28 xl:w-36 h-6 xl:h-8 text-[10px] md:text-sm lg:text-[11px] xl:text-sm">
                 <LightweightSelectValue />
               </LightweightSelectTrigger>
               <LightweightSelectContent>
@@ -402,7 +402,7 @@ export function TeamRosterCard({
                     key={i}
                     className="flex items-center justify-center opacity-20 py-4"
                   >
-                    <div className="w-14 h-14 rounded-full border-2 border-dashed border-border/50" />
+                    <div className="w-14 h-14 rounded-full border-2 border-dashed border-foreground/25" />
                   </div>
                 );
               }
@@ -410,7 +410,7 @@ export function TeamRosterCard({
               return (
                 <div
                   key={i}
-                  className="flex flex-col items-center justify-center rounded-lg bg-black/10 border border-dashed border-border/30 p-1 gap-1 min-h-[80px] lg:p-2 lg:gap-2 lg:min-h-[100px]"
+                  className="flex flex-col items-center justify-center rounded-lg bg-background/25 border border-dashed border-foreground/25 p-1 gap-1 min-h-[80px] lg:p-2 lg:gap-2 lg:min-h-[100px]"
                 >
                   <ItemPicker
                     type="character"
@@ -518,7 +518,7 @@ export function TeamRosterCard({
             return (
               <div
                 key={i}
-                className="flex flex-col rounded-lg bg-black/10 border border-border/10 p-1 gap-1 xl:p-2"
+                className="flex flex-col rounded-lg bg-background/25 border border-foreground/20 p-1 gap-1 xl:p-2"
               >
                 {/* Row 1: Interactive icons */}
                 <div className="flex items-end gap-0.5 md:gap-1.5">
@@ -657,7 +657,7 @@ export function TeamRosterCard({
                 </div>
 
                 {/* Rows 3-4: Level/Constellation/Refinement + Talent overrides */}
-                <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 lg:px-2 lg:py-1">
+                <div className="flex flex-col bg-background/25 rounded-md border border-foreground/25 px-1 py-0.5 lg:px-2 lg:py-1">
                   <div className="flex items-center justify-between gap-1">
                     <div className="w-full shrink pr-0.5">
                       <Select
@@ -666,7 +666,7 @@ export function TeamRosterCard({
                           handleOptionChange(`${charId}.overrideLevel`, v)
                         }
                       >
-                        <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                        <SelectTrigger className="w-full bg-background/40 border-foreground/25 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -679,7 +679,7 @@ export function TeamRosterCard({
                       </Select>
                     </div>
 
-                    <div className="w-full shrink px-0.5 border-l border-border/20">
+                    <div className="w-full shrink px-0.5 border-l border-foreground/15">
                       <Select
                         value={String(charConst)}
                         onValueChange={(v) =>
@@ -689,7 +689,7 @@ export function TeamRosterCard({
                           )
                         }
                       >
-                        <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                        <SelectTrigger className="w-full bg-background/40 border-foreground/25 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -703,7 +703,7 @@ export function TeamRosterCard({
                     </div>
 
                     {weaponId && (
-                      <div className="w-full shrink pl-0.5 border-l border-border/20">
+                      <div className="w-full shrink pl-0.5 border-l border-foreground/15">
                         <Select
                           value={String(weaponRefine)}
                           onValueChange={(v) =>
@@ -713,7 +713,7 @@ export function TeamRosterCard({
                             )
                           }
                         >
-                          <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                          <SelectTrigger className="w-full bg-background/40 border-foreground/25 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -728,7 +728,7 @@ export function TeamRosterCard({
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between gap-1 border-t border-border/20 pt-0.5 md:pt-1">
+                  <div className="flex items-center justify-between gap-1 border-t border-foreground/15 pt-0.5 md:pt-1">
                     {(
                       [
                         [
@@ -763,15 +763,15 @@ export function TeamRosterCard({
                           idx === 0
                             ? "pr-0.5"
                             : idx === 1
-                              ? "px-0.5 border-l border-border/20"
-                              : "pl-0.5 border-l border-border/20"
+                              ? "px-0.5 border-l border-foreground/15"
+                              : "pl-0.5 border-l border-foreground/15"
                         )}
                       >
                         <Select
                           value={String(value)}
                           onValueChange={(v) => handleOptionChange(optKey, v)}
                         >
-                          <SelectTrigger className="w-full bg-white/5 border-border/30 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
+                          <SelectTrigger className="w-full bg-background/40 border-foreground/25 focus:ring-0 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs lg:h-7 lg:px-1.5 lg:text-sm">
                             <SelectValue>
                               {t.resolveLabel(label)}:{" "}
                               {value + (hasBonus ? 3 : 0)}

@@ -56,13 +56,16 @@ export function AnalyzerConfigCard({
       <CardHeader className={CARD_HEADER_CLS}>
         <h3 className={CARD_TITLE_CLS}>{t.ui("teamComp.investmentRange")}</h3>
       </CardHeader>
-      <CardContent className="p-3 [container-type:inline-size] [container-name:investment-config]">
-        <div className="grid grid-cols-1 gap-4 [@container_investment-config_(min-width:28rem)]:grid-cols-2 [@container_investment-config_(min-width:56rem)]:grid-cols-4">
+      <CardContent className="p-2 md:p-3 [container-type:inline-size] [container-name:investment-config]">
+        <div className="grid grid-cols-1 gap-2 [@container_investment-config_(min-width:28rem)]:grid-cols-2 [@container_investment-config_(min-width:56rem)]:grid-cols-4">
           {charConfigs.map((config) => {
             const base = configs.find((c) => c.charId === config.charId)!;
             const baseFive = weaponsById[base.weaponId]?.rarity === 5;
             return (
-              <section key={config.charId} className="min-w-0 space-y-3">
+              <section
+                key={config.charId}
+                className="min-w-0 space-y-2 rounded-lg border border-foreground/15 bg-background/20 p-2"
+              >
                 <h4 className="break-words text-sm font-semibold">
                   {t.character(config.charId)}
                 </h4>
@@ -114,87 +117,97 @@ export function AnalyzerConfigCard({
                       </div>
                     );
                   })}
-                <div className="grid grid-cols-2 gap-2">
-                  {config.rarity === 5 && (
-                    <div className="space-y-1">
-                      <span className="text-xs">
-                        {t.ui("teamComp.investmentMaxConstellation")}
-                      </span>
-                      <Select
-                        value={String(config.maxConstellation)}
-                        onValueChange={(v) =>
-                          onUpdateMax(
-                            config.charId,
-                            "maxConstellation",
-                            Number(v)
-                          )
-                        }
-                      >
-                        <SelectTrigger
-                          className="h-8 w-full text-xs"
-                          aria-label={t.ui(
-                            "teamComp.investmentMaxConstellation"
-                          )}
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 7 }, (_, c) => (
-                            <SelectItem
-                              key={c}
-                              value={String(c)}
-                              disabled={c < config.startConstellation}
-                            >
-                              {t.format("common.constellationFormat", c)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                  {config.weapon5Star && (
-                    <div className="space-y-1">
-                      <span className="text-xs">
-                        {t.ui("teamComp.investmentMaxRefinement")}
-                      </span>
-                      <Select
-                        value={String(config.maxRefinement)}
-                        onValueChange={(v) =>
-                          onUpdateMax(config.charId, "maxRefinement", Number(v))
-                        }
-                      >
-                        <SelectTrigger
-                          className="h-8 w-full text-xs"
-                          aria-label={t.ui("teamComp.investmentMaxRefinement")}
-                        >
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Array.from({ length: 5 }, (_, i) => i + 1).map(
-                            (r) => (
-                              <SelectItem
-                                key={r}
-                                value={String(r)}
-                                disabled={r < config.startRefinement}
-                              >
-                                {t.format("common.refinementFormat", r)}
-                              </SelectItem>
+                {(config.rarity === 5 || config.weapon5Star) && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {config.rarity === 5 && (
+                      <div className="space-y-1">
+                        <span className="text-xs">
+                          {t.ui("teamComp.investmentMaxConstellation")}
+                        </span>
+                        <Select
+                          value={String(config.maxConstellation)}
+                          onValueChange={(v) =>
+                            onUpdateMax(
+                              config.charId,
+                              "maxConstellation",
+                              Number(v)
                             )
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  )}
-                </div>
+                          }
+                        >
+                          <SelectTrigger
+                            className="h-8 w-full border-foreground/25 bg-background/40 text-xs"
+                            aria-label={t.ui(
+                              "teamComp.investmentMaxConstellation"
+                            )}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 7 }, (_, c) => (
+                              <SelectItem
+                                key={c}
+                                value={String(c)}
+                                disabled={c < config.startConstellation}
+                              >
+                                {t.format("common.constellationFormat", c)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                    {config.weapon5Star && (
+                      <div className="space-y-1">
+                        <span className="text-xs">
+                          {t.ui("teamComp.investmentMaxRefinement")}
+                        </span>
+                        <Select
+                          value={String(config.maxRefinement)}
+                          onValueChange={(v) =>
+                            onUpdateMax(
+                              config.charId,
+                              "maxRefinement",
+                              Number(v)
+                            )
+                          }
+                        >
+                          <SelectTrigger
+                            className="h-8 w-full border-foreground/25 bg-background/40 text-xs"
+                            aria-label={t.ui(
+                              "teamComp.investmentMaxRefinement"
+                            )}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Array.from({ length: 5 }, (_, i) => i + 1).map(
+                              (r) => (
+                                <SelectItem
+                                  key={r}
+                                  value={String(r)}
+                                  disabled={r < config.startRefinement}
+                                >
+                                  {t.format("common.refinementFormat", r)}
+                                </SelectItem>
+                              )
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {renderChanges(config.charId)}
               </section>
             );
           })}
         </div>
         {footer && (
-          <div className="mt-3 flex flex-wrap items-center gap-2">{footer}</div>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-2 border-t border-foreground/15 pt-3">
+            {footer}
+          </div>
         )}
-        <div className="mt-3 space-y-3">{children}</div>
+        <div className="mt-3 space-y-3 empty:hidden">{children}</div>
       </CardContent>
     </Card>
   );

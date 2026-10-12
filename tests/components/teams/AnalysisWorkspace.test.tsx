@@ -112,6 +112,30 @@ function Workspace() {
   );
 }
 
+it("keeps keyboard navigation and accessible panel links across the analysis modes", async () => {
+  const user = userEvent.setup();
+  render(<Workspace />);
+  const tabs = screen.getByRole("tablist", { name: "Analysis" });
+  const artifacts = screen.getByRole("tab", { name: "Artifacts" });
+  artifacts.focus();
+  await user.keyboard("{ArrowRight}");
+  expect(screen.getByRole("tab", { name: "Builds" })).toHaveFocus();
+  expect(screen.getByRole("tab", { name: "Builds" })).toHaveAttribute(
+    "aria-selected",
+    "true"
+  );
+  await user.keyboard("{End}");
+  expect(screen.getByRole("tab", { name: "Energy" })).toHaveFocus();
+  await user.keyboard("{Home}");
+  expect(artifacts).toHaveFocus();
+  expect(artifacts).toHaveAttribute("aria-selected", "true");
+  for (const tab of tabs.querySelectorAll('[role="tab"]')) {
+    const panel = document.getElementById(tab.getAttribute("aria-controls")!);
+    expect(panel).toHaveAttribute("role", "tabpanel");
+    expect(panel).toHaveAttribute("aria-labelledby", tab.id);
+  }
+});
+
 it("keeps exactly the same roster and skill panel mounted through all five calculations", async () => {
   const user = userEvent.setup();
   render(<Workspace />);

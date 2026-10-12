@@ -780,17 +780,17 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
         </div>
 
         {hasScholarEquipped && (
-          <div className="px-3 py-1.5 text-xs md:text-sm text-amber-400 border-b border-border/30 bg-amber-500/5">
+          <div className="px-3 py-1.5 text-xs md:text-sm text-amber-400 border-b border-foreground/25 bg-amber-500/5">
             {t.ui("erCalc.scholarNotImplemented")}
           </div>
         )}
 
-        <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center justify-between gap-2 bg-muted/10">
+        <div className="px-3 py-2 border-b border-foreground/25 flex flex-wrap items-center justify-between gap-2 bg-muted/10">
           <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={handleAddStartup}
-              className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
+              className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-foreground/25 hover:border-border"
               title={t.ui("erCalc.addStartupTitle")}
             >
               {t.ui("erCalc.addStartup")}
@@ -799,7 +799,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
               <button
                 type="button"
                 onClick={handleCloneLoopToStartup}
-                className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
+                className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded-[4px] border border-foreground/25 hover:border-border"
                 title={t.ui("erCalc.cloneLoopTitle")}
               >
                 {t.ui("erCalc.cloneLoop")}
@@ -830,7 +830,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
         {/* Timeline editors */}
         {isEasyMode ? (
-          <div className="p-4 space-y-6 bg-muted/20 border-b border-border/30">
+          <div className="p-4 space-y-6 bg-muted/20 border-b border-foreground/25">
             {/* Character Configuration Grid */}
             <div>
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
@@ -941,7 +941,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
             </div>
 
             {/* Funnel Configuration Section */}
-            <div className="border-t border-border/30 pt-4 space-y-4">
+            <div className="border-t border-foreground/25 pt-4 space-y-4">
               <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
                 {t.ui("erCalc.particleFunnelingRules")}
               </h4>
@@ -1048,7 +1048,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
             </div>
 
             {/* Compilation Action */}
-            <div className="border-t border-border/30 pt-4 flex justify-end">
+            <div className="border-t border-foreground/25 pt-4 flex justify-end">
               <button
                 type="button"
                 onClick={handleCompileRotation}
@@ -1107,7 +1107,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
               <button
                 type="button"
                 onClick={() => handleRemoveTimeline(tlIdx)}
-                className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded-[4px] border border-border/30 hover:border-destructive/40"
+                className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded-[4px] border border-foreground/25 hover:border-destructive/40"
                 title={t.ui("erCalc.removeStartupTitle")}
               >
                 {t.ui("erCalc.remove")}
@@ -1161,7 +1161,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   <button
                     type="button"
                     onClick={handleResetFavDefaults}
-                    className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
+                    className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-foreground/25 hover:border-border"
                     title={t.ui("erCalc.resetFavDefaultsTitle")}
                   >
                     {t.ui("erCalc.resetFavDefaults")}

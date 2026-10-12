@@ -114,20 +114,20 @@ export function FrozenTeamSection({
   if (displayCharIds.length === 0) return null;
 
   return (
-    <div className="bg-black/15 border border-border rounded-lg overflow-hidden">
+    <div className="overflow-hidden rounded-xl border border-foreground/20 bg-gradient-card">
       {/* Header: "Team N" label + full team roster avatars + i18n names */}
-      <div className="flex items-center gap-3 px-3 py-2.5 bg-black/20 border-b border-border">
+      <div className="flex flex-wrap items-center gap-2 border-b border-foreground/15 bg-gradient-select px-3 py-2">
         <span className="text-xs md:text-sm text-muted-foreground font-medium shrink-0">
           {t.format("teamComp.teamIndex", teamIndex)}
         </span>
-        <div className="flex items-center gap-2 min-w-0 flex-1 overflow-hidden">
+        <div className="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-2 sm:basis-0">
           {fullRosterCharIds.map((charId) => {
             const char = charactersById[charId];
             return (
               <span key={charId} className="flex items-center gap-1 shrink-0">
                 <img
                   src={getAssetUrl(char?.imagePath)}
-                  className="w-5 h-5 md:w-7 md:h-7 rounded-full bg-black/20"
+                  className="h-5 w-5 rounded-full bg-secondary md:h-7 md:w-7"
                   alt={charId}
                 />
                 <span className="font-bold text-xs md:text-sm text-foreground">
@@ -138,14 +138,14 @@ export function FrozenTeamSection({
           })}
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="ml-auto flex w-full min-w-0 flex-wrap items-center justify-end gap-2 sm:w-auto">
           {/* Swap Guide toggle — styled to match freeze/unfreeze buttons */}
           <Button
             variant="outline"
             size="sm"
             onClick={() => setSwapGuideOpen((v) => !v)}
             className={cn(
-              "gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md",
+              "h-8 gap-1.5 px-3 text-xs font-semibold",
               swapGuideOpen
                 ? "border-primary/40 bg-primary/15 text-foreground ring-2 ring-primary/20 hover:bg-primary/20!"
                 : "border-primary/30 bg-primary/10 text-foreground ring-2 ring-primary/15 hover:bg-primary/15! hover:ring-primary/25"
@@ -164,7 +164,7 @@ export function FrozenTeamSection({
               variant="outline"
               size="sm"
               onClick={onUnfreezeAll}
-              className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:bg-red-500/15! hover:text-red-200! hover:ring-red-400/40"
+              className="h-8 gap-1.5 border-destructive/50 px-3 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
               <Flame className="w-3 h-3 md:w-3.5 md:h-3.5" />
               {t.ui("teamComp.unfreezeAll")}
@@ -176,7 +176,7 @@ export function FrozenTeamSection({
               variant="outline"
               size="sm"
               onClick={onRefreezeAll}
-              className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8 shadow-md border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-2 ring-cyan-400/20 hover:bg-cyan-500/15! hover:text-cyan-200! hover:ring-cyan-400/40"
+              className="h-8 gap-1.5 border-primary/40 bg-primary/10 px-3 text-xs font-semibold text-foreground hover:bg-primary/20"
             >
               <Snowflake className="w-3 h-3 md:w-3.5 md:h-3.5" />
               {t.ui("teamComp.freezeTeam")}

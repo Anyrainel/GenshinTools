@@ -593,7 +593,7 @@ export function CharacterReplacementDetail({
             t={t}
           />
         </div>
-        <div className="mb-3 grid min-w-0 gap-2 sm:grid-cols-2">
+        <div className="mb-3 grid min-w-0 gap-3 rounded-lg border border-foreground/15 bg-background/20 p-2 sm:grid-cols-2">
           <label
             htmlFor={`${teamComp.id}-character-pool`}
             className="grid min-w-0 gap-1 text-sm sm:grid-cols-2 sm:items-center"
@@ -610,7 +610,7 @@ export function CharacterReplacementDetail({
               <SelectTrigger
                 id={`${teamComp.id}-character-pool`}
                 aria-label={t.ui("charactersMode.candidatePool")}
-                className="w-full min-w-0 [&>span]:min-w-0 [&>span]:truncate"
+                className="w-full min-w-0 border-foreground/25 bg-background/40 [&>span]:min-w-0 [&>span]:truncate"
               >
                 <SelectValue />
               </SelectTrigger>
@@ -652,7 +652,7 @@ export function CharacterReplacementDetail({
                 <SelectTrigger
                   id={`${teamComp.id}-character-${key}`}
                   aria-label={label}
-                  className="w-full min-w-0"
+                  className="w-full min-w-0 border-foreground/25 bg-background/40"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -673,6 +673,7 @@ export function CharacterReplacementDetail({
         </div>
         <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
           <Button
+            size="sm"
             onClick={start}
             disabled={
               running ||

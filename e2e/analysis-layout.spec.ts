@@ -1,4 +1,83 @@
+import path from "node:path";
 import { expect, test } from "@playwright/test";
+
+test("reserved inventory and its picker remain usable in a narrow loadout view", async ({
+  page,
+}, testInfo) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("app_language", "en");
+    localStorage.setItem(
+      "greeting-storage",
+      JSON.stringify({
+        version: 1,
+        state: { onboardingCompleted: true, lastSeenUpdate: "2099-01-01" },
+      })
+    );
+  });
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/account-data/characters");
+  await page
+    .getByRole("dialog", { name: "Preset Builds Loaded" })
+    .getByRole("button", { name: "Got it", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Import", exact: true })
+    .first()
+    .click();
+  const importer = page.getByRole("dialog", {
+    name: "Import Account Data",
+    exact: true,
+  });
+  await importer
+    .getByRole("textbox", { name: "Optional UID" })
+    .fill("600000001");
+  await importer
+    .locator('input[type="file"]')
+    .setInputFiles(path.resolve("tests/fixtures/goodscanner-v3.json"));
+  await expect(importer).toBeHidden();
+  await page
+    .getByRole("dialog", { name: "Scoring Revamped" })
+    .getByRole("button", { name: "Got it", exact: true })
+    .click();
+  await page.goto("/team-comp/loadouts");
+  await page
+    .getByRole("button", { name: "Reserve artifacts", exact: true })
+    .click();
+  const picker = page.getByRole("dialog", {
+    name: "Reserve artifacts",
+    exact: true,
+  });
+  await expect(picker).toBeVisible();
+  await picker.getByRole("button", { name: /Crimson Witch of Flames/ }).click();
+  await expect(
+    picker.getByRole("button", { name: "Reserve selected", exact: true })
+  ).toBeEnabled();
+  const bounds = await picker.boundingBox();
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(320);
+  await page.screenshot({
+    path: testInfo.outputPath("reserve-picker-320.png"),
+  });
+  await picker
+    .getByRole("button", { name: "Reserve selected", exact: true })
+    .click();
+  await expect(picker.getByText("Saved loadout", { exact: true })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(picker).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "Clear", exact: true })
+  ).toBeVisible();
+  for (const width of [320, 560, 1280]) {
+    await page.setViewportSize({ width, height: 800 });
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth)
+    ).toBe(width);
+    await expect(page.getByRole("combobox")).toBeVisible();
+    await page.screenshot({
+      path: testInfo.outputPath(`loadouts-${width}.png`),
+    });
+  }
+});
 
 test("phone analysis modes occupy distinct rows above the active calculation", async ({
   page,
@@ -89,7 +168,7 @@ test("phone analysis modes occupy distinct rows above the active calculation", a
   await page.screenshot({
     path: testInfo.outputPath("phone-analysis-energy.png"),
   });
-  for (const width of [320, 1280]) {
+  for (const width of [320, 560, 1280]) {
     await page.setViewportSize({ width, height: 800 });
     for (const mode of ["Builds", "Investment", "Characters"]) {
       await page.getByRole("tab", { name: mode, exact: true }).click();

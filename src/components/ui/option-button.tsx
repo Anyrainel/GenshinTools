@@ -56,7 +56,7 @@ export const OptionButton = forwardRef<
         selected
           ? (selectedClassName ?? "border-primary bg-primary/10")
           : (unselectedClassName ??
-              "border-border/50 bg-black/5 hover:border-border/70 hover:bg-black/10"),
+              "border-foreground/25 bg-background/25 hover:border-primary hover:bg-primary/10"),
         className,
       )}
     >
@@ -91,7 +91,7 @@ function RadioDot({ selected }: { selected?: boolean }) {
     <div
       className={cn(
         "w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors",
-        selected ? "border-primary" : "border-border",
+        selected ? "border-primary" : "border-foreground/35",
       )}
     >
       {selected && <div className="w-2 h-2 rounded-full bg-primary" />}

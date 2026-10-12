@@ -370,7 +370,7 @@ export function PartBuffDialog({
                       "text-xs px-2.5 py-1.5 rounded-md border whitespace-nowrap transition-colors",
                       activeTab === idx
                         ? "border-primary/40 bg-primary/10 text-primary font-semibold"
-                        : "border-border/30 bg-card/50 text-muted-foreground hover:text-foreground hover:border-border/50"
+                        : "border-foreground/25 bg-card/50 text-muted-foreground hover:text-foreground hover:border-foreground/25"
                     )}
                     onClick={() => setActiveTab(idx)}
                   >

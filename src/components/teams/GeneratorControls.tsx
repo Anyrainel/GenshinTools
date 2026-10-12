@@ -31,9 +31,9 @@ import { cn } from "@/lib/utils";
 import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 const LABEL_CLS =
-  "font-semibold text-foreground/80 select-none whitespace-nowrap text-[10px] md:text-sm";
+  "font-semibold text-foreground select-none whitespace-nowrap text-xs md:text-sm";
 const INPUT_CLS =
-  "text-center font-bold border-border/20 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1";
+  "text-center font-bold border-foreground/25 bg-background/50 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:border-primary/40 focus-visible:ring-offset-0 text-xs h-6 w-8 px-0.5 py-0 leading-none md:text-sm md:h-7 md:w-10 md:px-1";
 const SPINNER_HIDE =
   "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
@@ -139,7 +139,7 @@ export function RollQualityInputs({
           value={String(rollMultiplier)}
           onValueChange={(v) => onRollMultiplierChange(Number(v))}
         >
-          <SelectTrigger className="font-bold border-border/20 bg-white/5 text-xs h-6 w-14 px-1 py-0 md:text-sm md:h-7 md:w-16 md:px-1.5">
+          <SelectTrigger className="font-bold border-foreground/25 bg-background/50 text-xs h-6 w-14 px-1 py-0 md:text-sm md:h-7 md:w-16 md:px-1.5">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -164,7 +164,7 @@ export function RollQualityInputs({
             onSubstatBudgetChange(preset.value);
           }}
         >
-          <SelectTrigger className="font-bold border-border/20 bg-white/5 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
+          <SelectTrigger className="font-bold border-foreground/25 bg-background/50 min-w-0 max-w-[9rem] text-xs h-6 px-1 py-0 md:text-sm md:h-7 md:max-w-[10rem] md:px-1.5">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -231,7 +231,7 @@ export function StellarDirectCoeffInput({
 // ─── Per-Character CR/ER Settings ───
 
 const CHAR_INPUT_CLS =
-  "text-center font-bold bg-white/5 rounded-md border border-border/20 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm";
+  "text-center font-bold bg-white/5 rounded-md border border-foreground/25 p-0 leading-none focus-visible:ring-1 focus-visible:ring-primary/30 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none w-8 h-5 text-xs lg:w-10 lg:h-6 lg:text-sm";
 
 // Defers commit until blur/Enter so per-keystroke config updates don't
 // re-render the whole optimizer/generator results pipeline.
@@ -260,8 +260,7 @@ function PctInput({
 }
 
 const CB_CLS = "flex items-center gap-0.5 cursor-pointer select-none";
-const CB_LABEL_CLS =
-  "font-medium text-foreground/60 text-[10px] md:text-xs leading-tight";
+const CB_LABEL_CLS = "font-medium text-foreground/80 text-xs leading-tight";
 
 export type CharCrErProps = {
   characters: (string | null)[];
@@ -329,7 +328,7 @@ export function CharCrErSettings({
                     });
                   }}
                 >
-                  <SelectTrigger className="w-[62px] md:w-[72px] h-5 md:h-6 text-[10px] md:text-xs font-bold text-foreground bg-white/5 border-border/20 px-0.5 shrink-0">
+                  <SelectTrigger className="w-[62px] md:w-[72px] h-5 md:h-6 text-[10px] md:text-xs font-bold text-foreground bg-white/5 border-foreground/25 px-0.5 shrink-0">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

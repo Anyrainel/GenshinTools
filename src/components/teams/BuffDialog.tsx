@@ -125,9 +125,9 @@ function FormulaBlock({
   if (applicableParts.length === 0) return null;
 
   return (
-    <div className="rounded-lg border border-emerald-600/50">
+    <div className="rounded-lg border border-foreground/25">
       {/* Formula name header */}
-      <div className="flex items-center gap-1.5 px-2 py-1.5 bg-black/10 border-b border-emerald-600/15">
+      <div className="flex items-center gap-1.5 px-2 py-1.5 bg-background/25 border-b border-foreground/15">
         {(() => {
           const [charId] = formulaKey.split(".");
           const charData = charactersById[charId];
@@ -167,7 +167,7 @@ function FormulaBlock({
           <div
             key={partIndex}
             className={cn(
-              "flex items-center gap-2 px-2 py-1.5 border-b border-emerald-600/15 last:border-b-0",
+              "flex items-center gap-2 px-2 py-1.5 border-b border-foreground/15 last:border-b-0",
               !isDefault && "bg-primary/5"
             )}
           >
@@ -475,7 +475,7 @@ export function BuffDialog({ buff, formulas, t }: Props) {
                       "flex items-center gap-1.5 text-xs md:text-sm px-2.5 py-1.5 rounded-md border whitespace-nowrap transition-colors",
                       activeTab === idx
                         ? "border-primary/40 bg-primary/10 text-primary font-semibold"
-                        : "border-border/30 bg-card/50 text-muted-foreground hover:text-foreground hover:border-border/50"
+                        : "border-foreground/25 bg-card/50 text-muted-foreground hover:text-foreground hover:border-primary"
                     )}
                     onClick={() => setActiveTab(idx)}
                   >

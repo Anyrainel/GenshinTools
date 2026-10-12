@@ -130,10 +130,10 @@ export function ReactionPartControls({
                 className={cn(
                   "w-4 h-4 rounded-[4px] border flex items-center justify-center shrink-0 transition-colors",
                   !partCanReact
-                    ? "border-border/60 bg-background opacity-30 cursor-not-allowed"
+                    ? "border-foreground/25 bg-background opacity-30 cursor-not-allowed"
                     : isChecked
                       ? "bg-primary/70 border-primary text-primary-foreground"
-                      : "border-border/60 bg-background hover:border-border"
+                      : "border-foreground/25 bg-background hover:border-border"
                 )}
               >
                 {isChecked && (
@@ -186,7 +186,7 @@ export function ReactionPartControls({
                 >
                   <SelectTrigger
                     className={cn(
-                      "h-5 w-12 px-1.5 text-[11px] rounded-[4px] border-border/30 bg-background/50 shrink-0",
+                      "h-5 w-12 px-1.5 text-[11px] rounded-[4px] border-foreground/25 bg-background/50 shrink-0",
                       !isChecked && "opacity-40"
                     )}
                   >

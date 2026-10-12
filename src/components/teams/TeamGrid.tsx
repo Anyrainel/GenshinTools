@@ -544,7 +544,7 @@ export function TeamGrid({
                 placeholder={t.ui("teamComp.searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-11 text-base rounded-xl bg-card/50 border-border/50 focus:border-primary/50 shadow-xs"
+                className="pl-10 h-11 text-base rounded-xl bg-card/50 border-foreground/25 focus:border-primary/50 shadow-xs"
               />
             </div>
 
@@ -582,7 +582,7 @@ export function TeamGrid({
             </div>
 
             {/* Row 2: Owned-only + Sort | New team buttons */}
-            <div className="flex items-center gap-1 2xl:gap-2 flex-wrap">
+            <div className="flex flex-wrap items-center gap-2 border-t border-foreground/15 pt-2">
               {/* Left: filter & sort chips */}
               {hasAccountData && (
                 <OwnedOnlyTooltip>
@@ -622,7 +622,7 @@ export function TeamGrid({
               <div className="flex-1" />
 
               {/* Right: New team buttons */}
-              <div className="flex items-center gap-1 2xl:gap-2">
+              <div className="ml-auto flex flex-wrap items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"

@@ -180,9 +180,7 @@ function valueCls(primary: "on" | "off" | "both", which: "off" | "on"): string {
     "text-right font-mono font-medium whitespace-nowrap",
     primary === "both" && "text-foreground",
     primary === which && "text-foreground",
-    primary !== which &&
-      primary !== "both" &&
-      "text-muted-foreground opacity-60"
+    primary !== which && primary !== "both" && "text-muted-foreground"
   );
 }
 
@@ -374,10 +372,10 @@ export function StatSheetPanel({
           <div
             key={charId}
             className={cn(
-              "flex flex-col bg-black/15 border rounded-lg overflow-hidden",
+              "flex flex-col bg-background/30 border rounded-lg overflow-hidden",
               isTarget
                 ? "border-primary/40 shadow-inner"
-                : "border-border/10 text-foreground/80",
+                : "border-foreground/15 text-foreground/80",
               isFrozen &&
                 "ring-1 ring-cyan-400/30 shadow-[0_0_12px_rgba(34,211,238,0.06)]",
               !isFrozen &&
@@ -386,10 +384,10 @@ export function StatSheetPanel({
             )}
           >
             {/* Header: avatar + name + freeze toggle */}
-            <div className="flex items-center gap-2 p-2 bg-black/20 border-b border-border/10 w-full">
+            <div className="flex items-center gap-2 p-2 bg-background/40 border-b border-foreground/15 w-full">
               <img
                 src={getAssetUrl(char?.imagePath)}
-                className="w-5 h-5 md:w-7 md:h-7 rounded-full bg-black/20 shrink-0"
+                className="w-5 h-5 md:w-7 md:h-7 rounded-full bg-background/40 shrink-0"
                 alt={charId}
               />
               <span className="font-bold text-xs md:text-sm truncate text-foreground/70">
@@ -480,7 +478,7 @@ export function StatSheetPanel({
             {/* Artifacts Grid or Fail Reason — frozen overlay only here */}
             <div
               className={cn(
-                "p-0 md:p-1 lg:p-2 border-b border-border/10",
+                "p-0 md:p-1 lg:p-2 border-b border-foreground/15",
                 isFrozen && "frozen-card"
               )}
             >
@@ -504,7 +502,7 @@ export function StatSheetPanel({
 
             {/* Thin view-mode bar */}
             {result && !preview && (
-              <div className="flex items-stretch gap-1 px-2 py-1.5 bg-black/10 border-b border-border/10">
+              <div className="flex items-stretch gap-1 px-2 py-1.5 bg-background/25 border-b border-foreground/15">
                 {(
                   [
                     {
@@ -714,7 +712,7 @@ function MarginalView({
   t: ReturnType<typeof useLanguage>["t"];
 }) {
   return (
-    <div className="flex flex-col space-y-[1px] p-2 bg-black/20 pt-1">
+    <div className="flex flex-col space-y-[1px] p-2 bg-background/40 pt-1">
       {marginalKeys.map((k) => {
         const rollVal = (AVG_SUBSTAT_ROLL as Record<string, number>)[k] || 0;
         const gain = marginal[k] as number;
@@ -735,29 +733,27 @@ function MarginalView({
                 : ""
             )}
           >
-            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded-[4px] border border-border/10 opacity-70">
+            <span className="text-[10px] md:text-xs font-bold bg-background/40 text-muted-foreground px-1 py-0.5 rounded-[4px] border border-foreground/15 opacity-70">
               +1
             </span>
             <span
               className={cn(
                 "font-bold text-xs md:text-sm",
-                isHl
-                  ? "text-[color:hsl(var(--primary))] opacity-100"
-                  : "text-primary"
+                isHl ? "text-primary opacity-100" : "text-primary"
               )}
             >
               {t.statShort(k)}
             </span>
             <span className="hidden md:inline text-[10px] md:text-xs whitespace-nowrap">
-              <span className="text-muted-foreground opacity-60">
+              <span className="text-muted-foreground">
                 ({t.ui("teamComp.avgVal")}
               </span>
               <span className="font-bold text-foreground opacity-90">
                 +{fmtStat(k, rollVal)}
               </span>
-              <span className="text-muted-foreground opacity-60">)</span>
+              <span className="text-muted-foreground">)</span>
             </span>
-            <span className="text-[10px] md:text-xs text-muted-foreground opacity-50 px-0.5">
+            <span className="text-[10px] md:text-xs text-muted-foreground px-0.5">
               ➔
             </span>
             <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-xs md:text-sm">
@@ -788,15 +784,13 @@ function MarginalView({
                 : ""
             )}
           >
-            <span className="text-[10px] md:text-xs font-bold bg-black/20 text-muted-foreground px-1 py-0.5 rounded-[4px] border border-border/10 opacity-70">
+            <span className="text-[10px] md:text-xs font-bold bg-background/40 text-muted-foreground px-1 py-0.5 rounded-[4px] border border-foreground/15 opacity-70">
               Lv
             </span>
             <span
               className={cn(
                 "font-bold text-xs md:text-sm",
-                lvHl
-                  ? "text-[color:hsl(var(--primary))] opacity-100"
-                  : "text-primary"
+                lvHl ? "text-primary opacity-100" : "text-primary"
               )}
             >
               {t.format(
@@ -805,7 +799,7 @@ function MarginalView({
                 levelUpGain.to
               )}
             </span>
-            <span className="text-[10px] md:text-xs text-muted-foreground opacity-50 px-0.5">
+            <span className="text-[10px] md:text-xs text-muted-foreground px-0.5">
               ➔
             </span>
             <span className="text-green-400 font-bold bg-green-500/10 px-1 py-0.5 rounded-sm text-xs md:text-sm">
@@ -866,7 +860,7 @@ function IdleView({
   const on = rec?.onField ?? {};
 
   return (
-    <div className="bg-black/20 pt-1 px-2 pb-2">
+    <div className="bg-background/40 pt-1 px-2 pb-2">
       <table className="w-full border-collapse text-[10px] md:text-xs xl:text-sm">
         <thead>
           <tr className="text-[8px] md:text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
@@ -902,7 +896,7 @@ function IdleView({
                 <td
                   className={cn(
                     "py-1 pr-2 whitespace-nowrap",
-                    isHl && "text-[color:hsl(var(--primary))]"
+                    isHl && "text-primary"
                   )}
                 >
                   {t.stat(key)}
@@ -942,7 +936,7 @@ function ConditionalView({
   const rows = useConditionalViewData(charId, result);
 
   return (
-    <div className="bg-black/20 pt-1 px-2 pb-2">
+    <div className="bg-background/40 pt-1 px-2 pb-2">
       <table className="w-full border-collapse text-[10px] md:text-xs xl:text-sm">
         <thead>
           <tr className="text-[8px] md:text-[10px] xl:text-xs font-bold text-muted-foreground uppercase tracking-wider opacity-70">
@@ -982,7 +976,7 @@ function ConditionalView({
                     className={cn(
                       "py-1 pr-2 whitespace-nowrap",
                       !showKey && "opacity-0",
-                      isHl && "text-[color:hsl(var(--primary))]"
+                      isHl && "text-primary"
                     )}
                   >
                     {showKey ? t.statShort(row.key) : "\u00A0"}
@@ -1003,7 +997,7 @@ function ConditionalView({
             <tr>
               <td
                 colSpan={4}
-                className="text-xs text-muted-foreground opacity-50 px-1 py-4 italic text-center"
+                className="text-xs text-muted-foreground px-1 py-4 italic text-center"
               >
                 {t.ui("teamComp.noStatsResolved")}
               </td>

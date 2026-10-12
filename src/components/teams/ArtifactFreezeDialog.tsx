@@ -153,7 +153,7 @@ export function ArtifactFreezeDialog({
       <ResponsiveDialogContent className="sm:max-w-2xl">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle className="flex items-center gap-2">
-            <Snowflake className="w-5 h-5 text-cyan-400" />
+            <Snowflake className="w-5 h-5 text-primary" />
             {t.ui("teamComp.freezeArtifact")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription asChild>
@@ -185,7 +185,7 @@ export function ArtifactFreezeDialog({
                 >
                   <LightweightSelectTrigger
                     className={cn(
-                      "w-24 font-medium",
+                      "w-24 border-foreground/25 bg-background/25 font-medium",
                       !currentVal && "text-muted-foreground"
                     )}
                   >
@@ -211,14 +211,14 @@ export function ArtifactFreezeDialog({
 
         {/* Freeze action bar */}
         {selectedCount > 0 && (
-          <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
-            <span className="text-sm text-cyan-300 font-medium">
+          <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-lg bg-primary/10 border border-primary/40">
+            <span className="text-sm text-foreground font-medium">
               {t.format("teamComp.freezeNSelected", selectedCount)}
             </span>
             <button
               type="button"
               onClick={handleFreezeSelected}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-cyan-600 text-white hover:bg-cyan-500 transition-colors text-xs font-bold cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-xs font-bold cursor-pointer"
             >
               <Snowflake className="w-3.5 h-3.5" />
               {t.ui("teamComp.freezeSelected")}
@@ -268,11 +268,12 @@ export function ArtifactFreezeDialog({
                           className={cn(
                             "flex items-center gap-3 px-3 py-2 rounded-lg border-2 text-left transition-all",
                             isFrozen
-                              ? "opacity-50 cursor-not-allowed border-sky-800/30 bg-sky-950/10"
-                              : "hover:bg-white/5 cursor-pointer",
+                              ? "cursor-not-allowed border-foreground/15 bg-background/25"
+                              : "hover:bg-primary/10 cursor-pointer",
                             isSelected && !isFrozen
-                              ? "border-cyan-400 bg-cyan-500/10 shadow-xs"
-                              : !isFrozen && "border-border/20 bg-black/10"
+                              ? "border-primary bg-primary/10 shadow-xs"
+                              : !isFrozen &&
+                                  "border-foreground/25 bg-background/25"
                           )}
                         >
                           {/* Selection indicator */}
@@ -280,17 +281,19 @@ export function ArtifactFreezeDialog({
                             className={cn(
                               "shrink-0 w-5 h-5 rounded-[4px] border-2 flex items-center justify-center transition-colors",
                               isFrozen
-                                ? "bg-sky-800/50 border-sky-700/50"
+                                ? "bg-background/40 border-foreground/25"
                                 : isSelected
-                                  ? "bg-cyan-500 border-cyan-400"
-                                  : "border-border bg-black/20"
+                                  ? "bg-primary border-primary"
+                                  : "border-foreground/35 bg-background/40"
                             )}
                           >
                             {(isFrozen || isSelected) && (
                               <Check
                                 className={cn(
                                   "w-3 h-3",
-                                  isFrozen ? "text-sky-400/60" : "text-white"
+                                  isFrozen
+                                    ? "text-muted-foreground"
+                                    : "text-primary-foreground"
                                 )}
                               />
                             )}
@@ -318,13 +321,13 @@ export function ArtifactFreezeDialog({
                                 {t.artifact(art.setKey)}
                               </span>
                               {isFrozen && (
-                                <span className="shrink-0 flex items-center gap-1 text-[10px] font-bold text-sky-400 bg-sky-400/10 px-1.5 py-0.5 rounded-full">
+                                <span className="shrink-0 flex items-center gap-1 text-xs font-bold text-foreground bg-primary/10 px-1.5 py-0.5 rounded-full">
                                   <Snowflake className="w-3 h-3" />
                                   {t.ui("teamComp.frozenBadge")}
                                 </span>
                               )}
                               {!isFrozen && matchCount > 0 && (
-                                <span className="shrink-0 text-[10px] font-bold bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded-full">
+                                <span className="shrink-0 text-[10px] font-bold bg-primary/15 text-primary px-1.5 py-0.5 rounded-full">
                                   {matchCount}/{activeStats.length}
                                 </span>
                               )}
@@ -346,7 +349,7 @@ export function ArtifactFreezeDialog({
                                         isFrozen
                                           ? "text-muted-foreground"
                                           : isHighlighted
-                                            ? "text-cyan-300 font-bold"
+                                            ? "text-primary font-bold"
                                             : "text-foreground/70"
                                       )}
                                     >

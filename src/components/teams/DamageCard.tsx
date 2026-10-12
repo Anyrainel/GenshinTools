@@ -316,7 +316,7 @@ function ComboBreakdown({
   return (
     <div className="space-y-1 md:space-y-2">
       <Collapsible open={expanded} onOpenChange={setExpanded}>
-        <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
+        <div className="border border-dashed border-foreground/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
           {/* Total damage row: comparison | card | DPS */}
           <div className="flex items-center justify-center">
             {/* Left wing — comparison */}
@@ -467,10 +467,10 @@ function ComboBreakdown({
                     return (
                       <div
                         key={charId}
-                        className="rounded-lg border border-border/30 bg-black/5 overflow-hidden"
+                        className="rounded-lg border border-foreground/25 bg-black/5 overflow-hidden"
                       >
                         {/* Character header */}
-                        <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-border/20 bg-black/10">
+                        <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-foreground/20 bg-black/10">
                           {charRes && (
                             <img
                               src={getAssetUrl(charRes.imagePath)}
@@ -617,8 +617,8 @@ function ComboBreakdown({
 
                 {/* Team Reactions section */}
                 {teamReactionLines.length > 0 && (
-                  <div className="rounded-lg border border-border/30 bg-black/5 overflow-hidden">
-                    <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-border/20 bg-black/10">
+                  <div className="rounded-lg border border-foreground/25 bg-black/5 overflow-hidden">
+                    <div className="flex items-center gap-2 px-3 py-1 md:py-2 border-b border-foreground/20 bg-black/10">
                       <span className="text-xs md:text-sm font-bold text-foreground/80">
                         {t.ui("teamComp.teamReactions")}
                         {totalLineDamage > 0 && teamRxTotal > 0 && (
@@ -859,7 +859,7 @@ function SingleResultView({
       {parts && parts.length > 0 ? (
         <div className="space-y-1 md:space-y-2">
           <Collapsible open={expanded} onOpenChange={setExpanded}>
-            <div className="border border-dashed border-border/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
+            <div className="border border-dashed border-foreground/20 rounded-lg bg-black/5 text-xs md:text-sm p-1">
               {/* Total damage row: comparison | card | DPS */}
               <div className="flex items-center justify-center">
                 {/* Left wing — comparison */}
@@ -1394,7 +1394,7 @@ function DpsDisplay({
           if (raw === "" || /^\d*\.?\d*$/.test(raw)) setDpsSeconds(raw);
         }}
         className={cn(
-          "text-center font-bold border-border/30 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
+          "text-center font-bold border-foreground/25 bg-white/5 focus-visible:ring-1 focus-visible:ring-primary/40 focus-visible:ring-offset-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none",
           isMobile
             ? "text-xs h-5 w-7 px-0.5 py-0"
             : "text-sm h-7 w-10 px-0.5 py-0"
@@ -1533,7 +1533,7 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       size="sm"
-      className="gap-1 md:gap-1.5 font-bold text-[10px] px-2 py-0.5 h-6 md:text-xs md:px-4 md:py-1 md:h-8"
+      className="h-8 gap-1.5 px-3 text-xs font-semibold"
     >
       {computing ? (
         <Loader2 className="w-3 h-3 md:w-3.5 md:h-3.5 animate-spin" />
@@ -1855,7 +1855,7 @@ export function DamageCard({
               />
             ) : null
           ) : (
-            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-foreground/25 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
               <p>
                 {t.ui(
@@ -1908,7 +1908,7 @@ export function DamageCard({
                   onValueChange={(v) => onTimeBudgetChange(Number(v))}
                   disabled={isComputing}
                 >
-                  <SelectTrigger className="font-bold border-border/20 bg-white/5 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
+                  <SelectTrigger className="font-bold border-foreground/20 bg-white/5 text-xs h-6 w-[52px] px-1 py-0 md:text-sm md:h-7 md:w-[60px] md:px-1.5">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1973,7 +1973,7 @@ export function DamageCard({
               <div className="space-y-2">
                 {/* Original empty state box */}
                 {!hasOptResult && (
-                  <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+                  <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-foreground/25 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                     <Swords className="w-8 h-8 opacity-15" />
                     <p>{t.ui("teamComp.emptyOptMsg")}</p>
                   </div>
@@ -2031,7 +2031,7 @@ export function DamageCard({
                     }}
                   >
                     <div
-                      className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20"
+                      className="space-y-3 bg-black/15 p-3 rounded-lg border border-foreground/20"
                       style={{
                         opacity: progressFading ? 0 : 1,
                         transition: "opacity 1.5s ease",
@@ -2220,7 +2220,7 @@ export function DamageCard({
                 />
               ) : null
             ) : allCharsResolved && !isComputing ? (
-              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+              <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-foreground/25 rounded-lg bg-black/10 flex flex-col items-center gap-3">
                 <Swords className="w-8 h-8 opacity-15" />
                 <p>{t.ui("teamComp.emptyOptMsg")}</p>
               </div>
@@ -2231,7 +2231,7 @@ export function DamageCard({
               allCharsResolved &&
               teamResult?.done &&
               teamResult.bestDamage === 0 && (
-                <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-border/30 rounded-lg bg-black/10">
+                <div className="p-6 text-center text-sm text-muted-foreground border border-dashed border-foreground/25 rounded-lg bg-black/10">
                   {t
                     .ui("teamComp.noValidCombos")
                     .replace("{0}", String(Math.round(minErRaw * 100)))}
@@ -2282,7 +2282,7 @@ export function DamageCard({
 
           {/* Empty state */}
           {!genComputing && !genResult?.done && !genError && (
-            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-border/30 rounded-lg bg-black/10 flex flex-col items-center gap-3">
+            <div className="text-muted-foreground py-10 text-center text-sm border border-dashed border-foreground/25 rounded-lg bg-black/10 flex flex-col items-center gap-3">
               <Swords className="w-8 h-8 opacity-15" />
               <p>{t.ui("teamComp.idealEmptyMessage")}</p>
             </div>
@@ -2298,7 +2298,7 @@ export function DamageCard({
 
           {/* Progress */}
           {genComputing && genResult && (
-            <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-border/20">
+            <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-foreground/20">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
                 <span className="font-semibold">{genResult.phase}</span>
                 <span className="font-mono font-bold">

@@ -321,7 +321,7 @@ export function TimelineStrip({
             }}
           />
         ))}
-        <div className="border-t border-border/40 pt-1.5 mt-1.5 flex gap-1.5">
+        <div className="border-t border-foreground/25 pt-1.5 mt-1.5 flex gap-1.5">
           <button
             type="button"
             onClick={() => {
@@ -385,8 +385,8 @@ export function TimelineStrip({
   );
 
   return (
-    <section className="mx-2 my-2 rounded-lg border border-border/50 bg-background/10 overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-1.5 bg-muted/15 border-b border-border/40">
+    <section className="mx-2 my-2 rounded-lg border border-foreground/25 bg-background/10 overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-1.5 bg-muted/15 border-b border-foreground/25">
         <div className="flex items-center gap-2">
           <div className="text-sm md:text-base font-semibold">{label}</div>
         </div>
@@ -590,7 +590,7 @@ export function TimelineStrip({
       </div>
 
       {hints.length > 0 && (
-        <ul className="px-3 pb-2 pt-1 space-y-1 border-t border-border/40">
+        <ul className="px-3 pb-2 pt-1 space-y-1 border-t border-foreground/25">
           {hints.map((hint) => (
             <li
               key={`${hint.type}-${hint.actionIndex ?? "x"}-${hint.messageEn}`}
@@ -803,7 +803,7 @@ function MainChip({
               ? "border-amber-500/30 bg-amber-500/10"
               : emits
                 ? "border-emerald-500/30 bg-emerald-500/10"
-                : "border-border/30 bg-black/5",
+                : "border-foreground/25 bg-black/5",
             isDragging && "opacity-40 scale-95",
             isBindingQ && "ring-1 ring-amber-400/50"
           )}
@@ -838,7 +838,7 @@ function MainChip({
             <div className="text-xs text-muted-foreground">{actionLabel}</div>
           </div>
         </div>
-        <div className="space-y-1 text-xs border-t border-border/30 pt-2">
+        <div className="space-y-1 text-xs border-t border-foreground/25 pt-2">
           {emits && particleCount > 0 && (
             <div className="flex justify-between">
               <span className="text-muted-foreground">
@@ -948,7 +948,7 @@ function MainChip({
 
         {/* Favonius toggle */}
         {favEligible && (
-          <div className="border-t border-border/30 pt-2">
+          <div className="border-t border-foreground/25 pt-2">
             <label className="flex items-center gap-2 cursor-pointer text-xs">
               <input
                 type="checkbox"
@@ -969,7 +969,7 @@ function MainChip({
 
         {/* Reaction trigger toggle (Bloodsoaked Ruins, Lumidouce Elegy, etc.) */}
         {reactionEligible && (
-          <div className="border-t border-border/30 pt-2">
+          <div className="border-t border-foreground/25 pt-2">
             <label className="flex items-start gap-2 cursor-pointer text-xs">
               <input
                 type="checkbox"
@@ -1003,7 +1003,7 @@ function MainChip({
         {/* Electro Resonance trigger — offered whenever the party qualifies,
             with no weapon requirement. Engine enforces the 5s ICD. */}
         {resonanceEligible && (
-          <div className="border-t border-border/30 pt-2">
+          <div className="border-t border-foreground/25 pt-2">
             <label className="flex items-start gap-2 cursor-pointer text-xs">
               <input
                 type="checkbox"
@@ -1029,7 +1029,7 @@ function MainChip({
 
         {/* Attach periodic proc from another team member */}
         {periodicSourceCandidates.length > 0 && (
-          <div className="border-t border-border/30 pt-2 space-y-1">
+          <div className="border-t border-foreground/25 pt-2 space-y-1">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
               {t.ui("erCalc.attachPeriodic")}
             </div>
@@ -1043,7 +1043,7 @@ function MainChip({
                     key={`${s.charId}-${trigger}`}
                     type="button"
                     onClick={() => onAddProc(s.charId, trigger)}
-                    className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-border/30 hover:bg-accent"
+                    className="flex items-center gap-1 px-1.5 py-0.5 rounded-[4px] border border-foreground/25 hover:bg-accent"
                   >
                     <CharAvatar charId={s.charId} size={14} />
                     <span className="text-xs">{trigger}</span>
@@ -1060,7 +1060,7 @@ function MainChip({
             onRemove();
             setOpen(false);
           }}
-          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center gap-1.5 pt-1 border-t border-border/30"
+          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center gap-1.5 pt-1 border-t border-foreground/25"
         >
           <Trash2 className="w-3 h-3" />
           {t.ui("erCalc.remove")}
@@ -1122,7 +1122,7 @@ function PeriodicChip({
             <div className="text-xs text-muted-foreground">{actionLabel}</div>
           </div>
         </div>
-        <div className="text-xs space-y-1 border-t border-border/30 pt-2">
+        <div className="text-xs space-y-1 border-t border-foreground/25 pt-2">
           <div className="flex justify-between">
             <span className="text-muted-foreground">
               {t.ui("erCalc.perProcLabel")}
@@ -1141,7 +1141,7 @@ function PeriodicChip({
             onRemove();
             setOpen(false);
           }}
-          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center gap-1.5 pt-1 border-t border-border/30"
+          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center gap-1.5 pt-1 border-t border-foreground/25"
         >
           <Trash2 className="w-3 h-3" />
           {t.ui("erCalc.remove")}
@@ -1236,7 +1236,7 @@ function GrantChip({
         <div className="text-xs text-foreground/80">
           {t.ui("erCalc.grantDesc")}
         </div>
-        <div className="space-y-1.5 border-t border-border/40 pt-2">
+        <div className="space-y-1.5 border-t border-foreground/25 pt-2">
           <div className="grid grid-cols-[1fr_auto_auto] gap-x-1.5 gap-y-0.5 items-center text-[10px] md:text-xs text-foreground/60">
             <span />
             <span className="text-center w-14">{t.ui("erCalc.grantFlat")}</span>
@@ -1263,7 +1263,7 @@ function GrantChip({
                         Number.parseFloat(e.target.value) || 0
                       )
                     }
-                    className="w-14 rounded-[4px] border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
+                    className="w-14 rounded-[4px] border border-foreground/25 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
                     placeholder="0"
                     title={t.ui("erCalc.grantFlatTitle")}
                   />
@@ -1279,7 +1279,7 @@ function GrantChip({
                         Number.parseFloat(e.target.value) || 0
                       )
                     }
-                    className="w-12 rounded-[4px] border border-border/40 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
+                    className="w-12 rounded-[4px] border border-foreground/25 bg-background/60 px-1 py-0.5 text-right tabular-nums text-xs"
                     placeholder="%"
                     title={t.ui("erCalc.grantPercentTitle")}
                   />
@@ -1294,7 +1294,7 @@ function GrantChip({
             onRemove();
             setOpen(false);
           }}
-          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center justify-center gap-1.5 pt-1 border-t border-border/30"
+          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center justify-center gap-1.5 pt-1 border-t border-foreground/25"
         >
           <Trash2 className="w-3 h-3" />
           {t.ui("erCalc.remove")}
@@ -1378,7 +1378,7 @@ function EnemyOrbChip({
         <div className="text-xs text-foreground/80">
           {t.ui("erCalc.enemyOrbDesc")}
         </div>
-        <div className="flex items-center gap-2 border-t border-border/40 pt-2 text-xs md:text-sm">
+        <div className="flex items-center gap-2 border-t border-foreground/25 pt-2 text-xs md:text-sm">
           <span className="flex-1">{t.ui("erCalc.enemyOrbCount")}</span>
           <input
             type="number"
@@ -1386,11 +1386,11 @@ function EnemyOrbChip({
             step={1}
             value={orbCount || ""}
             onChange={(e) => setCount(Number.parseFloat(e.target.value) || 0)}
-            className="w-16 rounded-[4px] border border-border/40 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
+            className="w-16 rounded-[4px] border border-foreground/25 bg-background/60 px-1.5 py-0.5 text-right tabular-nums"
             placeholder="0"
           />
         </div>
-        <div className="flex items-center gap-2 border-t border-border/40 pt-2 text-xs md:text-sm">
+        <div className="flex items-center gap-2 border-t border-foreground/25 pt-2 text-xs md:text-sm">
           <span className="flex-1">{t.ui("erCalc.enemyOrbElement")}</span>
           <Select
             value={orbElement}
@@ -1416,7 +1416,7 @@ function EnemyOrbChip({
             onRemove();
             setOpen(false);
           }}
-          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center justify-center gap-1.5 pt-1 border-t border-border/30"
+          className="w-full text-xs text-destructive hover:text-destructive/80 flex items-center justify-center gap-1.5 pt-1 border-t border-foreground/25"
         >
           <Trash2 className="w-3 h-3" />
           {t.ui("erCalc.remove")}

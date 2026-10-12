@@ -215,7 +215,7 @@ export function ArtifactSwapDialog({
                   : "hover:bg-white/5",
                 isSelected
                   ? "border-primary bg-primary/10 shadow-xs"
-                  : !isFrozen && "border-border/20 bg-black/10"
+                  : !isFrozen && "border-foreground/25 bg-background/25"
               )}
             >
               <ItemIcon

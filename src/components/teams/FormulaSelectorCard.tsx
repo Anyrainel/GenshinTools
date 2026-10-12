@@ -208,7 +208,7 @@ export function FormulaSelectorCard({
         </OptionButtonCell>
       </OptionButtonRow>
       {!isSingle && (
-        <div className="flex items-center justify-between px-2 2xl:px-4 pt-0.5 pb-1.5 border-b border-border/40">
+        <div className="flex items-center justify-between px-2 2xl:px-4 pt-0.5 pb-1.5 border-b border-foreground/25">
           <p className="text-xs text-foreground/80 italic">
             {t.ui("teamComp.comboDisclaimer")}
           </p>
@@ -216,7 +216,7 @@ export function FormulaSelectorCard({
             <button
               type="button"
               onClick={onResetCombo}
-              className="flex items-center gap-1 text-xs font-semibold text-foreground/80 bg-secondary hover:bg-secondary/80 px-2 py-1 rounded-md border border-border/50 transition-colors shrink-0 ml-2"
+              className="flex items-center gap-1 text-xs font-semibold text-foreground/80 bg-secondary hover:bg-secondary/80 px-2 py-1 rounded-md border border-foreground/25 transition-colors shrink-0 ml-2"
             >
               <RotateCcw className="w-3 h-3" />
               <span>{t.ui("common.reset")}</span>
@@ -311,10 +311,10 @@ export function FormulaSelectorCard({
                                   className={cn(
                                     "flex items-center gap-2 px-2 py-1 rounded-lg border-2 transition-colors font-bold text-xs md:text-sm lg:text-xs xl:text-sm",
                                     isLocked
-                                      ? "opacity-40 cursor-not-allowed bg-secondary text-muted-foreground border-border/40"
+                                      ? "opacity-40 cursor-not-allowed bg-secondary text-muted-foreground border-foreground/25"
                                       : isSingleSelected
                                         ? "bg-primary/15 text-foreground border-primary/40"
-                                        : "bg-secondary text-foreground hover:bg-secondary/80 border-border/40"
+                                        : "bg-secondary text-foreground hover:bg-secondary/80 border-foreground/25"
                                   )}
                                   onClick={() => {
                                     if (isLocked) return;
@@ -378,7 +378,7 @@ export function FormulaSelectorCard({
                                             "px-1.5 py-0.5 rounded-[4px] text-[10px] md:text-xs font-semibold border transition-colors",
                                             isRxActive
                                               ? "bg-primary/20 border-primary/40 text-primary"
-                                              : "bg-secondary/40 border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
+                                              : "bg-secondary/40 border-foreground/25 text-muted-foreground hover:text-foreground hover:border-border"
                                           )}
                                           onClick={() =>
                                             onSelectSingleFormula?.(
@@ -753,7 +753,7 @@ export function FormulaSelectorCard({
                     {!isSingle && onToggleIgnoreChar && (
                       <label
                         htmlFor={`${ignoreControlId}-${cid}`}
-                        className="mt-auto flex items-center justify-center gap-1.5 px-2 py-1 cursor-pointer border-t border-border/30 bg-black/10"
+                        className="mt-auto flex items-center justify-center gap-1.5 px-2 py-1 cursor-pointer border-t border-foreground/25 bg-black/10"
                       >
                         <Checkbox
                           id={`${ignoreControlId}-${cid}`}
@@ -823,7 +823,7 @@ export function FormulaSelectorCard({
                                           "px-2 py-0.5 rounded-lg border-2 text-[10px] md:text-xs xl:text-sm font-semibold transition-colors",
                                           isActive
                                             ? "bg-primary/15 border-primary/40 text-foreground/80"
-                                            : "bg-secondary border-border/40 text-foreground/80 hover:bg-secondary/80"
+                                            : "bg-secondary border-foreground/25 text-foreground/80 hover:bg-secondary/80"
                                         )}
                                         onClick={() =>
                                           onSelectSingleFormula?.(

@@ -164,7 +164,7 @@ export const TeamCard = memo(
     );
 
     const multiSelectTriggerClass = cn(
-      "border-border/40 bg-foreground/5 rounded-full h-auto w-auto",
+      "border-foreground/25 bg-foreground/5 rounded-full h-auto w-auto",
       "min-w-[6rem] xl:min-w-[7rem] pl-1.5 xl:pl-2 pr-1 py-0.5 xl:py-1 text-xs xl:text-sm [&>svg]:h-3 [&>svg]:w-3"
     );
 
@@ -172,14 +172,13 @@ export const TeamCard = memo(
       <Card
         data-tour-step-id="tc-team-card"
         className={cn(
-          "bg-card/40 backdrop-blur-md rounded-xl border border-border/30",
-          "hover:border-border/60",
+          "bg-gradient-card rounded-xl border border-foreground/25",
+          "hover:border-primary",
           "group w-fit mx-auto shadow-none",
-          isFullyFrozen &&
-            "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]",
+          isFullyFrozen && "ring-1 ring-primary border-primary",
           isFrozen &&
             !isFullyFrozen &&
-            "ring-1 ring-cyan-400/15 border-cyan-400/10"
+            "ring-1 ring-primary/50 border-primary/50"
         )}
       >
         {/* Header: Index + Reaction tags + Name + Context menu */}
@@ -222,7 +221,7 @@ export const TeamCard = memo(
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 xl:h-7 xl:w-7 p-0 opacity-60"
+                className="h-6 w-6 xl:h-7 xl:w-7 p-0 text-foreground/80"
               >
                 <MoreVertical className="h-3.5 w-3.5 xl:h-4 xl:w-4" />
               </Button>
@@ -497,7 +496,7 @@ export const TeamCard = memo(
           {isFrozen && onUnfreeze && (
             <Button
               variant="outline"
-              className="flex-1 font-semibold h-8 xl:h-9 gap-1.5 xl:gap-2 text-xs xl:text-sm shadow-md border-red-400/40 bg-red-500/10 text-red-300 ring-2 ring-red-400/20 hover:bg-red-500/15! hover:text-red-200! hover:ring-red-400/40"
+              className="flex-1 h-8 gap-1.5 border-destructive/50 text-xs font-semibold text-destructive hover:bg-destructive/10 hover:text-destructive xl:h-9 xl:text-sm"
               onClick={onUnfreeze}
             >
               <Flame className="w-3.5 h-3.5 xl:w-4 xl:h-4" />

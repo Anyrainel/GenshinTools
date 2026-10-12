@@ -1340,14 +1340,14 @@ export function AnalysisWorkspace({
             <ArrowLeft className="w-4 h-4 mr-1" />
             {t.ui("teamComp.switchTeam")}
           </Button>
-          <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-linear-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
+          <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight truncate flex-1">
             {teamComp.name || t.ui("teamComp.teamOptimization")}
             <span
               className="inline-block ml-1.5 align-baseline cursor-pointer"
               onClick={() => setLimitOpen(true)}
               title={t.ui("calcLimitations.title")}
             >
-              <Info className="w-5 h-5 text-primary" />
+              <Info className="w-5 h-5 text-foreground/70" />
             </span>
           </h2>
         </div>
@@ -1416,42 +1416,45 @@ export function AnalysisWorkspace({
         />
 
         <Tabs
-          className="mt-3 gap-1"
+          className="mt-4 gap-3 [container-type:inline-size] [container-name:analysis-modes]"
           value={mode}
           onValueChange={(value) => onModeChange(value as AnalysisMode)}
         >
-          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 group-data-[orientation=horizontal]/tabs:h-auto border border-border bg-background/40 min-[420px]:grid-cols-5 [&_[data-slot=tabs-trigger][data-state=active]]:border-primary [&_[data-slot=tabs-trigger][data-state=active]]:bg-primary [&_[data-slot=tabs-trigger][data-state=active]]:text-primary-foreground">
+          <TabsList
+            aria-label={t.ui("teamComp.tabAnalysis")}
+            className="grid h-auto w-full grid-cols-3 gap-1.5 rounded-xl border border-primary/40 bg-gradient-select p-1.5 group-data-[orientation=horizontal]/tabs:h-auto [@container_analysis-modes_(min-width:36rem)]:grid-cols-5 [&_[data-slot=tabs-trigger]]:border-primary/30 [&_[data-slot=tabs-trigger]]:bg-primary/10 [&_[data-slot=tabs-trigger]]:text-foreground [&_[data-slot=tabs-trigger]:hover]:bg-primary/20 [&_[data-slot=tabs-trigger][data-state=active]]:border-primary [&_[data-slot=tabs-trigger][data-state=active]]:bg-primary [&_[data-slot=tabs-trigger][data-state=active]]:text-primary-foreground"
+          >
             <TabsTrigger
               value="artifacts"
-              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-2 text-xs [@container_analysis-modes_(min-width:36rem)]:flex-row [@container_analysis-modes_(min-width:36rem)]:text-sm"
             >
               <Gem className="h-4 w-4 shrink-0" />
               {t.ui("accountData.artifacts")}
             </TabsTrigger>
             <TabsTrigger
               value="builds"
-              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-2 text-xs [@container_analysis-modes_(min-width:36rem)]:flex-row [@container_analysis-modes_(min-width:36rem)]:text-sm"
             >
               <Sword className="h-4 w-4 shrink-0" />
               {t.ui("app.navArtifactFilter")}
             </TabsTrigger>
             <TabsTrigger
               value="investment"
-              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-2 text-xs [@container_analysis-modes_(min-width:36rem)]:flex-row [@container_analysis-modes_(min-width:36rem)]:text-sm"
             >
               <TrendingUp className="h-4 w-4 shrink-0" />
               {t.ui("teamComp.modeInvestment")}
             </TabsTrigger>
             <TabsTrigger
               value="characters"
-              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-2 text-xs [@container_analysis-modes_(min-width:36rem)]:flex-row [@container_analysis-modes_(min-width:36rem)]:text-sm"
             >
               <Users className="h-4 w-4 shrink-0" />
               {t.ui("accountData.characters")}
             </TabsTrigger>
             <TabsTrigger
               value="energy"
-              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-h-11 min-w-0 flex-col gap-1 whitespace-normal px-2 text-xs [@container_analysis-modes_(min-width:36rem)]:flex-row [@container_analysis-modes_(min-width:36rem)]:text-sm"
             >
               <Zap className="h-4 w-4 shrink-0" />
               {t.ui("teamComp.modeEnergy")}
