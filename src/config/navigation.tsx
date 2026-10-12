@@ -48,7 +48,6 @@ export interface TabConfig {
 }
 
 export const getNavigationConfig = (t: I18n): NavItem[] => [
-  { label: t.ui("accountSystem.feedback"), href: "/feedback" },
   {
     label: t.ui("app.navAccountData"),
     href: "/account-data",

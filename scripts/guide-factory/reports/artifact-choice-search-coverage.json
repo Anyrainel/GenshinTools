@@ -3,11 +3,11 @@
   "generatedFrom": [
     {
       "path": "scripts/guide-factory/data/knowledge/repository.json",
-      "sha256": "628e21e5034c9711564095316f896758d4ccf2881abfa326af8629028bc59c1d"
+      "sha256": "06fcd2258390487a7843fba36d0a5c6f64b5c60c7e79cedaf1ef776d5e068625"
     },
     {
       "path": "scripts/guide-factory/src/artifactChoiceSearchCoverage.ts",
-      "sha256": "a713a715e510202f2e3c2a95f590245953fcf6268f17fe27bdfe8d44cc8a84ac"
+      "sha256": "196a5ca18ec165f392e9d47eee7fb936fa7e15d44e01755edd29d434daf91f45"
     },
     {
       "path": "scripts/guide-factory/src/schemas.ts",
@@ -18,36 +18,36 @@
       "sha256": "6788b1a0fa08e390ecc07a687691778716e679b5bb4494b1340523081cfcb58c"
     },
     {
-      "path": "src/data/betaState.ts",
-      "sha256": "b90184db728c9d6f7b95dbb49efa08abc47ee6259dd9dbb9dc68c966317f90ce"
+      "path": "src/config/gameConstants.ts",
+      "sha256": "432240461c5d88c19b8f55d924cbd480f0594b701eb98dc2f08b0d83e90dd72d"
     },
     {
-      "path": "src/data/constants.ts",
-      "sha256": "3e076788dfac5447d5d59456dc23d47c8d7fe5827795264b2d1dc20bde532c08"
+      "path": "src/domain/combat/analyzer/weaponChoice.ts",
+      "sha256": "a2cfa449d980984b734d9ce7b732eac85f62ed087b9abc7bb559bda767bc7d11"
     },
     {
-      "path": "src/data/enums.ts",
+      "path": "src/domain/enums.ts",
       "sha256": "50ba2322815509b90e3a45a8e2c35889d73385279e38955afc75fab4cac8070a"
     },
     {
-      "path": "src/data/gameResources.ts",
-      "sha256": "8cedb648026bd0b2684a61fc5658e724fc67b9016d1bc3909c625421ed1648eb"
+      "path": "src/domain/models.ts",
+      "sha256": "ad37d0498bd19ae56508c39a820048dba224d99572439124f7182f312dd8482a"
     },
     {
-      "path": "src/data/resources_beta.ts",
-      "sha256": "2f53ee6265fa2dc8367d6b5071e0deef95f080b0f34830403f795413fadcab21"
+      "path": "src/domain/reference/catalog.ts",
+      "sha256": "ffaaa71669580a7972dfda2f7a431a4b0885c36ac03220ff42a242112ebe3308"
     },
     {
-      "path": "src/data/resources.ts",
-      "sha256": "f8ab11b08762d1eb9e9bba2f8fb9b3f48ceaab34889b08294045c005de1798bd"
+      "path": "src/generated/catalog/resources_beta.ts",
+      "sha256": "beaa526631c00e6d796b87e1cceae358abeee1a3ced078a4002e524b932b2d60"
     },
     {
-      "path": "src/data/types.ts",
-      "sha256": "bdd204ea6ca5d18a3541de9667993a868c089da066bcc4deaa72af3426ac3e81"
+      "path": "src/generated/catalog/resources.ts",
+      "sha256": "7a6c531254b0943d430c72ac51ad52c49657715dcd3d9ee14ccdfd506ccb191a"
     },
     {
-      "path": "src/lib/team-comp/analyzer/weaponChoice.ts",
-      "sha256": "297995b86d74d30422dcbc8948acd13a19401ff7c872435ccb28dd84aaac95f4"
+      "path": "src/stores/betaState.ts",
+      "sha256": "68af501983f02b9db6700c494147ae0765c2c0daf1d243ae19bfe9f7f690994e"
     }
   ],
   "limitations": [
@@ -78,7 +78,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "aino"
           },
           "sourceId": "genshintools-presets",
@@ -109,7 +109,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "aino"
           },
           "sourceId": "genshintools-presets",
@@ -139,7 +139,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "albedo"
           },
           "sourceId": "genshintools-presets",
@@ -169,7 +169,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "albedo"
           },
           "sourceId": "genshintools-presets",
@@ -199,7 +199,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "alhaitham"
           },
           "sourceId": "genshintools-presets",
@@ -217,7 +217,7 @@
         "type": "4pc"
       },
       "characterId": "alyosha",
-      "observationId": "genshintools-presets:character-guide:alyosha:build:KIGz2-m",
+      "observationId": "genshintools-presets:character-guide:alyosha:build:K8yw4km",
       "outcome": "enumerated-initially",
       "recordId": "genshintools-presets:character-guide:alyosha",
       "recordStatus": "baseline",
@@ -226,11 +226,11 @@
         "sustain"
       ],
       "sourceKind": "guide-build",
-      "sourceRecordId": "KIGz2-m",
+      "sourceRecordId": "K8yw4km",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "alyosha"
           },
           "sourceId": "genshintools-presets",
@@ -260,7 +260,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "amber"
           },
           "sourceId": "genshintools-presets",
@@ -290,7 +290,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "arataki_itto"
           },
           "sourceId": "genshintools-presets",
@@ -320,7 +320,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "arlecchino"
           },
           "sourceId": "genshintools-presets",
@@ -353,7 +353,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "baizhu"
           },
           "sourceId": "genshintools-presets",
@@ -383,7 +383,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "baizhu"
           },
           "sourceId": "genshintools-presets",
@@ -413,7 +413,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "baizhu"
           },
           "sourceId": "genshintools-presets",
@@ -443,7 +443,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "barbara"
           },
           "sourceId": "genshintools-presets",
@@ -474,7 +474,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "beidou"
           },
           "sourceId": "genshintools-presets",
@@ -504,7 +504,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "bennett"
           },
           "sourceId": "genshintools-presets",
@@ -537,7 +537,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "candace"
           },
           "sourceId": "genshintools-presets",
@@ -567,7 +567,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "candace"
           },
           "sourceId": "genshintools-presets",
@@ -601,7 +601,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "charlotte"
           },
           "sourceId": "genshintools-presets",
@@ -632,7 +632,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chasca"
           },
           "sourceId": "genshintools-presets",
@@ -662,7 +662,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chasca"
           },
           "sourceId": "genshintools-presets",
@@ -692,7 +692,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chevreuse"
           },
           "sourceId": "genshintools-presets",
@@ -722,7 +722,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chevreuse"
           },
           "sourceId": "genshintools-presets",
@@ -753,7 +753,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chiori"
           },
           "sourceId": "genshintools-presets",
@@ -784,7 +784,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chiori"
           },
           "sourceId": "genshintools-presets",
@@ -814,7 +814,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "chongyun"
           },
           "sourceId": "genshintools-presets",
@@ -846,7 +846,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "citlali"
           },
           "sourceId": "genshintools-presets",
@@ -877,7 +877,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "citlali"
           },
           "sourceId": "genshintools-presets",
@@ -909,7 +909,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "citlali"
           },
           "sourceId": "genshintools-presets",
@@ -939,7 +939,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "clorinde"
           },
           "sourceId": "genshintools-presets",
@@ -969,7 +969,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "collei"
           },
           "sourceId": "genshintools-presets",
@@ -1000,7 +1000,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "columbina"
           },
           "sourceId": "genshintools-presets",
@@ -1030,7 +1030,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "columbina"
           },
           "sourceId": "genshintools-presets",
@@ -1060,7 +1060,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "cyno"
           },
           "sourceId": "genshintools-presets",
@@ -1090,7 +1090,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "cyno"
           },
           "sourceId": "genshintools-presets",
@@ -1120,7 +1120,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "dahlia"
           },
           "sourceId": "genshintools-presets",
@@ -1150,7 +1150,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "dehya"
           },
           "sourceId": "genshintools-presets",
@@ -1181,7 +1181,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "dehya"
           },
           "sourceId": "genshintools-presets",
@@ -1212,7 +1212,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "dehya"
           },
           "sourceId": "genshintools-presets",
@@ -1242,7 +1242,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "diluc"
           },
           "sourceId": "genshintools-presets",
@@ -1273,7 +1273,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "diona"
           },
           "sourceId": "genshintools-presets",
@@ -1303,7 +1303,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "dori"
           },
           "sourceId": "genshintools-presets",
@@ -1333,7 +1333,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "durin"
           },
           "sourceId": "genshintools-presets",
@@ -1363,7 +1363,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "durin"
           },
           "sourceId": "genshintools-presets",
@@ -1393,7 +1393,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "emilie"
           },
           "sourceId": "genshintools-presets",
@@ -1423,7 +1423,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "emilie"
           },
           "sourceId": "genshintools-presets",
@@ -1454,7 +1454,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "escoffier"
           },
           "sourceId": "genshintools-presets",
@@ -1484,7 +1484,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "escoffier"
           },
           "sourceId": "genshintools-presets",
@@ -1514,7 +1514,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "eula"
           },
           "sourceId": "genshintools-presets",
@@ -1545,7 +1545,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "faruzan"
           },
           "sourceId": "genshintools-presets",
@@ -1575,7 +1575,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "fischl"
           },
           "sourceId": "genshintools-presets",
@@ -1605,7 +1605,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "fischl"
           },
           "sourceId": "genshintools-presets",
@@ -1635,7 +1635,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "flins"
           },
           "sourceId": "genshintools-presets",
@@ -1670,7 +1670,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "freminet"
           },
           "sourceId": "genshintools-presets",
@@ -1701,7 +1701,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "freminet"
           },
           "sourceId": "genshintools-presets",
@@ -1734,7 +1734,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "furina"
           },
           "sourceId": "genshintools-presets",
@@ -1764,7 +1764,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "furina"
           },
           "sourceId": "genshintools-presets",
@@ -1795,7 +1795,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "furina"
           },
           "sourceId": "genshintools-presets",
@@ -1826,7 +1826,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "gaming"
           },
           "sourceId": "genshintools-presets",
@@ -1856,7 +1856,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ganyu"
           },
           "sourceId": "genshintools-presets",
@@ -1886,7 +1886,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ganyu"
           },
           "sourceId": "genshintools-presets",
@@ -1919,7 +1919,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ganyu"
           },
           "sourceId": "genshintools-presets",
@@ -1949,7 +1949,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "gorou"
           },
           "sourceId": "genshintools-presets",
@@ -1980,7 +1980,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "gorou"
           },
           "sourceId": "genshintools-presets",
@@ -2010,7 +2010,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "hu_tao"
           },
           "sourceId": "genshintools-presets",
@@ -2040,7 +2040,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "iansan"
           },
           "sourceId": "genshintools-presets",
@@ -2070,7 +2070,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ifa"
           },
           "sourceId": "genshintools-presets",
@@ -2101,7 +2101,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "illuga"
           },
           "sourceId": "genshintools-presets",
@@ -2134,7 +2134,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "illuga"
           },
           "sourceId": "genshintools-presets",
@@ -2165,7 +2165,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ineffa"
           },
           "sourceId": "genshintools-presets",
@@ -2196,7 +2196,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ineffa"
           },
           "sourceId": "genshintools-presets",
@@ -2227,7 +2227,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ineffa"
           },
           "sourceId": "genshintools-presets",
@@ -2258,7 +2258,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ineffa"
           },
           "sourceId": "genshintools-presets",
@@ -2289,7 +2289,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "jahoda"
           },
           "sourceId": "genshintools-presets",
@@ -2320,7 +2320,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "jahoda"
           },
           "sourceId": "genshintools-presets",
@@ -2351,7 +2351,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "jean"
           },
           "sourceId": "genshintools-presets",
@@ -2381,7 +2381,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kachina"
           },
           "sourceId": "genshintools-presets",
@@ -2411,7 +2411,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kaedehara_kazuha"
           },
           "sourceId": "genshintools-presets",
@@ -2441,7 +2441,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kaeya"
           },
           "sourceId": "genshintools-presets",
@@ -2471,7 +2471,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kamisato_ayaka"
           },
           "sourceId": "genshintools-presets",
@@ -2501,7 +2501,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kamisato_ayaka"
           },
           "sourceId": "genshintools-presets",
@@ -2531,7 +2531,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kamisato_ayato"
           },
           "sourceId": "genshintools-presets",
@@ -2561,7 +2561,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kaveh"
           },
           "sourceId": "genshintools-presets",
@@ -2591,7 +2591,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "keqing"
           },
           "sourceId": "genshintools-presets",
@@ -2621,7 +2621,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kinich"
           },
           "sourceId": "genshintools-presets",
@@ -2654,7 +2654,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kirara"
           },
           "sourceId": "genshintools-presets",
@@ -2685,7 +2685,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kirara"
           },
           "sourceId": "genshintools-presets",
@@ -2716,7 +2716,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "klee"
           },
           "sourceId": "genshintools-presets",
@@ -2748,7 +2748,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "klee"
           },
           "sourceId": "genshintools-presets",
@@ -2778,7 +2778,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "klee"
           },
           "sourceId": "genshintools-presets",
@@ -2808,7 +2808,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kujou_sara"
           },
           "sourceId": "genshintools-presets",
@@ -2839,7 +2839,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "kuki_shinobu"
           },
           "sourceId": "genshintools-presets",
@@ -2870,7 +2870,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lan_yan"
           },
           "sourceId": "genshintools-presets",
@@ -2901,7 +2901,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lauma"
           },
           "sourceId": "genshintools-presets",
@@ -2931,7 +2931,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lauma"
           },
           "sourceId": "genshintools-presets",
@@ -2961,7 +2961,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lauma"
           },
           "sourceId": "genshintools-presets",
@@ -2992,7 +2992,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lauma"
           },
           "sourceId": "genshintools-presets",
@@ -3022,7 +3022,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "layla"
           },
           "sourceId": "genshintools-presets",
@@ -3055,7 +3055,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "linnea"
           },
           "sourceId": "genshintools-presets",
@@ -3087,7 +3087,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "linnea"
           },
           "sourceId": "genshintools-presets",
@@ -3117,7 +3117,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lisa"
           },
           "sourceId": "genshintools-presets",
@@ -3147,7 +3147,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lohen"
           },
           "sourceId": "genshintools-presets",
@@ -3177,7 +3177,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lynette"
           },
           "sourceId": "genshintools-presets",
@@ -3208,7 +3208,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lynette"
           },
           "sourceId": "genshintools-presets",
@@ -3238,7 +3238,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "lyney"
           },
           "sourceId": "genshintools-presets",
@@ -3268,7 +3268,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "mavuika"
           },
           "sourceId": "genshintools-presets",
@@ -3299,7 +3299,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "mavuika"
           },
           "sourceId": "genshintools-presets",
@@ -3330,7 +3330,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "mika"
           },
           "sourceId": "genshintools-presets",
@@ -3360,7 +3360,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "mona"
           },
           "sourceId": "genshintools-presets",
@@ -3390,7 +3390,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "mona"
           },
           "sourceId": "genshintools-presets",
@@ -3420,7 +3420,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "mualani"
           },
           "sourceId": "genshintools-presets",
@@ -3450,7 +3450,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "nahida"
           },
           "sourceId": "genshintools-presets",
@@ -3481,7 +3481,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "nahida"
           },
           "sourceId": "genshintools-presets",
@@ -3512,7 +3512,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "navia"
           },
           "sourceId": "genshintools-presets",
@@ -3543,7 +3543,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "nefer"
           },
           "sourceId": "genshintools-presets",
@@ -3573,7 +3573,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "neuvillette"
           },
           "sourceId": "genshintools-presets",
@@ -3604,7 +3604,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "nicole"
           },
           "sourceId": "genshintools-presets",
@@ -3637,7 +3637,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "nilou"
           },
           "sourceId": "genshintools-presets",
@@ -3668,7 +3668,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "nilou"
           },
           "sourceId": "genshintools-presets",
@@ -3699,7 +3699,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ningguang"
           },
           "sourceId": "genshintools-presets",
@@ -3729,7 +3729,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ningguang"
           },
           "sourceId": "genshintools-presets",
@@ -3759,7 +3759,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "noelle"
           },
           "sourceId": "genshintools-presets",
@@ -3790,7 +3790,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "noelle"
           },
           "sourceId": "genshintools-presets",
@@ -3808,39 +3808,8 @@
         "type": "4pc"
       },
       "characterId": "odette",
-      "observationId": "genshintools-presets:character-guide:odette:build:K8zATpO",
-      "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:character-guide:odette",
-      "recordStatus": "baseline",
-      "roles": [
-        "dps",
-        "support"
-      ],
-      "sourceKind": "guide-build",
-      "sourceRecordId": "K8zATpO",
-      "sourceRefs": [
-        {
-          "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
-            "recordId": "odette"
-          },
-          "sourceId": "genshintools-presets",
-          "sourceRecordId": "odette"
-        }
-      ],
-      "styles": [
-        "off-field"
-      ],
-      "visible": true
-    },
-    {
-      "artifact": {
-        "setId": "heart_of_the_furnace",
-        "type": "4pc"
-      },
-      "characterId": "odette",
       "minConstellation": 4,
-      "observationId": "genshintools-presets:character-guide:odette:build:K8zATve",
+      "observationId": "genshintools-presets:character-guide:odette:build:J_f7Vfe",
       "outcome": "enumerated-initially",
       "recordId": "genshintools-presets:character-guide:odette",
       "recordStatus": "baseline",
@@ -3849,11 +3818,11 @@
         "support"
       ],
       "sourceKind": "guide-build",
-      "sourceRecordId": "K8zATve",
+      "sourceRecordId": "J_f7Vfe",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "odette"
           },
           "sourceId": "genshintools-presets",
@@ -3864,6 +3833,37 @@
         "off-field"
       ],
       "visible": false
+    },
+    {
+      "artifact": {
+        "setId": "heart_of_the_furnace",
+        "type": "4pc"
+      },
+      "characterId": "odette",
+      "observationId": "genshintools-presets:character-guide:odette:build:J_f7VZO",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:character-guide:odette",
+      "recordStatus": "baseline",
+      "roles": [
+        "dps",
+        "support"
+      ],
+      "sourceKind": "guide-build",
+      "sourceRecordId": "J_f7VZO",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "recordId": "odette"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "odette"
+        }
+      ],
+      "styles": [
+        "off-field"
+      ],
+      "visible": true
     },
     {
       "artifact": {
@@ -3883,7 +3883,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "ororon"
           },
           "sourceId": "genshintools-presets",
@@ -3913,7 +3913,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "prune"
           },
           "sourceId": "genshintools-presets",
@@ -3943,7 +3943,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "prune"
           },
           "sourceId": "genshintools-presets",
@@ -3973,7 +3973,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "qiqi"
           },
           "sourceId": "genshintools-presets",
@@ -4004,7 +4004,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "qiqi"
           },
           "sourceId": "genshintools-presets",
@@ -4034,7 +4034,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "raiden_shogun"
           },
           "sourceId": "genshintools-presets",
@@ -4065,7 +4065,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "razor"
           },
           "sourceId": "genshintools-presets",
@@ -4095,7 +4095,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "rosaria"
           },
           "sourceId": "genshintools-presets",
@@ -4125,7 +4125,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "rosaria"
           },
           "sourceId": "genshintools-presets",
@@ -4143,7 +4143,7 @@
         "type": "4pc"
       },
       "characterId": "sandrone",
-      "observationId": "genshintools-presets:character-guide:sandrone:build:J_f6hou",
+      "observationId": "genshintools-presets:character-guide:sandrone:build:JsL3jYu",
       "outcome": "enumerated-initially",
       "recordId": "genshintools-presets:character-guide:sandrone",
       "recordStatus": "baseline",
@@ -4151,11 +4151,11 @@
         "dps"
       ],
       "sourceKind": "guide-build",
-      "sourceRecordId": "J_f6hou",
+      "sourceRecordId": "JsL3jYu",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sandrone"
           },
           "sourceId": "genshintools-presets",
@@ -4187,7 +4187,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sangonomiya_kokomi"
           },
           "sourceId": "genshintools-presets",
@@ -4218,7 +4218,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sangonomiya_kokomi"
           },
           "sourceId": "genshintools-presets",
@@ -4249,7 +4249,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sayu"
           },
           "sourceId": "genshintools-presets",
@@ -4279,7 +4279,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sethos"
           },
           "sourceId": "genshintools-presets",
@@ -4312,7 +4312,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "shenhe"
           },
           "sourceId": "genshintools-presets",
@@ -4342,7 +4342,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "shenhe"
           },
           "sourceId": "genshintools-presets",
@@ -4372,7 +4372,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "shikanoin_heizou"
           },
           "sourceId": "genshintools-presets",
@@ -4406,7 +4406,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sigewinne"
           },
           "sourceId": "genshintools-presets",
@@ -4437,7 +4437,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sigewinne"
           },
           "sourceId": "genshintools-presets",
@@ -4467,7 +4467,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "skirk"
           },
           "sourceId": "genshintools-presets",
@@ -4497,7 +4497,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "sucrose"
           },
           "sourceId": "genshintools-presets",
@@ -4529,7 +4529,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "tartaglia"
           },
           "sourceId": "genshintools-presets",
@@ -4559,7 +4559,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "tartaglia"
           },
           "sourceId": "genshintools-presets",
@@ -4592,7 +4592,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "thoma"
           },
           "sourceId": "genshintools-presets",
@@ -4623,7 +4623,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "thoma"
           },
           "sourceId": "genshintools-presets",
@@ -4653,7 +4653,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "tighnari"
           },
           "sourceId": "genshintools-presets",
@@ -4671,7 +4671,7 @@
         "type": "4pc"
       },
       "characterId": "traveler_cryo",
-      "observationId": "genshintools-presets:character-guide:traveler_cryo:build:JsL3jYu",
+      "observationId": "genshintools-presets:character-guide:traveler_cryo:build:KIHCeIu",
       "outcome": "enumerated-initially",
       "recordId": "genshintools-presets:character-guide:traveler_cryo",
       "recordStatus": "baseline",
@@ -4679,11 +4679,11 @@
         "dps"
       ],
       "sourceKind": "guide-build",
-      "sourceRecordId": "JsL3jYu",
+      "sourceRecordId": "KIHCeIu",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "traveler_cryo"
           },
           "sourceId": "genshintools-presets",
@@ -4713,7 +4713,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "traveler_dendro"
           },
           "sourceId": "genshintools-presets",
@@ -4743,7 +4743,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "traveler_pyro"
           },
           "sourceId": "genshintools-presets",
@@ -4773,7 +4773,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "varesa"
           },
           "sourceId": "genshintools-presets",
@@ -4803,7 +4803,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "varka"
           },
           "sourceId": "genshintools-presets",
@@ -4834,7 +4834,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "varka"
           },
           "sourceId": "genshintools-presets",
@@ -4864,7 +4864,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "venti"
           },
           "sourceId": "genshintools-presets",
@@ -4894,7 +4894,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "venti"
           },
           "sourceId": "genshintools-presets",
@@ -4903,6 +4903,67 @@
       ],
       "styles": [
         "on-field"
+      ],
+      "visible": true
+    },
+    {
+      "artifact": {
+        "setId": "scarlet_proof",
+        "type": "4pc"
+      },
+      "characterId": "vesna",
+      "observationId": "genshintools-presets:character-guide:vesna:build:KRbF-zO",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:character-guide:vesna",
+      "recordStatus": "baseline",
+      "roles": [
+        "dps"
+      ],
+      "sourceKind": "guide-build",
+      "sourceRecordId": "KRbF-zO",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "recordId": "vesna"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "vesna"
+        }
+      ],
+      "styles": [
+        "on-field"
+      ],
+      "visible": true
+    },
+    {
+      "artifact": {
+        "setId": "tenacity_of_the_millelith",
+        "type": "4pc"
+      },
+      "characterId": "vodyanitsa",
+      "observationId": "genshintools-presets:character-guide:vodyanitsa:build:Kau_ZmG",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:character-guide:vodyanitsa",
+      "recordStatus": "baseline",
+      "roles": [
+        "support",
+        "sustain"
+      ],
+      "sourceKind": "guide-build",
+      "sourceRecordId": "Kau_ZmG",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "recordId": "vodyanitsa"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "vodyanitsa"
+        }
+      ],
+      "styles": [
+        "off-field"
       ],
       "visible": true
     },
@@ -4924,7 +4985,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "wanderer"
           },
           "sourceId": "genshintools-presets",
@@ -4955,7 +5016,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "wanderer"
           },
           "sourceId": "genshintools-presets",
@@ -4985,7 +5046,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "wriothesley"
           },
           "sourceId": "genshintools-presets",
@@ -5015,7 +5076,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "wriothesley"
           },
           "sourceId": "genshintools-presets",
@@ -5045,7 +5106,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xiangling"
           },
           "sourceId": "genshintools-presets",
@@ -5076,7 +5137,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xianyun"
           },
           "sourceId": "genshintools-presets",
@@ -5110,7 +5171,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xianyun"
           },
           "sourceId": "genshintools-presets",
@@ -5140,7 +5201,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xiao"
           },
           "sourceId": "genshintools-presets",
@@ -5170,7 +5231,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xiao"
           },
           "sourceId": "genshintools-presets",
@@ -5202,7 +5263,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xilonen"
           },
           "sourceId": "genshintools-presets",
@@ -5233,7 +5294,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xilonen"
           },
           "sourceId": "genshintools-presets",
@@ -5264,7 +5325,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xilonen"
           },
           "sourceId": "genshintools-presets",
@@ -5294,7 +5355,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xingqiu"
           },
           "sourceId": "genshintools-presets",
@@ -5327,7 +5388,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "xinyan"
           },
           "sourceId": "genshintools-presets",
@@ -5357,7 +5418,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yae_miko"
           },
           "sourceId": "genshintools-presets",
@@ -5388,7 +5449,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yae_miko"
           },
           "sourceId": "genshintools-presets",
@@ -5419,7 +5480,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yae_miko"
           },
           "sourceId": "genshintools-presets",
@@ -5449,7 +5510,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yanfei"
           },
           "sourceId": "genshintools-presets",
@@ -5479,7 +5540,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yaoyao"
           },
           "sourceId": "genshintools-presets",
@@ -5514,7 +5575,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yelan"
           },
           "sourceId": "genshintools-presets",
@@ -5545,7 +5606,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yelan"
           },
           "sourceId": "genshintools-presets",
@@ -5575,7 +5636,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yoimiya"
           },
           "sourceId": "genshintools-presets",
@@ -5605,7 +5666,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yoimiya"
           },
           "sourceId": "genshintools-presets",
@@ -5635,7 +5696,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yumemizuki_mizuki"
           },
           "sourceId": "genshintools-presets",
@@ -5665,7 +5726,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yumemizuki_mizuki"
           },
           "sourceId": "genshintools-presets",
@@ -5698,7 +5759,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yun_jin"
           },
           "sourceId": "genshintools-presets",
@@ -5728,7 +5789,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yun_jin"
           },
           "sourceId": "genshintools-presets",
@@ -5758,7 +5819,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "yun_jin"
           },
           "sourceId": "genshintools-presets",
@@ -5789,7 +5850,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "zhongli"
           },
           "sourceId": "genshintools-presets",
@@ -5819,7 +5880,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
+            "file": "src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json",
             "recordId": "zibai"
           },
           "sourceId": "genshintools-presets",
@@ -5850,7 +5911,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "1ZC3ATIWeGrK1fWd0N"
           },
           "sourceId": "genshintools-presets",
@@ -5877,7 +5938,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "1ZC3ATIWeGrK1fWd0N"
           },
           "sourceId": "genshintools-presets",
@@ -5904,7 +5965,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "1ZC3ATIWeGrK1fWd0N"
           },
           "sourceId": "genshintools-presets",
@@ -5931,7 +5992,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "1ZC3ATIWeGrK1fWd0N"
           },
           "sourceId": "genshintools-presets",
@@ -5958,7 +6019,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "2ca0nx50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -5985,7 +6046,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "2ca0nx50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -6012,7 +6073,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "2ca0nx50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -6039,7 +6100,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "2ca0nx50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -6066,7 +6127,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3446aBl0rKQi1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -6093,7 +6154,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3446aBl0rKQi1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -6120,7 +6181,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3446aBl0rKQi1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -6147,7 +6208,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3446aBl0rKQi1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -6174,7 +6235,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3AG6YxT0jJgK51SlW5"
           },
           "sourceId": "genshintools-presets",
@@ -6201,7 +6262,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3AG6YxT0jJgK51SlW5"
           },
           "sourceId": "genshintools-presets",
@@ -6228,7 +6289,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3AG6YxT0jJgK51SlW5"
           },
           "sourceId": "genshintools-presets",
@@ -6255,7 +6316,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3AG6YxT0jJgK51SlW5"
           },
           "sourceId": "genshintools-presets",
@@ -6282,7 +6343,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3su3x3X0jNRe1W8gW5"
           },
           "sourceId": "genshintools-presets",
@@ -6309,7 +6370,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3su3x3X0jNRe1W8gW5"
           },
           "sourceId": "genshintools-presets",
@@ -6337,7 +6398,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3su3x3X0jNRe1W8gW5"
           },
           "sourceId": "genshintools-presets",
@@ -6364,7 +6425,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "3su3x3X0jNRe1W8gW5"
           },
           "sourceId": "genshintools-presets",
@@ -6391,7 +6452,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "5ja6aBl0rSDS1f-a04"
           },
           "sourceId": "genshintools-presets",
@@ -6418,7 +6479,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "5ja6aBl0rSDS1f-a04"
           },
           "sourceId": "genshintools-presets",
@@ -6445,7 +6506,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "5ja6aBl0rSDS1f-a04"
           },
           "sourceId": "genshintools-presets",
@@ -6472,7 +6533,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "5ja6aBl0rSDS1f-a04"
           },
           "sourceId": "genshintools-presets",
@@ -6499,7 +6560,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "6te0ITIWe72K1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -6526,7 +6587,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "6te0ITIWe72K1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -6553,7 +6614,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "6te0ITIWe72K1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -6580,7 +6641,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "6te0ITIWe72K1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -6607,7 +6668,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7sa0JFZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -6634,7 +6695,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7sa0JFZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -6661,7 +6722,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7sa0JFZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -6688,7 +6749,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7sa0JFZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -6715,7 +6776,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7ZO29x50XD8W4Ogc0O"
           },
           "sourceId": "genshintools-presets",
@@ -6742,7 +6803,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7ZO29x50XD8W4Ogc0O"
           },
           "sourceId": "genshintools-presets",
@@ -6769,7 +6830,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7ZO29x50XD8W4Ogc0O"
           },
           "sourceId": "genshintools-presets",
@@ -6796,7 +6857,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "7ZO29x50XD8W4Ogc0O"
           },
           "sourceId": "genshintools-presets",
@@ -6823,7 +6884,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2oxT0jJgK51CXWN"
           },
           "sourceId": "genshintools-presets",
@@ -6850,7 +6911,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2oxT0jJgK51CXWN"
           },
           "sourceId": "genshintools-presets",
@@ -6877,7 +6938,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2oxT0jJgK51CXWN"
           },
           "sourceId": "genshintools-presets",
@@ -6904,7 +6965,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2oxT0jJgK51CXWN"
           },
           "sourceId": "genshintools-presets",
@@ -6931,7 +6992,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2p3X0jJb451cfWN"
           },
           "sourceId": "genshintools-presets",
@@ -6958,7 +7019,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2p3X0jJb451cfWN"
           },
           "sourceId": "genshintools-presets",
@@ -6985,7 +7046,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2p3X0jJb451cfWN"
           },
           "sourceId": "genshintools-presets",
@@ -7012,7 +7073,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8IS2p3X0jJb451cfWN"
           },
           "sourceId": "genshintools-presets",
@@ -7039,7 +7100,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jBby6X8h0N"
           },
           "sourceId": "genshintools-presets",
@@ -7066,7 +7127,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jBby6X8h0N"
           },
           "sourceId": "genshintools-presets",
@@ -7093,7 +7154,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jBby6X8h0N"
           },
           "sourceId": "genshintools-presets",
@@ -7120,7 +7181,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jBby6X8h0N"
           },
           "sourceId": "genshintools-presets",
@@ -7147,7 +7208,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jJgK50AfWD"
           },
           "sourceId": "genshintools-presets",
@@ -7174,7 +7235,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jJgK50AfWD"
           },
           "sourceId": "genshintools-presets",
@@ -7201,7 +7262,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jJgK50AfWD"
           },
           "sourceId": "genshintools-presets",
@@ -7228,7 +7289,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "8ru0gxT0jJgK50AfWD"
           },
           "sourceId": "genshintools-presets",
@@ -7255,7 +7316,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "9ru0fSlW595O6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7282,7 +7343,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "9ru0fSlW595O6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7309,7 +7370,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "9ru0fSlW595O6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7336,7 +7397,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "9ru0fSlW595O6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7363,7 +7424,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "AGO28gc0OCKu2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7390,7 +7451,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "AGO28gc0OCKu2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7417,7 +7478,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "AGO28gc0OCKu2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7444,7 +7505,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "AGO28gc0OCKu2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7471,7 +7532,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Bzm6YZLWg9Ta6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7498,7 +7559,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Bzm6YZLWg9Ta6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7525,7 +7586,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Bzm6YZLWg9Ta6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7552,7 +7613,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Bzm6YZLWg9Ta6eoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -7579,7 +7640,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2u6a0N5Km30orWD"
           },
           "sourceId": "genshintools-presets",
@@ -7606,7 +7667,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2u6a0N5Km30orWD"
           },
           "sourceId": "genshintools-presets",
@@ -7633,7 +7694,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2u6a0N5Km30orWD"
           },
           "sourceId": "genshintools-presets",
@@ -7660,7 +7721,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2u6a0N5Km30orWD"
           },
           "sourceId": "genshintools-presets",
@@ -7687,7 +7748,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2vYd0N9aC2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7714,7 +7775,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2vYd0N9aC2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7741,7 +7802,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2vYd0N9aC2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7768,7 +7829,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C4u2vYd0N9aC2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -7795,7 +7856,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C8O2y1jWpNRe5gSc04"
           },
           "sourceId": "genshintools-presets",
@@ -7822,7 +7883,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C8O2y1jWpNRe5gSc04"
           },
           "sourceId": "genshintools-presets",
@@ -7849,7 +7910,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C8O2y1jWpNRe5gSc04"
           },
           "sourceId": "genshintools-presets",
@@ -7876,7 +7937,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "C8O2y1jWpNRe5gSc04"
           },
           "sourceId": "genshintools-presets",
@@ -7903,7 +7964,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "CX03obKWOJgK51-fWO"
           },
           "sourceId": "genshintools-presets",
@@ -7930,7 +7991,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "CX03obKWOJgK51-fWO"
           },
           "sourceId": "genshintools-presets",
@@ -7957,7 +8018,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "CX03obKWOJgK51-fWO"
           },
           "sourceId": "genshintools-presets",
@@ -7984,7 +8045,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "CX03obKWOJgK51-fWO"
           },
           "sourceId": "genshintools-presets",
@@ -8011,7 +8072,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ddq4GEWWeBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8038,7 +8099,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ddq4GEWWeBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8065,7 +8126,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ddq4GEWWeBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8092,7 +8153,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ddq4GEWWeBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8122,7 +8183,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EeV6BPeWXFOe4GmZ0Z"
           },
           "sourceId": "genshintools-presets",
@@ -8149,7 +8210,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EeV6BPeWXFOe4GmZ0Z"
           },
           "sourceId": "genshintools-presets",
@@ -8176,7 +8237,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EeV6BPeWXFOe4GmZ0Z"
           },
           "sourceId": "genshintools-presets",
@@ -8203,7 +8264,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EeV6BPeWXFOe4GmZ0Z"
           },
           "sourceId": "genshintools-presets",
@@ -8230,7 +8291,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EuO4ID80XFOe49AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8257,7 +8318,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EuO4ID80XFOe49AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8284,7 +8345,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EuO4ID80XFOe49AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8311,7 +8372,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "EuO4ID80XFOe49AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -8338,7 +8399,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "G8m4ZXhWqFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -8365,7 +8426,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "G8m4ZXhWqFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -8392,7 +8453,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "G8m4ZXhWqFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -8419,7 +8480,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "G8m4ZXhWqFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -8446,7 +8507,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Geq4Hx50XD8W4PCXWC"
           },
           "sourceId": "genshintools-presets",
@@ -8473,7 +8534,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Geq4Hx50XD8W4PCXWC"
           },
           "sourceId": "genshintools-presets",
@@ -8500,7 +8561,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Geq4Hx50XD8W4PCXWC"
           },
           "sourceId": "genshintools-presets",
@@ -8528,7 +8589,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Geq4Hx50XD8W4PCXWC"
           },
           "sourceId": "genshintools-presets",
@@ -8555,7 +8616,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "HOu49x50XD4m4PCW0N"
           },
           "sourceId": "genshintools-presets",
@@ -8582,7 +8643,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "HOu49x50XD4m4PCW0N"
           },
           "sourceId": "genshintools-presets",
@@ -8609,7 +8670,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "HOu49x50XD4m4PCW0N"
           },
           "sourceId": "genshintools-presets",
@@ -8636,7 +8697,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "HOu49x50XD4m4PCW0N"
           },
           "sourceId": "genshintools-presets",
@@ -8663,7 +8724,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IP84xXhWqKSO1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -8690,7 +8751,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IP84xXhWqKSO1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -8717,7 +8778,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IP84xXhWqKSO1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -8744,7 +8805,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IP84xXhWqKSO1fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -8771,7 +8832,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IZC0JFZ0DJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8798,7 +8859,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IZC0JFZ0DJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8825,7 +8886,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IZC0JFZ0DJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8852,7 +8913,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "IZC0JFZ0DJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8879,7 +8940,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4wxT0jJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8906,7 +8967,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4wxT0jJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8933,7 +8994,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4wxT0jJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8960,7 +9021,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4wxT0jJgK50uIWD"
           },
           "sourceId": "genshintools-presets",
@@ -8987,7 +9048,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4xXhWq72K1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9014,7 +9075,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4xXhWq72K1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9042,7 +9103,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4xXhWq72K1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9069,7 +9130,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JAG4xXhWq72K1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9096,7 +9157,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JgK5xXhWDOS85gbKyO"
           },
           "sourceId": "genshintools-presets",
@@ -9123,7 +9184,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JgK5xXhWDOS85gbKyO"
           },
           "sourceId": "genshintools-presets",
@@ -9150,7 +9211,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JgK5xXhWDOS85gbKyO"
           },
           "sourceId": "genshintools-presets",
@@ -9180,7 +9241,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JgK5xXhWDOS85gbKyO"
           },
           "sourceId": "genshintools-presets",
@@ -9207,7 +9268,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4wxT0jJgK50gc0O"
           },
           "sourceId": "genshintools-presets",
@@ -9234,7 +9295,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4wxT0jJgK50gc0O"
           },
           "sourceId": "genshintools-presets",
@@ -9261,7 +9322,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4wxT0jJgK50gc0O"
           },
           "sourceId": "genshintools-presets",
@@ -9288,7 +9349,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4wxT0jJgK50gc0O"
           },
           "sourceId": "genshintools-presets",
@@ -9315,7 +9376,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4x3X0jNRe0gTIWe"
           },
           "sourceId": "genshintools-presets",
@@ -9342,7 +9403,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4x3X0jNRe0gTIWe"
           },
           "sourceId": "genshintools-presets",
@@ -9369,7 +9430,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4x3X0jNRe0gTIWe"
           },
           "sourceId": "genshintools-presets",
@@ -9396,7 +9457,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "JQC4x3X0jNRe0gTIWe"
           },
           "sourceId": "genshintools-presets",
@@ -9423,7 +9484,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5AxT0jJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9450,7 +9511,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5AxT0jJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9477,7 +9538,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5AxT0jJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9504,7 +9565,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5AxT0jJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9531,7 +9592,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5C1jWoNRe5gTIW4"
           },
           "sourceId": "genshintools-presets",
@@ -9558,7 +9619,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5C1jWoNRe5gTIW4"
           },
           "sourceId": "genshintools-presets",
@@ -9585,7 +9646,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5C1jWoNRe5gTIW4"
           },
           "sourceId": "genshintools-presets",
@@ -9612,7 +9673,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KAS5C1jWoNRe5gTIW4"
           },
           "sourceId": "genshintools-presets",
@@ -9642,7 +9703,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KiNZ2Sc0eFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9669,7 +9730,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KiNZ2Sc0eFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9696,7 +9757,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KiNZ2Sc0eFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9723,7 +9784,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "KiNZ2Sc0eFrC0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -9750,7 +9811,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Kqy2obKWOJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9777,7 +9838,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Kqy2obKWOJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9804,7 +9865,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Kqy2obKWOJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9831,7 +9892,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Kqy2obKWOJgK50orWD"
           },
           "sourceId": "genshintools-presets",
@@ -9858,7 +9919,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LAe0gxT0jJam50AfW5"
           },
           "sourceId": "genshintools-presets",
@@ -9885,7 +9946,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LAe0gxT0jJam50AfW5"
           },
           "sourceId": "genshintools-presets",
@@ -9912,7 +9973,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LAe0gxT0jJam50AfW5"
           },
           "sourceId": "genshintools-presets",
@@ -9939,7 +10000,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LAe0gxT0jJam50AfW5"
           },
           "sourceId": "genshintools-presets",
@@ -9966,7 +10027,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5Px50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -9993,7 +10054,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5Px50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10020,7 +10081,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5Px50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10047,7 +10108,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5Px50X5Km31AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10074,7 +10135,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5RXhWDKQi5fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -10101,7 +10162,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5RXhWDKQi5fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -10128,7 +10189,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5RXhWDKQi5fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -10155,7 +10216,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5RXhWDKQi5fAa04"
           },
           "sourceId": "genshintools-presets",
@@ -10182,7 +10243,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5S1jWpQya6IxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -10209,7 +10270,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5S1jWpQya6IxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -10236,7 +10297,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5S1jWpQya6IxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -10263,7 +10324,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Lgu5S1jWpQya6IxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -10290,7 +10351,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QT3W4Cte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10317,7 +10378,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QT3W4Cte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10344,7 +10405,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QT3W4Cte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10371,7 +10432,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QT3W4Cte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10398,7 +10459,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QxT0jCte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10425,7 +10486,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QxT0jCte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10452,7 +10513,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QxT0jCte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10479,7 +10540,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5QxT0jCte2uorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10506,7 +10567,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5R3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10533,7 +10594,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5R3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10561,7 +10622,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5R3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10588,7 +10649,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5R3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -10615,7 +10676,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5SBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -10642,7 +10703,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5SBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -10669,7 +10730,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5SBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -10696,7 +10757,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "LQm5SBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -10723,7 +10784,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "M7q2Px50XBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10750,7 +10811,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "M7q2Px50XBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10777,7 +10838,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "M7q2Px50XBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10804,7 +10865,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "M7q2Px50XBIS0XAC0e"
           },
           "sourceId": "genshintools-presets",
@@ -10831,7 +10892,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Mh45qBl0rSDS1gpO0i"
           },
           "sourceId": "genshintools-presets",
@@ -10858,7 +10919,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Mh45qBl0rSDS1gpO0i"
           },
           "sourceId": "genshintools-presets",
@@ -10885,7 +10946,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Mh45qBl0rSDS1gpO0i"
           },
           "sourceId": "genshintools-presets",
@@ -10912,7 +10973,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Mh45qBl0rSDS1gpO0i"
           },
           "sourceId": "genshintools-presets",
@@ -10939,7 +11000,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "NB85p3X0jOC45oxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -10966,7 +11027,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "NB85p3X0jOC45oxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -10993,7 +11054,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "NB85p3X0jOC45oxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -11021,7 +11082,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "NB85p3X0jOC45oxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -11048,7 +11109,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jJeS0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11075,7 +11136,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jJeS0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11102,7 +11163,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jJeS0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11129,7 +11190,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jJeS0WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11156,7 +11217,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jNRe1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11183,7 +11244,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jNRe1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11211,7 +11272,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jNRe1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11238,7 +11299,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05p3X0jNRe1WoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11265,7 +11326,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05qBl0rSDS6X8h0D"
           },
           "sourceId": "genshintools-presets",
@@ -11292,7 +11353,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05qBl0rSDS6X8h0D"
           },
           "sourceId": "genshintools-presets",
@@ -11319,7 +11380,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05qBl0rSDS6X8h0D"
           },
           "sourceId": "genshintools-presets",
@@ -11346,7 +11407,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Ny05qBl0rSDS6X8h0D"
           },
           "sourceId": "genshintools-presets",
@@ -11373,7 +11434,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1Wgc0O"
           },
           "sourceId": "genshintools-presets",
@@ -11400,7 +11461,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1Wgc0O"
           },
           "sourceId": "genshintools-presets",
@@ -11428,7 +11489,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1Wgc0O"
           },
           "sourceId": "genshintools-presets",
@@ -11455,7 +11516,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1Wgc0O"
           },
           "sourceId": "genshintools-presets",
@@ -11482,7 +11543,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -11509,7 +11570,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -11537,7 +11598,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -11564,7 +11625,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45p3X0jNRe1WorWD"
           },
           "sourceId": "genshintools-presets",
@@ -11591,7 +11652,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45qBl0rOS85gxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -11618,7 +11679,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45qBl0rOS85gxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -11645,7 +11706,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45qBl0rOS85gxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -11673,7 +11734,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "OC45qBl0rOS85gxT0C"
           },
           "sourceId": "genshintools-presets",
@@ -11691,20 +11752,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD:member:0:selected-artifact",
+      "observationId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD:member:0:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD",
+      "recordId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "PCC6yLrWuFte0XMYWD",
+      "sourceRecordId": "PCC6yJmWuFte0XMYWD",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "PCC6yLrWuFte0XMYWD"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "PCC6yJmWuFte0XMYWD"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "PCC6yLrWuFte0XMYWD"
+          "sourceRecordId": "PCC6yJmWuFte0XMYWD"
         }
       ]
     },
@@ -11718,20 +11779,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD:member:1:selected-artifact",
+      "observationId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD:member:1:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD",
+      "recordId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "PCC6yLrWuFte0XMYWD",
+      "sourceRecordId": "PCC6yJmWuFte0XMYWD",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "PCC6yLrWuFte0XMYWD"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "PCC6yJmWuFte0XMYWD"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "PCC6yLrWuFte0XMYWD"
+          "sourceRecordId": "PCC6yJmWuFte0XMYWD"
         }
       ]
     },
@@ -11745,20 +11806,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD:member:2:selected-artifact",
+      "observationId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD:member:2:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD",
+      "recordId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "PCC6yLrWuFte0XMYWD",
+      "sourceRecordId": "PCC6yJmWuFte0XMYWD",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "PCC6yLrWuFte0XMYWD"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "PCC6yJmWuFte0XMYWD"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "PCC6yLrWuFte0XMYWD"
+          "sourceRecordId": "PCC6yJmWuFte0XMYWD"
         }
       ]
     },
@@ -11772,20 +11833,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD:member:3:selected-artifact",
+      "observationId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD:member:3:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:PCC6yLrWuFte0XMYWD",
+      "recordId": "genshintools-presets:team:PCC6yJmWuFte0XMYWD",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "PCC6yLrWuFte0XMYWD",
+      "sourceRecordId": "PCC6yJmWuFte0XMYWD",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "PCC6yLrWuFte0XMYWD"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "PCC6yJmWuFte0XMYWD"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "PCC6yLrWuFte0XMYWD"
+          "sourceRecordId": "PCC6yJmWuFte0XMYWD"
         }
       ]
     },
@@ -11808,7 +11869,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKgdZ2Sc04"
           },
           "sourceId": "genshintools-presets",
@@ -11835,7 +11896,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKgdZ2Sc04"
           },
           "sourceId": "genshintools-presets",
@@ -11865,7 +11926,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKgdZ2Sc04"
           },
           "sourceId": "genshintools-presets",
@@ -11892,7 +11953,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKgdZ2Sc04"
           },
           "sourceId": "genshintools-presets",
@@ -11919,7 +11980,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKQi5GoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11946,7 +12007,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKQi5GoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -11973,7 +12034,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKQi5GoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -12000,7 +12061,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5xCCWjKQi5GoB0D"
           },
           "sourceId": "genshintools-presets",
@@ -12027,7 +12088,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5yBl0rSDS1gZLWg"
           },
           "sourceId": "genshintools-presets",
@@ -12054,7 +12115,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5yBl0rSDS1gZLWg"
           },
           "sourceId": "genshintools-presets",
@@ -12081,7 +12142,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5yBl0rSDS1gZLWg"
           },
           "sourceId": "genshintools-presets",
@@ -12108,7 +12169,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "PSK5yBl0rSDS1gZLWg"
           },
           "sourceId": "genshintools-presets",
@@ -12135,7 +12196,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QCC32ya0kJgK51AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -12162,7 +12223,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QCC32ya0kJgK51AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -12189,7 +12250,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QCC32ya0kJgK51AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -12216,7 +12277,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QCC32ya0kJgK51AC0e"
           },
           "sourceId": "genshintools-presets",
@@ -12243,7 +12304,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0W_T0D"
           },
           "sourceId": "genshintools-presets",
@@ -12270,7 +12331,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0W_T0D"
           },
           "sourceId": "genshintools-presets",
@@ -12297,7 +12358,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0W_T0D"
           },
           "sourceId": "genshintools-presets",
@@ -12324,7 +12385,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0W_T0D"
           },
           "sourceId": "genshintools-presets",
@@ -12351,7 +12412,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -12378,7 +12439,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -12405,7 +12466,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -12432,7 +12493,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "QSW63FZ0jJam0WuIWD"
           },
           "sourceId": "genshintools-presets",
@@ -12459,7 +12520,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RjC6C1jWoQya6Owh0O"
           },
           "sourceId": "genshintools-presets",
@@ -12486,7 +12547,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RjC6C1jWoQya6Owh0O"
           },
           "sourceId": "genshintools-presets",
@@ -12513,7 +12574,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RjC6C1jWoQya6Owh0O"
           },
           "sourceId": "genshintools-presets",
@@ -12540,7 +12601,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RjC6C1jWoQya6Owh0O"
           },
           "sourceId": "genshintools-presets",
@@ -12567,7 +12628,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RzO6C1jWoRD449r3WC"
           },
           "sourceId": "genshintools-presets",
@@ -12594,7 +12655,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RzO6C1jWoRD449r3WC"
           },
           "sourceId": "genshintools-presets",
@@ -12621,7 +12682,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RzO6C1jWoRD449r3WC"
           },
           "sourceId": "genshintools-presets",
@@ -12649,7 +12710,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "RzO6C1jWoRD449r3WC"
           },
           "sourceId": "genshintools-presets",
@@ -12676,7 +12737,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "SDS6aBl0r95O1ewZ0O"
           },
           "sourceId": "genshintools-presets",
@@ -12703,7 +12764,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "SDS6aBl0r95O1ewZ0O"
           },
           "sourceId": "genshintools-presets",
@@ -12730,7 +12791,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "SDS6aBl0r95O1ewZ0O"
           },
           "sourceId": "genshintools-presets",
@@ -12757,7 +12818,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "SDS6aBl0r95O1ewZ0O"
           },
           "sourceId": "genshintools-presets",
@@ -12784,7 +12845,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "WTe6C9kW5WbK6K1jWp"
           },
           "sourceId": "genshintools-presets",
@@ -12811,7 +12872,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "WTe6C9kW5WbK6K1jWp"
           },
           "sourceId": "genshintools-presets",
@@ -12838,7 +12899,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "WTe6C9kW5WbK6K1jWp"
           },
           "sourceId": "genshintools-presets",
@@ -12865,7 +12926,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "WTe6C9kW5WbK6K1jWp"
           },
           "sourceId": "genshintools-presets",
@@ -12892,7 +12953,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rSDS1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -12919,7 +12980,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rSDS1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -12946,7 +13007,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rSDS1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -12973,7 +13034,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rSDS1eia0O"
           },
           "sourceId": "genshintools-presets",
@@ -13000,7 +13061,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -13027,7 +13088,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -13054,7 +13115,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -13081,7 +13142,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Wzm6aBl0rXnS33XhWD"
           },
           "sourceId": "genshintools-presets",
@@ -13108,7 +13169,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6aBl0rSDS1gxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -13135,7 +13196,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6aBl0rSDS1gxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -13162,7 +13223,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6aBl0rSDS1gxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -13189,7 +13250,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6aBl0rSDS1gxT0j"
           },
           "sourceId": "genshintools-presets",
@@ -13216,7 +13277,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6ZFZ0DJam0X8h0r"
           },
           "sourceId": "genshintools-presets",
@@ -13243,7 +13304,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6ZFZ0DJam0X8h0r"
           },
           "sourceId": "genshintools-presets",
@@ -13270,7 +13331,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6ZFZ0DJam0X8h0r"
           },
           "sourceId": "genshintools-presets",
@@ -13297,7 +13358,7 @@
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
             "recordId": "Xjy6ZFZ0DJam0X8h0r"
           },
           "sourceId": "genshintools-presets",
@@ -13315,20 +13376,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C:member:0:selected-artifact",
+      "observationId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C:member:0:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C",
+      "recordId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YEm6qLrWuYrK1gxT0C",
+      "sourceRecordId": "Y-86qJmWuYbK1gxT0C",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YEm6qLrWuYrK1gxT0C"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "Y-86qJmWuYbK1gxT0C"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YEm6qLrWuYrK1gxT0C"
+          "sourceRecordId": "Y-86qJmWuYbK1gxT0C"
         }
       ]
     },
@@ -13342,20 +13403,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C:member:1:selected-artifact",
+      "observationId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C:member:1:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C",
+      "recordId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YEm6qLrWuYrK1gxT0C",
+      "sourceRecordId": "Y-86qJmWuYbK1gxT0C",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YEm6qLrWuYrK1gxT0C"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "Y-86qJmWuYbK1gxT0C"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YEm6qLrWuYrK1gxT0C"
+          "sourceRecordId": "Y-86qJmWuYbK1gxT0C"
         }
       ]
     },
@@ -13369,20 +13430,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C:member:2:selected-artifact",
+      "observationId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C:member:2:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C",
+      "recordId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YEm6qLrWuYrK1gxT0C",
+      "sourceRecordId": "Y-86qJmWuYbK1gxT0C",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YEm6qLrWuYrK1gxT0C"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "Y-86qJmWuYbK1gxT0C"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YEm6qLrWuYrK1gxT0C"
+          "sourceRecordId": "Y-86qJmWuYbK1gxT0C"
         }
       ]
     },
@@ -13397,20 +13458,20 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C:member:3:selected-artifact",
+      "observationId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C:member:3:selected-artifact",
       "outcome": "not-representable",
-      "recordId": "genshintools-presets:team:YEm6qLrWuYrK1gxT0C",
+      "recordId": "genshintools-presets:team:Y-86qJmWuYbK1gxT0C",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YEm6qLrWuYrK1gxT0C",
+      "sourceRecordId": "Y-86qJmWuYbK1gxT0C",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YEm6qLrWuYrK1gxT0C"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "Y-86qJmWuYbK1gxT0C"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YEm6qLrWuYrK1gxT0C"
+          "sourceRecordId": "Y-86qJmWuYbK1gxT0C"
         }
       ]
     },
@@ -13424,20 +13485,47 @@
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O:member:0:selected-artifact",
+      "observationId": "genshintools-presets:team:YE06qRt04YU470EWWs:member:0:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O",
+      "recordId": "genshintools-presets:team:YE06qRt04YU470EWWs",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YU06qLrWu1q46mwZ0O",
+      "sourceRecordId": "YE06qRt04YU470EWWs",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YU06qLrWu1q46mwZ0O"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "YE06qRt04YU470EWWs"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YU06qLrWu1q46mwZ0O"
+          "sourceRecordId": "YE06qRt04YU470EWWs"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "tenacity_of_the_millelith",
+        "type": "4pc"
+      },
+      "characterId": "vodyanitsa",
+      "memberIndex": 1,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "genshintools-presets:team:YE06qRt04YU470EWWs:member:1:selected-artifact",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:team:YE06qRt04YU470EWWs",
+      "recordStatus": "baseline",
+      "sourceKind": "team-selected-artifact",
+      "sourceRecordId": "YE06qRt04YU470EWWs",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "YE06qRt04YU470EWWs"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "YE06qRt04YU470EWWs"
         }
       ]
     },
@@ -13447,24 +13535,24 @@
         "type": "4pc"
       },
       "characterId": "odette",
-      "memberIndex": 1,
+      "memberIndex": 2,
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O:member:1:selected-artifact",
+      "observationId": "genshintools-presets:team:YE06qRt04YU470EWWs:member:2:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O",
+      "recordId": "genshintools-presets:team:YE06qRt04YU470EWWs",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YU06qLrWu1q46mwZ0O",
+      "sourceRecordId": "YE06qRt04YU470EWWs",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YU06qLrWu1q46mwZ0O"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "YE06qRt04YU470EWWs"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YU06qLrWu1q46mwZ0O"
+          "sourceRecordId": "YE06qRt04YU470EWWs"
         }
       ]
     },
@@ -13474,51 +13562,132 @@
         "type": "4pc"
       },
       "characterId": "yae_miko",
-      "memberIndex": 2,
+      "memberIndex": 3,
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O:member:2:selected-artifact",
+      "observationId": "genshintools-presets:team:YE06qRt04YU470EWWs:member:3:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O",
+      "recordId": "genshintools-presets:team:YE06qRt04YU470EWWs",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YU06qLrWu1q46mwZ0O",
+      "sourceRecordId": "YE06qRt04YU470EWWs",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YU06qLrWu1q46mwZ0O"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "YE06qRt04YU470EWWs"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YU06qLrWu1q46mwZ0O"
+          "sourceRecordId": "YE06qRt04YU470EWWs"
         }
       ]
     },
     {
       "artifact": {
-        "setId": "viridescent_venerer",
+        "setId": "scarlet_proof",
         "type": "4pc"
       },
-      "characterId": "sucrose",
+      "characterId": "vesna",
+      "memberIndex": 0,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "genshintools-presets:team:ZEq6yRt04YU471-fWD:member:0:selected-artifact",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:team:ZEq6yRt04YU471-fWD",
+      "recordStatus": "baseline",
+      "sourceKind": "team-selected-artifact",
+      "sourceRecordId": "ZEq6yRt04YU471-fWD",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "ZEq6yRt04YU471-fWD"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "ZEq6yRt04YU471-fWD"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "tenacity_of_the_millelith",
+        "type": "4pc"
+      },
+      "characterId": "vodyanitsa",
+      "memberIndex": 1,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "genshintools-presets:team:ZEq6yRt04YU471-fWD:member:1:selected-artifact",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:team:ZEq6yRt04YU471-fWD",
+      "recordStatus": "baseline",
+      "sourceKind": "team-selected-artifact",
+      "sourceRecordId": "ZEq6yRt04YU471-fWD",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "ZEq6yRt04YU471-fWD"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "ZEq6yRt04YU471-fWD"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "heart_of_the_furnace",
+        "type": "4pc"
+      },
+      "characterId": "odette",
+      "memberIndex": 2,
+      "memberInvestment": {
+        "status": "unspecified"
+      },
+      "observationId": "genshintools-presets:team:ZEq6yRt04YU471-fWD:member:2:selected-artifact",
+      "outcome": "enumerated-initially",
+      "recordId": "genshintools-presets:team:ZEq6yRt04YU471-fWD",
+      "recordStatus": "baseline",
+      "sourceKind": "team-selected-artifact",
+      "sourceRecordId": "ZEq6yRt04YU471-fWD",
+      "sourceRefs": [
+        {
+          "locator": {
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "ZEq6yRt04YU471-fWD"
+          },
+          "sourceId": "genshintools-presets",
+          "sourceRecordId": "ZEq6yRt04YU471-fWD"
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "setId": "noblesse_oblige",
+        "type": "4pc"
+      },
+      "characterId": "faruzan",
       "memberIndex": 3,
       "memberInvestment": {
         "status": "unspecified"
       },
-      "observationId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O:member:3:selected-artifact",
+      "observationId": "genshintools-presets:team:ZEq6yRt04YU471-fWD:member:3:selected-artifact",
       "outcome": "enumerated-initially",
-      "recordId": "genshintools-presets:team:YU06qLrWu1q46mwZ0O",
+      "recordId": "genshintools-presets:team:ZEq6yRt04YU471-fWD",
       "recordStatus": "baseline",
       "sourceKind": "team-selected-artifact",
-      "sourceRecordId": "YU06qLrWu1q46mwZ0O",
+      "sourceRecordId": "ZEq6yRt04YU471-fWD",
       "sourceRefs": [
         {
           "locator": {
-            "file": "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json",
-            "recordId": "YU06qLrWu1q46mwZ0O"
+            "file": "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json",
+            "recordId": "ZEq6yRt04YU471-fWD"
           },
           "sourceId": "genshintools-presets",
-          "sourceRecordId": "YU06qLrWu1q46mwZ0O"
+          "sourceRecordId": "ZEq6yRt04YU471-fWD"
         }
       ]
     },
@@ -30999,9 +31168,9 @@
   "summary": {
     "all": {
       "conditionallyRepresentable": 21,
-      "enumeratedInitially": 1026,
+      "enumeratedInitially": 1032,
       "notRepresentable": 28,
-      "total": 1075
+      "total": 1081
     },
     "byFailureReason": {
       "beta-only-artifact": 0,
@@ -31017,9 +31186,9 @@
     },
     "guideBuilds": {
       "conditionallyRepresentable": 14,
-      "enumeratedInitially": 167,
+      "enumeratedInitially": 169,
       "notRepresentable": 7,
-      "total": 188
+      "total": 190
     },
     "recommendations": {
       "conditionallyRepresentable": 0,
@@ -31035,9 +31204,9 @@
     },
     "teamSelectedArtifacts": {
       "conditionallyRepresentable": 7,
-      "enumeratedInitially": 820,
+      "enumeratedInitially": 824,
       "notRepresentable": 13,
-      "total": 840
+      "total": 844
     }
   },
   "supportsGuideClaims": false
