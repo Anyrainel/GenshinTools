@@ -8,6 +8,19 @@ The formats and algorithms are intentionally provisional. They should change
 when real source data, validation failures, or computation experiments show
 that the current model is inadequate.
 
+## Product direction — 2026-10-12
+
+The intended product is a calculation-generated character guide: recommended
+teams, each team's weapons and artifact sets, main/substats, and investment
+order with measured damage gains. See
+[the product contract](../../docs/design/calculated-character-guides.md).
+
+The former `/__lab/guides` and `/__lab/sources` report viewers have been removed.
+Checkpoint draft packets and source observations are research artifacts;
+they do not implement that product. Passing authentication and coverage tests
+establishes report integrity, not the correctness or usefulness of a guide.
+Bundled build presets are candidate inputs, not calculated recommendations.
+
 ## Current repository rebuild — 2026-10-12
 
 The durable non-ER reports have been rebuilt against the current repository
