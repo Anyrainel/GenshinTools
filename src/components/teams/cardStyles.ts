@@ -1,9 +1,9 @@
 /** Shared card style constants for the team analysis workspace. */
 
 export const CARD_CLS =
-  "bg-gradient-card border-border overflow-hidden shadow-lg gap-0 py-0";
+  "bg-gradient-card border-border overflow-hidden shadow-lg";
 export const CARD_HEADER_CLS =
-  "bg-gradient-select flex flex-wrap items-center gap-2 border-b border-border py-2 [.border-b]:pb-2 px-2 md:px-5";
+  "bg-gradient-select flex-row flex-wrap items-center gap-2 space-y-0 border-b border-border py-2 px-2 md:px-5";
 export const CARD_TITLE_CLS =
   "text-base font-bold flex items-center gap-2 tracking-tight text-primary-foreground/90";
 export const CARD_BODY_CLS = "p-1 2xl:p-2";
