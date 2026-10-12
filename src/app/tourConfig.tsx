@@ -121,7 +121,8 @@ export function useTours(): Tour[] {
             id: "tl-unassigned",
             title: t.ui("tour.tierList.unassignedTitle"),
             content: t.ui("tour.tierList.unassignedContent"),
-            side: "bottom",
+            // Pool can be taller than the viewport when a list is empty.
+            side: "right",
           },
           {
             id: "tl-tier-row",

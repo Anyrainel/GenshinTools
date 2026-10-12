@@ -52,9 +52,24 @@ for (const [name, route] of tours) {
       );
     });
     await page.goto(route);
-    await startHelp(page);
     const viewport = page.viewportSize();
     if (!viewport) throw new Error("Missing test viewport");
+    if (name === "Tier List" && viewport.width >= 1024) {
+      // An empty list puts every character in Pool, making its highlighted
+      // label taller than the desktop viewport. Exercise that real user state.
+      await page
+        .getByRole("button", { name: "Switch List", exact: true })
+        .click();
+      const manager = page.getByRole("dialog", {
+        name: "Switch List",
+        exact: true,
+      });
+      await manager
+        .getByRole("button", { name: "Create New Tier List", exact: true })
+        .click();
+      await expect(manager).toBeHidden();
+    }
+    await startHelp(page);
     if (viewport.width < 1024) {
       const guide = page.getByRole("dialog", { name: "Guide", exact: true });
       await expect(guide).toContainText("Guide");
