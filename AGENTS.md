@@ -56,19 +56,11 @@ Use this as the first routing hint when the user refers to a page or tab in natu
   - Artifacts (`/archive/artifacts`) — `src/pages/archive/ArtifactArchiveView.tsx`: artifact set archive with half-set filtering and expandable rows.
   - Bosses (`/archive/bosses`) — `src/pages/archive/BossArchiveView.tsx`: ley line boss archive with search, schedule-aware default selection, and detail panel.
 
-## Important Locations
+## Repository architecture
 
-- `src/components/{domain}/` — domain UI components
-- `src/components/shared/` — reusable cross-domain UI
-- `src/components/layout/` — page/layout shells
-- `src/stores/` — persisted Zustand stores
-- `src/data/` — static data, generated game data, localization files, shared types
-- `src/lib/{domain}/` — domain-specific pure logic; avoid putting cross-cutting primitives here unless they truly belong to that domain
-- `src/lib/artifact/` — shared artifact calculations and utilities, including basic scoring logic
-- `src/lib/dmgcalc/` — comprehensive damage calculation engine and game entity implementations
-- `src/lib/ercalc/` — event-based energy system emulation and ER calculation
-- `scripts/` — Python/TypeScript data and audit tooling; Python scripts run with `uv`
-- `docs/` — design notes, domain docs, trackers, and product specs
+The authoritative target layout and dependency rules are in
+[docs/architecture.md](docs/architecture.md). That document supersedes older
+general folder descriptions. Read it before reorganizing modules.
 
 ## Skills And Domain References
 
