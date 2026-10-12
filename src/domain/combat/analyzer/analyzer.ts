@@ -46,7 +46,7 @@ import { TeamMeta } from "../damage/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "../generator/substatBudget";
-import { deriveFutureInvestmentCombo } from "./investmentCounts";
+import { deriveAbsoluteInvestmentCombo } from "./investmentCounts";
 import type {
   AnalyzerCharConfig,
   AnalyzerDAG,
@@ -462,18 +462,20 @@ export function deriveComboForAllocation(
     AnalyzerOptions,
     | "baselineConstellations"
     | "futureCountChanges"
+    | "absoluteCountTargets"
     | "singleObjective"
     | "ignoredContributorIds"
   >
 ): ComboFormula {
   if (options?.baselineConstellations) {
-    return deriveFutureInvestmentCombo(
+    return deriveAbsoluteInvestmentCombo(
       allocation,
       templateCombo,
       teamBuild,
       options.baselineConstellations,
       options.futureCountChanges,
       comboOverrides,
+      options.absoluteCountTargets,
       options.singleObjective,
       options.ignoredContributorIds
     );

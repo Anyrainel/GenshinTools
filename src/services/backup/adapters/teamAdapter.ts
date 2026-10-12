@@ -41,7 +41,7 @@ export function teamToCloud(
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 5,
+      schemaVersion: 6,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -87,6 +87,8 @@ export function teamFromCloud(
       ? migrateReleasedTeamWeapons(restored)
       : restored;
   const parsed = PersistedTeamStoreSchema.parse(migrated);
+  // Cloud v6 adds optional absolute count targets. Prior v5 delta/exact maps
+  // keep their meaning and no target is synthesized during restore.
   return {
     ...migrated,
     activePresetId: parsed.activePresetId,

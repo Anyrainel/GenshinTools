@@ -75,7 +75,6 @@ import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/domain/reference/stats";
-import type { AccountEquipmentResult } from "@/domain/team/accountEquipmentTypes";
 import type { AnalysisMode } from "@/domain/team/analysisTypes";
 import { reconcileDefaultCombo } from "@/domain/team/reconcileDefaultCombo";
 import {
@@ -115,7 +114,6 @@ import {
   detectFrozenArtifactConflicts,
   getMatchingSetIds,
 } from "../../domain/build/artifact/inventory";
-import { AccountEquipmentCard } from "./AccountEquipmentCard";
 import { ArtifactSwapDialog } from "./ArtifactSwapDialog";
 import { BuildComparisonPanel } from "./BuildComparisonPanel";
 import { CharacterReplacementDetail } from "./CharacterReplacementDetail";
@@ -1159,50 +1157,6 @@ export function AnalysisWorkspace({
     else action();
   };
 
-  const applyEquipment = (result: AccountEquipmentResult) => {
-    const previews = Object.fromEntries(
-      Object.entries(result.artifactsByChar).map(([charId, pieces]) => [
-        charId,
-        Object.fromEntries(
-          Object.entries(pieces).filter(([, piece]) => piece !== null)
-        ),
-      ])
-    ) as Record<string, Record<string, ArtifactData>>;
-    pendingAppliedArtifacts.current = previews;
-    setRestoredArtifacts(previews);
-    const configsById = new Map(
-      result.configs.map((config) => [config.charId, config])
-    );
-    updateTeamComp(teamId, {
-      ...teamComp,
-      slots: teamComp.slots.map((slot) => {
-        const config = slot.charId ? configsById.get(slot.charId) : undefined;
-        return config
-          ? {
-              ...slot,
-              weaponId: config.weaponId,
-              artifactSet: config.artifactSet,
-            }
-          : slot;
-      }),
-    });
-    updateSetupConfig((config) => ({
-      ...config,
-      charConfigs: {
-        ...config.charConfigs,
-        ...Object.fromEntries(
-          result.configs.map((candidate) => [
-            candidate.charId,
-            {
-              ...config.charConfigs?.[candidate.charId],
-              refinement: candidate.refinement,
-            },
-          ])
-        ),
-      },
-    }));
-  };
-
   const handleFreezeCharFromCurrent = useCallback(
     (charId: string) => {
       const arts = equippedArtifactsByChar[charId];
@@ -1466,38 +1420,38 @@ export function AnalysisWorkspace({
           value={mode}
           onValueChange={(value) => onModeChange(value as AnalysisMode)}
         >
-          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 border border-border bg-background/40 min-[420px]:grid-cols-5 [&_[data-slot=tabs-trigger][data-state=active]]:border-primary [&_[data-slot=tabs-trigger][data-state=active]]:bg-primary [&_[data-slot=tabs-trigger][data-state=active]]:text-primary-foreground">
+          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 group-data-[orientation=horizontal]/tabs:h-auto border border-border bg-background/40 min-[420px]:grid-cols-5 [&_[data-slot=tabs-trigger][data-state=active]]:border-primary [&_[data-slot=tabs-trigger][data-state=active]]:bg-primary [&_[data-slot=tabs-trigger][data-state=active]]:text-primary-foreground">
             <TabsTrigger
               value="artifacts"
-              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
             >
               <Gem className="h-4 w-4 shrink-0" />
               {t.ui("accountData.artifacts")}
             </TabsTrigger>
             <TabsTrigger
               value="builds"
-              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
             >
               <Sword className="h-4 w-4 shrink-0" />
               {t.ui("app.navArtifactFilter")}
             </TabsTrigger>
             <TabsTrigger
               value="investment"
-              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
             >
               <TrendingUp className="h-4 w-4 shrink-0" />
               {t.ui("teamComp.modeInvestment")}
             </TabsTrigger>
             <TabsTrigger
               value="characters"
-              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
             >
               <Users className="h-4 w-4 shrink-0" />
               {t.ui("accountData.characters")}
             </TabsTrigger>
             <TabsTrigger
               value="energy"
-              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+              className="h-auto min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
             >
               <Zap className="h-4 w-4 shrink-0" />
               {t.ui("teamComp.modeEnergy")}
@@ -1515,22 +1469,6 @@ export function AnalysisWorkspace({
               configs={configs}
               objectiveCombo={displayCombo}
             />
-            <div className="mt-2">
-              <AccountEquipmentCard
-                teamComp={teamComp}
-                setupConfig={setupConfig}
-                accountData={accountData}
-                configs={configs}
-                objectiveCombo={displayCombo}
-                calcContext={activeContext}
-                baseSheets={artifactSheets}
-                onApply={applyEquipment}
-                onSave={(result) => {
-                  applyEquipment(result);
-                  saveAllocation(result.artifactsByChar);
-                }}
-              />
-            </div>
           </TabsContent>
           <TabsContent
             forceMount
@@ -1567,9 +1505,6 @@ export function AnalysisWorkspace({
                 updateTeamSetupConfig={updateTeamSetupConfig}
                 ignoredCharIds={ignoredCharIds}
                 onIgnoredCharIdsChange={setIgnoredCharIds}
-                onSaveLoadout={(result) =>
-                  saveAllocation(result.artifactsByChar)
-                }
               />
             )}
           </TabsContent>

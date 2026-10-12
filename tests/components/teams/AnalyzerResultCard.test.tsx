@@ -1,164 +1,95 @@
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import { AnalyzerResultCard } from "@/components/teams/AnalyzerResultCard";
 import type {
   AnalyzerCharConfig,
   AnalyzerResult,
-  AnalyzerStep,
 } from "@/domain/combat/analyzer/types";
-import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
 import { render, screen } from "../../utils/render";
 
-// Keep this test focused on choosing an investment budget, independent of
-// the graph/table renderers which have their own calculation coverage.
 vi.mock("@/components/teams/AnalyzerChart", () => ({
-  AnalyzerChart: () => null,
+  AnalyzerChart: () => <div>path chart</div>,
 }));
 vi.mock("@/components/teams/AnalyzerTable", () => ({
-  AnalyzerTable: () => null,
+  AnalyzerTable: () => <div>path table</div>,
 }));
 vi.mock("@/components/teams/AnalyzerSequence", () => ({
-  AnalyzerSequence: () => null,
+  AnalyzerSequence: () => <div>path sequence</div>,
 }));
-
-const charConfigs: AnalyzerCharConfig[] = [
+const configs: AnalyzerCharConfig[] = [
   {
     charId: "hu_tao",
     rarity: 5,
     weapon5Star: { id: "staff_of_homa" },
     startConstellation: 0,
     startRefinement: 1,
-    maxConstellation: 2,
+    maxConstellation: 1,
     maxRefinement: 1,
   },
 ];
-
-const sequence: AnalyzerStep[] = [
-  {
-    jin: 2,
-    allocation: {
-      hu_tao: {
-        constellation: 0,
-        weaponId: "staff_of_homa",
-        refinement: 1,
-        is5StarWeapon: true,
-      },
-    },
-    damage: 100_000,
-    gainVsBaseline: 0,
-    gainVsBaselinePct: 0,
-    gainVsPrev: 0,
-    gainVsPrevPct: 0,
-  },
-  {
-    jin: 3,
-    allocation: {
-      hu_tao: {
-        constellation: 1,
-        weaponId: "staff_of_homa",
-        refinement: 1,
-        is5StarWeapon: true,
-      },
-    },
-    damage: 125_000,
-    gainVsBaseline: 25_000,
-    gainVsBaselinePct: 25,
-    gainVsPrev: 25_000,
-    gainVsPrevPct: 25,
-  },
-  {
-    jin: 4,
-    allocation: {
-      hu_tao: {
-        constellation: 2,
-        weaponId: "staff_of_homa",
-        refinement: 1,
-        is5StarWeapon: true,
-      },
-    },
-    damage: 150_000,
-    gainVsBaseline: 50_000,
-    gainVsBaselinePct: 50,
-    gainVsPrev: 25_000,
-    gainVsPrevPct: 20,
-  },
-];
-
-function resultAtLimit(stepCount: number): AnalyzerResult {
-  const steps = sequence.slice(0, stepCount);
-  const nodes = steps.map((step) => ({
-    id: `tier-${step.jin}`,
-    jin: step.jin,
-    allocation: step.allocation,
-    damage: step.damage,
+function result(): AnalyzerResult {
+  const nodes = [0, 1].map((c) => ({
+    id: `c${c}`,
+    jin: c + 2,
+    damage: 100000 + c * 25000,
     validated: true,
     isBreakpoint: true,
+    allocation: {
+      hu_tao: {
+        constellation: c,
+        weaponId: "staff_of_homa",
+        refinement: 1,
+        is5StarWeapon: true,
+      },
+    },
   }));
   return {
-    dag: {
-      nodes,
-      edges: [],
-      baselineJin: 2,
-      maxJin: steps.at(-1)?.jin ?? 2,
-    },
-    bestAtTier: new Map(nodes.map((node) => [node.jin, node])),
-    sequence: steps,
-    nodesByJin: new Map(),
+    dag: { nodes, edges: [], baselineJin: 2, maxJin: 3 },
+    bestAtTier: new Map(nodes.map((n) => [n.jin, n])),
+    nodesByJin: new Map(nodes.map((n) => [n.jin, [n]])),
+    sequence: nodes.map((node) => ({
+      ...node,
+      gainVsBaseline: node.damage - 100000,
+      gainVsBaselinePct: node.damage / 1000 - 100,
+      gainVsPrev: 0,
+      gainVsPrevPct: 0,
+    })),
   };
 }
-
-const props = {
-  calcContext: {},
-  onCalcContextChange: vi.fn(),
-  charConfigs,
-  teamMeta: new TeamMeta(["hu_tao"]),
-  isComputing: false,
-  progress: null,
-  error: null,
-  onRun: vi.fn(),
-  onStop: vi.fn(),
-};
-
-describe("investment budget recommendation", () => {
-  it("shows the best allocation and gain for the chosen additional-copy budget", async () => {
-    const user = userEvent.setup();
-    render(<AnalyzerResultCard {...props} result={resultAtLimit(3)} />);
-
-    const budget = screen.getByRole("combobox", {
-      name: "Additional 5★ copies",
-    });
-    expect(budget).toHaveTextContent("+1");
-    expect(screen.getByText("C1")).toBeInTheDocument();
-    expect(screen.getByText("+25.0%")).toBeInTheDocument();
-
-    await user.click(budget);
-    await user.click(screen.getByRole("option", { name: "+2" }));
-
-    expect(budget).toHaveTextContent("+2");
-    expect(screen.getByText("C2")).toBeInTheDocument();
-    expect(screen.getByText("+50.0%")).toBeInTheDocument();
-    expect(screen.queryByText("C1")).not.toBeInTheDocument();
-  });
-
-  it("keeps the budget and recommendation consistent when refreshed limits remove a tier", async () => {
-    const user = userEvent.setup();
-    const { rerender } = render(
-      <AnalyzerResultCard {...props} result={resultAtLimit(3)} />
+describe("investment path result views", () => {
+  it("renders no placeholder or empty result area before the first run", () => {
+    const { container } = render(
+      <AnalyzerResultCard
+        charConfigs={configs}
+        isComputing={false}
+        result={null}
+        progress={null}
+        error={null}
+      />
     );
-    const budget = screen.getByRole("combobox", {
-      name: "Additional 5★ copies",
-    });
-    await user.click(budget);
-    await user.click(screen.getByRole("option", { name: "+2" }));
-
-    rerender(<AnalyzerResultCard {...props} result={resultAtLimit(2)} />);
-    expect(budget).toHaveTextContent("+1");
-    expect(screen.getByText("C1")).toBeInTheDocument();
-    expect(screen.getByText("+25.0%")).toBeInTheDocument();
-    expect(screen.queryByText("C2")).not.toBeInTheDocument();
-
-    rerender(<AnalyzerResultCard {...props} result={resultAtLimit(1)} />);
-    expect(budget).toHaveTextContent("+0");
-    expect(screen.getByText("C0")).toBeInTheDocument();
-    expect(screen.getByText("+0.0%")).toBeInTheDocument();
+    expect(container).toBeEmptyDOMElement();
+  });
+  it("shows next-pull branches from the same result without a separate run and preserves a capped prefix", async () => {
+    const user = userEvent.setup();
+    render(
+      <AnalyzerResultCard
+        charConfigs={configs}
+        isComputing={false}
+        result={result()}
+        progress={null}
+        error={null}
+      />
+    );
+    expect(screen.getByText("path chart")).toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Next pulls" }));
+    expect(screen.getByText(/\+25.0%/)).toBeInTheDocument();
+    expect(
+      screen.getByText("1 of 3 further copies available in this branch")
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /run/i })
+    ).not.toBeInTheDocument();
+    await user.click(screen.getByRole("tab", { name: "Full investment path" }));
+    expect(screen.getByText("path table")).toBeInTheDocument();
   });
 });

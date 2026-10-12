@@ -99,6 +99,18 @@ function result(mode: "weapon" | "artifact", timestamp: number): ComputeResult {
 }
 
 describe("owned comparison scope", () => {
+  it("keeps pre-run settings compact and renders completed empty rankings", () => {
+    const view = render(<TestPanel />);
+    expect(
+      screen.queryByText("Click Run to analyze weapons")
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText("(others unchanged)")).not.toBeInTheDocument();
+    expect(screen.queryByText("No compatible weapons")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    state.result = result("weapon", 99);
+    view.rerender(<TestPanel />);
+    expect(screen.getByText("No compatible weapons")).toBeInTheDocument();
+  });
   beforeEach(() => {
     state.account = account;
     state.result = null;
@@ -108,7 +120,9 @@ describe("owned comparison scope", () => {
 
   it("clears account-scoped rankings after inventory changes and can leave owned mode after account removal", async () => {
     const view = render(<TestPanel />);
-    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    );
     fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     expect(state.start.mock.calls[0][0].ownedWeaponChoices).toEqual([
       { weaponId: "staff_of_homa", refinement: 3 },
@@ -122,8 +136,12 @@ describe("owned comparison scope", () => {
     state.account = null;
     view.rerender(<TestPanel />);
     expect(screen.getByRole("button", { name: "Run Analysis" })).toBeDisabled();
-    expect(screen.getByRole("tab", { name: "All weapons" })).not.toBeDisabled();
-    await userEvent.click(screen.getByRole("tab", { name: "All weapons" }));
+    expect(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    ).not.toBeDisabled();
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    );
     expect(
       screen.getByRole("button", { name: "Run Analysis" })
     ).not.toBeDisabled();
@@ -131,8 +149,12 @@ describe("owned comparison scope", () => {
 
   it("keeps an artifact comparison running when unrelated owned inventory changes", async () => {
     const view = render(<TestPanel />);
-    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
-    await userEvent.click(screen.getByRole("tab", { name: "Artifact sets" }));
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Artifact sets" })
+    );
     fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     state.stop.mockClear();
     state.account = {
@@ -161,17 +183,53 @@ describe("owned comparison scope", () => {
     state.result = result("weapon", 11);
     view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("11");
-    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    );
     expect(screen.getByTestId("result")).toHaveTextContent("empty");
     fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     state.result = result("weapon", 22);
     view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("22");
-    await userEvent.click(screen.getByRole("tab", { name: "All weapons" }));
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    );
     expect(screen.getByTestId("result")).toHaveTextContent("11");
-    await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
+    await userEvent.click(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    );
     expect(screen.getByTestId("result")).toHaveTextContent("22");
   });
+  it("keeps owned weapons independent from theoretical artifact comparison and exposes settings before Run", async () => {
+    render(<TestPanel />);
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Weapons" })).toBeInTheDocument();
+    const owned = screen.getByRole("checkbox", { name: "Owned weapons" });
+    const run = screen.getByRole("button", { name: "Run Analysis" });
+    expect(
+      owned.compareDocumentPosition(run) & Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+    expect(owned.closest("details")).toBeNull();
+    await userEvent.click(owned);
+    await userEvent.click(
+      screen.getByRole("button", { name: "Artifact sets" })
+    );
+    expect(
+      screen.queryByRole("checkbox", { name: "Owned weapons" })
+    ).not.toBeInTheDocument();
+    await userEvent.click(run);
+    expect(state.start.mock.calls[0][0]).toMatchObject({ mode: "artifact" });
+    expect(state.start.mock.calls[0][0].ownedWeaponChoices).toBeUndefined();
+    await userEvent.click(screen.getByRole("button", { name: "Weapons" }));
+    expect(
+      screen.getByRole("checkbox", { name: "Owned weapons" })
+    ).toBeChecked();
+    await userEvent.click(run);
+    expect(state.start.mock.calls[1][0].ownedWeaponChoices).toEqual([
+      { weaponId: "staff_of_homa", refinement: 3 },
+    ]);
+  });
+
   it("ignores persisted catalog results without a matching calculation signature", () => {
     useTeamResultCacheStore
       .getState()

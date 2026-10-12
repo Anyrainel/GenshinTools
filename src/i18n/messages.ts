@@ -69,21 +69,24 @@ export const i18nUiData = {
     description: { en: "Description", zh: "说明" },
   },
   charactersMode: {
-    title: {
-      en: "Find character replacements",
-      zh: "寻找替换角色",
+    replace: { en: "Replace characters", zh: "替换角色" },
+    unowned: { en: "Replace unowned", zh: "替换未拥有" },
+    noUnowned: {
+      en: "All team characters are owned.",
+      zh: "队内角色均已拥有。",
     },
-    description: {
-      en: "Select slots to replace. Keep the other members and your shared damage objective.",
-      zh: "选择要替换的位置，保留其余队友与上方设置的伤害目标。",
+    slotUnavailable: {
+      en: "Single-skill source stays fixed.",
+      zh: "当前单技能来源不可替换。",
+    },
+    changeVsCurrent: { en: "{0}% vs current", zh: "较当前{0}%" },
+    title: {
+      en: "Character replacements",
+      zh: "角色替换",
     },
     emptySlot: {
       en: "Empty slot {0}",
       zh: "空位置{0}",
-    },
-    replaceUnowned: {
-      en: "Replace all unowned characters",
-      zh: "替换所有未拥有角色",
     },
     candidatePool: {
       en: "Character & weapon pool",
@@ -101,26 +104,6 @@ export const i18nUiData = {
       en: "All characters + any weapons",
       zh: "全部角色＋全部武器",
     },
-    artifactBasis: {
-      en: "Artifact source",
-      zh: "圣遗物来源",
-    },
-    accountArtifacts: {
-      en: "Account inventory",
-      zh: "账号仓库",
-    },
-    generatedArtifacts: {
-      en: "Generated ideal artifacts",
-      zh: "生成理论最优圣遗物",
-    },
-    hypotheticalRanks: {
-      en: "Unowned character & weapon assumptions",
-      zh: "未拥有角色与武器设置",
-    },
-    rankDescription: {
-      en: "Owned candidates use imported character stats and weapon copies. Unowned characters use Lv.90, talents 10/10/10 and these ranks. Catalog weapon variants use these refinements.",
-      zh: "已拥有角色与武器优先使用账号数据。未拥有角色按90级、天赋10/10/10及以下命座计算；理论武器候选按以下精炼计算。",
-    },
     constellation4: {
       en: "3–4★ characters",
       zh: "三星／四星角色命座",
@@ -137,10 +120,6 @@ export const i18nUiData = {
       en: "5★ weapons",
       zh: "五星武器精炼",
     },
-    assumptions: {
-      en: "Approximate staged search ranked by damage. Owned weapon copies and inventory artifacts are allocated once per team. Saved artifact reservations and the selected reuse policy are respected. Locked artifacts may move. Energy and survivability are not checked.",
-      zh: "分阶段近似搜索，按伤害排序。账号武器与圣遗物在队内不重复使用；遵循已保存配装的预留与复用规则，游戏内已锁定的圣遗物仍可换装。充能与生存能力需自行判断。",
-    },
     search: {
       en: "Find replacements",
       zh: "搜索替换方案",
@@ -152,22 +131,6 @@ export const i18nUiData = {
     refining: {
       en: "Optimizing finalist builds",
       zh: "优化入围队伍配装",
-    },
-    evaluated: {
-      en: "candidates evaluated",
-      zh: "个候选已计算",
-    },
-    bestFound: {
-      en: "Best found in this search",
-      zh: "本次搜索找到的最佳方案",
-    },
-    partial: {
-      en: "Search limit reached",
-      zh: "已达到搜索上限",
-    },
-    skipped: {
-      en: "unsupported or infeasible candidates skipped",
-      zh: "个不支持或不可行候选已跳过",
     },
     damage: {
       en: "damage",
@@ -184,10 +147,6 @@ export const i18nUiData = {
     applied: {
       en: "Team updated. You can run another optimization round.",
       zh: "队伍已更新，可继续下一轮优化。",
-    },
-    saveLoadout: {
-      en: "Apply team & save artifacts",
-      zh: "应用队伍并保存配装",
     },
     ownedCopy: {
       en: "Owned weapon copy",
@@ -210,17 +169,13 @@ export const i18nUiData = {
         en: "Choose a supported skill or combo in the shared panel first.",
         zh: "请先在上方技能面板选择可计算的技能或连招。",
       },
-      singleSource: {
-        en: "Single-skill damage needs its source character. Keep that slot, or switch to a combo before replacing it.",
-        zh: "单技能计算需要保留伤害来源角色。请保留该位置，或先切换到连招再替换。",
-      },
       noAccount: {
-        en: "Import account data for this character, weapon or artifact source, or choose all characters and generated artifacts.",
-        zh: "此角色、武器或圣遗物范围需要账号数据。请导入账号，或选择全部角色与生成圣遗物。",
+        en: "Import account data to use owned characters or weapons.",
+        zh: "需要账号数据才能限定已拥有角色或武器。",
       },
       copyShortage: {
-        en: "A member kept in the team has no selected weapon or no available owned copy. Edit the roster or allow any weapons.",
-        zh: "保留的队友尚未选武器，或账号缺少对应武器。请修改阵容或允许使用全部武器。",
+        en: "Choose a weapon for each member you keep.",
+        zh: "请为保留的队友选择武器。",
       },
       notEnough: {
         en: "Not enough distinct candidates are available to fill these slots.",
@@ -1774,114 +1729,62 @@ export const i18nUiData = {
     switchTeam: { en: "Switch team", zh: "切换队伍" },
     modeInvestment: { en: "Investment", zh: "补金" },
     modeEnergy: { en: "Energy", zh: "充能" },
-    investmentFutureCounts: {
-      en: "Future constellation changes",
-      zh: "后续命座变化",
+    investmentAddChange: {
+      en: "+ Add constellation change",
+      zh: "+ 添加命座变化",
     },
-    investmentFutureCountsDesc: {
-      en: "Start from the shared action counts. Each entry replaces the extra actions gained at that future constellation; negative changes are allowed. Bonuses already included at your starting constellation are not added again.",
-      zh: "以共享面板中的次数为起点。每项表示到达该后续命座时增减的次数，可填写负数；起始命座已包含的效果不会重复计入。",
-    },
-    investmentSingleObjective: {
-      en: "Ranking uses only the selected skill and reaction; action-count changes do not affect a single hit.",
-      zh: "按当前所选技能与反应的单次伤害排名，不使用循环次数变化。",
-    },
-    investmentCountDelta: { en: "Count change", zh: "次数变化" },
-    investmentAddChange: { en: "Add change point", zh: "添加命座变化" },
     investmentRetainedSettings: {
-      en: "Saved investment customizations",
+      en: "Saved investment settings",
       zh: "保留的补金设置",
-    },
-    investmentRetainedSettingsDesc: {
-      en: "Your previous exact counts remain active. Older independent environment and reaction settings are preserved here; shared settings take precedence until you explicitly adopt them.",
-      zh: "旧版各命座的自定义次数仍然生效。原补金面板独立的环境与反应设置也已保留；默认使用共享设置，可主动将旧设置应用到共享面板。",
     },
     investmentAdoptSettings: {
       en: "Use saved environment and reactions",
       zh: "使用保留的环境与反应设置",
     },
-    buildsIndependent: {
-      en: "Each ranking changes one character at a time. Apply a choice, then compare again to refine the team.",
-      zh: "每份排名只更换一位角色的装备。应用方案后可再次比较，逐步调整队伍配装。",
+    investmentDiscardSettings: {
+      en: "Discard saved settings",
+      zh: "清除保留设置",
+    },
+    investmentCountAt: {
+      en: "At {0}, {1} becomes {2}",
+      zh: "{0}时，{1}次数变为{2}",
+    },
+    investmentErAt: {
+      en: "At {0}, minimum ER becomes {1}%",
+      zh: "{0}时，最低充能变为{1}%",
+    },
+    investmentAbsoluteCount: { en: "Count becomes", zh: "次数变为" },
+    investmentSaveChange: { en: "Save change", zh: "保存变化" },
+    investmentRemoveChange: {
+      en: "Remove custom change",
+      zh: "移除自定义变化",
+    },
+    investmentLowWeapon: {
+      en: "3/4★ comparison weapon",
+      zh: "三星/四星对比武器",
+    },
+    investmentFiveWeapon: { en: "5★ comparison weapon", zh: "五星对比武器" },
+    investmentChooseWeapon: {
+      en: "Choose comparison weapon",
+      zh: "选择对比武器",
+    },
+    investmentMaxConstellation: { en: "Constellation ceiling", zh: "命座上限" },
+    investmentMaxRefinement: { en: "Refinement ceiling", zh: "精炼上限" },
+    investmentFullPath: { en: "Full investment path", zh: "完整补金路径" },
+    investmentNextPulls: { en: "Next pulls", zh: "接下来怎么抽" },
+    investmentAvailablePulls: {
+      en: "{0} of {1} further copies available in this branch",
+      zh: "该分支可继续{0}金（所选{1}金）",
     },
     applyToRoster: { en: "Apply to roster", zh: "应用到队伍" },
-    applyAndSave: { en: "Apply & save loadout", zh: "应用并保存配装方案" },
     savedLoadoutOutdated: {
       en: "This saved loadout includes a character no longer in this team. It remains reserved until you update or remove it.",
       zh: "此配装方案包含已不在当前队伍中的角色。更新或移除方案前，原圣遗物仍会保留预留。",
     },
-    accountEquipmentTask: {
-      en: "Improve with my equipment",
-      zh: "使用账号装备提升",
-    },
-    accountEquipmentApproximate: {
-      en: "Best found by a bounded weapon search and real-artifact optimization. Weapon levels are normalized to Lv. 90.",
-      zh: "结果来自有限范围的武器搜索与实际圣遗物优化，不保证全局最优。武器等级统一按90级计算。",
-    },
-    accountEquipmentDesc: {
-      en: "Find a coordinated allocation of owned weapon copies and real artifacts, respecting saved reservations and your selected reuse policy.",
-      zh: "从已拥有的武器与实际圣遗物中寻找全队配装方案，遵循已保存配装的预留与复用规则。",
-    },
-    accountEquipmentNoAccount: {
-      en: "Import account data to search your equipment.",
-      zh: "请先导入账号数据，再搜索已拥有的装备。",
-    },
-    accountEquipmentMissingWeapons: {
-      en: "Select a weapon for every team member.",
-      zh: "请为每位队员选择武器。",
-    },
-    accountEquipmentUnavailable: {
-      en: "Your account does not have enough compatible weapons or artifacts for this team.",
-      zh: "账号中可用的武器或圣遗物不足以完成此队伍的配装。",
-    },
-    accountEquipmentBestFound: {
-      en: "Best allocation found",
-      zh: "已找到的最佳配装",
-    },
-    investmentNextTitle: { en: "Next 3 investments", zh: "下一金怎么抽" },
-    investmentNextDesc: {
-      en: "Compare one additional 5★ copy from your account’s equipped builds. Uses the selected 5★ weapons and this rotation; artifacts stay equipped.",
-      zh: "从账号当前配装出发，比较再抽一金的伤害提升。使用所选五星武器和当前输出循环，保持已装备圣遗物。",
-    },
-    investmentNextRun: { en: "Rank next investments", zh: "计算下一金" },
-    investmentNextNeedsAccount: {
-      en: "Import account data and equip a weapon for every team member to rank your next investments.",
-      zh: "请导入账号数据，并为队伍中的每位角色装备武器后再计算。",
-    },
-    investmentNextEmpty: {
-      en: "No further upgrades are available with the selected weapons.",
-      zh: "当前所选武器下已无可追加的命座或精炼。",
-    },
-    investmentNextBaseline: {
-      en: "Current account damage",
-      zh: "账号当前伤害",
-    },
-    investmentNextGain: { en: "Damage gain", zh: "伤害提升" },
     investmentBudget: { en: "Additional 5★ copies", zh: "新增金数" },
-    investmentGain: {
-      en: "Gain from your starting point",
-      zh: "相对当前配置的提升",
-    },
-    investmentBestAtBudget: {
-      en: "Best team at this budget",
-      zh: "该档位的最佳配置",
-    },
-    analysisAssumptions: { en: "Calculation settings", zh: "计算设置" },
-    analysisAssumptionsDesc: {
-      en: "Enemy stats, artifact quality, and stat requirements",
-      zh: "敌人属性、圣遗物练度与属性要求",
-    },
-    comparisonGoal: {
-      en: "What would you like to compare?",
-      zh: "想比较什么？",
-    },
     ownedWeaponComparison: {
       en: "Owned weapons",
       zh: "已拥有武器",
-    },
-    ownedWeaponComparisonDesc: {
-      en: "Use equipped and inventory weapons at their account refinements. Weapon levels are normalized to Lv. 90.",
-      zh: "按账号中的精炼等级比较已装备和背包中的武器，武器等级统一按90级计算。",
     },
     ownedWeaponComparisonNeedsAccount: {
       en: "Import account data to compare owned weapons.",
@@ -1891,24 +1794,12 @@ export const i18nUiData = {
       en: "No owned weapons match this team’s weapon types.",
       zh: "账号中没有适用于本队角色的武器。",
     },
-    ownedWeaponBaseline: {
-      en: "Best owned weapon = 100%.",
-      zh: "最佳已拥有武器为100%。",
-    },
     percentOfBest: { en: "% of best", zh: "最优方案占比" },
     showAllChoices: { en: "Show all choices", zh: "查看全部方案" },
     showTopChoices: { en: "Show top choices", zh: "只看前列方案" },
     investmentRange: {
-      en: "Your starting point and upgrade limits",
-      zh: "当前配置与提升上限",
-    },
-    investmentRangeDesc: {
-      en: "Start from the shared roster, choose alternate weapons, then set the highest upgrades you want to consider.",
-      zh: "以共享队伍配置为起点，选择备选武器，再设置愿意考虑的命座、精炼上限。",
-    },
-    investmentResults: {
-      en: "Where should you invest next?",
-      zh: "下一步该提升什么？",
+      en: "Investment settings",
+      zh: "补金设置",
     },
     emptyTeamTitle: {
       en: "Team Damage Calculator",
@@ -2276,41 +2167,13 @@ export const i18nUiData = {
       en: "Run Analysis",
       zh: "开始分析",
     },
-    analyzerPhase1: {
-      en: "Generating artifacts…",
-      zh: "生成圣遗物中…",
-    },
-    analyzerPhase2: {
-      en: "Evaluating combinations…",
-      zh: "评估组合中…",
-    },
-    analyzerPhase3: {
-      en: "Optimizing paths…",
-      zh: "优化路径中…",
-    },
     analyzerTable: {
       en: "Table",
       zh: "表格",
     },
-    analyzerTableDesc: {
-      en: "Compare all allocations",
-      zh: "对比所有配置",
-    },
     analyzerSequence: {
       en: "Path",
       zh: "路径",
-    },
-    analyzerSequenceDesc: {
-      en: "Optimal upgrade order",
-      zh: "最优升级顺序",
-    },
-    analyzerMinConfig: {
-      en: "Starting point",
-      zh: "当前配置",
-    },
-    analyzerMaxConfig: {
-      en: "Upgrade limit",
-      zh: "提升上限",
     },
     analyzerChar: {
       en: "Character",
@@ -2358,21 +2221,8 @@ export const i18nUiData = {
     weaponChoiceRanking: { en: "Weapon Ranking", zh: "武器排名" },
     weaponChoiceConfig: { en: "Character Config", zh: "角色配置" },
     weaponChoiceBest: { en: "Best", zh: "最佳" },
-    weaponChoiceResults: { en: "Choice Results", zh: "选择结果" },
-    choiceModeWeapon: { en: "All weapons", zh: "全部武器" },
-    choiceModeWeaponDesc: {
-      en: "Compare compatible weapons with generated artifacts",
-      zh: "用生成圣遗物比较可用武器",
-    },
+    buildComparison: { en: "Build Comparison", zh: "配装对比" },
     choiceModeArtifact: { en: "Artifact sets", zh: "圣遗物套装" },
-    choiceModeArtifactDesc: {
-      en: "Compare 4-piece artifact sets with the current weapon",
-      zh: "用当前武器比较四件套",
-    },
-    choiceOthersUnchanged: {
-      en: "(others unchanged)",
-      zh: "（其他人不变）",
-    },
     artifactAssignmentSuggestion: {
       en: "Artifact Assignment Suggestion",
       zh: "圣遗物分配建议",
@@ -2388,14 +2238,6 @@ export const i18nUiData = {
     artifactAssignmentNoChange: {
       en: "Current assignment is already best",
       zh: "当前分配已经最优",
-    },
-    weaponChoiceEmpty: {
-      en: "Click Run to analyze weapons",
-      zh: "点击运行以分析武器",
-    },
-    artifactChoiceEmpty: {
-      en: "Click Run to analyze artifact sets",
-      zh: "点击运行以分析圣遗物套装",
     },
     mainStats: { en: "Main Stats", zh: "主词条" },
     substatAllocation: { en: "Substat Totals", zh: "副词条合计" },

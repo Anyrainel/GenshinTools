@@ -335,6 +335,17 @@ const TeamInvestmentConfigSchema = z
       )
       .optional()
       .catch(undefined),
+    absoluteCountTargets: z
+      .array(
+        z.object({
+          charId: z.string(),
+          constellation: z.number().int().min(1).max(6),
+          formulaId: z.string(),
+          count: z.number().finite().min(0),
+        })
+      )
+      .optional()
+      .catch(undefined),
     legacyCountOverrides: z
       .record(z.string(), z.number())
       .optional()

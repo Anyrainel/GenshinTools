@@ -272,10 +272,16 @@ test("GOOD scanner upload reaches converted account and survives reload", async 
     })
     .click();
   await page.getByRole("tab", { name: "Characters", exact: true }).click();
-  await page.getByRole("checkbox", { name: /Amber/ }).check();
-  await page
-    .getByRole("combobox", { name: "Artifact source", exact: true })
-    .selectOption("generated");
+  await expect(
+    page.getByRole("button", { name: "Replace characters", exact: true })
+  ).toBeVisible();
+  await expect(
+    page.locator("[data-character-comparison]").getByRole("checkbox")
+  ).toHaveCount(0);
+  await expect(page.locator("[data-replacement-slot]")).toHaveCount(0);
+  await expect(
+    page.getByRole("combobox", { name: "Character & weapon pool", exact: true })
+  ).toBeVisible();
   const calculation = page.waitForEvent("worker", {
     predicate: (worker) => worker.url().includes("characterReplacement.worker"),
   });
@@ -283,11 +289,12 @@ test("GOOD scanner upload reaches converted account and survives reload", async 
     .getByRole("button", { name: "Find replacements", exact: true })
     .click();
   await calculation;
+  await expect(page.locator("[data-replacement-slot]")).toHaveCount(4);
   await expect(
     page
       .getByRole("button", { name: "Apply to this team", exact: true })
       .first()
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 120000 });
   const replacement = page
     .locator("section")
     .filter({

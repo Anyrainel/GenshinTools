@@ -1,16 +1,33 @@
-import { useMemo, useState } from "react";
+import { Loader2, Play } from "lucide-react";
+import { useId, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   fullToStored,
   reconcileConfigs,
 } from "@/domain/combat/analyzer/analyzerConfig";
-import { getFutureInvestmentChanges } from "@/domain/combat/analyzer/investmentCounts";
+import {
+  deriveAbsoluteInvestmentCombo,
+  getFutureInvestmentChanges,
+  getInvestmentFormulaCount,
+} from "@/domain/combat/analyzer/investmentCounts";
+import { setInvestmentErPoint } from "@/domain/combat/analyzer/investmentEr";
 import type {
   AnalyzerOptions,
-  InvestmentCountChange,
+  TeamInvestment,
 } from "@/domain/combat/analyzer/types";
 import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type {
@@ -18,18 +35,16 @@ import type {
   TeamSlotConfig,
 } from "@/domain/combat/damage/types";
 import { resolveCalcContext } from "@/domain/combat/damage/utils";
+import { formatBuffStats } from "@/domain/team/displayFormatter";
 import type {
   TeamComp,
   TeamInvestmentConfig,
   TeamSetupConfig,
 } from "@/domain/team/types";
-import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useAnalyzer } from "@/hooks/useAnalyzer";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { AccountInvestmentCard } from "./AccountInvestmentCard";
 import { AnalyzerConfigCard } from "./AnalyzerConfigCard";
 import { AnalyzerResultCard } from "./AnalyzerResultCard";
-import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
 
 interface InvestmentPanelProps {
   teamComp: TeamComp;
@@ -51,7 +66,6 @@ export function InvestmentPanel({
   ignoredCharIds,
 }: InvestmentPanelProps) {
   const { t } = useLanguage();
-  const account = useActiveAccountData();
   const updateSetup = useTeamStore((s) => s.updateTeamSetupConfig);
   const investment = setupConfig.investment ?? {};
   const charConfigs = useMemo(
@@ -61,36 +75,18 @@ export function InvestmentPanel({
   const starts = Object.fromEntries(
     configs.map((c) => [c.charId, c.constellation])
   );
-  const changes = getFutureInvestmentChanges(
-    teamBuild,
-    starts,
-    investment.futureCountChanges
+  const allocation: TeamInvestment = Object.fromEntries(
+    configs.map((c) => [
+      c.charId,
+      {
+        constellation: c.constellation,
+        weaponId: c.weaponId,
+        refinement: c.refinement,
+        is5StarWeapon:
+          charConfigs.find((x) => x.charId === c.charId)!.startRefinement > 0,
+      },
+    ])
   );
-  const [draft, setDraft] = useState({
-    charId: "",
-    constellation: 1,
-    formulaId: "",
-    delta: 0,
-  });
-  const draftChar =
-    configs.find((c) => c.charId === draft.charId) ??
-    configs.find((c) => c.constellation < 6);
-  const draftFormulas = draftChar
-    ? [
-        ...new Set([
-          ...Object.keys(
-            teamBuild.catalog.getFormulaIds()[draftChar.charId] ?? {}
-          ).filter((id) => !id.startsWith("rx-")),
-          ...teamBuild.catalog.getReactionComboGrid().map((row) => row.baseId),
-          ...changes
-            .filter((change) => change.charId === draftChar.charId)
-            .map((change) => change.formulaId),
-        ]),
-      ]
-    : [];
-  const draftFormula = draftFormulas.includes(draft.formulaId)
-    ? draft.formulaId
-    : draftFormulas[0];
   const options: AnalyzerOptions = {
     configs: charConfigs,
     baseConfigs: configs,
@@ -101,6 +97,7 @@ export function InvestmentPanel({
     calcContext: resolveCalcContext(setupConfig.damage?.calcContext),
     baselineConstellations: starts,
     futureCountChanges: investment.futureCountChanges,
+    absoluteCountTargets: investment.absoluteCountTargets,
     singleObjective,
     ignoredContributorIds: ignoredCharIds ? [...ignoredCharIds] : [],
     perChar: Object.fromEntries(
@@ -134,25 +131,360 @@ export function InvestmentPanel({
         fullToStored(c, configs.find((base) => base.charId === c.charId)!)
       ),
     });
-  const customize = (change: InvestmentCountChange, delta: number) =>
-    patch({
-      futureCountChanges: [
-        ...(investment.futureCountChanges ?? []).filter(
-          (c) =>
-            !(
-              c.charId === change.charId &&
-              c.constellation === change.constellation &&
-              c.formulaId === change.formulaId
-            )
+  const countAt = (charId: string, c: number, id: string) =>
+    getInvestmentFormulaCount(
+      deriveAbsoluteInvestmentCombo(
+        {
+          ...allocation,
+          [charId]: { ...allocation[charId], constellation: c },
+        },
+        objectiveCombo,
+        teamBuild,
+        starts,
+        investment.futureCountChanges,
+        investment.legacyCountOverrides,
+        investment.absoluteCountTargets
+      ),
+      charId,
+      id
+    );
+  const label = (id: string) => {
+    const value =
+      teamBuild.catalog.formulaIndex.get(id)?.label ??
+      teamBuild.catalog.getReactionComboGrid().find((row) => row.baseId === id)
+        ?.label;
+    return value ? t.resolveLabel(value) : id;
+  };
+  const renderChanges = (charId: string) => {
+    const start = starts[charId];
+    const points = new Map<
+      string,
+      { constellation: number; formulaId: string }
+    >();
+    for (const point of [
+      ...getFutureInvestmentChanges(
+        teamBuild,
+        starts,
+        investment.futureCountChanges
+      ),
+      ...(investment.absoluteCountTargets ?? []),
+    ]) {
+      if (point.charId === charId && point.constellation > start)
+        points.set(`${point.constellation}|${point.formulaId}`, point);
+    }
+    for (const key of Object.keys(investment.legacyCountOverrides ?? {})) {
+      const [owner, c, formula] = key.split("|");
+      if (owner === charId && Number(c) > start && formula)
+        points.set(`${c}|${formula.split(":")[0]}`, {
+          constellation: Number(c),
+          formulaId: formula.split(":")[0],
+        });
+    }
+    const formulas = [
+      ...new Set([
+        ...Object.keys(teamBuild.catalog.getFormulaIds()[charId] ?? {}).filter(
+          (id) => !id.startsWith("rx-")
         ),
-        { ...change, delta },
-      ],
-    });
+        ...teamBuild.catalog.getReactionComboGrid().map((row) => row.baseId),
+        ...[...points.values()].map((point) => point.formulaId),
+      ]),
+    ];
+    let previousEr = setupConfig.charConfigs?.[charId]?.minEr ?? 1;
+    const erPoints: { constellation: number; value: number }[] = [];
+    for (let c = start + 1; c <= 6; c++) {
+      const value =
+        investment.minErOverrides?.[`${charId}|${c}`] ??
+        setupConfig.charConfigs?.[charId]?.minEr ??
+        1;
+      if (value !== previousEr) erPoints.push({ constellation: c, value });
+      previousEr = value;
+    }
+    return (
+      <div className="space-y-2 text-xs">
+        {!singleObjective &&
+          [...points.values()]
+            .sort(
+              (a, b) =>
+                a.constellation - b.constellation ||
+                a.formulaId.localeCompare(b.formulaId)
+            )
+            .map((point) => (
+              <div
+                key={`${point.constellation}|${point.formulaId}`}
+                className="flex items-start justify-between gap-1"
+              >
+                <span className="min-w-0 break-words">
+                  {t.format(
+                    "teamComp.investmentCountAt",
+                    t.format("common.constellationFormat", point.constellation),
+                    label(point.formulaId),
+                    Number(
+                      countAt(
+                        charId,
+                        point.constellation,
+                        point.formulaId
+                      ).toFixed(2)
+                    )
+                  )}
+                </span>
+                {(investment.absoluteCountTargets?.some(
+                  (target) =>
+                    target.charId === charId &&
+                    target.constellation === point.constellation &&
+                    target.formulaId === point.formulaId
+                ) ||
+                  investment.futureCountChanges?.some(
+                    (change) =>
+                      change.charId === charId &&
+                      change.constellation === point.constellation &&
+                      change.formulaId === point.formulaId
+                  )) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-5 shrink-0 px-1 text-xs"
+                    aria-label={t.ui("teamComp.investmentRemoveChange")}
+                    onClick={() =>
+                      patch({
+                        absoluteCountTargets:
+                          investment.absoluteCountTargets?.filter(
+                            (p) =>
+                              !(
+                                p.charId === charId &&
+                                p.constellation === point.constellation &&
+                                p.formulaId === point.formulaId
+                              )
+                          ),
+                        futureCountChanges:
+                          investment.futureCountChanges?.filter(
+                            (p) =>
+                              !(
+                                p.charId === charId &&
+                                p.constellation === point.constellation &&
+                                p.formulaId === point.formulaId
+                              )
+                          ),
+                      })
+                    }
+                  >
+                    ×
+                  </Button>
+                )}
+              </div>
+            ))}
+        {erPoints.map((point) => (
+          <div
+            key={`er${point.constellation}`}
+            className="flex items-start justify-between gap-1"
+          >
+            <span className="min-w-0 break-words">
+              {t.format(
+                "teamComp.investmentErAt",
+                t.format("common.constellationFormat", point.constellation),
+                Math.round(point.value * 100)
+              )}
+            </span>
+            {investment.minErOverrides?.[`${charId}|${point.constellation}`] !==
+              undefined && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-5 shrink-0 px-1 text-xs"
+                aria-label={t.ui("teamComp.investmentRemoveChange")}
+                onClick={() =>
+                  patch({
+                    minErOverrides: setInvestmentErPoint(
+                      investment.minErOverrides ?? {},
+                      charId,
+                      point.constellation,
+                      setupConfig.charConfigs?.[charId]?.minEr ?? 1,
+                      undefined
+                    ),
+                  })
+                }
+              >
+                ×
+              </Button>
+            )}
+          </div>
+        ))}
+        {start < 6 && (
+          <InvestmentChangePopover
+            charId={charId}
+            start={start}
+            formulas={formulas}
+            label={label}
+            countAt={countAt}
+            single={singleObjective}
+            baseEr={setupConfig.charConfigs?.[charId]?.minEr ?? 1}
+            overrides={investment.minErOverrides ?? {}}
+            onSave={(c, id, value) => {
+              if (id === "er") {
+                patch({
+                  minErOverrides: setInvestmentErPoint(
+                    investment.minErOverrides ?? {},
+                    charId,
+                    c,
+                    setupConfig.charConfigs?.[charId]?.minEr ?? 1,
+                    value / 100
+                  ),
+                });
+              } else
+                patch({
+                  absoluteCountTargets: [
+                    ...(investment.absoluteCountTargets ?? []).filter(
+                      (p) =>
+                        !(
+                          p.charId === charId &&
+                          p.constellation === c &&
+                          p.formulaId === id
+                        )
+                    ),
+                    { charId, constellation: c, formulaId: id, count: value },
+                  ],
+                });
+            }}
+          />
+        )}
+      </div>
+    );
+  };
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <AnalyzerConfigCard
         configs={configs}
         charConfigs={charConfigs}
+        renderChanges={renderChanges}
+        footer={
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() =>
+                patch({
+                  futureCountChanges: undefined,
+                  absoluteCountTargets: undefined,
+                  minErOverrides: undefined,
+                  legacyCountOverrides: undefined,
+                })
+              }
+            >
+              {t.ui("teamComp.analyzerResetDefaults")}
+            </Button>
+            {investment.legacyInputs && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm">
+                    {t.ui("teamComp.investmentRetainedSettings")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 max-w-[calc(100vw-2rem)] space-y-3">
+                  <div className="max-h-56 space-y-2 overflow-auto text-sm">
+                    {investment.legacyInputs.enemyAura && (
+                      <div>
+                        {t.ui("teamComp.enemyAura")}{" "}
+                        {t.element(investment.legacyInputs.enemyAura)}
+                      </div>
+                    )}
+                    {investment.legacyInputs.extraBuffs?.map((buff) => (
+                      <div key={buff.id}>
+                        {buff.target === "team"
+                          ? t.ui("teamComp.extraBuffs")
+                          : t.character(buff.target)}
+                        : {formatBuffStats(buff.stats, t)}
+                      </div>
+                    ))}
+                    {Object.entries(
+                      investment.legacyInputs.reactionOverrides ?? {}
+                    ).map(([key, reaction]) => (
+                      <div key={key}>
+                        {t.character(key.split(".")[0])} ·{" "}
+                        {label(key.split(".").slice(1).join("."))}:{" "}
+                        {reaction.reaction
+                          ? t.reaction(reaction.reaction)
+                          : "—"}
+                      </div>
+                    ))}
+                    {Object.entries(
+                      investment.legacyInputs.startingValues ?? {}
+                    ).map(([id, ranks]) => (
+                      <div key={id}>
+                        {t.character(id)}:{" "}
+                        {t.format(
+                          "common.constellationFormat",
+                          ranks.constellation
+                        )}{" "}
+                        /{" "}
+                        {ranks.refinement
+                          ? t.format(
+                              "common.refinementFormat",
+                              ranks.refinement
+                            )
+                          : "3/4★"}
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    className="h-auto w-full whitespace-normal"
+                    onClick={() =>
+                      updateSetup(teamComp.id, (config) => {
+                        const saved = config.investment?.legacyInputs;
+                        const combo = config.damage?.combo;
+                        const selected = config.damage?.selectedFormula;
+                        return {
+                          ...config,
+                          damage: {
+                            ...config.damage,
+                            ...(saved?.enemyAura
+                              ? { enemyAura: saved.enemyAura }
+                              : {}),
+                            ...(saved?.extraBuffs
+                              ? { extraBuffs: saved.extraBuffs }
+                              : {}),
+                            ...(selected &&
+                            saved?.reactionOverrides?.[
+                              `${selected.charId}.${selected.formulaId}`
+                            ]
+                              ? {
+                                  singleReaction:
+                                    saved.reactionOverrides[
+                                      `${selected.charId}.${selected.formulaId}`
+                                    ],
+                                }
+                              : {}),
+                            ...(combo && saved?.reactionOverrides
+                              ? {
+                                  combo: {
+                                    ...combo,
+                                    lines: combo.lines.map((line) => ({
+                                      ...line,
+                                      reaction:
+                                        saved.reactionOverrides?.[
+                                          `${line.charId}.${line.formulaId}`
+                                        ] ?? line.reaction,
+                                    })),
+                                  },
+                                }
+                              : {}),
+                          },
+                        };
+                      })
+                    }
+                  >
+                    {t.ui("teamComp.investmentAdoptSettings")}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => patch({ legacyInputs: undefined })}
+                  >
+                    {t.ui("teamComp.investmentDiscardSettings")}
+                  </Button>
+                </PopoverContent>
+              </Popover>
+            )}
+          </>
+        }
         onUpdateMax={(id, field, value) =>
           saveConfigs(
             charConfigs.map((c) =>
@@ -169,7 +501,9 @@ export function InvestmentPanel({
                   ? {
                       ...c,
                       weapon5Star: weaponId ? { id: weaponId } : undefined,
-                      maxRefinement: weaponId ? 5 : c.startRefinement,
+                      maxRefinement: weaponId
+                        ? Math.max(1, c.maxRefinement)
+                        : c.startRefinement,
                     }
                   : {
                       ...c,
@@ -180,291 +514,165 @@ export function InvestmentPanel({
             )
           )
         }
-      />
-      <Card className={CARD_CLS}>
-        <CardHeader className={CARD_HEADER_CLS}>
-          <h3 className={CARD_TITLE_CLS}>
-            {t.ui("teamComp.investmentFutureCounts")}
-          </h3>
-        </CardHeader>
-        <CardContent className="space-y-3 p-3">
-          <p className="text-sm text-muted-foreground">
-            {t.ui("teamComp.investmentFutureCountsDesc")}
-          </p>
-          {singleObjective && (
-            <p className="text-sm text-muted-foreground">
-              {t.ui("teamComp.investmentSingleObjective")}
-            </p>
-          )}
+      >
+        <div className="flex flex-wrap items-center gap-2">
           <Button
-            variant="outline"
-            onClick={() =>
-              patch({
-                futureCountChanges: undefined,
-                minErOverrides: undefined,
-                legacyCountOverrides: undefined,
-              })
+            onClick={
+              analysis.isComputing
+                ? analysis.stop
+                : () => analysis.start(options, !!analysis.result)
             }
+            variant={analysis.isComputing ? "destructive" : "default"}
           >
-            {t.ui("teamComp.analyzerResetDefaults")}
+            {analysis.isComputing ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Play className="mr-2 h-4 w-4" />
+            )}
+            {analysis.isComputing
+              ? t.ui("common.stop")
+              : t.ui("teamComp.runAnalysis")}
           </Button>
-          {!singleObjective &&
-            changes.map((change) => (
-              <div
-                key={`${change.charId}:${change.constellation}:${change.formulaId}`}
-                className="flex flex-wrap items-center gap-2 rounded-md border border-border p-2"
-              >
-                <span className="min-w-0 flex-1 break-words text-sm">
-                  {t.character(change.charId)}{" "}
-                  {t.format("common.constellationFormat", change.constellation)}{" "}
-                  ·{" "}
-                  {teamBuild.catalog.formulaIndex.get(change.formulaId)?.label
-                    ? t.resolveLabel(
-                        teamBuild.catalog.formulaIndex.get(change.formulaId)!
-                          .label
-                      )
-                    : change.formulaId}
-                </span>
-                <label
-                  htmlFor={`investment-${teamComp.id}-delta-${change.charId}-${change.constellation}-${change.formulaId}`}
-                  className="flex items-center gap-2 text-sm"
-                >
-                  {t.ui("teamComp.investmentCountDelta")}
-                  <Input
-                    id={`investment-${teamComp.id}-delta-${change.charId}-${change.constellation}-${change.formulaId}`}
-                    aria-label={`${t.character(change.charId)} ${change.formulaId} ${t.format("common.constellationFormat", change.constellation)}`}
-                    className="w-20"
-                    type="number"
-                    value={change.delta}
-                    onChange={(event) =>
-                      customize(change, Number(event.target.value))
-                    }
-                  />
-                </label>
-              </div>
-            ))}
-          {!singleObjective && draftChar && (
-            <div className="flex flex-wrap items-center gap-2 rounded-md border border-border p-2">
-              <select
-                aria-label={t.ui("teamComp.investmentAddChange")}
-                className="max-w-full rounded-md border border-border bg-background p-2 text-sm"
-                value={draftChar.charId}
-                onChange={(event) =>
-                  setDraft({ ...draft, charId: event.target.value })
-                }
-              >
-                {configs
-                  .filter((c) => c.constellation < 6)
-                  .map((c) => (
-                    <option key={c.charId} value={c.charId}>
-                      {t.character(c.charId)}
-                    </option>
-                  ))}
-              </select>
-              <select
-                aria-label={t.ui("charEdit.constellation")}
-                className="rounded-md border border-border bg-background p-2 text-sm"
-                value={Math.max(
-                  draftChar.constellation + 1,
-                  draft.constellation
-                )}
-                onChange={(event) =>
-                  setDraft({
-                    ...draft,
-                    constellation: Number(event.target.value),
-                  })
-                }
-              >
-                {Array.from(
-                  { length: 6 - draftChar.constellation },
-                  (_, i) => draftChar.constellation + i + 1
-                ).map((c) => (
-                  <option key={c} value={c}>
-                    {t.format("common.constellationFormat", c)}
-                  </option>
-                ))}
-              </select>
-              <select
-                aria-label={t.ui("teamComp.formulaSelect")}
-                className="min-w-0 max-w-full flex-1 rounded-md border border-border bg-background p-2 text-sm"
-                value={draftFormula}
-                onChange={(event) =>
-                  setDraft({ ...draft, formulaId: event.target.value })
-                }
-              >
-                {draftFormulas.map((id) => (
-                  <option key={id} value={id}>
-                    {teamBuild.catalog.formulaIndex.get(id)?.label
-                      ? t.resolveLabel(
-                          teamBuild.catalog.formulaIndex.get(id)!.label
-                        )
-                      : teamBuild.catalog
-                            .getReactionComboGrid()
-                            .find((row) => row.baseId === id)?.label
-                        ? t.resolveLabel(
-                            teamBuild.catalog
-                              .getReactionComboGrid()
-                              .find((row) => row.baseId === id)!.label
-                          )
-                        : id}
-                  </option>
-                ))}
-              </select>
-              <Input
-                aria-label={t.ui("teamComp.investmentCountDelta")}
-                className="w-20"
-                type="number"
-                value={draft.delta}
-                onChange={(event) =>
-                  setDraft({ ...draft, delta: Number(event.target.value) })
-                }
-              />
-              <Button
-                variant="outline"
-                disabled={!draftFormula}
-                onClick={() =>
-                  customize(
-                    {
-                      charId: draftChar.charId,
-                      constellation: Math.max(
-                        draftChar.constellation + 1,
-                        draft.constellation
-                      ),
-                      formulaId: draftFormula,
-                      delta: draft.delta,
-                    },
-                    draft.delta
-                  )
-                }
-              >
-                {t.ui("teamComp.investmentAddChange")}
-              </Button>
-            </div>
-          )}
-          <details className="rounded-md border border-border p-3">
-            <summary className="cursor-pointer text-sm font-medium">
-              {t.ui("teamComp.analyzerMinEr")}
-            </summary>
-            <div className="mt-2 flex flex-wrap gap-3">
-              {configs.flatMap((config) =>
-                Array.from(
-                  { length: 6 - config.constellation },
-                  (_, i) => config.constellation + i + 1
-                ).map((c) => (
-                  <label
-                    key={`${config.charId}-${c}`}
-                    htmlFor={`investment-${teamComp.id}-er-${config.charId}-${c}`}
-                    className="text-sm"
-                  >
-                    {t.character(config.charId)}{" "}
-                    {t.format("common.constellationFormat", c)}
-                    <Input
-                      id={`investment-${teamComp.id}-er-${config.charId}-${c}`}
-                      className="w-24"
-                      type="number"
-                      min={0}
-                      value={Math.round(
-                        (investment.minErOverrides?.[`${config.charId}|${c}`] ??
-                          setupConfig.charConfigs?.[config.charId]?.minEr ??
-                          1) * 100
-                      )}
-                      onChange={(event) =>
-                        patch({
-                          minErOverrides: {
-                            ...investment.minErOverrides,
-                            [`${config.charId}|${c}`]:
-                              Number(event.target.value) / 100,
-                          },
-                        })
-                      }
-                    />
-                    %
-                  </label>
-                ))
-              )}
-            </div>
-          </details>
-          {(investment.legacyInputs || investment.legacyCountOverrides) && (
-            <details className="space-y-2 rounded-md border border-border p-3">
-              <summary className="cursor-pointer text-sm font-medium">
-                {t.ui("teamComp.investmentRetainedSettings")}
-              </summary>
-              <p className="text-sm text-muted-foreground">
-                {t.ui("teamComp.investmentRetainedSettingsDesc")}
-              </p>
-              <pre className="max-h-64 overflow-auto whitespace-pre-wrap break-all text-xs">
-                {JSON.stringify(
-                  {
-                    inputs: investment.legacyInputs,
-                    exactCounts: investment.legacyCountOverrides,
-                  },
-                  null,
-                  2
-                )}
-              </pre>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  updateSetup(teamComp.id, (config) => {
-                    const saved = config.investment?.legacyInputs;
-                    const combo = config.damage?.combo;
-                    return {
-                      ...config,
-                      damage: {
-                        ...config.damage,
-                        ...(saved?.enemyAura
-                          ? { enemyAura: saved.enemyAura }
-                          : {}),
-                        ...(saved?.extraBuffs
-                          ? { extraBuffs: saved.extraBuffs }
-                          : {}),
-                        ...(combo && saved?.reactionOverrides
-                          ? {
-                              combo: {
-                                ...combo,
-                                lines: combo.lines.map((line) => ({
-                                  ...line,
-                                  reaction:
-                                    saved.reactionOverrides?.[
-                                      `${line.charId}.${line.formulaId}`
-                                    ] ?? line.reaction,
-                                })),
-                              },
-                            }
-                          : {}),
-                      },
-                    };
-                  })
-                }
-              >
-                {t.ui("teamComp.investmentAdoptSettings")}
-              </Button>
-            </details>
-          )}
-        </CardContent>
-      </Card>
-      <AccountInvestmentCard
-        account={account}
-        charConfigs={charConfigs}
-        options={options}
-      />
-      <AnalyzerResultCard
-        calcContext={setupConfig.damage?.calcContext ?? {}}
-        onCalcContextChange={(calcContext) =>
-          updateSetup(teamComp.id, (config) => ({
-            ...config,
-            damage: { ...config.damage, calcContext },
-          }))
-        }
-        charConfigs={charConfigs}
-        teamMeta={teamBuild.teamMeta}
-        isComputing={analysis.isComputing}
-        result={analysis.result}
-        progress={analysis.progress}
-        error={analysis.error}
-        onRun={() => analysis.start(options, !!analysis.result)}
-        onStop={analysis.stop}
-      />
+        </div>
+        <AnalyzerResultCard
+          charConfigs={charConfigs}
+          isComputing={analysis.isComputing}
+          result={analysis.result}
+          progress={analysis.progress}
+          error={analysis.error}
+        />
+      </AnalyzerConfigCard>
     </div>
+  );
+}
+
+function InvestmentChangePopover({
+  charId,
+  start,
+  formulas,
+  label,
+  countAt,
+  single,
+  baseEr,
+  overrides,
+  onSave,
+}: {
+  charId: string;
+  start: number;
+  formulas: string[];
+  label: (id: string) => string;
+  countAt: (charId: string, c: number, id: string) => number;
+  single: boolean;
+  baseEr: number;
+  overrides: Record<string, number>;
+  onSave: (c: number, id: string, value: number) => void;
+}) {
+  const { t } = useLanguage();
+  const inputId = useId();
+  const [open, setOpen] = useState(false);
+  const [c, setC] = useState(start + 1);
+  const [formula, setFormula] = useState(single ? "er" : (formulas[0] ?? "er"));
+  const [value, setValue] = useState(0);
+  const read = (at: number, id: string) =>
+    id === "er"
+      ? (overrides[`${charId}|${at}`] ?? baseEr) * 100
+      : countAt(charId, at, id);
+  return (
+    <Popover
+      open={open}
+      onOpenChange={(next) => {
+        if (next) {
+          setC(start + 1);
+          const nextFormula = single
+            ? "er"
+            : formulas.includes(formula) || formula === "er"
+              ? formula
+              : (formulas[0] ?? "er");
+          setFormula(nextFormula);
+          setValue(read(start + 1, nextFormula));
+        }
+        setOpen(next);
+      }}
+    >
+      <PopoverTrigger asChild>
+        <Button variant="ghost" className="h-7 px-0 text-xs">
+          {t.ui("teamComp.investmentAddChange")}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-72 max-w-[calc(100vw-2rem)] space-y-3"
+        align="start"
+      >
+        <Select
+          value={String(c)}
+          onValueChange={(raw) => {
+            const next = Number(raw);
+            setC(next);
+            setValue(read(next, formula));
+          }}
+        >
+          <SelectTrigger aria-label={t.ui("charEdit.constellation")}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Array.from({ length: 6 - start }, (_, i) => start + i + 1).map(
+              (point) => (
+                <SelectItem key={point} value={String(point)}>
+                  {t.format("common.constellationFormat", point)}
+                </SelectItem>
+              )
+            )}
+          </SelectContent>
+        </Select>
+        <Select
+          value={formula}
+          onValueChange={(id) => {
+            setFormula(id);
+            setValue(read(c, id));
+          }}
+        >
+          <SelectTrigger aria-label={t.ui("teamComp.formulaSelect")}>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {!single &&
+              formulas.map((id) => (
+                <SelectItem key={id} value={id}>
+                  {label(id)}
+                </SelectItem>
+              ))}
+            <SelectItem value="er">{t.ui("teamComp.analyzerMinEr")}</SelectItem>
+          </SelectContent>
+        </Select>
+        <label htmlFor={inputId} className="text-sm">
+          {formula === "er"
+            ? t.ui("teamComp.analyzerMinEr")
+            : t.ui("teamComp.investmentAbsoluteCount")}
+        </label>
+        <Input
+          id={inputId}
+          aria-label={
+            formula === "er"
+              ? t.ui("teamComp.analyzerMinEr")
+              : t.ui("teamComp.investmentAbsoluteCount")
+          }
+          type="number"
+          min={0}
+          value={Number(value.toFixed(2))}
+          onChange={(event) =>
+            setValue(Math.max(0, Number(event.target.value)))
+          }
+        />
+        <Button
+          className="w-full"
+          onClick={() => {
+            onSave(c, formula, value);
+            setOpen(false);
+          }}
+        >
+          {t.ui("teamComp.investmentSaveChange")}
+        </Button>
+      </PopoverContent>
+    </Popover>
   );
 }

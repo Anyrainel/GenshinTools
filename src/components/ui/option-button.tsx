@@ -52,7 +52,7 @@ export const OptionButton = forwardRef<
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full h-full flex flex-wrap md:flex-nowrap items-baseline rounded-lg border-2 px-3 py-2 text-left transition-all",
+        "w-full h-full flex flex-wrap md:flex-nowrap items-baseline rounded-lg border-2 px-1 py-2 min-[420px]:px-3 text-left transition-all",
         selected
           ? (selectedClassName ?? "border-primary bg-primary/10")
           : (unselectedClassName ??
@@ -61,13 +61,13 @@ export const OptionButton = forwardRef<
       )}
     >
       {/* Icon + title grouped so icon centers against the title line-height */}
-      <span className="inline-flex items-center gap-2.5 shrink-0">
-        <span className={cn("inline-flex items-center", ICON_HEIGHT)}>
+      <span className="inline-flex max-w-full min-w-0 items-center gap-2.5 max-[420px]:w-full max-[420px]:flex-col max-[420px]:gap-1">
+        <span className={cn("inline-flex shrink-0 items-center", ICON_HEIGHT)}>
           {icon ?? <RadioDot selected={selected} />}
         </span>
         <span
           className={cn(
-            "text-sm md:text-base lg:text-lg font-bold",
+            "min-w-0 whitespace-normal [overflow-wrap:anywhere] text-xs min-[420px]:text-sm md:text-base lg:text-lg font-bold max-[420px]:text-center",
             titleClassName ??
               (selected ? "text-foreground" : "text-foreground/70"),
           )}

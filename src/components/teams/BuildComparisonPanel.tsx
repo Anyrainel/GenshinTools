@@ -57,11 +57,9 @@ export function BuildComparisonPanel({
   const clearChoiceResults = useTeamResultCacheStore(
     (s) => s.clearChoiceResults
   );
-  const [comparison, setComparison] = useState<"all" | "owned" | "artifact">(
-    "all"
-  );
-  const mode = comparison === "artifact" ? "artifact" : "weapon";
-  const owned = comparison === "owned";
+  const [mode, setMode] = useState<"weapon" | "artifact">("weapon");
+  const [ownedWeaponsOnly, setOwnedWeaponsOnly] = useState(false);
+  const owned = mode === "weapon" && ownedWeaponsOnly;
   const { characters, weapons, artifacts } = useMemo(
     () => teamCompToArrays(teamComp),
     [teamComp]
@@ -190,10 +188,15 @@ export function BuildComparisonPanel({
       isComputing={isComputing}
       choiceMode={mode}
       ownedWeaponsOnly={owned}
-      onComparisonChange={(next) => {
+      onChoiceModeChange={(next) => {
         stop();
         runInput.current = null;
-        setComparison(next);
+        setMode(next);
+      }}
+      onOwnedWeaponsOnlyChange={(next) => {
+        stop();
+        runInput.current = null;
+        setOwnedWeaponsOnly(next);
       }}
       hasAccount={accountData !== null}
       hasOwnedCompatibleWeapons={configs.some(

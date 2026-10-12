@@ -1,7 +1,14 @@
-import { ItemIcon } from "@/components/shared/ItemIcon";
+import { ChevronDown } from "lucide-react";
+import type { ReactNode } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { AnalyzerCharConfig } from "@/domain/combat/analyzer/types";
 import type { TeamSlotConfig } from "@/domain/combat/damage/types";
@@ -14,21 +21,23 @@ import {
 } from "@/domain/reference/stats";
 import { useResource } from "@/hooks/useResource";
 import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
-import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 interface AnalyzerConfigCardProps {
   charConfigs: AnalyzerCharConfig[];
   configs: TeamSlotConfig[];
   onUpdateWeapon: (
-    charId: string,
+    id: string,
     star: "4" | "5",
     weaponId: string | null
   ) => void;
   onUpdateMax: (
-    charId: string,
+    id: string,
     field: "maxConstellation" | "maxRefinement",
     value: number
   ) => void;
+  renderChanges: (id: string) => ReactNode;
+  footer?: ReactNode;
+  children?: ReactNode;
 }
 
 export function AnalyzerConfigCard({
@@ -36,6 +45,9 @@ export function AnalyzerConfigCard({
   configs,
   onUpdateWeapon,
   onUpdateMax,
+  renderChanges,
+  footer,
+  children,
 }: AnalyzerConfigCardProps) {
   const { t } = useLanguage();
   const characterStats = useResource(characterStatsResource);
@@ -45,144 +57,155 @@ export function AnalyzerConfigCard({
       <CardHeader className={CARD_HEADER_CLS}>
         <h3 className={CARD_TITLE_CLS}>{t.ui("teamComp.investmentRange")}</h3>
       </CardHeader>
-      <CardContent className="space-y-3 p-3">
-        <p className="text-sm text-muted-foreground">
-          {t.ui("teamComp.investmentRangeDesc")}
-        </p>
-        <TeamCharacterGrid>
-          {charConfigs.map((config) => (
-            <div
-              key={config.charId}
-              className="min-w-0 space-y-3 rounded-lg border border-border p-3"
-            >
-              <div className="flex min-w-0 items-center gap-2">
-                <ItemIcon characterId={config.charId} size="sm" />
-                <span className="break-words font-semibold">
+      <CardContent className="p-3 [container-type:inline-size] [container-name:investment-config]">
+        <div className="grid grid-cols-1 gap-4 [@container_investment-config_(min-width:28rem)]:grid-cols-2 [@container_investment-config_(min-width:56rem)]:grid-cols-4">
+          {charConfigs.map((config) => {
+            const base = configs.find((c) => c.charId === config.charId)!;
+            const baseFive = weaponsById[base.weaponId]?.rarity === 5;
+            return (
+              <section key={config.charId} className="min-w-0 space-y-3">
+                <h4 className="break-words text-sm font-semibold">
                   {t.character(config.charId)}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center gap-3">
-                {(["4", "5"] as const).map((star) => (
-                  <div key={star} className="space-y-1 text-sm">
-                    <p>{star === "4" ? "3/4★" : "5★"}</p>
-                    {(weaponsById[
-                      configs.find((base) => base.charId === config.charId)!
-                        .weaponId
-                    ]?.rarity ===
-                      5) ===
-                    (star === "5") ? (
-                      <ItemIcon
-                        weaponId={
-                          configs.find((base) => base.charId === config.charId)!
-                            .weaponId
-                        }
-                        size="sm"
-                      />
-                    ) : (
-                      <ItemPicker
-                        type="weapon"
-                        value={
-                          star === "4"
-                            ? (config.weapon4Star?.id ?? null)
-                            : (config.weapon5Star?.id ?? null)
-                        }
-                        onChange={(id) =>
-                          onUpdateWeapon(config.charId, star, id as string)
-                        }
-                        onClear={() =>
-                          onUpdateWeapon(config.charId, star, null)
-                        }
-                        filter={(weapon) =>
-                          (star === "5"
-                            ? weapon.rarity === 5
-                            : weapon.rarity === 3 || weapon.rarity === 4) &&
-                          (!weaponStats ||
-                            !characterStats ||
-                            getWeaponDisplayMeta(weapon, weaponStats[weapon.id])
-                              .type ===
-                              getCharacterDisplayMeta(
-                                charactersById[config.charId],
-                                characterStats[config.charId]
-                              ).weaponType)
-                        }
-                        triggerSize="sm"
-                        menuSize="sm"
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                {t.ui("teamComp.analyzerMinConfig")}:{" "}
-                {t.format(
-                  "common.constellationFormat",
-                  config.startConstellation
-                )}{" "}
-                /{" "}
-                {config.startRefinement > 0
-                  ? t.format("common.refinementFormat", config.startRefinement)
-                  : "3/4★"}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {config.rarity === 5 && (
-                  <label
-                    htmlFor={`investment-max-c-${config.charId}`}
-                    className="min-w-0 flex-1 text-sm"
-                  >
-                    {t.ui("teamComp.analyzerMaxConfig")}{" "}
-                    {t.format(
-                      "common.constellationFormat",
-                      config.maxConstellation
-                    )}
-                    <Input
-                      id={`investment-max-c-${config.charId}`}
-                      type="number"
-                      min={config.startConstellation}
-                      max={6}
-                      value={config.maxConstellation}
-                      onChange={(event) =>
-                        onUpdateMax(
-                          config.charId,
-                          "maxConstellation",
-                          Math.max(
-                            config.startConstellation,
-                            Math.min(6, Number(event.target.value))
+                </h4>
+                {(["4", "5"] as const)
+                  .filter((star) => (star === "5") !== baseFive)
+                  .map((star) => {
+                    const value =
+                      star === "5"
+                        ? config.weapon5Star?.id
+                        : config.weapon4Star?.id;
+                    return (
+                      <div key={star} className="space-y-1">
+                        <span className="text-xs">
+                          {star === "5"
+                            ? t.ui("teamComp.investmentFiveWeapon")
+                            : t.ui("teamComp.investmentLowWeapon")}
+                        </span>
+                        <ItemPicker
+                          type="weapon"
+                          value={value ?? null}
+                          className="h-8 w-full min-w-0 justify-between rounded-md border border-border bg-background px-2 text-xs hover:bg-accent"
+                          triggerLabel={
+                            star === "5"
+                              ? t.ui("teamComp.investmentFiveWeapon")
+                              : t.ui("teamComp.investmentLowWeapon")
+                          }
+                          triggerContent={
+                            <>
+                              <span className="truncate">
+                                {value
+                                  ? t.weapon(value)
+                                  : t.ui("teamComp.investmentChooseWeapon")}
+                              </span>
+                              <ChevronDown className="ml-1 h-3 w-3 shrink-0" />
+                            </>
+                          }
+                          onChange={(id) => {
+                            onUpdateWeapon(config.charId, star, id);
+                          }}
+                          onClear={() => {
+                            onUpdateWeapon(config.charId, star, null);
+                          }}
+                          filter={(weapon) =>
+                            (star === "5"
+                              ? weapon.rarity === 5
+                              : weapon.rarity === 3 || weapon.rarity === 4) &&
+                            (!characterStats ||
+                              !weaponStats ||
+                              getWeaponDisplayMeta(
+                                weapon,
+                                weaponStats[weapon.id]
+                              ).type ===
+                                getCharacterDisplayMeta(
+                                  charactersById[config.charId],
+                                  characterStats[config.charId]
+                                ).weaponType)
+                          }
+                        />
+                      </div>
+                    );
+                  })}
+                <div className="grid grid-cols-2 gap-2">
+                  {config.rarity === 5 && (
+                    <div className="space-y-1">
+                      <span className="text-xs">
+                        {t.ui("teamComp.investmentMaxConstellation")}
+                      </span>
+                      <Select
+                        value={String(config.maxConstellation)}
+                        onValueChange={(v) =>
+                          onUpdateMax(
+                            config.charId,
+                            "maxConstellation",
+                            Number(v)
                           )
-                        )
-                      }
-                    />
-                  </label>
-                )}
-                {config.weapon5Star && (
-                  <label
-                    htmlFor={`investment-max-r-${config.charId}`}
-                    className="min-w-0 flex-1 text-sm"
-                  >
-                    {t.ui("teamComp.analyzerMaxConfig")}{" "}
-                    {t.format("common.refinementFormat", config.maxRefinement)}
-                    <Input
-                      id={`investment-max-r-${config.charId}`}
-                      type="number"
-                      min={config.startRefinement}
-                      max={5}
-                      value={config.maxRefinement}
-                      onChange={(event) =>
-                        onUpdateMax(
-                          config.charId,
-                          "maxRefinement",
-                          Math.max(
-                            config.startRefinement,
-                            Math.min(5, Number(event.target.value))
-                          )
-                        )
-                      }
-                    />
-                  </label>
-                )}
-              </div>
-            </div>
-          ))}
-        </TeamCharacterGrid>
+                        }
+                      >
+                        <SelectTrigger
+                          className="h-8 w-full text-xs"
+                          aria-label={t.ui(
+                            "teamComp.investmentMaxConstellation"
+                          )}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 7 }, (_, c) => (
+                            <SelectItem
+                              key={c}
+                              value={String(c)}
+                              disabled={c < config.startConstellation}
+                            >
+                              {t.format("common.constellationFormat", c)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  {config.weapon5Star && (
+                    <div className="space-y-1">
+                      <span className="text-xs">
+                        {t.ui("teamComp.investmentMaxRefinement")}
+                      </span>
+                      <Select
+                        value={String(config.maxRefinement)}
+                        onValueChange={(v) =>
+                          onUpdateMax(config.charId, "maxRefinement", Number(v))
+                        }
+                      >
+                        <SelectTrigger
+                          className="h-8 w-full text-xs"
+                          aria-label={t.ui("teamComp.investmentMaxRefinement")}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.from({ length: 5 }, (_, i) => i + 1).map(
+                            (r) => (
+                              <SelectItem
+                                key={r}
+                                value={String(r)}
+                                disabled={r < config.startRefinement}
+                              >
+                                {t.format("common.refinementFormat", r)}
+                              </SelectItem>
+                            )
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+                {renderChanges(config.charId)}
+              </section>
+            );
+          })}
+        </div>
+        {footer && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">{footer}</div>
+        )}
+        <div className="mt-3 space-y-3">{children}</div>
       </CardContent>
     </Card>
   );

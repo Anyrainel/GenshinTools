@@ -4,20 +4,30 @@ import {
   weaponStatsResource,
 } from "@/domain/reference/stats";
 import type {
-  CharacterReplacementMessage,
   CharacterReplacementRequest,
+  CharacterReplacementWorkerMessage,
 } from "../../domain/team/characterReplacementTypes";
-import { runCharacterReplacement } from "./characterReplacement";
+import {
+  runCharacterReplacement,
+  runIndependentCharacterReplacements,
+} from "./characterReplacement";
 
 self.onmessage = async (event: MessageEvent<CharacterReplacementRequest>) => {
-  const report = (message: CharacterReplacementMessage) =>
+  const report = (message: CharacterReplacementWorkerMessage) =>
     self.postMessage(message);
   try {
     const [chars, weapons] = await Promise.all([
       characterStatsResource.preload(),
       weaponStatsResource.preload(),
     ]);
-    await runCharacterReplacement(event.data, chars, weapons, report);
+    if (event.data.task === "independent")
+      await runIndependentCharacterReplacements(
+        event.data,
+        chars,
+        weapons,
+        report
+      );
+    else await runCharacterReplacement(event.data, chars, weapons, report);
   } catch (error) {
     report({
       type: "error",

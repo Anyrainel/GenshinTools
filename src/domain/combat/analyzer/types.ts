@@ -44,6 +44,14 @@ export type InvestmentCountChange = {
   delta: number;
 };
 
+/** Absolute authored action/reaction total at a future constellation. */
+export type InvestmentCountTarget = {
+  charId: string;
+  constellation: number;
+  formulaId: string;
+  count: number;
+};
+
 export type AnalyzerNode = {
   id: string;
   jin: number;
@@ -119,6 +127,7 @@ export type AnalyzerOptions = {
   calcContext: CalcContext;
   baselineConstellations?: Record<string, number>;
   futureCountChanges?: InvestmentCountChange[];
+  absoluteCountTargets?: InvestmentCountTarget[];
   singleObjective?: boolean;
   ignoredContributorIds?: string[];
 };

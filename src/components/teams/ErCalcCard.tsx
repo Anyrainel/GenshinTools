@@ -58,6 +58,8 @@ import { TimelineStrip } from "./TimelineStrip";
 const EMPTY_ERT: ERTimeline = { actions: [], periodic: [] };
 const DEFAULT_CALC_MODE: CalcMode = "full-energy-repeat";
 const DEFAULT_PARTICLE_MODE: ParticleMode = "expected";
+const ENERGY_TOGGLE_ITEM_CLS =
+  "h-7 px-2.5 text-xs md:text-sm border-foreground/30 bg-background text-foreground hover:bg-accent data-[spacing=0]:data-[variant=outline]:border-l data-[spacing=0]:data-[variant=outline]:[&:not(:first-child)]:-ml-px data-[state=on]:z-10 data-[state=on]:border-primary data-[state=on]:bg-primary data-[state=on]:text-primary-foreground";
 const DEFAULT_EASY_CASTS = {
   skillCount: 1,
   burstCount: 1,
@@ -740,10 +742,10 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
               variant="outline"
               size="sm"
             >
-              <ToggleGroupItem value="empty" className="text-xs md:text-sm h-7">
+              <ToggleGroupItem value="empty" className={ENERGY_TOGGLE_ITEM_CLS}>
                 {t.ui("erCalc.zeroEnergy")}
               </ToggleGroupItem>
-              <ToggleGroupItem value="full" className="text-xs md:text-sm h-7">
+              <ToggleGroupItem value="full" className={ENERGY_TOGGLE_ITEM_CLS}>
                 {t.ui("erCalc.fullEnergy")}
               </ToggleGroupItem>
             </ToggleGroup>
@@ -764,11 +766,11 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
             >
               <ToggleGroupItem
                 value="expected"
-                className="text-xs md:text-sm h-7"
+                className={ENERGY_TOGGLE_ITEM_CLS}
               >
                 {t.ui("erCalc.avgEst")}
               </ToggleGroupItem>
-              <ToggleGroupItem value="max" className="text-xs md:text-sm h-7">
+              <ToggleGroupItem value="max" className={ENERGY_TOGGLE_ITEM_CLS}>
                 {t.ui("erCalc.maxEst")}
               </ToggleGroupItem>
             </ToggleGroup>
@@ -813,16 +815,13 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
             variant="outline"
             size="sm"
           >
-            <ToggleGroupItem
-              value="easy"
-              className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-            >
+            <ToggleGroupItem value="easy" className={ENERGY_TOGGLE_ITEM_CLS}>
               <Sparkles className="w-3.5 h-3.5 mr-1" />
               {t.ui("erCalc.easyMode")}
             </ToggleGroupItem>
             <ToggleGroupItem
               value="timeline"
-              className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+              className={ENERGY_TOGGLE_ITEM_CLS}
             >
               {t.ui("erCalc.expertTimeline")}
             </ToggleGroupItem>
@@ -1086,13 +1085,13 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                   <ToggleGroupItem
                     value="once"
                     disabled={startFull}
-                    className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+                    className={ENERGY_TOGGLE_ITEM_CLS}
                   >
                     {t.ui("erCalc.loopOnce")}
                   </ToggleGroupItem>
                   <ToggleGroupItem
                     value="repeat"
-                    className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+                    className={ENERGY_TOGGLE_ITEM_CLS}
                   >
                     {t.ui("erCalc.loopRepeat")}
                   </ToggleGroupItem>

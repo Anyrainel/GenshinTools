@@ -294,6 +294,25 @@ describe("ItemPicker", () => {
   });
 
   describe("common behavior", () => {
+    it("opens the picker from the real compact text trigger without duplicating the portrait", async () => {
+      const user = userEvent.setup();
+      const { container } = render(
+        <ItemPicker
+          type="weapon"
+          value="staff_of_homa"
+          onChange={mockOnChange}
+          triggerLabel="Comparison weapon"
+          triggerContent={<span>Choose comparison weapon</span>}
+          filter={(weapon) => weapon.id === "staff_of_homa"}
+        />
+      );
+      const trigger = screen.getByRole("button", { name: "Comparison weapon" });
+      expect(trigger).toHaveTextContent("Choose comparison weapon");
+      expect(trigger.querySelector("img")).toBeNull();
+      await user.click(trigger);
+      expect(screen.getByRole("textbox")).toBeInTheDocument();
+      expect(container.contains(trigger)).toBe(true);
+    });
     it("applies opacity when disabled", () => {
       const { container } = render(
         <ItemPicker

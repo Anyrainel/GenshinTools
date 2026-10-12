@@ -13,12 +13,14 @@ import {
 import type {
   CharacterReplacementMessage,
   CharacterReplacementRequest,
+  CharacterSlotReplacementRanking,
 } from "@/domain/team/characterReplacementTypes";
 import { buildTeamSlotConfigs } from "@/domain/team/teamConfigUtils";
 import { teamCompInputToComp } from "@/domain/team/teamDeltas";
 import {
   buildReplacementCombo,
   runCharacterReplacement,
+  runIndependentCharacterReplacements,
 } from "@/services/combat/characterReplacement";
 
 let chars: CharacterStatsMap;
@@ -156,6 +158,130 @@ async function run(input: CharacterReplacementRequest) {
 }
 
 describe("selected-team character replacement", () => {
+  it.each([1, 3])(
+    "ranks every empty position for a %i-member saved team",
+    async (memberCount) => {
+      const input = request();
+      input.teamComp.slots = input.teamComp.slots.slice(0, memberCount);
+      const retained = new Set(input.teamComp.slots.map((slot) => slot.charId));
+      input.objective.lines = input.objective.lines.filter((line) =>
+        retained.has(line.charId)
+      );
+      input.settings.artifactBasis = "generated";
+      let done: CharacterSlotReplacementRanking[] = [];
+      await runIndependentCharacterReplacements(
+        input,
+        chars,
+        weapons,
+        (message) => {
+          if (message.type === "independent-result") done = message.rankings;
+        }
+      );
+      expect(done.map((ranking) => ranking.slotIndex)).toEqual([0, 1, 2, 3]);
+      for (const ranking of done.slice(memberCount)) {
+        expect(ranking.outcome.type).toBe("result");
+        if (ranking.outcome.type !== "result") continue;
+        expect(ranking.outcome.results.length).toBeGreaterThan(0);
+        for (const result of ranking.outcome.results) {
+          expect(result.configs).toHaveLength(memberCount + 1);
+          expect(
+            result.configs.slice(0, memberCount).map((config) => config.charId)
+          ).toEqual(input.teamComp.slots.map((slot) => slot.charId));
+          expect(result.slotIndexes.at(-1)).toBe(ranking.slotIndex);
+          expect(
+            new Set(result.configs.map((config) => config.charId)).size
+          ).toBe(memberCount + 1);
+          expect(result.damage).toBeGreaterThan(0);
+        }
+      }
+      expect(input.teamComp.slots).toHaveLength(memberCount);
+    },
+    30000
+  );
+
+  it("ranks all four slots independently against the original generated team", async () => {
+    const input = request();
+    input.settings.artifactBasis = "generated";
+    input.settings.replaceSlots = [];
+    let done: CharacterSlotReplacementRanking[] = [];
+    const streamed: number[] = [];
+    await runIndependentCharacterReplacements(
+      input,
+      chars,
+      weapons,
+      (message) => {
+        if (message.type === "slot-result")
+          streamed.push(message.ranking.slotIndex);
+        if (message.type === "independent-result") done = message.rankings;
+      }
+    );
+    expect(done.map((entry) => entry.slotIndex)).toEqual([0, 1, 2, 3]);
+    expect(new Set(streamed).size).toBe(4);
+    for (const ranking of done) {
+      expect(ranking.outcome.type).toBe("result");
+      if (ranking.outcome.type !== "result") continue;
+      expect(ranking.outcome.baselineDamage).toBeGreaterThan(0);
+      for (const result of ranking.outcome.results) {
+        expect(result.replacementSlots).toEqual([ranking.slotIndex]);
+        expect(result.configs).toHaveLength(4);
+        expect(
+          new Set(result.configs.map((config) => config.charId)).size
+        ).toBe(4);
+        result.configs.forEach((config, index) => {
+          if (index !== ranking.slotIndex)
+            expect(config.charId).toBe(input.teamComp.slots[index].charId);
+        });
+        expect(new Set(result.weaponInstanceIds.filter(Boolean)).size).toBe(
+          result.weaponInstanceIds.filter(Boolean).length
+        );
+        const team = new TeamBuild(
+          result.configs,
+          input.setupConfig.combatOptions,
+          input.setupConfig.damage?.enemyAura,
+          [],
+          undefined,
+          input.calcContext
+        );
+        const sheets = Object.fromEntries(
+          result.configs.map((config) => [
+            config.charId,
+            StatSheet.fromArtifacts(
+              Object.values(result.artifactsByChar[config.charId]).filter(
+                (artifact) => artifact !== null
+              )
+            ),
+          ])
+        );
+        expect(
+          team.getComboDamageResult(result.combo, sheets, input.calcContext)
+            .totalDamage
+        ).toBeCloseTo(result.damage, 7);
+      }
+    }
+  }, 30000);
+
+  it("keeps a single-skill source fixed while returning the other three slot rankings", async () => {
+    const input = request();
+    input.settings.artifactBasis = "generated";
+    input.setupConfig.damage!.formulaMode = "single";
+    input.objective.lines = [{ ...input.objective.lines[0], count: 1 }];
+    let done: CharacterSlotReplacementRanking[] = [];
+    await runIndependentCharacterReplacements(
+      input,
+      chars,
+      weapons,
+      (message) => {
+        if (message.type === "independent-result") done = message.rankings;
+      }
+    );
+    expect(done[0].outcome).toMatchObject({
+      type: "error",
+      reason: "single-source",
+    });
+    expect(
+      done.slice(1).every((entry) => entry.outcome.type === "result")
+    ).toBe(true);
+  }, 30000);
   it.each(["none", "sameChar", "forceReuse"] as const)(
     "honors cross-team %s artifact reuse for a replacement character",
     async (reuseMode) => {
@@ -390,7 +516,7 @@ describe("selected-team character replacement", () => {
     });
   });
 
-  it("distinguishes missing account and fixed physical-copy shortages", async () => {
+  it("distinguishes missing account and missing selected weapons", async () => {
     const input = request();
     input.accountData = null;
     expect(await run(input)).toMatchObject({
@@ -398,12 +524,27 @@ describe("selected-team character replacement", () => {
       reason: "no-account",
     });
     const shortage = request();
-    shortage.teamComp.slots[2].weaponId = "staff_of_homa";
+    shortage.teamComp.slots[2].weaponId = null;
     expect(await run(shortage)).toMatchObject({
       type: "error",
       reason: "fixed-copy-shortage",
     });
   });
+
+  it("permits hypothetical unchanged gear while restricting owned replacement copies", async () => {
+    const input = request();
+    input.teamComp.slots[2].weaponId = "staff_of_homa";
+    input.settings.artifactBasis = "generated";
+    const outcome = await run(input);
+    expect(outcome.type).toBe("result");
+    if (outcome.type !== "result") return;
+    for (const result of outcome.results) {
+      expect(result.configs[2].weaponId).toBe("staff_of_homa");
+      expect(result.weaponInstanceIds[2]).toBeNull();
+      expect(result.weaponInstanceIds[3]).toBe("fischl-weapon");
+      expect(new Set(result.weaponInstanceIds.filter(Boolean)).size).toBe(3);
+    }
+  }, 30000);
 
   it("keeps owned characters and generated artifacts independent", async () => {
     const input = request();

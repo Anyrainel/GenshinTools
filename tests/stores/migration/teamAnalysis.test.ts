@@ -103,6 +103,67 @@ beforeEach(() => {
 });
 
 describe("team analysis persistence boundaries", () => {
+  it("hydrates the public v23 envelope without reinterpreting delta/exact maps and roundtrips new absolute targets", async () => {
+    const prior = teamFromCloud([
+      {
+        namespace: "teams",
+        partitionKey: "all",
+        schemaVersion: 4,
+        conflictPolicy: "explicit-choice",
+        isDefaultState: false,
+        payload: fixture(),
+      },
+    ]);
+    prior.configsByTeamId["custom-team"].investment!.futureCountChanges = [
+      {
+        charId: "hu_tao",
+        constellation: 4,
+        formulaId: "hu_tao-charged",
+        delta: -2,
+      },
+    ];
+    const original = structuredClone(
+      prior.configsByTeamId["custom-team"].investment
+    );
+    localStorage.setItem(
+      "team-builder-storage",
+      JSON.stringify({ version: 23, state: prior })
+    );
+    await useTeamStore.persist.rehydrate();
+    expect(
+      useTeamStore.getState().configsByTeamId["custom-team"].investment
+    ).toEqual(original);
+    expect(original?.absoluteCountTargets).toBeUndefined();
+    const targets = [
+      {
+        charId: "hu_tao",
+        constellation: 4,
+        formulaId: "hu_tao-charged",
+        count: 15,
+      },
+    ];
+    useTeamStore.getState().updateTeamSetupConfig("custom-team", (config) => ({
+      ...config,
+      investment: { ...config.investment, absoluteCountTargets: targets },
+    }));
+    await useTeamStore.persist.rehydrate();
+    expect(
+      useTeamStore.getState().configsByTeamId["custom-team"].investment
+        ?.absoluteCountTargets
+    ).toEqual(targets);
+    const cloud = teamToCloud({
+      ...prior,
+      configsByTeamId: useTeamStore.getState().configsByTeamId,
+    })[0];
+    expect(
+      teamFromCloud([cloud]).configsByTeamId["custom-team"].investment
+        ?.absoluteCountTargets
+    ).toEqual(targets);
+    expect(
+      teamFromCloud([{ ...cloud, schemaVersion: 5, payload: prior }])
+        .configsByTeamId["custom-team"].investment
+    ).toEqual(original);
+  });
   it("hydrates realistic v22 custom/preset data and preserves divergent inputs, exact overrides and timelines", async () => {
     const old = fixture();
     localStorage.setItem(
@@ -135,7 +196,7 @@ describe("team analysis persistence boundaries", () => {
     ).toHaveLength(1);
     expect(
       JSON.parse(localStorage.getItem("team-builder-storage")!).version
-    ).toBe(23);
+    ).toBe(24);
   });
   it("uses the same transform for old cloud snapshots and exports only the new semantics", () => {
     const old = fixture();
@@ -155,7 +216,7 @@ describe("team analysis persistence boundaries", () => {
     );
     expect(investment?.legacyInputs?.enemyAura).toBe("Cryo");
     const exported = teamToCloud(restored)[0];
-    expect(exported.schemaVersion).toBe(5);
+    expect(exported.schemaVersion).toBe(6);
     expect(
       teamFromCloud([exported]).configsByTeamId["custom-team"].investment
     ).toEqual(investment);

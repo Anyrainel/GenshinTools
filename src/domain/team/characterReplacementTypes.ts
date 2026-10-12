@@ -23,6 +23,7 @@ export interface CharacterReplacementSettings {
   refinement5: number;
 }
 export interface CharacterReplacementRequest {
+  task?: "independent" | "joint";
   teamComp: TeamComp;
   setupConfig: TeamSetupConfig;
   accountData: AccountData | null;
@@ -38,6 +39,7 @@ export interface CharacterReplacementRequest {
   };
 }
 export interface CharacterReplacementResult {
+  replacementSlots?: number[];
   configs: TeamSlotConfig[];
   slotIndexes: number[];
   weaponInstanceIds: (string | null)[];
@@ -73,3 +75,16 @@ export type CharacterReplacementMessage =
       partial: boolean;
     }
   | { type: "error"; reason: CharacterReplacementFailure; details?: string };
+
+export type CharacterSlotReplacementOutcome = Extract<
+  CharacterReplacementMessage,
+  { type: "result" | "error" }
+>;
+export interface CharacterSlotReplacementRanking {
+  slotIndex: number;
+  outcome: CharacterSlotReplacementOutcome;
+}
+export type CharacterReplacementWorkerMessage =
+  | CharacterReplacementMessage
+  | { type: "slot-result"; ranking: CharacterSlotReplacementRanking }
+  | { type: "independent-result"; rankings: CharacterSlotReplacementRanking[] };

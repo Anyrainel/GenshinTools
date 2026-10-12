@@ -614,6 +614,9 @@ export function migrateTeamStore(
     );
   }
   state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});
+  // v24 adds optional absoluteCountTargets for future constellation counts.
+  // v23 delta/exact maps are retained verbatim; absent targets stay absent.
+  // No defaults are copied into authored data at this migration boundary.
 
   delete state.teams;
   return state;

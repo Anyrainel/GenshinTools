@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  deriveAbsoluteInvestmentCombo,
   deriveFutureInvestmentCombo,
   getFutureInvestmentChanges,
+  getInvestmentFormulaCount,
 } from "@/domain/combat/analyzer/investmentCounts";
 import type { TeamInvestment } from "@/domain/combat/analyzer/types";
 import type { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
@@ -44,6 +46,77 @@ const allocation = (c: number): TeamInvestment => ({
 });
 
 describe("future investment counts", () => {
+  it("anchors absolute direct/reaction values and retains subsequent default increments", () => {
+    const targets = [
+      {
+        charId: "carry",
+        constellation: 3,
+        formulaId: "rx-vaporize",
+        count: 12,
+      },
+      { charId: "carry", constellation: 3, formulaId: "followup", count: 2 },
+    ];
+    const at3 = deriveAbsoluteInvestmentCombo(
+      allocation(3),
+      baseline,
+      team,
+      { carry: 2 },
+      [],
+      {},
+      targets
+    );
+    const at4 = deriveAbsoluteInvestmentCombo(
+      allocation(4),
+      baseline,
+      team,
+      { carry: 2 },
+      [],
+      {},
+      targets
+    );
+    expect(getInvestmentFormulaCount(at3, "carry", "rx-vaporize")).toBe(12);
+    expect(getInvestmentFormulaCount(at4, "carry", "rx-vaporize")).toBe(15);
+    expect(getInvestmentFormulaCount(at3, "carry", "followup")).toBe(2);
+    expect(getInvestmentFormulaCount(at4, "carry", "followup")).toBe(4);
+  });
+  it("preserves old exact and global reaction maps while explicitly overriding their future value", () => {
+    const exact = { "carry|3|skill": 23, "_rx-char|carry|rx-vaporize": 9 };
+    const targets = [
+      { charId: "carry", constellation: 3, formulaId: "skill", count: 18 },
+      {
+        charId: "carry",
+        constellation: 3,
+        formulaId: "rx-vaporize",
+        count: 12,
+      },
+    ];
+    const changed = deriveAbsoluteInvestmentCombo(
+      allocation(3),
+      baseline,
+      team,
+      { carry: 2 },
+      [],
+      exact,
+      targets
+    );
+    expect(getInvestmentFormulaCount(changed, "carry", "skill")).toBe(18);
+    expect(getInvestmentFormulaCount(changed, "carry", "rx-vaporize")).toBe(12);
+    const reset = deriveAbsoluteInvestmentCombo(
+      allocation(3),
+      baseline,
+      team,
+      { carry: 2 },
+      [],
+      exact,
+      []
+    );
+    expect(getInvestmentFormulaCount(reset, "carry", "skill")).toBe(23);
+    expect(getInvestmentFormulaCount(reset, "carry", "rx-vaporize")).toBe(9);
+    expect(exact).toEqual({
+      "carry|3|skill": 23,
+      "_rx-char|carry|rx-vaporize": 9,
+    });
+  });
   it("does not reapply bonuses already included at the configured starting constellation", () => {
     const actual = deriveFutureInvestmentCombo(allocation(3), baseline, team, {
       carry: 2,

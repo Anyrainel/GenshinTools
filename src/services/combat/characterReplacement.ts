@@ -31,6 +31,8 @@ import type {
   CharacterReplacementMessage,
   CharacterReplacementRequest,
   CharacterReplacementResult,
+  CharacterReplacementWorkerMessage,
+  CharacterSlotReplacementRanking,
 } from "../../domain/team/characterReplacementTypes";
 import {
   buildTeamSlotConfigs,
@@ -224,11 +226,6 @@ export async function runCharacterReplacement(
       "fixed-copy-shortage",
       "Choose a weapon for every member kept in the team."
     );
-  if (
-    request.settings.pool === "owned-owned" &&
-    fixedSlots.some((index) => !assignments[index].copy)
-  )
-    return fail("fixed-copy-shortage");
   const ownedChars = new Map(
     request.accountData?.characters.map((char) => [char.key, char]) ?? []
   );
@@ -553,7 +550,7 @@ export async function runCharacterReplacement(
               config.charId,
               {
                 minEr:
-                  request.setupConfig.charConfigs?.[config.charId]?.minEr ?? 0,
+                  request.setupConfig.charConfigs?.[config.charId]?.minEr ?? 1,
                 minCr:
                   request.setupConfig.charConfigs?.[config.charId]?.minCr ?? 0,
               },
@@ -695,6 +692,7 @@ export async function runCharacterReplacement(
         continue;
       }
       results.push({
+        replacementSlots: [...replace],
         configs,
         slotIndexes: [...state.slots.keys()].sort((a, b) => a - b),
         weaponInstanceIds: [...state.copyIds]
@@ -725,4 +723,126 @@ export async function runCharacterReplacement(
     skipped,
     partial,
   });
+}
+
+/** Every slot is assessed against the same original team; suggestions are independent. */
+export async function runIndependentCharacterReplacements(
+  input: CharacterReplacementRequest,
+  chars: CharacterStatsMap,
+  weapons: WeaponStatsMap,
+  report: (message: CharacterReplacementWorkerMessage) => void
+): Promise<void> {
+  const request: CharacterReplacementRequest = {
+    ...input,
+    teamComp: {
+      ...input.teamComp,
+      slots: Array.from(
+        { length: 4 },
+        (_, index) =>
+          input.teamComp.slots[index] ?? {
+            charId: null,
+            weaponId: null,
+            artifactSet: null,
+          }
+      ),
+    },
+  };
+  let baselineDamage: number | null = null;
+  try {
+    const configs = buildTeamSlotConfigs(
+      request.teamComp,
+      request.setupConfig,
+      request.accountData
+    );
+    const team = new TeamBuild(
+      configs,
+      request.setupConfig.combatOptions,
+      request.setupConfig.damage?.enemyAura,
+      request.setupConfig.damage?.extraBuffs,
+      undefined,
+      request.calcContext
+    );
+    if (request.objective.lines.some((line) => line.count > 0)) {
+      for await (const update of runGenerator({
+        teamBuild: team,
+        carryCharId: request.objective.lines.find((line) => line.count > 0)!
+          .charId,
+        combo: request.objective,
+        calcContext: request.calcContext,
+        setKeysByChar: deriveSetKeysFromConfigs(configs),
+        perChar: Object.fromEntries(
+          configs.map((config) => [
+            config.charId,
+            {
+              minEr:
+                request.setupConfig.charConfigs?.[config.charId]?.minEr ?? 1,
+              minCr:
+                request.setupConfig.charConfigs?.[config.charId]?.minCr ?? 0,
+            },
+          ])
+        ),
+      })) {
+        if (update.done)
+          baselineDamage = team.getComboDamageResult(
+            request.objective,
+            update.sheetsByChar,
+            request.calcContext
+          ).totalDamage;
+      }
+    }
+  } catch {
+    /* A missing baseline does not prevent valid replacements for other slots. */
+  }
+  const progressBySlot = new Map<number, number>();
+  let completed = 0;
+  const rankings = await Promise.all(
+    request.teamComp.slots.map(
+      async (_, slotIndex): Promise<CharacterSlotReplacementRanking> => {
+        let outcome: CharacterSlotReplacementRanking["outcome"] = {
+          type: "error",
+          reason: "no-results",
+        };
+        try {
+          await runCharacterReplacement(
+            {
+              ...request,
+              task: "joint",
+              settings: { ...request.settings, replaceSlots: [slotIndex] },
+            },
+            chars,
+            weapons,
+            (message) => {
+              if (message.type === "progress") {
+                progressBySlot.set(slotIndex, message.evaluated);
+                report({
+                  ...message,
+                  evaluated: [...progressBySlot.values()].reduce(
+                    (sum, count) => sum + count,
+                    0
+                  ),
+                  step: Math.min(completed + 1, request.teamComp.slots.length),
+                  total: request.teamComp.slots.length,
+                });
+              } else
+                outcome =
+                  message.type === "result"
+                    ? { ...message, baselineDamage }
+                    : message;
+            }
+          );
+        } catch (error) {
+          outcome = {
+            type: "error",
+            reason: "calculator-error",
+            details: error instanceof Error ? error.message : String(error),
+          };
+        }
+        const ranking = { slotIndex, outcome };
+        completed++;
+        report({ type: "slot-result", ranking });
+        return ranking;
+      }
+    )
+  );
+  report({ type: "independent-result", rankings });
 }

@@ -89,6 +89,24 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
 }
 
 describe("FormulaSelectorCard", () => {
+  it("toggles ignored damage once from the checkbox or its row label", async () => {
+    const user = userEvent.setup();
+    const onToggleIgnoreChar = vi.fn();
+    render(<TestCard {...defaultProps({ onToggleIgnoreChar })} />);
+    const checkbox = screen.getByRole("checkbox", {
+      name: "Ignore Hu Tao damage",
+    });
+    expect(checkbox.closest("button button")).toBeNull();
+    await user.click(checkbox);
+    expect(onToggleIgnoreChar).toHaveBeenCalledExactlyOnceWith("hu_tao");
+    onToggleIgnoreChar.mockClear();
+    await user.click(screen.getByText("Ignore Hu Tao damage"));
+    expect(onToggleIgnoreChar).toHaveBeenCalledExactlyOnceWith("hu_tao");
+    onToggleIgnoreChar.mockClear();
+    checkbox.focus();
+    await user.keyboard(" ");
+    expect(onToggleIgnoreChar).toHaveBeenCalledExactlyOnceWith("hu_tao");
+  });
   it("renders the card header", () => {
     render(<TestCard {...defaultProps()} />);
     expect(screen.getByText("Formula Selection")).toBeInTheDocument();

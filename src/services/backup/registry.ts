@@ -34,7 +34,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "teams",
     includeInBackup: true,
     namespaces: ["teams"],
-    currentVersion: 5,
+    currentVersion: 6,
     conflictPolicy: "explicit-choice",
   },
   {

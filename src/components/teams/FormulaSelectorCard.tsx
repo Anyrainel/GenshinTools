@@ -6,6 +6,7 @@ import {
   RotateCcw,
   Swords,
 } from "lucide-react";
+import { useId } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -157,6 +158,7 @@ export function FormulaSelectorCard({
   onToggleIgnoreChar,
   t,
 }: FormulaSelectorCardProps) {
+  const ignoreControlId = useId();
   const isSingle = formulaMode === "single";
   const selectedFormula = damageConfig.selectedFormula;
   const singleReaction = damageConfig.singleReaction;
@@ -749,22 +751,22 @@ export function FormulaSelectorCard({
                         })}
                     </div>
                     {!isSingle && onToggleIgnoreChar && (
-                      <button
-                        type="button"
-                        onClick={() => onToggleIgnoreChar(cid)}
+                      <label
+                        htmlFor={`${ignoreControlId}-${cid}`}
                         className="mt-auto flex items-center justify-center gap-1.5 px-2 py-1 cursor-pointer border-t border-border/30 bg-black/10"
                       >
                         <Checkbox
+                          id={`${ignoreControlId}-${cid}`}
                           checked={isCharIgnored}
                           onCheckedChange={() => onToggleIgnoreChar(cid)}
-                          className="rounded-full pointer-events-none"
+                          className="rounded-full"
                         />
                         <span className="text-xs md:text-sm lg:text-xs xl:text-sm text-muted-foreground truncate">
                           {t
                             .ui("common.ignoreCharDamage")
                             .replace("{0}", t.character(cid))}
                         </span>
-                      </button>
+                      </label>
                     )}
                   </div>
                 );

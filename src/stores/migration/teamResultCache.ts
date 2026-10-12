@@ -56,5 +56,10 @@ export function migrateTeamResultCacheStore(
     // damage/optimizer/investment assumptions. Old results cannot be reconciled.
     state.resultsByTeamId = {};
   }
+  if (version < 7) {
+    // Investment now supports absolute anchors and one shared path/next-pull
+    // result scope. Recompute prior results instead of mixing old assumptions.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

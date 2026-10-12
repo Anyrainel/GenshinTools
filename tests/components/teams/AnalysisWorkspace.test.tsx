@@ -71,9 +71,6 @@ vi.mock("@/components/teams/InvestmentPanel", () => ({
 vi.mock("@/components/teams/CharacterReplacementDetail", () => ({
   CharacterReplacementDetail: () => null,
 }));
-vi.mock("@/components/teams/AccountEquipmentCard", () => ({
-  AccountEquipmentCard: () => null,
-}));
 
 await Promise.all([
   characterStatsResource.preload(),

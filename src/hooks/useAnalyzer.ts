@@ -46,7 +46,7 @@ function buildCacheKey(opts: AnalyzerOptions): string {
     ? JSON.stringify(opts.minErOverrides)
     : "";
 
-  return `${charParts}::${comboPart}::${overridePart}::${minErPart}::${JSON.stringify({ configs: opts.configs, baseConfigs: opts.baseConfigs, objective: opts.templateCombo, context: opts.calcContext, starts: opts.baselineConstellations, changes: opts.futureCountChanges, single: opts.singleObjective, ignored: opts.ignoredContributorIds, perChar: opts.perChar, combat: opts.teamBuild.combatOpts, aura: opts.teamBuild.enemyAura, buffs: opts.teamBuild.extraBuffs })}`;
+  return `${charParts}::${comboPart}::${overridePart}::${minErPart}::${JSON.stringify({ configs: opts.configs, baseConfigs: opts.baseConfigs, objective: opts.templateCombo, context: opts.calcContext, starts: opts.baselineConstellations, changes: opts.futureCountChanges, targets: opts.absoluteCountTargets, single: opts.singleObjective, ignored: opts.ignoredContributorIds, perChar: opts.perChar, combat: opts.teamBuild.combatOpts, aura: opts.teamBuild.enemyAura, buffs: opts.teamBuild.extraBuffs })}`;
 }
 
 export interface UseAnalyzerState {

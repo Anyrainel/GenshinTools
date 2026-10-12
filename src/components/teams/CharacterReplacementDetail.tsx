@@ -1,10 +1,23 @@
-import { Search, X } from "lucide-react";
+import { Search, Users, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
+import { CharAvatar } from "@/components/shared/CharAvatar";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  OptionButton,
+  OptionButtonCell,
+  OptionButtonRow,
+} from "@/components/ui/option-button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
 import type { CalcContext, ComboFormula } from "@/domain/combat/damage/types";
@@ -18,10 +31,21 @@ import type {
   CharacterReplacementMessage,
   CharacterReplacementResult,
   CharacterReplacementSettings,
+  CharacterReplacementWorkerMessage,
+  CharacterSlotReplacementRanking,
 } from "@/domain/team/characterReplacementTypes";
 import type { TeamComp, TeamSetupConfig } from "@/domain/team/types";
 import { resolveRosterWeaponCopies } from "@/domain/team/weaponCopies";
 import { useFreezeStore } from "@/stores/useFreezeStore";
+import {
+  CARD_BODY_CLS,
+  CARD_CLS,
+  CARD_HEADER_CLS,
+  CARD_TITLE_CLS,
+  CONTROLS_CLS,
+} from "./cardStyles";
+import { EnemyInputs, RollQualityInputs } from "./GeneratorControls";
+import { TeamCharacterGrid } from "./TeamCharacterGrid";
 
 interface CharacterReplacementDetailProps {
   teamComp: TeamComp;
@@ -38,26 +62,31 @@ interface CharacterReplacementDetailProps {
       | Partial<TeamSetupConfig>
       | ((config: TeamSetupConfig) => TeamSetupConfig)
   ) => void;
-  onSaveLoadout?: (result: CharacterReplacementResult) => void;
   ignoredCharIds?: ReadonlySet<string>;
   onIgnoredCharIdsChange?: (ids: ReadonlySet<string>) => void;
 }
+type Submode = "replace" | "unowned";
 type Outcome = Extract<CharacterReplacementMessage, { type: "result" }>;
 interface LocalState {
   teamId: string;
   signature: string;
+  mode: Submode;
   settings: CharacterReplacementSettings;
   outcome: Outcome | null;
+  rankings: CharacterSlotReplacementRanking[];
   error: CharacterReplacementFailure | null;
-  details?: string;
 }
 const teamStates = new Map<string, LocalState>();
+const teamModes = new Map<string, Submode>();
 
-function defaultSettings(hasAccount: boolean): CharacterReplacementSettings {
+function defaultSettings(
+  hasAccount: boolean,
+  mode: Submode
+): CharacterReplacementSettings {
   return {
     replaceSlots: [],
-    pool: hasAccount ? "owned-owned" : "all-any",
-    artifactBasis: hasAccount ? "account" : "generated",
+    pool: mode === "unowned" || hasAccount ? "owned-owned" : "all-any",
+    artifactBasis: "generated",
     constellation4: 6,
     constellation5: 0,
     refinement34: 5,
@@ -75,12 +104,10 @@ export function CharacterReplacementDetail({
   calcContext,
   updateTeamComp,
   updateTeamSetupConfig,
-  onSaveLoadout,
   ignoredCharIds,
   onIgnoredCharIdsChange,
 }: CharacterReplacementDetailProps) {
   const { t } = useLanguage();
-  const reservedLoadouts = useFreezeStore((state) => state.frozenTeamLoadouts);
   const reservedIds = useFreezeStore((state) => state.frozenArtifactIds);
   const reuseMode = useFreezeStore((state) => state.reuseMode);
   const signature = JSON.stringify({
@@ -89,18 +116,19 @@ export function CharacterReplacementDetail({
     accountData,
     objective,
     calcContext,
-    reservedLoadouts,
-    reservedIds,
-    reuseMode,
     ignoredCharIds: [...(ignoredCharIds ?? [])],
   });
-  const initial = (): LocalState => {
-    const cached = teamStates.get(teamComp.id);
+  const initial = (
+    mode: Submode = teamModes.get(teamComp.id) ?? "replace"
+  ): LocalState => {
+    const cached = teamStates.get(`${teamComp.id}:${mode}`);
     return {
       teamId: teamComp.id,
       signature,
-      settings: cached?.settings ?? defaultSettings(!!accountData),
+      mode,
+      settings: cached?.settings ?? defaultSettings(!!accountData, mode),
       outcome: cached?.signature === signature ? cached.outcome : null,
+      rankings: cached?.signature === signature ? cached.rankings : [],
       error: null,
     };
   };
@@ -113,26 +141,32 @@ export function CharacterReplacementDetail({
   const worker = useRef<Worker | null>(null);
   const latestSignature = useRef(signature);
   latestSignature.current = signature;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: The serialized input snapshot invalidates runs/results while retaining per-team controls.
-  useEffect(() => {
+  const stop = () => {
     worker.current?.terminate();
     worker.current = null;
     setRunning(false);
     setProgress(null);
+  };
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Actual shared inputs invalidate results while per-team/submode controls remain cached.
+  useEffect(() => {
+    stop();
     setLocal((current) =>
       current.teamId === teamComp.id
         ? {
             ...current,
             signature,
             outcome: current.signature === signature ? current.outcome : null,
+            rankings: current.signature === signature ? current.rankings : [],
             error: null,
           }
         : initial()
     );
   }, [teamComp.id, signature]);
   useEffect(() => {
-    if (local.teamId === teamComp.id && local.signature === signature)
-      teamStates.set(local.teamId, local);
+    if (local.teamId === teamComp.id && local.signature === signature) {
+      teamStates.set(`${local.teamId}:${local.mode}`, local);
+      teamModes.set(local.teamId, local.mode);
+    }
   }, [local, teamComp.id, signature]);
   useEffect(() => () => worker.current?.terminate(), []);
   const active =
@@ -140,13 +174,46 @@ export function CharacterReplacementDetail({
       ? local
       : initial();
   const settings = active.settings;
-  const updateSettings = (patch: Partial<CharacterReplacementSettings>) =>
+  const rosterSlots = Array.from(
+    { length: 4 },
+    (_, index) =>
+      teamComp.slots[index] ?? {
+        charId: null,
+        weaponId: null,
+        artifactSet: null,
+      }
+  );
+  const unownedSlots = teamComp.slots.flatMap((slot, index) =>
+    slot.charId &&
+    !accountData?.characters.some((char) => char.key === slot.charId)
+      ? [index]
+      : []
+  );
+  const switchMode = (mode: Submode) => {
+    if (mode === active.mode) return;
+    stop();
+    teamStates.set(`${teamComp.id}:${active.mode}`, active);
+    teamModes.set(teamComp.id, mode);
+    setLocal(initial(mode));
+  };
+  const updateSettings = (patch: Partial<CharacterReplacementSettings>) => {
+    stop();
     setLocal({
       ...active,
       settings: { ...settings, ...patch },
       outcome: null,
+      rankings: [],
       error: null,
     });
+  };
+  const updateContext = (patch: Partial<CalcContext>) =>
+    updateTeamSetupConfig(teamComp.id, (current) => ({
+      ...current,
+      damage: {
+        ...current.damage,
+        calcContext: { ...current.damage?.calcContext, ...patch },
+      },
+    }));
   const errorText = (reason: CharacterReplacementFailure): string => {
     switch (reason) {
       case "invalid-slots":
@@ -154,7 +221,7 @@ export function CharacterReplacementDetail({
       case "no-objective":
         return t.ui("charactersMode.errors.noObjective");
       case "single-source":
-        return t.ui("charactersMode.errors.singleSource");
+        return t.ui("charactersMode.slotUnavailable");
       case "no-account":
         return t.ui("charactersMode.errors.noAccount");
       case "fixed-copy-shortage":
@@ -167,16 +234,9 @@ export function CharacterReplacementDetail({
         return t.ui("charactersMode.errors.calculator");
     }
   };
-  const sourceInReplacement =
-    (setupConfig.damage?.formulaMode ?? "single") === "single" &&
-    objective.lines.some((line) =>
-      settings.replaceSlots.some(
-        (index) => teamComp.slots[index]?.charId === line.charId
-      )
-    );
   const start = () => {
     if (running || !characterStats || !weaponStats) return;
-    setLocal({ ...active, outcome: null, error: null });
+    setLocal({ ...active, outcome: null, rankings: [], error: null });
     setRunning(true);
     try {
       const taskWorker = new Worker(
@@ -188,7 +248,7 @@ export function CharacterReplacementDetail({
       );
       worker.current = taskWorker;
       taskWorker.onmessage = (
-        event: MessageEvent<CharacterReplacementMessage>
+        event: MessageEvent<CharacterReplacementWorkerMessage>
       ) => {
         if (
           worker.current !== taskWorker ||
@@ -197,12 +257,23 @@ export function CharacterReplacementDetail({
           return;
         const message = event.data;
         if (message.type === "progress") setProgress(message);
+        else if (message.type === "slot-result")
+          setLocal((current) => ({
+            ...current,
+            rankings: [
+              ...current.rankings.filter(
+                (ranking) => ranking.slotIndex !== message.ranking.slotIndex
+              ),
+              message.ranking,
+            ].sort((a, b) => a.slotIndex - b.slotIndex),
+          }));
         else {
           setLocal({
             ...active,
+            rankings:
+              message.type === "independent-result" ? message.rankings : [],
             outcome: message.type === "result" ? message : null,
             error: message.type === "error" ? message.reason : null,
-            details: message.type === "error" ? message.details : undefined,
           });
           setRunning(false);
           setProgress(null);
@@ -212,18 +283,26 @@ export function CharacterReplacementDetail({
       };
       taskWorker.onerror = () => {
         if (worker.current !== taskWorker) return;
-        setLocal({ ...active, error: "calculator-error", outcome: null });
-        setRunning(false);
-        taskWorker.terminate();
-        worker.current = null;
+        setLocal({
+          ...active,
+          error: "calculator-error",
+          outcome: null,
+          rankings: [],
+        });
+        stop();
       };
       taskWorker.postMessage({
+        task: active.mode === "replace" ? "independent" : "joint",
         teamComp,
         setupConfig,
         accountData,
         objective,
         calcContext,
-        settings,
+        settings: {
+          ...settings,
+          artifactBasis: "generated",
+          replaceSlots: active.mode === "unowned" ? unownedSlots : [],
+        },
         excludedArtifactIds: [
           ...useFreezeStore.getState().getFrozenArtifactIds(teamComp.id),
         ],
@@ -235,22 +314,31 @@ export function CharacterReplacementDetail({
         },
       });
     } catch {
-      setLocal({ ...active, error: "calculator-error", outcome: null });
+      setLocal({
+        ...active,
+        error: "calculator-error",
+        outcome: null,
+        rankings: [],
+      });
       setRunning(false);
     }
   };
-  const apply = (result: CharacterReplacementResult) => {
-    const slots = teamComp.slots.map((slot) => ({ ...slot }));
+  const apply = (result: CharacterReplacementResult, slotIndex?: number) => {
+    const replacements =
+      result.replacementSlots ??
+      (slotIndex === undefined ? unownedSlots : [slotIndex]);
+    const previewSlots = rosterSlots.map((slot) => ({ ...slot }));
     result.configs.forEach((config, index) => {
       const slotIndex = result.slotIndexes[index];
-      slots[slotIndex].artifactSet = config.artifactSet;
-      if (settings.replaceSlots.includes(slotIndex))
-        slots[slotIndex] = {
+      previewSlots[slotIndex].artifactSet = config.artifactSet;
+      if (replacements.includes(slotIndex))
+        previewSlots[slotIndex] = {
           charId: config.charId,
           weaponId: config.weaponId,
           artifactSet: config.artifactSet,
         };
     });
+    const slots = previewSlots.filter((slot) => slot.charId);
     updateTeamComp(teamComp.id, { ...teamComp, slots });
     onIgnoredCharIdsChange?.(new Set(result.ignoredCharIds));
     updateTeamSetupConfig(teamComp.id, (current) => {
@@ -267,7 +355,7 @@ export function CharacterReplacementDetail({
       );
       result.configs.forEach((config, index) => {
         const slotIndex = result.slotIndexes[index];
-        if (settings.replaceSlots.includes(slotIndex))
+        if (replacements.includes(slotIndex))
           charConfigs[config.charId] = {
             ...charConfigs[config.charId],
             level: config.charLevel,
@@ -276,8 +364,9 @@ export function CharacterReplacementDetail({
             talentLevels: config.talentLevels,
           };
         else if (
-          beforeCopies[slotIndex].refinement === config.refinement &&
-          afterCopies[slotIndex].refinement !== config.refinement
+          beforeCopies[slotIndex]?.refinement === config.refinement &&
+          afterCopies[slots.findIndex((slot) => slot.charId === config.charId)]
+            ?.refinement !== config.refinement
         ) {
           // A new earlier slot may change account-copy ordering. Keep the preview's effective rank.
           charConfigs[config.charId] = {
@@ -299,363 +388,390 @@ export function CharacterReplacementDetail({
     });
     toast.success(t.ui("charactersMode.applied"));
   };
-  return (
-    <div className="space-y-4">
-      <section className="space-y-4 rounded-xl border border-border bg-gradient-card p-4">
-        <div>
-          <h3 className="font-semibold">{t.ui("charactersMode.title")}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t.ui("charactersMode.description")}
-          </p>
+  const renderResult = (
+    result: CharacterReplacementResult,
+    rank: number,
+    outcome: Outcome,
+    slotIndex?: number
+  ) => {
+    const best = outcome.results[0].damage;
+    const tradeoff =
+      best > 0 ? ((100 * (best - result.damage)) / best).toFixed(1) : "0.0";
+    let labels: Record<string, string> = {};
+    try {
+      const team = new TeamBuild(
+        result.configs,
+        setupConfig.combatOptions,
+        setupConfig.damage?.enemyAura,
+        setupConfig.damage?.extraBuffs,
+        undefined,
+        calcContext
+      );
+      labels = Object.fromEntries(
+        [...team.catalog.formulaIndex].map(([id, formula]) => [
+          id,
+          t.resolveLabel(formula.label),
+        ])
+      );
+    } catch {
+      /* IDs remain inspectable if a registry entry becomes unavailable. */
+    }
+    return (
+      <section
+        key={result.configs.map((config) => config.charId).join("|")}
+        className="space-y-4 rounded-xl border border-border bg-gradient-card p-4"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h3 className="font-semibold">
+              #{rank + 1} · {Math.round(result.damage).toLocaleString()}{" "}
+              {t.ui("charactersMode.damage")}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {outcome.baselineDamage && outcome.baselineDamage > 0
+                ? t.format(
+                    "charactersMode.changeVsCurrent",
+                    (
+                      100 *
+                      (result.damage / outcome.baselineDamage - 1)
+                    ).toFixed(1)
+                  )
+                : t.format("charactersMode.tradeoff", tradeoff)}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => apply(result, slotIndex)}
+            >
+              {t.ui("charactersMode.applyRoster")}
+            </Button>
+          </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
-          {teamComp.slots.map((slot, index) => (
-            <label
-              key={index}
-              htmlFor={`replace-slot-${teamComp.id}-${index}`}
-              className="flex cursor-pointer items-center gap-2 rounded-lg border border-border p-2"
-            >
-              <Checkbox
-                id={`replace-slot-${teamComp.id}-${index}`}
-                disabled={running}
-                checked={settings.replaceSlots.includes(index)}
-                onCheckedChange={(checked) =>
-                  updateSettings({
-                    replaceSlots: checked
-                      ? [...settings.replaceSlots, index]
-                      : settings.replaceSlots.filter(
-                          (value) => value !== index
-                        ),
-                  })
-                }
-              />
-              {slot.charId ? (
-                <>
-                  <ItemIcon characterId={slot.charId} size="xs" />
-                  <span className="text-sm">{t.character(slot.charId)}</span>
-                </>
-              ) : (
-                <span className="text-sm">
-                  {t.format("charactersMode.emptySlot", index + 1)}
-                </span>
-              )}
-            </label>
-          ))}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={running || !accountData}
-          onClick={() =>
-            updateSettings({
-              replaceSlots: teamComp.slots.flatMap((slot, index) =>
-                slot.charId &&
-                !accountData?.characters.some(
-                  (char) => char.key === slot.charId
-                )
-                  ? [index]
-                  : []
-              ),
-            })
-          }
-        >
-          {t.ui("charactersMode.replaceUnowned")}
-        </Button>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <label className="space-y-1 text-sm">
-            <span>{t.ui("charactersMode.candidatePool")}</span>
-            <select
-              className="block w-full rounded-md border border-border bg-background p-2 text-foreground"
-              value={settings.pool}
-              disabled={running}
-              onChange={(event) =>
-                updateSettings({
-                  pool: event.target
-                    .value as CharacterReplacementSettings["pool"],
-                })
-              }
-            >
-              <option value="owned-owned">
-                {t.ui("charactersMode.ownedOwned")}
-              </option>
-              <option value="owned-any">
-                {t.ui("charactersMode.ownedAny")}
-              </option>
-              <option value="all-any">{t.ui("charactersMode.allAny")}</option>
-            </select>
-          </label>
-          <label className="space-y-1 text-sm">
-            <span>{t.ui("charactersMode.artifactBasis")}</span>
-            <select
-              className="block w-full rounded-md border border-border bg-background p-2 text-foreground"
-              value={settings.artifactBasis}
-              disabled={running}
-              onChange={(event) =>
-                updateSettings({
-                  artifactBasis: event.target
-                    .value as CharacterReplacementSettings["artifactBasis"],
-                })
-              }
-            >
-              <option value="account">
-                {t.ui("charactersMode.accountArtifacts")}
-              </option>
-              <option value="generated">
-                {t.ui("charactersMode.generatedArtifacts")}
-              </option>
-            </select>
-          </label>
+        <div className="space-y-2">
+          {result.configs
+            .filter((_, index) =>
+              (
+                result.replacementSlots ??
+                (slotIndex === undefined ? unownedSlots : [slotIndex])
+              ).includes(result.slotIndexes[index])
+            )
+            .map((config) => (
+              <div key={config.charId} className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <ItemIcon
+                    characterId={config.charId}
+                    badge={config.constellation}
+                    level={`Lv.${config.charLevel}`}
+                    size="md"
+                  />
+                  <span className="text-sm font-medium">
+                    {t.character(config.charId)}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <ItemIcon
+                    weaponId={config.weaponId}
+                    badge={config.refinement}
+                    size="sm"
+                  />
+                  <div>
+                    <p className="text-xs">
+                      {t.weapon(config.weaponId)} · R{config.refinement}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {result.weaponInstanceIds[
+                        result.configs.findIndex(
+                          (member) => member.charId === config.charId
+                        )
+                      ]
+                        ? t.ui("charactersMode.ownedCopy")
+                        : t.ui("charactersMode.hypotheticalWeapon")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  {Object.values(result.artifactsByChar[config.charId]).map(
+                    (artifact) =>
+                      artifact && (
+                        <ArtifactDataHoverCard
+                          key={artifact.id}
+                          artifact={artifact}
+                          slot={artifact.slotKey}
+                          side="top"
+                        >
+                          <ItemIcon
+                            artifactSetId={artifact.setKey}
+                            slot={artifact.slotKey}
+                            rarity={artifact.rarity}
+                            level={`+${artifact.level}`}
+                            size="xs"
+                          />
+                        </ArtifactDataHoverCard>
+                      )
+                  )}
+                </div>
+              </div>
+            ))}
         </div>
         <details>
           <summary className="cursor-pointer text-sm font-medium">
-            {t.ui("charactersMode.hypotheticalRanks")}
+            {t.ui("charactersMode.inspectCounts")}
           </summary>
-          <p className="mt-2 text-xs text-muted-foreground">
-            {t.ui("charactersMode.rankDescription")}
-          </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {(
-              [
-                ["constellation4", t.ui("charactersMode.constellation4"), 0, 6],
-                ["constellation5", t.ui("charactersMode.constellation5"), 0, 6],
-                ["refinement34", t.ui("charactersMode.refinement34"), 1, 5],
-                ["refinement5", t.ui("charactersMode.refinement5"), 1, 5],
-              ] as const
-            ).map(([key, label, min, max]) => (
-              <label
-                key={key}
-                className="flex items-center justify-between gap-2 text-sm"
+          <div className="mt-2 space-y-1">
+            {result.combo.lines.map((line, index) => (
+              <div
+                key={`${line.charId}:${line.formulaId}:${index}`}
+                className="flex flex-wrap justify-between gap-2 text-xs"
               >
-                {label}
-                <select
-                  className="rounded-md border border-border bg-background p-2"
-                  value={settings[key]}
-                  disabled={running}
-                  onChange={(event) =>
-                    updateSettings({ [key]: Number(event.target.value) })
-                  }
+                <span>
+                  {t.character(line.charId)} ·{" "}
+                  {labels[line.formulaId] ?? line.formulaId}
+                  {line.reaction?.reaction
+                    ? ` · ${t.reaction(line.reaction.reaction)}`
+                    : ""}
+                </span>
+                <span>×{line.count}</span>
+              </div>
+            ))}
+          </div>
+        </details>
+      </section>
+    );
+  };
+
+  return (
+    <Card className={CARD_CLS} data-character-comparison>
+      <CardHeader className={CARD_HEADER_CLS}>
+        <h3 className={CARD_TITLE_CLS}>
+          <Users className="h-4 w-4" />
+          {t.ui("charactersMode.title")}
+        </h3>
+      </CardHeader>
+      <OptionButtonRow>
+        <OptionButtonCell>
+          <OptionButton
+            selected={active.mode === "replace"}
+            onClick={() => switchMode("replace")}
+            title={t.ui("charactersMode.replace")}
+          />
+        </OptionButtonCell>
+        <OptionButtonCell>
+          <OptionButton
+            selected={active.mode === "unowned"}
+            onClick={() => switchMode("unowned")}
+            title={t.ui("charactersMode.unowned")}
+          />
+        </OptionButtonCell>
+      </OptionButtonRow>
+      <CardContent className={CARD_BODY_CLS}>
+        <div className={CONTROLS_CLS}>
+          <EnemyInputs
+            enemyLevel={calcContext.enemyLevel}
+            enemyRes={calcContext.enemyRes * 100}
+            onEnemyLevelChange={(raw) => {
+              const value = Number.parseFloat(raw);
+              if (Number.isFinite(value)) updateContext({ enemyLevel: value });
+            }}
+            onEnemyResChange={(raw) => {
+              const value = Number.parseFloat(raw);
+              if (Number.isFinite(value))
+                updateContext({ enemyRes: value / 100 });
+            }}
+            t={t}
+          />
+          <RollQualityInputs
+            rollMultiplier={calcContext.rollMultiplier}
+            onRollMultiplierChange={(value) =>
+              updateContext({ rollMultiplier: value })
+            }
+            substatBudget={calcContext.substatBudget}
+            onSubstatBudgetChange={(value) =>
+              updateContext({ substatBudget: value })
+            }
+            t={t}
+          />
+        </div>
+        <div className="mb-3 grid min-w-0 gap-2 sm:grid-cols-2">
+          <label
+            htmlFor={`${teamComp.id}-character-pool`}
+            className="grid min-w-0 gap-1 text-sm sm:grid-cols-2 sm:items-center"
+          >
+            <span>{t.ui("charactersMode.candidatePool")}</span>
+            <Select
+              value={settings.pool}
+              onValueChange={(value) =>
+                updateSettings({
+                  pool: value as CharacterReplacementSettings["pool"],
+                })
+              }
+            >
+              <SelectTrigger
+                id={`${teamComp.id}-character-pool`}
+                aria-label={t.ui("charactersMode.candidatePool")}
+                className="w-full min-w-0 [&>span]:min-w-0 [&>span]:truncate"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="owned-owned">
+                  {t.ui("charactersMode.ownedOwned")}
+                </SelectItem>
+                <SelectItem value="owned-any">
+                  {t.ui("charactersMode.ownedAny")}
+                </SelectItem>
+                {active.mode === "replace" && (
+                  <SelectItem value="all-any">
+                    {t.ui("charactersMode.allAny")}
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+          </label>
+          {(
+            [
+              ["constellation4", t.ui("charactersMode.constellation4"), 0, 6],
+              ["constellation5", t.ui("charactersMode.constellation5"), 0, 6],
+              ["refinement34", t.ui("charactersMode.refinement34"), 1, 5],
+              ["refinement5", t.ui("charactersMode.refinement5"), 1, 5],
+            ] as const
+          ).map(([key, label, min, max]) => (
+            <label
+              key={key}
+              htmlFor={`${teamComp.id}-character-${key}`}
+              className="grid min-w-0 gap-1 text-sm sm:grid-cols-2 sm:items-center"
+            >
+              <span>{label}</span>
+              <Select
+                value={String(settings[key])}
+                onValueChange={(value) =>
+                  updateSettings({ [key]: Number(value) })
+                }
+              >
+                <SelectTrigger
+                  id={`${teamComp.id}-character-${key}`}
+                  aria-label={label}
+                  className="w-full min-w-0"
                 >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {Array.from(
                     { length: max - min + 1 },
                     (_, index) => index + min
                   ).map((value) => (
-                    <option key={value} value={value}>
+                    <SelectItem key={value} value={String(value)}>
                       {key.startsWith("constellation") ? "C" : "R"}
                       {value}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
-              </label>
-            ))}
-          </div>
-        </details>
-        <p className="text-xs text-muted-foreground">
-          {t.ui("charactersMode.assumptions")}
-        </p>
-        {sourceInReplacement && (
-          <p role="alert" className="text-sm text-primary">
-            {t.ui("charactersMode.errors.singleSource")}
-          </p>
-        )}
-        {active.error && (
-          <div role="alert" className="space-y-1 text-sm text-primary">
-            <p>{errorText(active.error)}</p>
-            {active.details && (
-              <p className="text-xs text-muted-foreground">{active.details}</p>
-            )}
-          </div>
-        )}
-        <div className="flex flex-wrap items-center gap-3">
+                </SelectContent>
+              </Select>
+            </label>
+          ))}
+        </div>
+        <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
           <Button
+            onClick={start}
             disabled={
               running ||
-              !settings.replaceSlots.length ||
-              sourceInReplacement ||
               !characterStats ||
-              !weaponStats
+              !weaponStats ||
+              (active.mode === "unowned" &&
+                (!accountData || !unownedSlots.length))
             }
-            onClick={start}
           >
             <Search className="mr-2 h-4 w-4" />
             {t.ui("charactersMode.search")}
           </Button>
           {running && (
-            <Button
-              variant="outline"
-              onClick={() => {
-                worker.current?.terminate();
-                worker.current = null;
-                setRunning(false);
-                setProgress(null);
-              }}
-            >
+            <Button variant="outline" onClick={stop}>
               <X className="mr-2 h-4 w-4" />
               {t.ui("common.cancel")}
             </Button>
           )}
           {progress && (
-            <p role="status" className="text-sm text-muted-foreground">
+            <span role="status" className="text-xs text-muted-foreground">
               {progress.phase === "screen"
                 ? t.ui("charactersMode.screening")
                 : t.ui("charactersMode.refining")}{" "}
-              {progress.step}/{progress.total} ·{" "}
-              {progress.evaluated.toLocaleString()}{" "}
-              {t.ui("charactersMode.evaluated")}
-            </p>
+              · {progress.evaluated.toLocaleString()}
+            </span>
           )}
         </div>
-      </section>
-      {active.outcome && (
-        <p role="status" className="text-sm text-muted-foreground">
-          {active.outcome.evaluated.toLocaleString()}{" "}
-          {t.ui("charactersMode.evaluated")} ·{" "}
-          {t.ui("charactersMode.bestFound")}
-          {active.outcome.partial ? ` · ${t.ui("charactersMode.partial")}` : ""}
-          {active.outcome.skipped
-            ? ` · ${active.outcome.skipped} ${t.ui("charactersMode.skipped")}`
-            : ""}
-        </p>
-      )}
-      {active.outcome?.results.map((result, rank) => {
-        const best = active.outcome!.results[0].damage;
-        const tradeoff =
-          best > 0 ? ((100 * (best - result.damage)) / best).toFixed(1) : "0.0";
-        let labels: Record<string, string> = {};
-        try {
-          const team = new TeamBuild(
-            result.configs,
-            setupConfig.combatOptions,
-            setupConfig.damage?.enemyAura,
-            setupConfig.damage?.extraBuffs,
-            undefined,
-            calcContext
-          );
-          labels = Object.fromEntries(
-            [...team.catalog.formulaIndex].map(([id, formula]) => [
-              id,
-              t.resolveLabel(formula.label),
-            ])
-          );
-        } catch {
-          /* IDs remain inspectable if a registry entry becomes unavailable. */
-        }
-        return (
-          <section
-            key={result.configs.map((config) => config.charId).join("|")}
-            className="space-y-4 rounded-xl border border-border bg-gradient-card p-4"
-          >
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="font-semibold">
-                  #{rank + 1} · {Math.round(result.damage).toLocaleString()}{" "}
-                  {t.ui("charactersMode.damage")}
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  {t.format("charactersMode.tradeoff", tradeoff)}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => apply(result)}
-                >
-                  {t.ui("charactersMode.applyRoster")}
-                </Button>
-                {result.artifactBasis === "account" && onSaveLoadout && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      apply(result);
-                      onSaveLoadout(result);
-                    }}
+        {active.error && (
+          <p role="alert" className="mb-2 text-sm text-primary">
+            {errorText(active.error)}
+          </p>
+        )}
+        {active.mode === "unowned" && !accountData && (
+          <p className="text-sm text-primary">
+            {t.ui("charactersMode.errors.noAccount")}
+          </p>
+        )}
+        {active.mode === "unowned" && accountData && !unownedSlots.length && (
+          <p className="text-sm text-muted-foreground">
+            {t.ui("charactersMode.noUnowned")}
+          </p>
+        )}
+        {active.mode === "replace" ? (
+          (running || active.rankings.length > 0) && (
+            <TeamCharacterGrid>
+              {rosterSlots.map((slot, slotIndex) => {
+                const ranking = active.rankings.find(
+                  (entry) => entry.slotIndex === slotIndex
+                );
+                const fixedSource =
+                  (setupConfig.damage?.formulaMode ?? "single") === "single" &&
+                  objective.lines.some((line) => line.charId === slot.charId);
+                return (
+                  <section
+                    key={slotIndex}
+                    data-replacement-slot={slotIndex}
+                    className="space-y-2 rounded-lg border border-border p-2"
                   >
-                    {t.ui("charactersMode.saveLoadout")}
-                  </Button>
-                )}
-              </div>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {result.configs.map((config, index) => (
-                <div key={config.charId} className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <ItemIcon
-                      characterId={config.charId}
-                      badge={config.constellation}
-                      level={`Lv.${config.charLevel}`}
-                      size="md"
-                    />
-                    <span className="text-sm font-medium">
-                      {t.character(config.charId)}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <ItemIcon
-                      weaponId={config.weaponId}
-                      badge={config.refinement}
-                      size="sm"
-                    />
-                    <div>
-                      <p className="text-xs">
-                        {t.weapon(config.weaponId)} · R{config.refinement}
-                      </p>
+                    <h4 className="flex items-center gap-2 font-semibold">
+                      {slot.charId && (
+                        <CharAvatar charId={slot.charId} size={24} />
+                      )}
+                      <span>
+                        {slot.charId
+                          ? t.character(slot.charId)
+                          : t.format("charactersMode.emptySlot", slotIndex + 1)}
+                      </span>
+                    </h4>
+                    {fixedSource ? (
                       <p className="text-xs text-muted-foreground">
-                        {result.weaponInstanceIds[index]
-                          ? t.ui("charactersMode.ownedCopy")
-                          : t.ui("charactersMode.hypotheticalWeapon")}
+                        {t.ui("charactersMode.slotUnavailable")}
                       </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-1">
-                    {Object.values(result.artifactsByChar[config.charId]).map(
-                      (artifact) =>
-                        artifact && (
-                          <ArtifactDataHoverCard
-                            key={artifact.id}
-                            artifact={artifact}
-                            slot={artifact.slotKey}
-                            side="top"
-                          >
-                            <ItemIcon
-                              artifactSetId={artifact.setKey}
-                              slot={artifact.slotKey}
-                              rarity={artifact.rarity}
-                              level={`+${artifact.level}`}
-                              size="xs"
-                            />
-                          </ArtifactDataHoverCard>
+                    ) : ranking?.outcome.type === "error" ? (
+                      <p className="text-xs text-primary">
+                        {errorText(ranking.outcome.reason)}
+                      </p>
+                    ) : ranking?.outcome.type === "result" ? (
+                      ranking.outcome.results.map((result, rank) =>
+                        renderResult(
+                          result,
+                          rank,
+                          ranking.outcome as Outcome,
+                          slotIndex
                         )
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <details>
-              <summary className="cursor-pointer text-sm font-medium">
-                {t.ui("charactersMode.inspectCounts")}
-              </summary>
-              <div className="mt-2 space-y-1">
-                {result.combo.lines.map((line, index) => (
-                  <div
-                    key={`${line.charId}:${line.formulaId}:${index}`}
-                    className="flex flex-wrap justify-between gap-2 text-xs"
-                  >
-                    <span>
-                      {t.character(line.charId)} ·{" "}
-                      {labels[line.formulaId] ?? line.formulaId}
-                      {line.reaction?.reaction
-                        ? ` · ${t.reaction(line.reaction.reaction)}`
-                        : ""}
-                    </span>
-                    <span>×{line.count}</span>
-                  </div>
-                ))}
-              </div>
-            </details>
-          </section>
-        );
-      })}
-    </div>
+                      )
+                    ) : null}
+                  </section>
+                );
+              })}
+            </TeamCharacterGrid>
+          )
+        ) : (
+          <div className="space-y-2">
+            {active.outcome?.results.map((result, rank) =>
+              renderResult(result, rank, active.outcome!)
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

@@ -1,5 +1,5 @@
 import { Ban, Bookmark, Search, Trophy, X } from "lucide-react";
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, type ReactNode, useCallback, useMemo, useState } from "react";
 import { ArtifactMixedBuilder } from "@/components/shared/ArtifactMixedBuilder";
 import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
 import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
@@ -95,6 +95,8 @@ interface ItemPickerProps<T extends ItemPickerType> {
   placeholder?: string;
   /** Accessible name for the item selection button. */
   triggerLabel?: string;
+  /** Optional compact control content, using the actual picker anchor. */
+  triggerContent?: ReactNode;
   showItemName?: boolean;
   /** Show element badge overlay on character icons */
   showElementBadge?: boolean;
@@ -122,6 +124,7 @@ function ItemPickerComponent<T extends ItemPickerType>({
   menuSize = "md",
   placeholder,
   triggerLabel,
+  triggerContent,
   showItemName = false,
   showElementBadge = false,
   defaultOpen = false,
@@ -172,22 +175,29 @@ function ItemPickerComponent<T extends ItemPickerType>({
       disabled={disabled}
       aria-label={triggerLabel ?? placeholder}
       className={cn(
-        "flex flex-col items-center gap-2",
-        "cursor-pointer hover:scale-105 transition-transform select-none relative",
+        triggerContent
+          ? "flex items-center cursor-pointer select-none relative"
+          : "flex flex-col items-center gap-2 cursor-pointer hover:scale-105 transition-transform select-none relative",
         disabled && "opacity-50 cursor-not-allowed hover:scale-100 grayscale",
         className
       )}
     >
-      <PickerTrigger
-        type={type}
-        value={value}
-        size={triggerSize}
-        disabled={disabled}
-        showElementBadge={showElementBadge}
-        characterStats={characterStats}
-        frozen={frozen}
-      />
-      {showItemName && value && <PickerItemName type={type} value={value} />}
+      {triggerContent ?? (
+        <>
+          <PickerTrigger
+            type={type}
+            value={value}
+            size={triggerSize}
+            disabled={disabled}
+            showElementBadge={showElementBadge}
+            characterStats={characterStats}
+            frozen={frozen}
+          />
+          {showItemName && value && (
+            <PickerItemName type={type} value={value} />
+          )}
+        </>
+      )}
     </button>
   );
 

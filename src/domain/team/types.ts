@@ -15,6 +15,7 @@ import type { ArtifactData, ArtifactSetConfig } from "@/domain/models";
 import type {
   ComboCountOverrides,
   InvestmentCountChange,
+  InvestmentCountTarget,
   MinErOverrides,
   StoredAnalyzerCharConfig,
 } from "../combat/analyzer/types";
@@ -181,6 +182,7 @@ export interface TeamInvestmentConfig {
   /** Exact older authored counts are retained until explicitly reset. */
   legacyCountOverrides?: ComboCountOverrides;
   futureCountChanges?: InvestmentCountChange[];
+  absoluteCountTargets?: InvestmentCountTarget[];
   minErOverrides?: MinErOverrides;
   /** Prior independent inputs retained for inspection/explicit reconciliation.
    *  All new calculations use damage's shared inputs. */

@@ -1,8 +1,9 @@
-import { ArrowRight, ChevronDown, Loader2, Play } from "lucide-react";
-import { type ReactNode, useCallback, useState } from "react";
+import { ArrowRight, Loader2, Play } from "lucide-react";
+import { type ReactNode, useCallback, useId, useState } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Drawer,
   DrawerContent,
@@ -11,12 +12,16 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
+  OptionButton,
+  OptionButtonCell,
+  OptionButtonRow,
+} from "@/components/ui/option-button";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { WeaponChoiceProgress } from "@/domain/combat/analyzer/weaponChoice";
@@ -195,7 +200,8 @@ interface WeaponChoiceResultCardProps {
   onRun: () => void;
   runDisabled?: boolean;
   ownedWeaponsOnly?: boolean;
-  onComparisonChange?: (tab: "all" | "owned" | "artifact") => void;
+  onChoiceModeChange?: (mode: "weapon" | "artifact") => void;
+  onOwnedWeaponsOnlyChange?: (owned: boolean) => void;
   hasAccount?: boolean;
   hasOwnedCompatibleWeapons?: boolean;
   onStop: () => void;
@@ -206,11 +212,9 @@ interface WeaponChoiceResultCardProps {
 
 function CharPanelHeader({
   charId,
-  scopeHint,
   t,
 }: {
   charId: string;
-  scopeHint?: string;
   t: WeaponChoiceResultCardProps["t"];
 }) {
   return (
@@ -225,11 +229,6 @@ function CharPanelHeader({
       <span className="text-xs md:text-sm lg:text-xs xl:text-sm font-bold truncate">
         {t.character(charId)}
       </span>
-      {scopeHint && (
-        <span className="text-xs text-muted-foreground shrink-0">
-          {scopeHint}
-        </span>
-      )}
     </div>
   );
 }
@@ -519,7 +518,6 @@ export function CharacterWeaponPanel({
   characters,
   weapons,
   rankings,
-  scopeHint,
   isMobile,
   t,
   onApply,
@@ -528,7 +526,6 @@ export function CharacterWeaponPanel({
   characters?: (string | null)[];
   weapons?: (string | null)[];
   rankings: ChoiceRanking[];
-  scopeHint?: string;
   isMobile: boolean;
   t: WeaponChoiceResultCardProps["t"];
   onApply?: (entry: ChoiceRanking) => void;
@@ -547,7 +544,7 @@ export function CharacterWeaponPanel({
   const visibleRankings = showAll ? rankings : shortlist;
   return (
     <div className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden">
-      <CharPanelHeader charId={charId} scopeHint={scopeHint} t={t} />
+      <CharPanelHeader charId={charId} t={t} />
       <div className="px-2 py-1 text-right text-xs text-muted-foreground">
         {t.ui("teamComp.percentOfBest")}
       </div>
@@ -768,15 +765,15 @@ export function WeaponChoiceResultCard({
   onRun,
   runDisabled = false,
   ownedWeaponsOnly = false,
-  onComparisonChange,
+  onChoiceModeChange,
+  onOwnedWeaponsOnlyChange,
   hasAccount = false,
   hasOwnedCompatibleWeapons = false,
   onStop,
   t,
 }: WeaponChoiceResultCardProps) {
+  const ownedToggleId = useId();
   const isMobile = useMediaQuery("(max-width: 1023px)");
-  const comparisonTab =
-    choiceMode === "artifact" ? "artifact" : ownedWeaponsOnly ? "owned" : "all";
   const ctx = setupConfig.damage?.calcContext ?? {};
   const hasStellarConduct = teamMeta.hasReaction("stellarConduct");
 
@@ -794,7 +791,6 @@ export function WeaponChoiceResultCard({
   );
 
   const hasResult = result && Object.keys(result.perCharacter).length > 0;
-  const scopeHint = t.ui("teamComp.choiceOthersUnchanged");
   const applyChoice = (charId: string, entry: ChoiceRanking) => {
     const next = {
       ...teamComp,
@@ -840,308 +836,274 @@ export function WeaponChoiceResultCard({
         )}
       >
         <span className={CARD_TITLE_CLS}>
-          {t.ui("teamComp.weaponChoiceResults")}
+          {t.ui("teamComp.buildComparison")}
         </span>
-        <Button
-          onClick={isComputing ? onStop : onRun}
-          disabled={!isComputing && runDisabled}
-          variant={isComputing ? "destructive" : "default"}
-          size="sm"
-          className="shrink-0"
-        >
-          {isComputing ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin mr-1" />
-              {t.ui("common.stop")}
-            </>
-          ) : (
-            <>
-              <Play className="w-4 h-4 mr-1" />
-              {t.ui("teamComp.runAnalysis")}
-            </>
-          )}
-        </Button>
       </CardHeader>
+      <OptionButtonRow>
+        <OptionButtonCell>
+          <OptionButton
+            selected={choiceMode === "weapon"}
+            onClick={() => onChoiceModeChange?.("weapon")}
+            title={t.ui("accountData.weapons")}
+          />
+        </OptionButtonCell>
+        <OptionButtonCell>
+          <OptionButton
+            selected={choiceMode === "artifact"}
+            onClick={() => onChoiceModeChange?.("artifact")}
+            title={t.ui("teamComp.choiceModeArtifact")}
+          />
+        </OptionButtonCell>
+      </OptionButtonRow>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
-        <p className="px-2 text-xs text-muted-foreground">
-          {t.ui("teamComp.buildsIndependent")}
-        </p>
-        <Tabs
-          value={comparisonTab}
-          onValueChange={(value) =>
-            onComparisonChange?.(value as "all" | "artifact" | "owned")
-          }
-        >
-          <TabsList
-            aria-label={t.ui("teamComp.comparisonGoal")}
-            className="grid h-auto w-full grid-cols-3"
-          >
-            <TabsTrigger value="all" className="min-w-0 whitespace-normal px-1">
-              {t.ui("teamComp.choiceModeWeapon")}
-            </TabsTrigger>
-            <TabsTrigger
-              value="owned"
-              className="min-w-0 whitespace-normal px-1"
+        <div className="space-y-2">
+          {choiceMode === "weapon" && (
+            <label
+              htmlFor={ownedToggleId}
+              className="flex items-center justify-center gap-2 py-1 text-sm"
             >
+              <Checkbox
+                id={ownedToggleId}
+                className="border-foreground/30"
+                checked={ownedWeaponsOnly}
+                onCheckedChange={(checked) =>
+                  onOwnedWeaponsOnlyChange?.(checked === true)
+                }
+              />
               {t.ui("teamComp.ownedWeaponComparison")}
-            </TabsTrigger>
-            <TabsTrigger
-              value="artifact"
-              className="min-w-0 whitespace-normal px-1"
-            >
-              {t.ui("teamComp.choiceModeArtifact")}
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value={comparisonTab} className="space-y-2">
-            <p className="text-xs text-muted-foreground">
-              {comparisonTab === "owned"
-                ? hasAccount
-                  ? t.ui("teamComp.ownedWeaponComparisonDesc")
-                  : t.ui("teamComp.ownedWeaponComparisonNeedsAccount")
-                : comparisonTab === "artifact"
-                  ? t.ui("teamComp.choiceModeArtifactDesc")
-                  : t.ui("teamComp.choiceModeWeaponDesc")}
+            </label>
+          )}
+          {/* Per-character CR/ER settings */}
+          <CharCrErSettings
+            characters={characters}
+            charConfigs={setupConfig.charConfigs}
+            onCharConfigsChange={(charConfigs) =>
+              onSetupConfigChange({ charConfigs })
+            }
+            t={t}
+          />
+
+          {/* Settings row */}
+          <div className={CONTROLS_CLS}>
+            <EnemyInputs
+              enemyLevel={ctx.enemyLevel ?? ""}
+              enemyRes={
+                ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
+              }
+              onEnemyLevelChange={(raw) => {
+                const num = Number(raw);
+                if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
+              }}
+              onEnemyResChange={(raw) => {
+                const num = Number(raw);
+                if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
+              }}
+              t={t}
+            />
+            <RollQualityInputs
+              rollMultiplier={
+                ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
+              }
+              substatBudget={
+                ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
+              }
+              onRollMultiplierChange={(v) => patchCtx({ rollMultiplier: v })}
+              onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
+              t={t}
+            />
+            {hasStellarConduct && (
+              <StellarDirectCoeffInput
+                stellarAttachHits={ctx.stellarAttachHits}
+                stellarDirectCoeff={ctx.stellarDirectCoeff}
+                onStellarAttachHitsChange={(hits) =>
+                  patchCtx({
+                    stellarAttachHits: hits,
+                    stellarDirectCoeff: undefined,
+                  })
+                }
+                t={t}
+              />
+            )}
+          </div>
+        </div>
+        <div className="flex justify-center py-2">
+          <Button
+            onClick={isComputing ? onStop : onRun}
+            disabled={!isComputing && runDisabled}
+            variant={isComputing ? "destructive" : "default"}
+            size="sm"
+            className="shrink-0"
+          >
+            {isComputing ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                {t.ui("common.stop")}
+              </>
+            ) : (
+              <>
+                <Play className="w-4 h-4 mr-1" />
+                {t.ui("teamComp.runAnalysis")}
+              </>
+            )}
+          </Button>
+        </div>
+        {choiceMode === "weapon" && ownedWeaponsOnly && !hasAccount && (
+          <p className="text-sm text-muted-foreground text-center">
+            {t.ui("teamComp.ownedWeaponComparisonNeedsAccount")}
+          </p>
+        )}
+        {choiceMode === "weapon" &&
+          ownedWeaponsOnly &&
+          hasAccount &&
+          !hasOwnedCompatibleWeapons && (
+            <p className="text-sm text-muted-foreground text-center">
+              {t.ui("teamComp.noOwnedCompatibleWeapons")}
             </p>
-            {comparisonTab === "owned" &&
-              hasAccount &&
-              !hasOwnedCompatibleWeapons && (
-                <p className="text-sm text-muted-foreground">
-                  {t.ui("teamComp.noOwnedCompatibleWeapons")}
-                </p>
-              )}
-            <details className="group rounded-lg border border-border bg-background/30">
-              <summary className="flex cursor-pointer list-none items-center gap-2 p-3 text-sm font-semibold [&::-webkit-details-marker]:hidden">
-                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
-                {t.ui("teamComp.analysisAssumptions")}
-                <span className="hidden sm:inline text-xs font-normal text-muted-foreground">
-                  {t.ui("teamComp.analysisAssumptionsDesc")}
-                </span>
-              </summary>
-              <div className="px-2 pb-2 space-y-2">
-                {/* Per-character CR/ER settings */}
-                <CharCrErSettings
-                  characters={characters}
-                  charConfigs={setupConfig.charConfigs}
-                  onCharConfigsChange={(charConfigs) =>
-                    onSetupConfigChange({ charConfigs })
-                  }
-                  t={t}
-                />
+          )}
 
-                {/* Settings row */}
-                <div className={CONTROLS_CLS}>
-                  <EnemyInputs
-                    enemyLevel={ctx.enemyLevel ?? ""}
-                    enemyRes={
-                      ctx.enemyRes != null ? Math.round(ctx.enemyRes * 100) : ""
-                    }
-                    onEnemyLevelChange={(raw) => {
-                      const num = Number(raw);
-                      if (!Number.isNaN(num)) patchCtx({ enemyLevel: num });
-                    }}
-                    onEnemyResChange={(raw) => {
-                      const num = Number(raw);
-                      if (!Number.isNaN(num)) patchCtx({ enemyRes: num / 100 });
-                    }}
-                    t={t}
-                  />
-                  <RollQualityInputs
-                    rollMultiplier={
-                      ctx.rollMultiplier ?? DEFAULT_CALC_CONTEXT.rollMultiplier
-                    }
-                    substatBudget={
-                      ctx.substatBudget ?? DEFAULT_CALC_CONTEXT.substatBudget
-                    }
-                    onRollMultiplierChange={(v) =>
-                      patchCtx({ rollMultiplier: v })
-                    }
-                    onSubstatBudgetChange={(v) =>
-                      patchCtx({ substatBudget: v })
-                    }
-                    t={t}
-                  />
-                  {hasStellarConduct && (
-                    <StellarDirectCoeffInput
-                      stellarAttachHits={ctx.stellarAttachHits}
-                      stellarDirectCoeff={ctx.stellarDirectCoeff}
-                      onStellarAttachHitsChange={(hits) =>
-                        patchCtx({
-                          stellarAttachHits: hits,
-                          stellarDirectCoeff: undefined,
-                        })
-                      }
-                      t={t}
-                    />
-                  )}
-                </div>
-              </div>
-            </details>
-
-            {/* Progress chips with ring spinners */}
-            {isComputing && (
-              <div className="space-y-1.5">
-                <Progress
-                  value={Math.round((progress?.overallProgress ?? 0) * 100)}
-                  className="h-2"
-                />
-                {progress?.chars && progress.chars.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {progress.chars.map((cp) => {
-                      const pct = cp.total > 0 ? cp.done / cp.total : 1;
-                      const isDone = pct >= 1;
-                      const target = formatProgressTarget(
-                        cp.currentTarget ?? cp.currentWeapon
-                      );
-                      const r = 7;
-                      const circ = 2 * Math.PI * r;
-                      const offset = circ * (1 - pct);
-                      return (
-                        <span
-                          key={cp.charId}
-                          className={cn(
-                            "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs",
-                            isDone
-                              ? "border-border text-muted-foreground"
-                              : "border-primary/30 text-foreground"
-                          )}
-                        >
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 18 18"
-                            className="shrink-0"
-                          >
-                            <circle
-                              cx="9"
-                              cy="9"
-                              r={r}
-                              fill="none"
-                              strokeWidth="2.5"
-                              className="stroke-muted"
-                            />
-                            <circle
-                              cx="9"
-                              cy="9"
-                              r={r}
-                              fill="none"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              className={
-                                isDone
-                                  ? "stroke-muted-foreground"
-                                  : "stroke-primary"
-                              }
-                              strokeDasharray={circ}
-                              strokeDashoffset={offset}
-                              transform="rotate(-90 9 9)"
-                            />
-                          </svg>
-                          {t.character(cp.charId)} {Math.round(pct * 100)}%
-                          {target}
-                        </span>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-xs text-muted-foreground">
-                    {t.ui("teamComp.weaponChoiceRunning")}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {error && (
-              <p className="text-sm text-destructive">{error.message}</p>
-            )}
-            {choiceMode === "weapon" && ownedWeaponsOnly && (
-              <p className="text-xs text-muted-foreground">
-                {t.ui("teamComp.ownedWeaponBaseline")}
-              </p>
-            )}
-
-            {choiceMode === "artifact" &&
-              result?.artifactAssignmentSuggestion &&
-              hasArtifactAssignmentImprovement(
-                result.artifactAssignmentSuggestion
-              ) && (
-                <ArtifactAssignmentCard
-                  suggestion={result.artifactAssignmentSuggestion}
-                  teamComp={teamComp}
-                  characters={characters}
-                  artifacts={artifacts}
-                  result={result}
-                  onTeamCompChange={onTeamCompChange}
-                  setChoiceResult={setChoiceResult}
-                  t={t}
-                />
-              )}
-
-            {/* Results grid — always show character panels when charIds exist */}
-            {charIds.length > 0 ? (
-              <TeamCharacterGrid className="gap-2">
-                {charIds.map((charId) => {
-                  const rankings = hasResult
-                    ? result.perCharacter[charId]
-                    : undefined;
-
-                  if (rankings && rankings.length > 0) {
-                    return (
-                      <CharacterWeaponPanel
-                        key={charId}
-                        charId={charId}
-                        characters={characters}
-                        weapons={weapons}
-                        rankings={rankings}
-                        scopeHint={scopeHint}
-                        isMobile={isMobile}
-                        t={t}
-                        onApply={(entry) => applyChoice(charId, entry)}
-                      />
-                    );
-                  }
-
+        {/* Progress chips with ring spinners */}
+        {isComputing && (
+          <div className="space-y-1.5">
+            <Progress
+              value={Math.round((progress?.overallProgress ?? 0) * 100)}
+              className="h-2"
+            />
+            {progress?.chars && progress.chars.length > 0 ? (
+              <div className="flex flex-wrap gap-1.5">
+                {progress.chars.map((cp) => {
+                  const pct = cp.total > 0 ? cp.done / cp.total : 1;
+                  const isDone = pct >= 1;
+                  const target = formatProgressTarget(
+                    cp.currentTarget ?? cp.currentWeapon
+                  );
+                  const r = 7;
+                  const circ = 2 * Math.PI * r;
+                  const offset = circ * (1 - pct);
                   return (
-                    <div
-                      key={charId}
-                      className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden"
+                    <span
+                      key={cp.charId}
+                      className={cn(
+                        "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs",
+                        isDone
+                          ? "border-border text-muted-foreground"
+                          : "border-primary/30 text-foreground"
+                      )}
                     >
-                      <CharPanelHeader
-                        charId={charId}
-                        scopeHint={scopeHint}
-                        t={t}
-                      />
-                      <div className="flex flex-col items-center justify-center py-6 px-2">
-                        {isComputing ? (
-                          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-                        ) : hasResult ? (
-                          <p className="text-xs text-muted-foreground text-center">
-                            {t.ui(
-                              choiceMode === "artifact"
-                                ? "teamComp.noCompatibleArtifactSets"
-                                : "teamComp.noCompatibleWeapons"
-                            )}
-                          </p>
-                        ) : (
-                          <p className="text-xs text-muted-foreground text-center">
-                            {t.ui(
-                              choiceMode === "artifact"
-                                ? "teamComp.artifactChoiceEmpty"
-                                : "teamComp.weaponChoiceEmpty"
-                            )}
-                          </p>
-                        )}
-                      </div>
-                    </div>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 18 18"
+                        className="shrink-0"
+                      >
+                        <circle
+                          cx="9"
+                          cy="9"
+                          r={r}
+                          fill="none"
+                          strokeWidth="2.5"
+                          className="stroke-muted"
+                        />
+                        <circle
+                          cx="9"
+                          cy="9"
+                          r={r}
+                          fill="none"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          className={
+                            isDone
+                              ? "stroke-muted-foreground"
+                              : "stroke-primary"
+                          }
+                          strokeDasharray={circ}
+                          strokeDashoffset={offset}
+                          transform="rotate(-90 9 9)"
+                        />
+                      </svg>
+                      {t.character(cp.charId)} {Math.round(pct * 100)}%{target}
+                    </span>
                   );
                 })}
-              </TeamCharacterGrid>
+              </div>
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                {t.ui("teamComp.analyzerNoResults")}
+              <p className="text-xs text-muted-foreground">
+                {t.ui("teamComp.weaponChoiceRunning")}
               </p>
             )}
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
+
+        {error && <p className="text-sm text-destructive">{error.message}</p>}
+
+        {choiceMode === "artifact" &&
+          result?.artifactAssignmentSuggestion &&
+          hasArtifactAssignmentImprovement(
+            result.artifactAssignmentSuggestion
+          ) && (
+            <ArtifactAssignmentCard
+              suggestion={result.artifactAssignmentSuggestion}
+              teamComp={teamComp}
+              characters={characters}
+              artifacts={artifacts}
+              result={result}
+              onTeamCompChange={onTeamCompChange}
+              setChoiceResult={setChoiceResult}
+              t={t}
+            />
+          )}
+
+        {/* Keep results below settings once a comparison starts. */}
+        {(isComputing || result) &&
+          (charIds.length > 0 ? (
+            <TeamCharacterGrid className="gap-2">
+              {charIds.map((charId) => {
+                const rankings = hasResult
+                  ? result.perCharacter[charId]
+                  : undefined;
+
+                if (rankings && rankings.length > 0) {
+                  return (
+                    <CharacterWeaponPanel
+                      key={charId}
+                      charId={charId}
+                      characters={characters}
+                      weapons={weapons}
+                      rankings={rankings}
+                      isMobile={isMobile}
+                      t={t}
+                      onApply={(entry) => applyChoice(charId, entry)}
+                    />
+                  );
+                }
+
+                return (
+                  <div
+                    key={charId}
+                    className="flex flex-col rounded-md border border-border bg-background/30 overflow-hidden"
+                  >
+                    <CharPanelHeader charId={charId} t={t} />
+                    <div className="flex flex-col items-center justify-center py-6 px-2">
+                      {isComputing ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+                      ) : (
+                        <p className="text-xs text-muted-foreground text-center">
+                          {t.ui(
+                            choiceMode === "artifact"
+                              ? "teamComp.noCompatibleArtifactSets"
+                              : "teamComp.noCompatibleWeapons"
+                          )}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </TeamCharacterGrid>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-8">
+              {t.ui("teamComp.analyzerNoResults")}
+            </p>
+          ))}
       </CardContent>
     </Card>
   );

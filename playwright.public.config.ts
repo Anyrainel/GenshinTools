@@ -4,7 +4,11 @@ const baseURL = process.env.E2E_BASE_URL ?? "http://127.0.0.1:4175";
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: ["public-workflows.spec.ts", "tour.spec.ts"],
+  testMatch: [
+    "public-workflows.spec.ts",
+    "tour.spec.ts",
+    "analysis-layout.spec.ts",
+  ],
   fullyParallel: true,
   workers: 2,
   forbidOnly: Boolean(process.env.CI),
