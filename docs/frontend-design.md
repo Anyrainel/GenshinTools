@@ -6,6 +6,8 @@ For explicit edits, follow the user's instructions and the nearest existing patt
 - Inspect 2–3 sibling surfaces first. Reuse their layout, mode selectors and shared
   controls. A new calculation does not justify a new interaction pattern.
   Team calculator submodes use `OptionButtonRow`, `OptionButtonCell` and `OptionButton`.
+  Group related calculation parameters in one wrapping row. Preserve existing
+  picker triggers when changing labels; do not redesign their appearance unasked.
 - Keep shared inputs shared. Add only missing settings; do not copy an entire
   roster panel. Keep character-specific settings in compact per-character columns.
 - Put mode selection, visible calculation settings, Run, then results in that

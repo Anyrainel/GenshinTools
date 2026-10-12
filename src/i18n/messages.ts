@@ -1764,10 +1764,6 @@ export const i18nUiData = {
       zh: "三星/四星对比武器",
     },
     investmentFiveWeapon: { en: "5★ comparison weapon", zh: "五星对比武器" },
-    investmentChooseWeapon: {
-      en: "Choose comparison weapon",
-      zh: "选择对比武器",
-    },
     investmentMaxConstellation: { en: "Constellation ceiling", zh: "命座上限" },
     investmentMaxRefinement: { en: "Refinement ceiling", zh: "精炼上限" },
     investmentFullPath: { en: "Full investment path", zh: "完整补金路径" },

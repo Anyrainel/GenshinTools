@@ -1,4 +1,3 @@
-import { ChevronDown } from "lucide-react";
 import type { ReactNode } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -84,21 +83,11 @@ export function AnalyzerConfigCard({
                         <ItemPicker
                           type="weapon"
                           value={value ?? null}
-                          className="h-8 w-full min-w-0 justify-between rounded-md border border-border bg-background px-2 text-xs hover:bg-accent"
+                          triggerSize="sm"
                           triggerLabel={
                             star === "5"
                               ? t.ui("teamComp.investmentFiveWeapon")
                               : t.ui("teamComp.investmentLowWeapon")
-                          }
-                          triggerContent={
-                            <>
-                              <span className="truncate">
-                                {value
-                                  ? t.weapon(value)
-                                  : t.ui("teamComp.investmentChooseWeapon")}
-                              </span>
-                              <ChevronDown className="ml-1 h-3 w-3 shrink-0" />
-                            </>
                           }
                           onChange={(id) => {
                             onUpdateWeapon(config.charId, star, id);

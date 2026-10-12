@@ -112,6 +112,28 @@ test("phone analysis modes occupy distinct rows above the active calculation", a
         expect(control.x).toBeGreaterThanOrEqual(0);
         expect(control.right).toBeLessThanOrEqual(width);
       }
+      if (mode === "Builds" && width === 1280) {
+        const owned = await calculation
+          .getByRole("checkbox", { name: "Owned weapons", exact: true })
+          .boundingBox();
+        const enemy = await calculation
+          .getByText("Enemy Lv.", { exact: true })
+          .boundingBox();
+        expect(owned).not.toBeNull();
+        expect(enemy).not.toBeNull();
+        expect(
+          Math.abs(owned!.y + owned!.height / 2 - enemy!.y - enemy!.height / 2)
+        ).toBeLessThan(3);
+      }
+      if (mode === "Investment") {
+        const pickers = calculation.getByRole("button", {
+          name: "5★ comparison weapon",
+          exact: true,
+        });
+        await expect(pickers).toHaveCount(2);
+        for (const picker of await pickers.all())
+          await expect(picker).toHaveText("+");
+      }
       await page.screenshot({
         path: testInfo.outputPath(`${mode}-${width}.png`),
       });

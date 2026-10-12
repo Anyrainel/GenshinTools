@@ -857,22 +857,6 @@ export function WeaponChoiceResultCard({
       </OptionButtonRow>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
         <div className="space-y-2">
-          {choiceMode === "weapon" && (
-            <label
-              htmlFor={ownedToggleId}
-              className="flex items-center justify-center gap-2 py-1 text-sm"
-            >
-              <Checkbox
-                id={ownedToggleId}
-                className="border-foreground/30"
-                checked={ownedWeaponsOnly}
-                onCheckedChange={(checked) =>
-                  onOwnedWeaponsOnlyChange?.(checked === true)
-                }
-              />
-              {t.ui("teamComp.ownedWeaponComparison")}
-            </label>
-          )}
           {/* Per-character CR/ER settings */}
           <CharCrErSettings
             characters={characters}
@@ -911,6 +895,22 @@ export function WeaponChoiceResultCard({
               onSubstatBudgetChange={(v) => patchCtx({ substatBudget: v })}
               t={t}
             />
+            {choiceMode === "weapon" && (
+              <label
+                htmlFor={ownedToggleId}
+                className="flex items-center gap-2 text-xs md:text-sm"
+              >
+                <Checkbox
+                  id={ownedToggleId}
+                  className="border-foreground/30"
+                  checked={ownedWeaponsOnly}
+                  onCheckedChange={(checked) =>
+                    onOwnedWeaponsOnlyChange?.(checked === true)
+                  }
+                />
+                {t.ui("teamComp.ownedWeaponComparison")}
+              </label>
+            )}
             {hasStellarConduct && (
               <StellarDirectCoeffInput
                 stellarAttachHits={ctx.stellarAttachHits}
