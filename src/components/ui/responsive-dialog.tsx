@@ -63,7 +63,8 @@ const ResponsiveDialogContext = React.createContext<{
  * ResponsiveDialog - A dialog that renders as a Dialog on desktop and a Drawer on mobile.
  *
  * Usage matches the standard Dialog pattern, but automatically adapts for mobile.
- * On mobile (< 768px), it renders as a bottom Drawer with full height.
+ * On mobile (< 768px), it renders as a bottom Drawer with horizontally centered
+ * content. Width constraints apply to the content, while the drawer stays full width.
  * On desktop (>= 768px), it renders as a centered Dialog.
  *
  * @example
@@ -125,7 +126,7 @@ function ResponsiveDialogContent({
 
   return (
     <DrawerContent>
-      <div className={cn("flex flex-col h-full max-h-[85vh] overflow-y-auto px-4 pb-6 safe-area-bottom", className)}>
+      <div className={cn("mx-auto flex w-full flex-col h-full max-h-[85vh] overflow-y-auto px-4 pb-6 safe-area-bottom", className)}>
         {children}
       </div>
     </DrawerContent>
