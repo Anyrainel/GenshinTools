@@ -225,9 +225,12 @@ export function useAccountRosterConfig(
       (char) => char.key === slot.charId
     );
     const config = { ...next.charConfigs?.[slot.charId] };
+    config.constellation = character?.constellation ?? 0;
+    config.refinement = assignments[index]?.copy?.refinement ?? 1;
+    delete next.combatOptions[`${slot.charId}.overrideConstellation`];
+    delete next.combatOptions[`${slot.charId}.overrideRefinement`];
     if (character) {
       config.level = Number(getCharacterLevelTier(character.level));
-      config.constellation = character.constellation;
       config.talentLevels = { ...character.talent };
       for (const field of [
         "Level",
@@ -237,10 +240,6 @@ export function useAccountRosterConfig(
         "TalentBurst",
       ])
         delete next.combatOptions[`${slot.charId}.override${field}`];
-    }
-    if (assignments[index]?.copy) {
-      config.refinement = assignments[index].copy.refinement;
-      delete next.combatOptions[`${slot.charId}.overrideRefinement`];
     }
     next.charConfigs![slot.charId] = config;
   });

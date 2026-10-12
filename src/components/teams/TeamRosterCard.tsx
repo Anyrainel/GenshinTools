@@ -359,7 +359,7 @@ export function TeamRosterCard({
             <span>{t.ui("teamComp.teamRoster")}</span>
           </span>
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="ml-auto flex flex-wrap justify-end gap-2">
           <Button
             variant="outline"
             size="sm"

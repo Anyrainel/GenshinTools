@@ -125,10 +125,10 @@ describe("slot-aware weapon copies", () => {
       slots.every((slot) => slot.copy === null && slot.source === "no-account")
     ).toBe(true);
   });
-  it("prefills owned stats and copy-assigned refinement while preserving unrelated settings and shortages", () => {
+  it("prefills owned ranks and defaults missing characters/weapons to C0/R1", () => {
     const original = {
       combatOptions: { "bennett.overrideConstellation": "6", enemy: "custom" },
-      charConfigs: { jean: { refinement: 4 } },
+      charConfigs: { jean: { constellation: 6, refinement: 4 } },
       damage: { calcContext: { enemyLevel: 105 } },
     };
     const next = useAccountRosterConfig(comp, original, account());
@@ -139,7 +139,10 @@ describe("slot-aware weapon copies", () => {
       talentLevels: { auto: 3, skill: 8, burst: 9 },
     });
     expect(next.charConfigs?.xingqiu?.refinement).toBe(2);
-    expect(next.charConfigs?.jean?.refinement).toBe(4);
+    expect(next.charConfigs?.jean).toMatchObject({
+      constellation: 0,
+      refinement: 1,
+    });
     expect(next.combatOptions).toEqual({ enemy: "custom" });
     expect(next.damage).toEqual(original.damage);
     expect(original.combatOptions["bennett.overrideConstellation"]).toBe("6");
