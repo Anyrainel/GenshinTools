@@ -36,6 +36,28 @@ describe("ErCalcCard", () => {
     });
   });
 
+  it("shows energy controls even when the previous session saved it collapsed", () => {
+    let teamId = "";
+    act(() => {
+      useSessionNavStore.getState().setErCalcExpanded("analysis", false);
+      teamId = useTeamStore.getState().addTeam({
+        id: "er-visible-team",
+        name: "Energy controls",
+        characters: ["bennett", "xiangling", null, null],
+        setupConfig: { combatOptions: {} },
+      });
+    });
+
+    render(
+      <ErCalcCard
+        teamComp={useTeamStore.getState().teamCompById[teamId]}
+        setupConfig={useTeamStore.getState().getTeamSetupConfigById(teamId)}
+      />
+    );
+
+    expect(screen.getByRole("radio", { name: /^Full$/ })).toBeVisible();
+  });
+
   it("persists reordered action positions after dragging", () => {
     const initialTimeline = {
       actions: [

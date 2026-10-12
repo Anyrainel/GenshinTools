@@ -1462,11 +1462,11 @@ export function AnalysisWorkspace({
         />
 
         <Tabs
-          className="space-y-2"
+          className="mt-3 gap-1"
           value={mode}
           onValueChange={(value) => onModeChange(value as AnalysisMode)}
         >
-          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 min-[420px]:grid-cols-5">
+          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 border border-border bg-background/40 min-[420px]:grid-cols-5 [&_[data-slot=tabs-trigger][data-state=active]]:border-primary [&_[data-slot=tabs-trigger][data-state=active]]:bg-primary [&_[data-slot=tabs-trigger][data-state=active]]:text-primary-foreground">
             <TabsTrigger
               value="artifacts"
               className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"

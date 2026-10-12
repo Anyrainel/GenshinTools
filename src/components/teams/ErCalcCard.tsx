@@ -1,12 +1,7 @@
-import { Battery, ChevronDown, Plus, Sparkles, Trash2 } from "lucide-react";
+import { Battery, Plus, Sparkles, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
@@ -55,8 +50,6 @@ import type {
 } from "@/domain/team/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import { useResource } from "@/hooks/useResource";
-import { cn } from "@/lib/utils";
-import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
 import { ErResultsPanel } from "./ErResultsPanel";
@@ -217,19 +210,6 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
   const { characters, artifacts } = useMemo(
     () => teamCompToArrays(teamComp),
     [teamComp]
-  );
-  // Persist open/closed across refresh via session store (sessionStorage-backed).
-  const expanded = useSessionNavStore(
-    (s) => s.viewSettings.analysis.erCalcExpanded
-  );
-  const setErCalcExpanded = useSessionNavStore((s) => s.setErCalcExpanded);
-  const collapsed = !expanded;
-  const setCollapsed = useCallback(
-    (updater: boolean | ((prev: boolean) => boolean)) => {
-      const next = typeof updater === "function" ? updater(collapsed) : updater;
-      setErCalcExpanded("analysis", !next);
-    },
-    [collapsed, setErCalcExpanded]
   );
 
   const charIds = characters.filter((id): id is string => id != null);
@@ -730,509 +710,470 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
 
   return (
     <Card className={CARD_CLS}>
-      <Collapsible
-        open={!collapsed}
-        onOpenChange={() => setCollapsed((p) => !p)}
-      >
-        <CollapsibleTrigger asChild>
-          <CardHeader
-            className={cn(CARD_HEADER_CLS, "cursor-pointer select-none")}
+      <CardHeader className={CARD_HEADER_CLS}>
+        <h3 className={CARD_TITLE_CLS}>
+          <Battery className="w-4 h-4" />
+          {t.ui("erCalc.title")}
+        </h3>
+      </CardHeader>
+      <CardContent className="p-0">
+        {/* Settings bar */}
+        <div className="px-3 py-2 border-b border-border flex flex-wrap items-center gap-x-2 gap-y-2">
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs md:text-sm text-foreground/80">
+              {t.ui("erCalc.startEnergy")}
+            </span>
+            <ToggleGroup
+              type="single"
+              value={startFull ? "full" : "empty"}
+              onValueChange={(v) => {
+                if (!v) return;
+                // Starting full only ever asks the sustain question — the
+                // full + run-once pairing hands everyone a charged burst
+                // bar and answers 100% for the whole team.
+                if (v === "full") setCalcMode("full-energy-repeat");
+                else
+                  setCalcMode(
+                    isRepeating ? "zero-energy-repeat" : "zero-energy-start"
+                  );
+              }}
+              variant="outline"
+              size="sm"
+            >
+              <ToggleGroupItem value="empty" className="text-xs md:text-sm h-7">
+                {t.ui("erCalc.zeroEnergy")}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="full" className="text-xs md:text-sm h-7">
+                {t.ui("erCalc.fullEnergy")}
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+
+          <div className="h-6 border-r"></div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-xs md:text-sm text-foreground/80">
+              {t.ui("erCalc.particleEst")}
+            </span>
+            <ToggleGroup
+              type="single"
+              value={particleMode}
+              onValueChange={(v) => v && setParticleMode(v as ParticleMode)}
+              variant="outline"
+              size="sm"
+            >
+              <ToggleGroupItem
+                value="expected"
+                className="text-xs md:text-sm h-7"
+              >
+                {t.ui("erCalc.avgEst")}
+              </ToggleGroupItem>
+              <ToggleGroupItem value="max" className="text-xs md:text-sm h-7">
+                {t.ui("erCalc.maxEst")}
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+
+          <div className="h-6 border-r"></div>
+        </div>
+
+        {hasScholarEquipped && (
+          <div className="px-3 py-1.5 text-xs md:text-sm text-amber-400 border-b border-border/30 bg-amber-500/5">
+            {t.ui("erCalc.scholarNotImplemented")}
+          </div>
+        )}
+
+        <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center justify-between gap-2 bg-muted/10">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleAddStartup}
+              className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
+              title={t.ui("erCalc.addStartupTitle")}
+            >
+              {t.ui("erCalc.addStartup")}
+            </button>
+            {mainERT.actions.length > 0 && (
+              <button
+                type="button"
+                onClick={handleCloneLoopToStartup}
+                className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
+                title={t.ui("erCalc.cloneLoopTitle")}
+              >
+                {t.ui("erCalc.cloneLoop")}
+              </button>
+            )}
+          </div>
+
+          {/* Mode Selector */}
+          <ToggleGroup
+            type="single"
+            value={isEasyMode ? "easy" : "timeline"}
+            onValueChange={(v) => v && setIsEasyMode(v === "easy")}
+            variant="outline"
+            size="sm"
           >
-            <div className="flex items-center w-full">
-              <div className={CARD_TITLE_CLS}>
-                <Battery className="w-4 h-4" />
-                {t.ui("erCalc.title")}
-                <ChevronDown
-                  className={cn(
-                    "w-4 h-4 transition-transform",
-                    !collapsed && "rotate-180"
-                  )}
-                />
+            <ToggleGroupItem
+              value="easy"
+              className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+            >
+              <Sparkles className="w-3.5 h-3.5 mr-1" />
+              {t.ui("erCalc.easyMode")}
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="timeline"
+              className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
+            >
+              {t.ui("erCalc.expertTimeline")}
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        {/* Timeline editors */}
+        {isEasyMode ? (
+          <div className="p-4 space-y-6 bg-muted/20 border-b border-border/30">
+            {/* Character Configuration Grid */}
+            <div>
+              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
+                {t.ui("erCalc.characterCasts")}
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {erTeam.map((member) => {
+                  const casts = easyCasts[member.charId] ?? DEFAULT_EASY_CASTS;
+                  const isDriver = easyDriver === member.charId;
+
+                  const updateCast = (
+                    field: "skillCount" | "burstCount" | "normalAttackCount",
+                    val: number
+                  ) => {
+                    setEasyCasts((prev) => ({
+                      ...prev,
+                      [member.charId]: {
+                        ...(prev[member.charId] ?? DEFAULT_EASY_CASTS),
+                        [field]: val,
+                      },
+                    }));
+                  };
+
+                  return (
+                    <div
+                      key={member.charId}
+                      className="p-3 bg-card border border-border rounded-lg space-y-3 shadow-xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold text-foreground">
+                          {t.character(member.charId)}
+                        </span>
+                        <label className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground">
+                          <input
+                            type="radio"
+                            name="easyDriver"
+                            checked={isDriver}
+                            onChange={() => setEasyDriver(member.charId)}
+                            className="w-3 h-3 text-primary focus:ring-0 focus:ring-offset-0"
+                          />
+                          {t.ui("erCalc.driver")}
+                        </label>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="space-y-1">
+                          <span className="text-muted-foreground">
+                            {t.ui("erCalc.skills")}
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="5"
+                            value={casts.skillCount}
+                            onChange={(e) =>
+                              updateCast(
+                                "skillCount",
+                                Math.max(0, Number(e.target.value))
+                              )
+                            }
+                            className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="text-muted-foreground">
+                            {t.ui("erCalc.bursts")}
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="2"
+                            value={casts.burstCount}
+                            onChange={(e) =>
+                              updateCast(
+                                "burstCount",
+                                Math.max(0, Number(e.target.value))
+                              )
+                            }
+                            className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                          />
+                        </div>
+                      </div>
+
+                      {isDriver && (
+                        <div className="space-y-1 text-xs">
+                          <span className="text-muted-foreground">
+                            {t.ui("erCalc.normalAttacks")}
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            max="20"
+                            value={casts.normalAttackCount}
+                            onChange={(e) =>
+                              updateCast(
+                                "normalAttackCount",
+                                Math.max(0, Number(e.target.value))
+                              )
+                            }
+                            className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-          </CardHeader>
-        </CollapsibleTrigger>
 
-        <CollapsibleContent>
-          <CardContent className="p-0 max-h-[65vh] overflow-y-auto">
-            {/* Settings bar */}
-            <div className="px-3 py-2 border-b border-border flex flex-wrap items-center gap-x-2 gap-y-2">
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs md:text-sm text-foreground/80">
-                  {t.ui("erCalc.startEnergy")}
+            {/* Funnel Configuration Section */}
+            <div className="border-t border-border/30 pt-4 space-y-4">
+              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
+                {t.ui("erCalc.particleFunnelingRules")}
+              </h4>
+
+              {easyFunnels.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {easyFunnels.map((funnel, fIdx) => (
+                    <div
+                      key={fIdx}
+                      className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/40 border border-border rounded-lg text-xs"
+                    >
+                      <span className="font-medium text-foreground">
+                        {t.character(funnel.sourceCharId)}
+                      </span>
+                      <span className="text-muted-foreground">E &rarr;</span>
+                      <span className="font-medium text-foreground">
+                        {t.character(funnel.targetCharId)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setEasyFunnels((prev) =>
+                            prev.filter((_, idx) => idx !== fIdx)
+                          )
+                        }
+                        className="text-muted-foreground hover:text-destructive ml-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex flex-wrap items-end gap-3 p-3 bg-muted/40 border border-border rounded-lg max-w-xl text-xs">
+                <div className="space-y-1 flex-1 min-w-[120px]">
+                  <span className="text-muted-foreground">
+                    {t.ui("erCalc.sourceCharacter")}
+                  </span>
+                  <select
+                    id={`funnel-source-${teamComp.id}`}
+                    className="w-full h-8 px-2 bg-card border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40"
+                  >
+                    {erTeam.map((m) => (
+                      <option key={m.charId} value={m.charId}>
+                        {t.character(m.charId)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="text-muted-foreground self-center pb-2">
+                  &rarr;
+                </div>
+
+                <div className="space-y-1 flex-1 min-w-[120px]">
+                  <span className="text-muted-foreground">
+                    {t.ui("erCalc.targetCharacter")}
+                  </span>
+                  <select
+                    id={`funnel-target-${teamComp.id}`}
+                    className="w-full h-8 px-2 bg-card border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40"
+                  >
+                    {erTeam.map((m) => (
+                      <option key={m.charId} value={m.charId}>
+                        {t.character(m.charId)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    const srcSelect = document.getElementById(
+                      `funnel-source-${teamComp.id}`
+                    ) as HTMLSelectElement;
+                    const tgtSelect = document.getElementById(
+                      `funnel-target-${teamComp.id}`
+                    ) as HTMLSelectElement;
+                    if (srcSelect && tgtSelect) {
+                      const src = srcSelect.value;
+                      const tgt = tgtSelect.value;
+                      if (src && tgt) {
+                        const exists = easyFunnels.some(
+                          (f) =>
+                            f.sourceCharId === src && f.targetCharId === tgt
+                        );
+                        if (!exists) {
+                          setEasyFunnels((prev) => [
+                            ...prev,
+                            { sourceCharId: src, targetCharId: tgt },
+                          ]);
+                        }
+                      }
+                    }
+                  }}
+                  className="h-8 px-3 bg-primary hover:bg-primary/95 text-primary-foreground font-medium rounded-[4px] flex items-center justify-center gap-1 transition shadow-xs"
+                >
+                  <Plus className="w-4 h-4" />
+                  {t.ui("erCalc.addFunnel")}
+                </button>
+              </div>
+            </div>
+
+            {/* Compilation Action */}
+            <div className="border-t border-border/30 pt-4 flex justify-end">
+              <button
+                type="button"
+                onClick={handleCompileRotation}
+                className="py-2 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg flex items-center gap-1.5 transition-colors shadow-xs text-sm"
+              >
+                <Sparkles className="w-4 h-4" />
+                {t.ui("erCalc.compileRotation")}
+              </button>
+            </div>
+          </div>
+        ) : (
+          timelines.map((tl, tlIdx) => {
+            const isLast = tlIdx === timelines.length - 1;
+            const startupNum = tlIdx + 1;
+            const labelNode = isLast ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm md:text-base font-semibold">
+                  {t.ui("erCalc.loopLabel")}
                 </span>
                 <ToggleGroup
                   type="single"
-                  value={startFull ? "full" : "empty"}
+                  value={isRepeating ? "repeat" : "once"}
                   onValueChange={(v) => {
                     if (!v) return;
-                    // Starting full only ever asks the sustain question — the
-                    // full + run-once pairing hands everyone a charged burst
-                    // bar and answers 100% for the whole team.
-                    if (v === "full") setCalcMode("full-energy-repeat");
-                    else
+                    if (v === "repeat")
                       setCalcMode(
-                        isRepeating ? "zero-energy-repeat" : "zero-energy-start"
+                        startFull ? "full-energy-repeat" : "zero-energy-repeat"
                       );
+                    else setCalcMode("zero-energy-start");
                   }}
                   variant="outline"
                   size="sm"
                 >
                   <ToggleGroupItem
-                    value="empty"
-                    className="text-xs md:text-sm h-7"
+                    value="once"
+                    disabled={startFull}
+                    className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                   >
-                    {t.ui("erCalc.zeroEnergy")}
+                    {t.ui("erCalc.loopOnce")}
                   </ToggleGroupItem>
                   <ToggleGroupItem
-                    value="full"
-                    className="text-xs md:text-sm h-7"
+                    value="repeat"
+                    className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
                   >
-                    {t.ui("erCalc.fullEnergy")}
+                    {t.ui("erCalc.loopRepeat")}
                   </ToggleGroupItem>
                 </ToggleGroup>
-              </div>
-
-              <div className="h-6 border-r"></div>
-
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs md:text-sm text-foreground/80">
-                  {t.ui("erCalc.particleEst")}
-                </span>
-                <ToggleGroup
-                  type="single"
-                  value={particleMode}
-                  onValueChange={(v) => v && setParticleMode(v as ParticleMode)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <ToggleGroupItem
-                    value="expected"
-                    className="text-xs md:text-sm h-7"
-                  >
-                    {t.ui("erCalc.avgEst")}
-                  </ToggleGroupItem>
-                  <ToggleGroupItem
-                    value="max"
-                    className="text-xs md:text-sm h-7"
-                  >
-                    {t.ui("erCalc.maxEst")}
-                  </ToggleGroupItem>
-                </ToggleGroup>
-              </div>
-
-              <div className="h-6 border-r"></div>
-            </div>
-
-            {hasScholarEquipped && (
-              <div className="px-3 py-1.5 text-xs md:text-sm text-amber-400 border-b border-border/30 bg-amber-500/5">
-                {t.ui("erCalc.scholarNotImplemented")}
-              </div>
-            )}
-
-            <div className="px-3 py-2 border-b border-border/30 flex flex-wrap items-center justify-between gap-2 bg-muted/10">
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleAddStartup}
-                  className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
-                  title={t.ui("erCalc.addStartupTitle")}
-                >
-                  {t.ui("erCalc.addStartup")}
-                </button>
-                {mainERT.actions.length > 0 && (
-                  <button
-                    type="button"
-                    onClick={handleCloneLoopToStartup}
-                    className="text-xs md:text-sm text-muted-foreground hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
-                    title={t.ui("erCalc.cloneLoopTitle")}
-                  >
-                    {t.ui("erCalc.cloneLoop")}
-                  </button>
-                )}
-              </div>
-
-              {/* Mode Selector */}
-              <ToggleGroup
-                type="single"
-                value={isEasyMode ? "easy" : "timeline"}
-                onValueChange={(v) => v && setIsEasyMode(v === "easy")}
-                variant="outline"
-                size="sm"
-              >
-                <ToggleGroupItem
-                  value="easy"
-                  className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-                >
-                  <Sparkles className="w-3.5 h-3.5 mr-1" />
-                  {t.ui("erCalc.easyMode")}
-                </ToggleGroupItem>
-                <ToggleGroupItem
-                  value="timeline"
-                  className="text-xs h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-                >
-                  {t.ui("erCalc.expertTimeline")}
-                </ToggleGroupItem>
-              </ToggleGroup>
-            </div>
-
-            {/* Timeline editors */}
-            {isEasyMode ? (
-              <div className="p-4 space-y-6 bg-muted/20 border-b border-border/30">
-                {/* Character Configuration Grid */}
-                <div>
-                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
-                    {t.ui("erCalc.characterCasts")}
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {erTeam.map((member) => {
-                      const casts =
-                        easyCasts[member.charId] ?? DEFAULT_EASY_CASTS;
-                      const isDriver = easyDriver === member.charId;
-
-                      const updateCast = (
-                        field:
-                          | "skillCount"
-                          | "burstCount"
-                          | "normalAttackCount",
-                        val: number
-                      ) => {
-                        setEasyCasts((prev) => ({
-                          ...prev,
-                          [member.charId]: {
-                            ...(prev[member.charId] ?? DEFAULT_EASY_CASTS),
-                            [field]: val,
-                          },
-                        }));
-                      };
-
-                      return (
-                        <div
-                          key={member.charId}
-                          className="p-3 bg-card border border-border rounded-lg space-y-3 shadow-xs"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-semibold text-foreground">
-                              {t.character(member.charId)}
-                            </span>
-                            <label className="flex items-center gap-1.5 cursor-pointer text-xs text-muted-foreground">
-                              <input
-                                type="radio"
-                                name="easyDriver"
-                                checked={isDriver}
-                                onChange={() => setEasyDriver(member.charId)}
-                                className="w-3 h-3 text-primary focus:ring-0 focus:ring-offset-0"
-                              />
-                              {t.ui("erCalc.driver")}
-                            </label>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-2 text-xs">
-                            <div className="space-y-1">
-                              <span className="text-muted-foreground">
-                                {t.ui("erCalc.skills")}
-                              </span>
-                              <input
-                                type="number"
-                                min="0"
-                                max="5"
-                                value={casts.skillCount}
-                                onChange={(e) =>
-                                  updateCast(
-                                    "skillCount",
-                                    Math.max(0, Number(e.target.value))
-                                  )
-                                }
-                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <span className="text-muted-foreground">
-                                {t.ui("erCalc.bursts")}
-                              </span>
-                              <input
-                                type="number"
-                                min="0"
-                                max="2"
-                                value={casts.burstCount}
-                                onChange={(e) =>
-                                  updateCast(
-                                    "burstCount",
-                                    Math.max(0, Number(e.target.value))
-                                  )
-                                }
-                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
-                              />
-                            </div>
-                          </div>
-
-                          {isDriver && (
-                            <div className="space-y-1 text-xs">
-                              <span className="text-muted-foreground">
-                                {t.ui("erCalc.normalAttacks")}
-                              </span>
-                              <input
-                                type="number"
-                                min="0"
-                                max="20"
-                                value={casts.normalAttackCount}
-                                onChange={(e) =>
-                                  updateCast(
-                                    "normalAttackCount",
-                                    Math.max(0, Number(e.target.value))
-                                  )
-                                }
-                                className="w-full h-8 px-2 bg-muted/40 border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40 text-center font-mono"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Funnel Configuration Section */}
-                <div className="border-t border-border/30 pt-4 space-y-4">
-                  <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                    {t.ui("erCalc.particleFunnelingRules")}
-                  </h4>
-
-                  {easyFunnels.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {easyFunnels.map((funnel, fIdx) => (
-                        <div
-                          key={fIdx}
-                          className="flex items-center gap-1.5 px-2.5 py-1 bg-muted/40 border border-border rounded-lg text-xs"
-                        >
-                          <span className="font-medium text-foreground">
-                            {t.character(funnel.sourceCharId)}
-                          </span>
-                          <span className="text-muted-foreground">
-                            E &rarr;
-                          </span>
-                          <span className="font-medium text-foreground">
-                            {t.character(funnel.targetCharId)}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setEasyFunnels((prev) =>
-                                prev.filter((_, idx) => idx !== fIdx)
-                              )
-                            }
-                            className="text-muted-foreground hover:text-destructive ml-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap items-end gap-3 p-3 bg-muted/40 border border-border rounded-lg max-w-xl text-xs">
-                    <div className="space-y-1 flex-1 min-w-[120px]">
-                      <span className="text-muted-foreground">
-                        {t.ui("erCalc.sourceCharacter")}
-                      </span>
-                      <select
-                        id={`funnel-source-${teamComp.id}`}
-                        className="w-full h-8 px-2 bg-card border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40"
-                      >
-                        {erTeam.map((m) => (
-                          <option key={m.charId} value={m.charId}>
-                            {t.character(m.charId)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div className="text-muted-foreground self-center pb-2">
-                      &rarr;
-                    </div>
-
-                    <div className="space-y-1 flex-1 min-w-[120px]">
-                      <span className="text-muted-foreground">
-                        {t.ui("erCalc.targetCharacter")}
-                      </span>
-                      <select
-                        id={`funnel-target-${teamComp.id}`}
-                        className="w-full h-8 px-2 bg-card border border-border rounded-[4px] focus:outline-hidden focus:ring-1 focus:ring-primary/40"
-                      >
-                        {erTeam.map((m) => (
-                          <option key={m.charId} value={m.charId}>
-                            {t.character(m.charId)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const srcSelect = document.getElementById(
-                          `funnel-source-${teamComp.id}`
-                        ) as HTMLSelectElement;
-                        const tgtSelect = document.getElementById(
-                          `funnel-target-${teamComp.id}`
-                        ) as HTMLSelectElement;
-                        if (srcSelect && tgtSelect) {
-                          const src = srcSelect.value;
-                          const tgt = tgtSelect.value;
-                          if (src && tgt) {
-                            const exists = easyFunnels.some(
-                              (f) =>
-                                f.sourceCharId === src && f.targetCharId === tgt
-                            );
-                            if (!exists) {
-                              setEasyFunnels((prev) => [
-                                ...prev,
-                                { sourceCharId: src, targetCharId: tgt },
-                              ]);
-                            }
-                          }
-                        }
-                      }}
-                      className="h-8 px-3 bg-primary hover:bg-primary/95 text-primary-foreground font-medium rounded-[4px] flex items-center justify-center gap-1 transition shadow-xs"
-                    >
-                      <Plus className="w-4 h-4" />
-                      {t.ui("erCalc.addFunnel")}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Compilation Action */}
-                <div className="border-t border-border/30 pt-4 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={handleCompileRotation}
-                    className="py-2 px-5 bg-emerald-600 hover:bg-emerald-500 text-white font-medium rounded-lg flex items-center gap-1.5 transition-colors shadow-xs text-sm"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    {t.ui("erCalc.compileRotation")}
-                  </button>
-                </div>
               </div>
             ) : (
-              timelines.map((tl, tlIdx) => {
-                const isLast = tlIdx === timelines.length - 1;
-                const startupNum = tlIdx + 1;
-                const labelNode = isLast ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm md:text-base font-semibold">
-                      {t.ui("erCalc.loopLabel")}
-                    </span>
-                    <ToggleGroup
-                      type="single"
-                      value={isRepeating ? "repeat" : "once"}
-                      onValueChange={(v) => {
-                        if (!v) return;
-                        if (v === "repeat")
-                          setCalcMode(
-                            startFull
-                              ? "full-energy-repeat"
-                              : "zero-energy-repeat"
-                          );
-                        else setCalcMode("zero-energy-start");
-                      }}
-                      variant="outline"
-                      size="sm"
-                    >
-                      <ToggleGroupItem
-                        value="once"
-                        disabled={startFull}
-                        className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-                      >
-                        {t.ui("erCalc.loopOnce")}
-                      </ToggleGroupItem>
-                      <ToggleGroupItem
-                        value="repeat"
-                        className="text-sm font-semibold h-7 px-2.5 data-[state=on]:border-primary data-[state=on]:bg-transparent data-[state=on]:text-foreground"
-                      >
-                        {t.ui("erCalc.loopRepeat")}
-                      </ToggleGroupItem>
-                    </ToggleGroup>
-                  </div>
-                ) : (
-                  <span className="text-sm md:text-base font-semibold">
-                    {t.ui("erCalc.startupLabel")} {startupNum}
-                  </span>
-                );
+              <span className="text-sm md:text-base font-semibold">
+                {t.ui("erCalc.startupLabel")} {startupNum}
+              </span>
+            );
 
-                const removeControl = !isLast ? (
+            const removeControl = !isLast ? (
+              <button
+                type="button"
+                onClick={() => handleRemoveTimeline(tlIdx)}
+                className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded-[4px] border border-border/30 hover:border-destructive/40"
+                title={t.ui("erCalc.removeStartupTitle")}
+              >
+                {t.ui("erCalc.remove")}
+              </button>
+            ) : null;
+            return (
+              <TimelineStrip
+                key={tlIdx}
+                label={labelNode}
+                ert={tl}
+                team={erTeam}
+                particleMode={particleMode}
+                bindingQIndices={isLast ? bindingQIndices : undefined}
+                incomingBridge={
+                  tlIdx > 0 ? boundaryBridges[tlIdx - 1] : undefined
+                }
+                outgoingBridge={boundaryBridges[tlIdx]}
+                extraControls={removeControl}
+                onAddAction={(charId, action) =>
+                  handleAddAction(charId, action, tlIdx)
+                }
+                onRemoveAction={(i) => handleRemoveAction(i, tlIdx)}
+                onUpdateAction={(i, a) => handleUpdateAction(i, a, tlIdx)}
+                onReorderActions={(newActions, newPeriodic) =>
+                  handleReorderActions(newActions, newPeriodic, tlIdx)
+                }
+                onUpdatePeriodic={(newP) => handleUpdatePeriodic(newP, tlIdx)}
+                onClear={() => handleClearTimeline(tlIdx)}
+              />
+            );
+          })
+        )}
+
+        {/* Results */}
+        {results.length > 0 && (
+          <ErResultsPanel
+            results={results}
+            team={erTeam}
+            targetTeam={teamComp}
+            actionControls={
+              <>
+                <button
+                  type="button"
+                  onClick={handleOptimizeWaits}
+                  className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary/70 text-primary-foreground transition-colors"
+                  title={t.ui("erCalc.optimizeWaitsTitle")}
+                >
+                  {t.ui("erCalc.optimizeWaits")}
+                </button>
+                {canResetFavDefaults && (
                   <button
                     type="button"
-                    onClick={() => handleRemoveTimeline(tlIdx)}
-                    className="text-xs md:text-sm hover:text-destructive px-2 py-0.5 rounded-[4px] border border-border/30 hover:border-destructive/40"
-                    title={t.ui("erCalc.removeStartupTitle")}
+                    onClick={handleResetFavDefaults}
+                    className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
+                    title={t.ui("erCalc.resetFavDefaultsTitle")}
                   >
-                    {t.ui("erCalc.remove")}
+                    {t.ui("erCalc.resetFavDefaults")}
                   </button>
-                ) : null;
-                return (
-                  <TimelineStrip
-                    key={tlIdx}
-                    label={labelNode}
-                    ert={tl}
-                    team={erTeam}
-                    particleMode={particleMode}
-                    bindingQIndices={isLast ? bindingQIndices : undefined}
-                    incomingBridge={
-                      tlIdx > 0 ? boundaryBridges[tlIdx - 1] : undefined
-                    }
-                    outgoingBridge={boundaryBridges[tlIdx]}
-                    extraControls={removeControl}
-                    onAddAction={(charId, action) =>
-                      handleAddAction(charId, action, tlIdx)
-                    }
-                    onRemoveAction={(i) => handleRemoveAction(i, tlIdx)}
-                    onUpdateAction={(i, a) => handleUpdateAction(i, a, tlIdx)}
-                    onReorderActions={(newActions, newPeriodic) =>
-                      handleReorderActions(newActions, newPeriodic, tlIdx)
-                    }
-                    onUpdatePeriodic={(newP) =>
-                      handleUpdatePeriodic(newP, tlIdx)
-                    }
-                    onClear={() => handleClearTimeline(tlIdx)}
-                  />
-                );
-              })
-            )}
-
-            {/* Results */}
-            {results.length > 0 && (
-              <ErResultsPanel
-                results={results}
-                team={erTeam}
-                targetTeam={teamComp}
-                actionControls={
-                  <>
-                    <button
-                      type="button"
-                      onClick={handleOptimizeWaits}
-                      className="text-xs md:text-sm font-semibold px-2.5 py-1 rounded-md bg-primary/80 hover:bg-primary/70 text-primary-foreground transition-colors"
-                      title={t.ui("erCalc.optimizeWaitsTitle")}
-                    >
-                      {t.ui("erCalc.optimizeWaits")}
-                    </button>
-                    {canResetFavDefaults && (
-                      <button
-                        type="button"
-                        onClick={handleResetFavDefaults}
-                        className="text-xs md:text-sm hover:text-primary px-2 py-1 rounded-[4px] border border-border/30 hover:border-border"
-                        title={t.ui("erCalc.resetFavDefaultsTitle")}
-                      >
-                        {t.ui("erCalc.resetFavDefaults")}
-                      </button>
-                    )}
-                  </>
-                }
-                embedded
-              />
-            )}
-          </CardContent>
-        </CollapsibleContent>
-      </Collapsible>
+                )}
+              </>
+            }
+            embedded
+          />
+        )}
+      </CardContent>
     </Card>
   );
 }
