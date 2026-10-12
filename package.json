@@ -27,7 +27,8 @@
     "feedback:fetch": "node scripts/dev/fetch-feedback-report.js",
     "data:refresh": "uv run --project scripts python scripts/refresh_game_data.py",
     "data:scanner:check": "node scripts/check-scanner-data.mjs",
-    "type-check": "npm run cf:types:check && tsc -b --noEmit",
+    "type-check": "npm run cf:types:check && tsc -b --noEmit && npm run type-check:scripts",
+    "type-check:scripts": "tsc -p tsconfig.scripts.json --noEmit",
     "test": "vitest run",
     "styles:generate": "node scripts/generate-game-palette.mjs",
     "styles:check": "node scripts/generate-game-palette.mjs --check",
@@ -66,7 +67,7 @@
     "test:dependency-rules": "node --test scripts/dependency-rules.test.mjs",
     "check:app": "npm run styles:check && npm run lint && npm run type-check && npm run depcheck && npm run test:tooling && npm test && npm run regtest -- run --quiet && npm run check:boss-icons && npm run check:artifact-set-roles && npm run data:scanner:check",
     "check": "npm run check:app && npm run check:worker && npm run check:python",
-    "test:tooling": "node --test scripts/dependency-rules.test.mjs scripts/related-tests.test.mjs scripts/architecture-layout.test.mjs",
+    "test:tooling": "node --test scripts/dependency-rules.test.mjs scripts/related-tests.test.mjs scripts/architecture-layout.test.mjs scripts/dev/er-calc-cli.test.mjs",
     "check:python": "uv run --project scripts ty check scripts && uv run --project scripts python -m unittest discover -s scripts/tests"
   },
   "lint-staged": {

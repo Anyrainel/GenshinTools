@@ -9,7 +9,7 @@ import accountJson from "../tests/benchmark/data/account.json";
 import buildPreset from "../src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 import tierListPreset from "../src/config/presets/tier-list/[GGArtifact] 培养优先级 Build Priority.json";
 import type { Build, TierAssignment } from "../src/domain/models";
-import { convertGOODToAccountData } from "../src/providers/scanner/formats/formats/goodConversion";
+import { convertGOODToAccountData } from "../src/providers/scanner/formats/goodConversion";
 import {
   type ArtifactScoreResult,
   buildToWeightMap,

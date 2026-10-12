@@ -73,6 +73,26 @@ no new guide-test errors:
 - `scripts/kSweepReal.ts:89`: callback parameter `c` is implicitly `any`
   (TS7006).
 
+## Script repair follow-up — 2026-10-12
+
+The seven broader script typing errors were reproduced and repaired. Artifact
+role coverage now compares string IDs without narrowing the coverage checker to
+the generated catalog union; the K-sweep benchmark imports the current scanner
+conversion owner, restoring inference for its character reduction.
+
+The ER CLI's bundled preset module had been deleted in an earlier ER refactor.
+Its preset/fuzz commands also assumed the retired array timeline format. The
+CLI now supports explicit `run-json` input using the current `actions` and
+`periodic` timeline, validates calculation/particle modes, and reports retired
+commands clearly. An executable regression covers successful calculation and
+invalid-mode rejection. `type-check:scripts` is now included in the ordinary
+type-check gate, and the CLI regression runs with tooling tests.
+
+The research suite independently reproduced 63 failures and 149 skipped tests.
+Its blockers include old source paths, historical raw-byte fingerprints, and a
+125-character catalog boundary against the current 127-character catalog.
+Those historical evidence boundaries have not been silently rehashed or removed.
+
 ## References
 
 - [Cloudflare Workers Vitest migration](https://developers.cloudflare.com/workers/testing/vitest-integration/migration-guides/migrate-to-vitest-plugin/)

@@ -5,7 +5,7 @@ const releasedIds = new Set(artifacts.map((artifact) => artifact.id));
 const assignments = Object.entries(ARTIFACT_SET_ROLE_IDS).flatMap(
   ([role, setIds]) => setIds.map((setId) => ({ role, setId }))
 );
-const assignedIds = new Set(assignments.map(({ setId }) => setId));
+const assignedIds = new Set<string>(assignments.map(({ setId }) => setId));
 
 const duplicateIds = assignments
   .filter(
