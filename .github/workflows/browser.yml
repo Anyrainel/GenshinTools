@@ -18,6 +18,8 @@ jobs:
           node-version: 24
           cache: npm
       - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          python-version: "3.13"
       - run: npm ci
       - run: npm run check
       - run: npx playwright install --with-deps chromium
