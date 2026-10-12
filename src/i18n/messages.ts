@@ -170,19 +170,6 @@ export const i18nUiData = {
   roster: {
     useAccountData: { en: "Use account data", zh: "使用账号数据" },
     resetFiveStar: { en: "Reset 5★ to C0/R1", zh: "五星重置为0命精1" },
-    accountMissing: {
-      en: "Import account data to use owned character and weapon ranks.",
-      zh: "请先导入账号数据，以使用已拥有角色的命座与武器精炼。",
-    },
-    unownedCharacter: { en: "Character not owned", zh: "未拥有此角色" },
-    weaponShortage: {
-      en: "Not enough owned weapon copies",
-      zh: "已拥有武器数量不足",
-    },
-    hypotheticalRefinement: {
-      en: "Custom refinement overrides account data",
-      zh: "自定义精炼覆盖账号数据",
-    },
     accountPrefilled: {
       en: "Account data applied to this team",
       zh: "已将账号数据应用到当前队伍",

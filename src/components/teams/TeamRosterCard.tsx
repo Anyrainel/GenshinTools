@@ -491,8 +491,7 @@ export function TeamRosterCard({
                 ? Number(charConfigs[charId]?.constellation)
                 : (acctChar?.constellation ?? 0);
 
-            const weaponAssignment = weaponCopies[i];
-            const weaponRefine = weaponAssignment.refinement;
+            const weaponRefine = weaponCopies[i].refinement;
 
             // Talent levels: from override → account data → default 10
             const info = charInfo[charId];
@@ -521,26 +520,6 @@ export function TeamRosterCard({
                 key={i}
                 className="flex flex-col rounded-lg bg-black/10 border border-border/10 p-1 gap-1 xl:p-2"
               >
-                {accountData && !acctChar && (
-                  <p className="text-xs text-primary">
-                    {t.ui("roster.unownedCharacter")}
-                  </p>
-                )}
-                {weaponId && accountData && !weaponAssignment.copy && (
-                  <p className="text-xs text-primary">
-                    {t.ui("roster.weaponShortage")}
-                  </p>
-                )}
-                {weaponId && weaponAssignment.hypothetical && (
-                  <p className="text-xs text-primary">
-                    {t.format("roster.hypotheticalRefinement", weaponRefine)}
-                  </p>
-                )}
-                {!accountData && (
-                  <p className="text-xs text-muted-foreground">
-                    {t.ui("roster.accountMissing")}
-                  </p>
-                )}
                 {/* Row 1: Interactive icons */}
                 <div className="flex items-end gap-0.5 md:gap-1.5">
                   <ItemPicker
