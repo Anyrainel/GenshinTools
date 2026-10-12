@@ -31,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -380,14 +381,14 @@ function BuildCardComponent({
 
   return (
     <>
-      <div
-        className="border border-border/50 rounded-lg bg-muted/30"
+      <Card
+        className="border border-border/50 rounded-lg bg-muted/30 shadow-none"
         style={{
           containerType: "inline-size",
           containerName: "artifact-build",
         }}
       >
-        <div className="px-2 md:px-3 pt-2 space-y-1.5 md:space-y-0">
+        <CardHeader className="items-stretch gap-0 px-2 md:px-3 pt-2 space-y-1.5 md:space-y-0">
           <div className="flex items-center gap-1 md:gap-2">
             <Switch
               checked={build.visible}
@@ -497,8 +498,8 @@ function BuildCardComponent({
               />
             </div>
           )}
-        </div>
-        <div className={cn("px-2 py-1.5 md:py-2")}>
+        </CardHeader>
+        <CardContent className="px-2 py-1.5 md:py-2">
           <div className="pt-1 border-t border-border/30">
             <div
               className={cn(
@@ -558,8 +559,8 @@ function BuildCardComponent({
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       <AlertDialog
         open={!!confirmAction}

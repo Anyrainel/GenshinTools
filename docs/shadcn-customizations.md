@@ -8,4 +8,8 @@
 - CardHeader：默认使用 flex，移除固定两行 grid 和下边框触发的 `pb-6`；有 CardAction 时仍使用 grid。
 - 其余 API、主题颜色和各区块内边距保持原版。
 
-更新时审查并重新应用以上差异，不直接覆盖。Card 在 stock 清单中登记为自定义组件，仍接受普通 UI 样式检查；其他原版组件继续校验源码哈希。
+## Select · 2026-10-12
+
+文件：`src/components/ui/select.tsx`。Trigger 的 `size` 使用普通 `h-9` / `h-8`，移除 `data-size` 条件高度，允许调用处的紧凑高度正常生效；其余行为保留原版。
+
+更新时审查并重新应用以上差异，不直接覆盖。Card、Select 在 stock 清单中登记为自定义组件，仍接受普通 UI 样式检查；其他原版组件继续校验源码哈希。

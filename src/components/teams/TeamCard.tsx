@@ -16,6 +16,12 @@ import { memo, useMemo } from "react";
 import { ItemPicker } from "@/components/shared/ItemPicker";
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -150,12 +156,12 @@ export const TeamCard = memo(
     );
 
     return (
-      <div
+      <Card
         data-tour-step-id="tc-team-card"
         className={cn(
           "bg-card/40 backdrop-blur-md rounded-xl border border-border/30",
           "hover:border-border/60",
-          "group w-fit mx-auto",
+          "group w-fit mx-auto shadow-none",
           isFullyFrozen &&
             "ring-1 ring-cyan-400/30 border-cyan-400/20 shadow-[0_0_20px_rgba(34,211,238,0.1)]",
           isFrozen &&
@@ -166,7 +172,7 @@ export const TeamCard = memo(
         )}
       >
         {/* Header: Index + Reaction tags + Name + Context menu */}
-        <div className="flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 pt-2 xl:pt-3 pb-0.5 xl:pb-1">
+        <CardHeader className="flex-row items-center gap-1 xl:gap-1.5 px-2 xl:px-3 pt-2 xl:pt-3 pb-0.5 xl:pb-1">
           {dragHandleProps ? (
             <div
               {...dragHandleProps}
@@ -233,10 +239,10 @@ export const TeamCard = memo(
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </CardHeader>
 
         {/* Body: 5-column grid — element row + row-label + 4 pickers */}
-        <div
+        <CardContent
           className={cn(
             "px-2 xl:px-3 py-1.5 xl:py-2",
             isFrozen && "ring-1 ring-primary/30"
@@ -456,10 +462,10 @@ export const TeamCard = memo(
               );
             })}
           </div>
-        </div>
+        </CardContent>
 
         {/* Footer: Optimize / Unfreeze buttons */}
-        <div
+        <CardFooter
           className={cn(
             "px-2 xl:px-3 pb-2 xl:pb-3 pt-1.5 xl:pt-2",
             isFrozen ? "flex gap-1.5 xl:gap-2" : ""
@@ -493,8 +499,8 @@ export const TeamCard = memo(
             )}
             <span>{selectLabel ?? t.ui("teamComp.teamOptimization")}</span>
           </Button>
-        </div>
-      </div>
+        </CardFooter>
+      </Card>
     );
   },
   (prev, next) =>

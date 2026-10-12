@@ -602,7 +602,7 @@ export function AppBar({
                             variant="ghost"
                             asChild
                             className={cn(
-                              "justify-start gap-2 h-9 text-sm font-semibold w-full pt-1.5 pb-2.5",
+                              "justify-start gap-2 h-9 text-sm font-semibold w-full py-2",
                               isActive && "text-primary"
                             )}
                             onClick={(e) => handleLinkClick(e, targetHref)}
@@ -623,7 +623,7 @@ export function AppBar({
                                   }
                                   asChild
                                   className={cn(
-                                    "justify-start gap-2 h-8 text-sm w-full pt-1 pb-2",
+                                    "justify-start gap-2 h-8 text-sm w-full py-1.5",
                                     isChildActive &&
                                       "bg-accent text-accent-foreground"
                                   )}
@@ -652,7 +652,7 @@ export function AppBar({
                         variant={isActive ? "secondary" : "ghost"}
                         asChild
                         className={cn(
-                          "justify-start gap-2 h-9 text-sm font-medium pt-1.5 pb-2.5",
+                          "justify-start gap-2 h-9 text-sm font-medium py-2",
                           isActive &&
                             "bg-primary/10 text-primary hover:bg-primary/20"
                         )}
@@ -679,7 +679,7 @@ export function AppBar({
                     variant={isActive ? "secondary" : "ghost"}
                     asChild
                     className={cn(
-                      "gap-1 px-3 pt-1.5 pb-2.5",
+                      "gap-1 px-3 py-2",
                       isActive &&
                         "bg-primary/10 text-primary hover:bg-primary/20"
                     )}
@@ -697,7 +697,7 @@ export function AppBar({
               <Button
                 variant="outline"
                 aria-label={showDesktopAction.label}
-                className="h-9 gap-2 px-3 pt-1.5 pb-2.5"
+                className="h-9 gap-2 px-3 py-2"
                 onClick={showDesktopAction.onTrigger}
                 data-tour-step-id={showDesktopAction.tourStepId}
               >
@@ -771,7 +771,7 @@ export function AppBar({
                     variant={activeTab === tab.value ? "default" : "ghost"}
                     onClick={() => onTabChange?.(tab.value)}
                     className={cn(
-                      "gap-2 h-9 px-4 text-sm pt-1.5 pb-2.5",
+                      "gap-2 h-9 px-4 text-sm py-2",
                       activeTab === tab.value &&
                         "bg-primary/60 text-primary-foreground"
                     )}
