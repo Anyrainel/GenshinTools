@@ -10,12 +10,23 @@ across both sites. User identities remain normalized in the existing auth tables
 ## Public feeds and character discussions
 
 Both sites provide `/feedback`, retaining `/account/feedback` as a legacy link.
-The submission dialog explicitly announces that feedback is public. Updated
-clients send `public: true`; historical submissions and older clients remain
-private through the `is_public` default in migration `0008_public_feedback.sql`.
-Public GET `/api/feedback/v1/submissions?game=GI|HSR` returns only post ID,
-timestamp, rating, suggestion, and bug report. Contact metadata and account
-identifiers are never selected for public responses.
+Feedback stays in the account menu, outside primary navigation. The dialog
+offers "Hide from public feedback" and sends the selected `public` boolean.
+Migration `0008` originally marked historical feedback private. Migration `0009`
+publishes existing submissions at the site owner's explicit request; subsequent
+hidden submissions remain private. Older clients without a choice remain private.
+GET `/api/feedback/v1/submissions?game=GI|HSR` includes public posts and, when
+authenticated, that user's own hidden posts. It returns masked author email,
+visibility, ownership, vote count and the viewer's vote state alongside content.
+Full email, contact metadata and account identifiers never leave the server.
+Email local parts and domain labels are masked even for short addresses.
+POST `/submissions/:id/visibility` accepts `{ public: boolean }` for the author
+only. POST `/submissions/:id/vote` accepts `{ voted: boolean }` for signed-in
+users who can see the post. Both actions are idempotent. The `feedback_votes`
+table has a unique `(feedback_id, user_id)` key and an insertion trigger gives
+authors their default vote, with existing authors backfilled by migration `0009`.
+Authors may remove their own default vote. Private responses use `no-store` and
+each site's feed resets on login, logout or account changes.
 
 Archive character details use GET/POST
 `/api/community/v1/characters/:characterId/comments?game=GI|HSR`, backed by

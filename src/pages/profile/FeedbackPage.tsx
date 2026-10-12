@@ -4,6 +4,7 @@ import { AccountFeedbackDialog } from "@/components/layout/AccountFeedbackDialog
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CommunityFeed } from "@/components/shared/CommunityFeed";
+import { FeedbackControls } from "@/components/shared/FeedbackControls";
 import { Button } from "@/components/ui/button";
 import { useAppSession } from "@/contexts/AppSessionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -30,10 +31,17 @@ export default function FeedbackPage() {
         }
       >
         <CommunityFeed<PublicFeedback>
+          key={
+            session.isAuthenticated
+              ? (session.account?.id ?? "signed-in")
+              : "anonymous"
+          }
+          includeOwn={session.isAuthenticated}
           path="/api/feedback/v1/submissions"
           revision={revision}
           renderItem={(item) => (
             <>
+              <FeedbackControls post={item} />
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span
                   role="img"

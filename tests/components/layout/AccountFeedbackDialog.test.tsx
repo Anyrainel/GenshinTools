@@ -100,6 +100,7 @@ describe("AccountFeedbackDialog", () => {
 
     await waitFor(() => {
       expect(feedbackApi.submitFeedback).toHaveBeenCalledWith({
+        hidden: false,
         rating: 5,
         suggestion: "Add artifact notes",
         bugReport: "Import preview is blank",
@@ -151,6 +152,44 @@ describe("AccountFeedbackDialog", () => {
     );
   });
 
+  it("restores and submits a hidden v2 draft", async () => {
+    sessionStorage.setItem(
+      FEEDBACK_DRAFT_KEY,
+      JSON.stringify({
+        schemaVersion: 2,
+        hidden: true,
+        rating: 4,
+        suggestion: "Private draft",
+        bugReport: "",
+        contactMethod: "",
+      })
+    );
+    vi.mocked(feedbackApi.submitFeedback).mockResolvedValue({
+      id: "hidden",
+      createdAt: 1,
+      nextAllowedAt: 2,
+    });
+    render(
+      <AccountFeedbackDialog
+        open
+        onOpenChange={vi.fn()}
+        isAuthenticated
+        isAccountLoading={false}
+        accountId="usr_feedback"
+        onSignIn={async () => undefined}
+      />
+    );
+    expect(
+      screen.getByRole("checkbox", { name: "feedback.hide" })
+    ).toBeChecked();
+    fireEvent.click(screen.getByRole("button", { name: "feedback.submit" }));
+    await waitFor(() =>
+      expect(feedbackApi.submitFeedback).toHaveBeenCalledWith(
+        expect.objectContaining({ hidden: true, suggestion: "Private draft" })
+      )
+    );
+  });
+
   it("keeps the draft when submit finds an expired sign-in", async () => {
     const onOpenChange = vi.fn();
     const onSignIn = vi.fn(async () => undefined);
@@ -191,6 +230,8 @@ describe("AccountFeedbackDialog", () => {
       ).toBeInTheDocument();
     });
     expect(readFeedbackDraft()).toEqual({
+      schemaVersion: 2,
+      hidden: false,
       rating: 3,
       suggestion: "Add filters",
       bugReport: "Login expired during submit",

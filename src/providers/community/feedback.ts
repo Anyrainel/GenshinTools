@@ -1,3 +1,5 @@
+import type { PublicFeedback } from "@/providers/community/community";
+
 export const FEEDBACK_BODY_MAX_LENGTH = 1000;
 export const FEEDBACK_CONTACT_METHOD_MAX_LENGTH = 200;
 export const FEEDBACK_SUBMISSION_COOLDOWN_MS = 5 * 60 * 1000;
@@ -7,6 +9,7 @@ export type SubmitFeedbackInput = {
   suggestion?: string;
   bugReport?: string;
   contactMethod?: string;
+  hidden?: boolean;
 };
 
 export type SubmitFeedbackResponse = {
@@ -42,7 +45,7 @@ export async function submitFeedback(
     credentials: "same-origin",
     body: JSON.stringify({
       game: "GI",
-      public: true,
+      public: !input.hidden,
       rating: input.rating,
       suggestion: input.suggestion?.trim() || undefined,
       bugReport: input.bugReport?.trim() || undefined,
@@ -60,6 +63,31 @@ export async function submitFeedback(
   }
 
   return response.json() as Promise<SubmitFeedbackResponse>;
+}
+
+export async function updateFeedbackPost(
+  id: string,
+  action: "visibility" | "vote",
+  enabled: boolean
+): Promise<PublicFeedback> {
+  const response = await fetch(
+    `/api/feedback/v1/submissions/${encodeURIComponent(id)}/${action}`,
+    {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(
+        action === "visibility" ? { public: enabled } : { voted: enabled }
+      ),
+    }
+  );
+  if (!response.ok)
+    throw new FeedbackApiError(
+      "Feedback update failed",
+      response.status,
+      await readFeedbackErrorPayload(response)
+    );
+  return response.json();
 }
 
 export function isFeedbackRateLimitedError(

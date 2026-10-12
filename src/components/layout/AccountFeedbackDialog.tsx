@@ -2,6 +2,7 @@ import { Star } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -34,6 +35,7 @@ type AccountFeedbackDialogProps = {
 };
 
 type FeedbackFormState = {
+  hidden: boolean;
   rating: number | null;
   suggestion: string;
   bugReport: string;
@@ -41,6 +43,7 @@ type FeedbackFormState = {
 };
 
 const EMPTY_FORM: FeedbackFormState = {
+  hidden: false,
   rating: null,
   suggestion: "",
   bugReport: "",
@@ -107,7 +110,7 @@ export function AccountFeedbackDialog({
     isSubmitting || isCoolingDown || validationError !== null;
 
   const updateForm = (
-    field: Exclude<keyof FeedbackFormState, "rating">,
+    field: Exclude<keyof FeedbackFormState, "rating" | "hidden">,
     value: string
   ) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -147,6 +150,7 @@ export function AccountFeedbackDialog({
     setRequiresSignIn(false);
     try {
       const response = await submitFeedback({
+        hidden: form.hidden,
         rating: form.rating,
         suggestion: form.suggestion,
         bugReport: form.bugReport,
@@ -234,6 +238,17 @@ export function AccountFeedbackDialog({
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
         <form className="space-y-4" onSubmit={handleSubmit}>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="feedback-hidden"
+              checked={form.hidden}
+              disabled={isSubmitting}
+              onCheckedChange={(checked) =>
+                setForm((current) => ({ ...current, hidden: checked === true }))
+              }
+            />
+            <Label htmlFor="feedback-hidden">{t.ui("feedback.hide")}</Label>
+          </div>
           <div className="text-sm text-foreground">
             {t.ui("feedback.gameSite")}: {t.ui("app.gameGenshin")}
           </div>
@@ -418,6 +433,7 @@ function getValidationError(
 function hasFeedbackDraft(form: FeedbackFormState): boolean {
   return (
     form.rating !== null ||
+    form.hidden ||
     form.suggestion.trim().length > 0 ||
     form.bugReport.trim().length > 0 ||
     form.contactMethod.trim().length > 0
@@ -430,7 +446,10 @@ function readFeedbackDraft(): FeedbackFormState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as Partial<FeedbackFormState> | null;
     if (!parsed || typeof parsed !== "object") return null;
+    // v1 drafts had no visibility choice. Preserve their public default.
+    if ("schemaVersion" in parsed && parsed.schemaVersion !== 2) return null;
     const draft = {
+      hidden: parsed.hidden === true,
       rating:
         typeof parsed.rating === "number" &&
         parsed.rating >= 1 &&
@@ -455,7 +474,10 @@ function writeFeedbackDraft(form: FeedbackFormState) {
       sessionStorage.removeItem(FEEDBACK_DRAFT_KEY);
       return;
     }
-    sessionStorage.setItem(FEEDBACK_DRAFT_KEY, JSON.stringify(form));
+    sessionStorage.setItem(
+      FEEDBACK_DRAFT_KEY,
+      JSON.stringify({ schemaVersion: 2, ...form })
+    );
   } catch {
     // Losing a tab-local draft should not block the feedback form.
   }

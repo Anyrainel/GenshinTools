@@ -4,6 +4,11 @@ export interface PublicFeedback {
   suggestion: string | null;
   bugReport: string | null;
   createdAt: number;
+  authorEmail: string | null;
+  isPublic: boolean;
+  isOwner: boolean;
+  upvotes: number;
+  hasUpvoted: boolean;
 }
 
 export interface CharacterComment {
@@ -26,13 +31,14 @@ export class CommunityApiError extends Error {
 export async function loadCommunityPage<T>(
   path: string,
   cursor: string | null,
-  signal: AbortSignal
+  signal: AbortSignal,
+  includeOwn = false
 ): Promise<CommunityPage<T>> {
   const params = new URLSearchParams({ game: "GI" });
   if (cursor) params.set("cursor", cursor);
   const response = await fetch(`${path}?${params}`, {
     signal,
-    credentials: "omit",
+    credentials: includeOwn ? "same-origin" : "omit",
   });
   if (!response.ok) throw new CommunityApiError(response.status);
   return response.json();

@@ -4,6 +4,7 @@ import authSchema from "../../migrations/0002_auth.sql?raw";
 import oldSchema from "../../migrations/0005_feedback.sql?raw";
 import gameMigration from "../../migrations/0006_feedback_game.sql?raw";
 import publicMigration from "../../migrations/0008_public_feedback.sql?raw";
+import controlsMigration from "../../migrations/0009_feedback_controls.sql?raw";
 import { type FeedbackEnv, handleFeedbackRequest } from "../../worker/feedback";
 import { createTestJwt } from "./jwtTestUtils";
 import { mockJwks } from "./network";
@@ -40,6 +41,32 @@ it("preserves pre-game feedback as GI and accepts only supported game sites", as
     suggestion: "Original feedback",
     metadata_json: '{"schemaVersion":1}',
   });
+  const triggerStart = controlsMigration.indexOf("CREATE TRIGGER");
+  for (const sql of controlsMigration
+    .slice(0, triggerStart)
+    .replace(/^--.*$/gm, "")
+    .split(";")
+    .filter((sql) => sql.trim()))
+    await db.prepare(sql).run();
+  await db.prepare(controlsMigration.slice(triggerStart)).run();
+  expect(
+    await db
+      .prepare(
+        "SELECT is_public, suggestion, metadata_json FROM feedback_submissions WHERE id = 'old-feedback'"
+      )
+      .first()
+  ).toEqual({
+    is_public: 1,
+    suggestion: "Original feedback",
+    metadata_json: '{"schemaVersion":1}',
+  });
+  expect(
+    await db
+      .prepare(
+        "SELECT COUNT(*) AS count FROM feedback_votes WHERE feedback_id = 'old-feedback'"
+      )
+      .first()
+  ).toEqual({ count: 1 });
   await db
     .prepare(
       "INSERT INTO feedback_submissions (id, user_id, rating, suggestion, metadata_json, created_at, game) VALUES ('hsr-feedback', 'old-user', 5, 'Star Rail feedback', '{}', 2, 'HSR')"

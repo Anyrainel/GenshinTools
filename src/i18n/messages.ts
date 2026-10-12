@@ -636,11 +636,20 @@ export const i18nUiData = {
       zh: "评论会公开展示，请勿填写个人隐私信息。",
     },
     publicFeedbackNotice: {
-      en: "Feedback is public. Your contact method stays private.",
-      zh: "反馈内容会公开展示，联系方式仅站长可见。",
+      en: "Feedback is public unless hidden. Your contact method stays private.",
+      zh: "未隐藏的反馈会公开展示，联系方式仅站长可见。",
     },
   },
   feedback: {
+    hide: { en: "Hide from public feedback", zh: "从公开反馈中隐藏" },
+    hidden: { en: "Hidden", zh: "已隐藏" },
+    publish: { en: "Make public", zh: "公开反馈" },
+    anonymous: { en: "Anonymous", zh: "匿名用户" },
+    upvote: { en: "Upvote", zh: "赞同" },
+    updateFailed: {
+      en: "Couldn't update feedback. Please try again.",
+      zh: "反馈更新失败，请重试。",
+    },
     gameSite: { en: "Game site", zh: "游戏站点" },
     title: { en: "Send feedback", zh: "提交反馈" },
     ratingLabel: {

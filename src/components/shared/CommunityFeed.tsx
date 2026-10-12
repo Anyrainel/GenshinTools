@@ -9,16 +9,19 @@ import {
 export function CommunityFeed<T extends { id: string }>({
   path,
   revision = 0,
+  includeOwn = false,
   renderItem,
 }: {
   path: string;
   revision?: number;
+  includeOwn?: boolean;
   renderItem: (item: T) => React.ReactNode;
 }) {
   return (
     <FeedPage<T>
       key={`${path}:${revision}`}
       path={path}
+      includeOwn={includeOwn}
       renderItem={renderItem}
     />
   );
@@ -27,9 +30,11 @@ export function CommunityFeed<T extends { id: string }>({
 function FeedPage<T extends { id: string }>({
   path,
   renderItem,
+  includeOwn,
 }: {
   path: string;
   renderItem: (item: T) => React.ReactNode;
+  includeOwn: boolean;
 }) {
   const { t } = useLanguage();
   const [cursors, setCursors] = useState<(string | null)[]>([null]);
@@ -45,7 +50,7 @@ function FeedPage<T extends { id: string }>({
     setData(null);
     setError(false);
     const signal = controller.signal;
-    loadCommunityPage<T>(path, request.cursor, signal).then(
+    loadCommunityPage<T>(path, request.cursor, signal, includeOwn).then(
       (result) => {
         if (!controller.signal.aborted) setData(result);
       },
@@ -54,7 +59,7 @@ function FeedPage<T extends { id: string }>({
       }
     );
     return () => controller.abort();
-  }, [path, request]);
+  }, [path, request, includeOwn]);
   return (
     <div className="space-y-3" aria-live="polite">
       {error ? (

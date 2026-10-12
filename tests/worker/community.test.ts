@@ -6,8 +6,10 @@ import feedbackSchema from "../../migrations/0005_feedback.sql?raw";
 import gameMigration from "../../migrations/0006_feedback_game.sql?raw";
 import commentSchema from "../../migrations/0007_character_comments.sql?raw";
 import publicMigration from "../../migrations/0008_public_feedback.sql?raw";
+import controlsMigration from "../../migrations/0009_feedback_controls.sql?raw";
 import { handleCommunityRequest } from "../../worker/community";
 import { handleFeedbackRequest } from "../../worker/feedback";
+import { maskFeedbackEmail } from "../../worker/feedbackFeed";
 import { sha256Hex } from "./jwtTestUtils";
 
 beforeAll(async () => {
@@ -25,6 +27,14 @@ beforeAll(async () => {
       .filter((sql) => sql.trim()))
       await env.BACKUP_DB.prepare(sql).run();
   }
+  const triggerStart = controlsMigration.indexOf("CREATE TRIGGER");
+  for (const sql of controlsMigration
+    .slice(0, triggerStart)
+    .replace(/^--.*$/gm, "")
+    .split(";")
+    .filter((sql) => sql.trim()))
+    await env.BACKUP_DB.prepare(sql).run();
+  await env.BACKUP_DB.prepare(controlsMigration.slice(triggerStart)).run();
 });
 
 beforeEach(async () => {
@@ -43,6 +53,103 @@ beforeEach(async () => {
 });
 
 describe("Public community API with migrated D1", () => {
+  it.each(["ab@example.com", "a@example.com", "alice.smith@personal.example"])(
+    "masks even short email addresses: %s",
+    (email) => {
+      expect(maskFeedbackEmail(email)).toContain("***");
+      expect(maskFeedbackEmail(email)).not.toContain(email);
+      expect(maskFeedbackEmail(email)?.split("@")[0]).not.toBe(
+        email.split("@")[0]
+      );
+    }
+  );
+
+  it("shows private feedback only to its author, permits owner visibility changes and deduplicates votes", async () => {
+    const db = env.BACKUP_DB;
+    await db
+      .prepare(
+        "INSERT INTO auth_identities VALUES ('logto', 'social-subject', 'social-user', 'traveler@example.com', 'Private identity', 1, 1)"
+      )
+      .run();
+    await db
+      .prepare(
+        "INSERT INTO app_users (id, created_at, updated_at) VALUES ('other-user', 1, 1)"
+      )
+      .run();
+    await db
+      .prepare(
+        "INSERT INTO app_auth_sessions (token_hash, user_id, created_at, expires_at, last_seen_at) VALUES (?, 'other-user', 1, ?, 1)"
+      )
+      .bind(await sha256Hex("other-token"), Date.now() + 3600000)
+      .run();
+    await db
+      .prepare(
+        "INSERT INTO feedback_submissions (id, user_id, rating, suggestion, metadata_json, created_at, is_public) VALUES ('hidden', 'social-user', 5, 'Hidden feedback', '{\"contactMethod\":\"secret@example.com\"}', 100, 0)"
+      )
+      .run();
+    const url = new URL("https://example.com/api/feedback/v1/submissions");
+    const read = async (token?: string) =>
+      (
+        await handleFeedbackRequest(
+          new Request(url, {
+            headers: token ? { Cookie: `ggartifact_session=${token}` } : {},
+          }),
+          url,
+          env
+        )
+      ).json() as Promise<{ items: Array<Record<string, unknown>> }>;
+    const mutate = async (
+      action: string,
+      value: unknown,
+      token = "social-token"
+    ) => {
+      const target = new URL(`${url}/hidden/${action}`);
+      return handleFeedbackRequest(
+        new Request(target, {
+          method: "POST",
+          headers: {
+            Cookie: `ggartifact_session=${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(value),
+        }),
+        target,
+        env
+      );
+    };
+    expect((await read()).items).toEqual([]);
+    expect((await read("other-token")).items).toEqual([]);
+    const own = await read("social-token");
+    expect(own.items[0]).toMatchObject({
+      id: "hidden",
+      isOwner: true,
+      isPublic: false,
+      upvotes: 1,
+      hasUpvoted: true,
+      authorEmail: "t***r@e***e.com",
+    });
+    expect(JSON.stringify(own)).not.toContain("traveler@example.com");
+    expect(JSON.stringify(own)).not.toContain("secret@example.com");
+    expect(JSON.stringify(own)).not.toContain("social-user");
+    expect(
+      (await mutate("visibility", { public: true }, "other-token")).status
+    ).toBe(404);
+    expect((await mutate("vote", { voted: true }, "other-token")).status).toBe(
+      404
+    );
+    expect((await mutate("visibility", { public: "true" })).status).toBe(422);
+    expect((await mutate("visibility", { public: true })).status).toBe(200);
+    expect((await read()).items).toHaveLength(1);
+    expect((await read()).items[0].isOwner).toBe(false);
+    await mutate("vote", { voted: true }, "other-token");
+    await mutate("vote", { voted: true }, "other-token");
+    expect((await read()).items[0].upvotes).toBe(2);
+    await mutate("vote", { voted: false }, "other-token");
+    expect((await read()).items[0].upvotes).toBe(1);
+    await mutate("visibility", { public: false });
+    expect((await read()).items).toEqual([]);
+    expect((await read("social-token")).items).toHaveLength(1);
+  });
   it("keeps old and old-client feedback private and omits identity/contact fields", async () => {
     const db = env.BACKUP_DB;
     await db
@@ -77,11 +184,16 @@ describe("Public community API with migrated D1", () => {
       suggestion: "Public text",
     });
     expect(Object.keys(payload.items[0] as object).sort()).toEqual([
+      "authorEmail",
       "bugReport",
       "createdAt",
+      "hasUpvoted",
       "id",
+      "isOwner",
+      "isPublic",
       "rating",
       "suggestion",
+      "upvotes",
     ]);
     expect(JSON.stringify(payload)).not.toContain("secret");
     expect(JSON.stringify(payload)).not.toContain("Private");

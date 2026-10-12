@@ -1,5 +1,5 @@
 import { type AppEnv, isAuthFailure, requireUser } from "./auth";
-import { communityPage, parseCommunityPage } from "./community";
+import { listFeedback, updateFeedback } from "./feedbackFeed";
 
 const FEEDBACK_API_PREFIX = "/api/feedback/v1";
 const FEEDBACK_COOLDOWN_MS = 5 * 60 * 1000;
@@ -53,27 +53,24 @@ export async function handleFeedbackRequest(
 
   const path = stripFeedbackPrefix(url.pathname);
   if (path === "/submissions" && request.method === "GET") {
-    const page = parseCommunityPage(url);
-    if (page instanceof Response) return page;
-    const result =
-      await env.BACKUP_DB.prepare(`SELECT id, rating, suggestion, bug_report AS bugReport, created_at AS createdAt
-      FROM feedback_submissions WHERE game = ? AND is_public = 1
-      AND (created_at < ? OR (created_at = ? AND id < ?))
-      ORDER BY created_at DESC, id DESC LIMIT 21`)
-        .bind(page.game, page.before, page.before, page.beforeId)
-        .all<{
-          id: string;
-          rating: number;
-          suggestion: string | null;
-          bugReport: string | null;
-          createdAt: number;
-        }>();
-    return feedbackJson(communityPage(result.results));
+    return listFeedback(request, url, env);
   }
 
   const user = await requireUser(request, env);
   if (isAuthFailure(user)) {
     return feedbackJson(user.payload, user.status);
+  }
+
+  const action =
+    /^\/submissions\/([a-zA-Z0-9_-]{1,100})\/(visibility|vote)$/.exec(path);
+  if (action) {
+    return updateFeedback(
+      request,
+      env,
+      user.userId,
+      action[1],
+      action[2] as "visibility" | "vote"
+    );
   }
 
   if (path === "/submissions") {
