@@ -70,7 +70,7 @@ export function resolvePartReaction(
 }
 
 // ─── Shared combo management helpers ─────────────────────────────────────────
-// Used by DamageDetail and WeaponChoiceDetail to avoid duplicating combo logic.
+// The analysis workspace resolves one shared objective for all calculation modes.
 
 type FormulaListEntry = {
   charId: string;

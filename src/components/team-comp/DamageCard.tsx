@@ -1225,8 +1225,6 @@ interface DamageCardProps {
   /** True when every roster character has artifacts (frozen/force-reused/optimized) */
   allCharsResolved?: boolean;
   isFrozen?: boolean;
-  isFullyFrozen?: boolean;
-  isPartiallyFrozen?: boolean;
   frozenCharIds?: Set<string>;
   onFreezeAll?: () => void;
   onUnfreezeAll?: () => void;
@@ -1581,8 +1579,6 @@ export function DamageCard({
   hasOptResult,
   allCharsResolved,
   isFrozen,
-  isFullyFrozen,
-  isPartiallyFrozen,
   frozenCharIds,
   onFreezeAll,
   onUnfreezeAll,
@@ -1922,26 +1918,12 @@ export function DamageCard({
                   </SelectContent>
                 </Select>
               </div>
-              <span
-                title={
-                  isFullyFrozen
-                    ? t.ui("teamComp.frozenTooltip")
-                    : isPartiallyFrozen
-                      ? t.ui("teamComp.partialFrozenTip")
-                      : undefined
-                }
-              >
+              <span>
                 <ActionButton
                   onClick={handleOptimize}
-                  disabled={isFullyFrozen || isComputing || !hasActiveFormula}
+                  disabled={isComputing || !hasActiveFormula}
                   computing={isComputing}
-                  labelIdle={
-                    isFullyFrozen
-                      ? t.ui("teamComp.frozenBadge")
-                      : isPartiallyFrozen
-                        ? t.ui("teamComp.optimizeRest")
-                        : t.ui("teamComp.tabOptimize")
-                  }
+                  labelIdle={t.ui("teamComp.tabOptimize")}
                   labelBusy={t.ui("teamComp.optimizing")}
                 />
               </span>
@@ -1956,13 +1938,13 @@ export function DamageCard({
                   {t.ui("teamComp.swapRestore")}
                 </Button>
               )}
-              {onFreezeAll && !isFullyFrozen && (
+              {onFreezeAll && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={onFreezeAll}
                   disabled={
-                    (!hasOptResult && !isPartiallyFrozen) ||
+                    !hasOptResult ||
                     (teamResult?.done && teamResult.bestDamage <= 0) ||
                     !hasActiveFormula
                   }

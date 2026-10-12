@@ -6,6 +6,7 @@ export interface AsyncComputationState<TResult, TOpts> {
   error: Error | null;
   start: (opts: TOpts) => void;
   stop: () => void;
+  reset: () => void;
 }
 
 export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
@@ -27,6 +28,11 @@ export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
     }
     setIsComputing(false);
   }, []);
+  const reset = useCallback(() => {
+    stop();
+    setResult(null);
+    setError(null);
+  }, [stop]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -51,21 +57,23 @@ export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
       setError(null);
       onStart?.();
       setIsComputing(true);
+      const gen = runFn(opts);
+      activeGenerator.current = gen;
 
       try {
-        const gen = runFn(opts);
-        activeGenerator.current = gen;
-
         for await (const yielded of gen) {
-          if (!isMounted.current) break;
-          handleYield(yielded, setResult);
+          if (!isMounted.current || activeGenerator.current !== gen) break;
+          handleYield(yielded, (next) => {
+            if (isMounted.current && activeGenerator.current === gen)
+              setResult(next);
+          });
         }
       } catch (err) {
-        if (isMounted.current) {
+        if (isMounted.current && activeGenerator.current === gen) {
           setError(err instanceof Error ? err : new Error(String(err)));
         }
       } finally {
-        if (isMounted.current) {
+        if (isMounted.current && activeGenerator.current === gen) {
           setIsComputing(false);
           activeGenerator.current = null;
         }
@@ -74,5 +82,5 @@ export function useAsyncComputation<TYield, TResult = TYield, TOpts = unknown>(
     [stop, runFn, handleYield, onStart]
   );
 
-  return { result, isComputing, error, start, stop };
+  return { result, isComputing, error, start, stop, reset };
 }

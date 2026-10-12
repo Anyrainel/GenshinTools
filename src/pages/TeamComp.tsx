@@ -1,6 +1,5 @@
 import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { getTabsForRoute } from "@/components/layout/appNavigation";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -16,29 +15,17 @@ import {
   getCachedPresetMetadata,
   loadPresetMetadata,
 } from "@/lib/presetLoader";
-import { createDefaultTeamSetupConfig } from "@/lib/team-comp/teamDeltas";
 import { loadTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
 import type { TeamCompData } from "@/lib/team-comp/types";
 import { useFreezeStore } from "@/stores/useFreezeStore";
-import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
-import { DamageView } from "./team-comp/DamageView";
+import { AnalysisView } from "./team-comp/AnalysisView";
 import type { FrozenViewHandle } from "./team-comp/FrozenView";
 import { FrozenView } from "./team-comp/FrozenView";
-import { InvestmentView } from "./team-comp/InvestmentView";
-import { TeammateSearchView } from "./team-comp/TeammateSearchView";
-import { WeaponChoiceView } from "./team-comp/WeaponChoiceView";
 
-type TeamCompTab = "damage" | "frozen" | "investment" | "weapon" | "teammates";
-
+type TeamCompTab = "analysis" | "loadouts";
 function isValidTab(tab: string | null): tab is TeamCompTab {
-  return (
-    tab === "damage" ||
-    tab === "frozen" ||
-    tab === "investment" ||
-    tab === "weapon" ||
-    tab === "teammates"
-  );
+  return tab === "analysis" || tab === "loadouts";
 }
 
 const presetModules = import.meta.glob<{ default: TeamCompData }>(
@@ -50,25 +37,11 @@ export default function TeamCompPage() {
   const { t } = useLanguage();
   const { activeTab, setActiveTab } = useCanonicalTabRoute({
     basePath: "/team-comp",
-    defaultTab: "damage",
+    defaultTab: "analysis",
     isValidTab,
   });
   const tabs = useMemo(() => getTabsForRoute(t, "/team-comp"), [t]);
   const tour = useTour();
-  const teamComps = useTeamStore((state) => state.teamComps);
-  const [searchParams] = useSearchParams();
-  const teamParam = searchParams.get("team");
-  const routedDamageTeamId =
-    activeTab === "damage" &&
-    teamParam != null &&
-    teamComps.some((team) => team.id === teamParam)
-      ? teamParam
-      : null;
-  const setActiveTeamId = useSessionNavStore((s) => s.setActiveTeamId);
-  const updateTeamComp = useTeamStore((state) => state.updateTeamComp);
-  const updateTeamSetupConfig = useTeamStore(
-    (state) => state.updateTeamSetupConfig
-  );
   const importTeams = useTeamStore((state) => state.importTeams);
   const subscribePreset = useTeamStore((state) => state.subscribePreset);
   const exportTeams = useTeamStore((state) => state.exportTeams);
@@ -130,42 +103,11 @@ export default function TeamCompPage() {
     }
   };
 
-  if (activeTab === "frozen") {
-    const hasFrozenTeams = Object.keys(frozenTeams).length > 0;
-    return (
-      <PageLayout
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        actions={
-          hasFrozenTeams
-            ? [
-                {
-                  key: "download-frozen",
-                  icon: FileDown,
-                  label: t.ui("teamComp.downloadAllFrozen"),
-                  onTrigger: () => frozenViewRef.current?.downloadAllFrozen(),
-                },
-              ]
-            : []
-        }
-      >
-        <FrozenView ref={frozenViewRef} />
-      </PageLayout>
-    );
-  }
-
-  if (activeTab === "teammates") {
-    return (
-      <PageLayout tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
-        <TeammateSearchView />
-      </PageLayout>
-    );
-  }
+  const showAnalysis = activeTab === "analysis";
 
   // Shared dialogs — always mounted so import/export/clear refs stay live
   // across tab switches (including the empty-state import button on
-  // Investment / Weapon Choice).
+  // Analysis).
   const teamControls = (
     <>
       <ImportControl<TeamCompData>
@@ -188,7 +130,7 @@ export default function TeamCompPage() {
   );
 
   // Shared action buttons for tabs that operate on the team list
-  // (damage grid, investment, weapon choice). Help is damage-only.
+  // for the canonical analysis team grid.
   const teamDataActions = [
     {
       key: "import",
@@ -212,97 +154,49 @@ export default function TeamCompPage() {
     },
   ];
 
-  if (activeTab === "investment") {
-    return (
-      <PageLayout
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onClearData={clearTeams}
-        clearLabel={t.ui("common.clearTeams")}
-        actions={teamDataActions}
-      >
-        {teamControls}
-        <InvestmentView importRef={importRef} />
-      </PageLayout>
-    );
-  }
-
-  if (activeTab === "weapon") {
-    return (
-      <PageLayout
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onClearData={clearTeams}
-        clearLabel={t.ui("common.clearTeams")}
-        actions={teamDataActions}
-      >
-        {teamControls}
-        <WeaponChoiceView importRef={importRef} />
-      </PageLayout>
-    );
-  }
-
-  // Damage tab — detail view (team selected)
-  if (routedDamageTeamId) {
-    const activeTeam = teamComps.find((t) => t.id === routedDamageTeamId);
-    if (!activeTeam) {
-      setTimeout(() => setActiveTeamId("damage", null), 0);
-      return null;
-    }
-    const clearActiveTeam = () => {
-      updateTeamComp(activeTeam.id, {
-        ...activeTeam,
-        slots: [],
-      });
-      updateTeamSetupConfig(activeTeam.id, {
-        ...createDefaultTeamSetupConfig(),
-        damage: { selectedFormula: null },
-      });
-    };
-
-    return (
-      <PageLayout
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onClearData={clearActiveTeam}
-        clearLabel={t.ui("teamComp.clearTeamData")}
-        actions={[
-          {
-            key: "help",
-            icon: HelpCircle,
-            label: t.ui("buttons.help"),
-            onTrigger: () => tour.start("team-opt-detail"),
-          },
-        ]}
-      >
-        <DamageView importRef={importRef} />
-      </PageLayout>
-    );
-  }
-
-  // Damage tab — grid view
   return (
     <PageLayout
       tabs={tabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
-      onClearData={clearTeams}
+      onClearData={showAnalysis ? clearTeams : undefined}
       clearLabel={t.ui("common.clearTeams")}
-      actions={[
-        ...teamDataActions,
-        {
-          key: "help",
-          icon: HelpCircle,
-          label: t.ui("buttons.help"),
-          onTrigger: () => tour.start("team-comp"),
-        },
-      ]}
+      actions={
+        showAnalysis
+          ? [
+              ...teamDataActions,
+              {
+                key: "help",
+                icon: HelpCircle,
+                label: t.ui("buttons.help"),
+                onTrigger: () => tour.start("team-comp"),
+              },
+            ]
+          : Object.keys(frozenTeams).length > 0
+            ? [
+                {
+                  key: "download-loadouts",
+                  icon: FileDown,
+                  label: t.ui("teamComp.downloadAllFrozen"),
+                  onTrigger: () => frozenViewRef.current?.downloadAllFrozen(),
+                },
+              ]
+            : []
+      }
     >
       {teamControls}
-      <DamageView importRef={importRef} />
+      <div
+        hidden={!showAnalysis}
+        className={showAnalysis ? "flex min-h-0 flex-1 flex-col" : "hidden"}
+      >
+        <AnalysisView importRef={importRef} active={showAnalysis} />
+      </div>
+      <div
+        hidden={showAnalysis}
+        className={showAnalysis ? "hidden" : "flex min-h-0 flex-1 flex-col"}
+      >
+        <FrozenView ref={frozenViewRef} />
+      </div>
     </PageLayout>
   );
 }

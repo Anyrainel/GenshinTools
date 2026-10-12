@@ -15,11 +15,11 @@ import {
   upsertCustomTeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import type {
-  AnalyzerConfig,
   TeamCharConfig,
   TeamComp,
   TeamSetupConfig,
 } from "@/lib/team-comp/types";
+import type { LegacyAnalyzerConfig } from "./teamAnalysis";
 
 /**
  * Old persisted Zustand/localStorage team shape before team.comp/team.config
@@ -46,7 +46,7 @@ export interface LegacyPersistedTeam {
   combo?: ComboFormula | null;
   charSettings?: Record<string, LegacyCharSettings>;
   erTimelines?: ERTimeline[];
-  analyzer?: AnalyzerConfig;
+  analyzer?: LegacyAnalyzerConfig;
 }
 
 export interface LegacyCharSettings {
@@ -250,7 +250,7 @@ export function legacyTeamToSetupConfig(
   };
 
   const investment = (team.analyzer ?? base.investment) as
-    | AnalyzerConfig
+    | LegacyAnalyzerConfig
     | undefined;
 
   return normalizeTeamSetupConfig({

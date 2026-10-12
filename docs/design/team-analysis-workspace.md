@@ -103,4 +103,14 @@ Acceptance: all five modes use the exact same two mounted components above the s
 
 ## Implementation evidence
 
-Pending. Record actual commits, schema versions/boundaries, tests, and any remaining limitations after integration.
+Specification committed as `a3cdc422`. The five-mode shared workspace, canonical routing, editable saved loadouts, physical weapon-copy resolution, account equipment improvement, character replacement, and investment change-point panel are implemented.
+
+Agreed integration contract: `InvestmentPanel` receives `{ teamComp, setupConfig, teamBuild, configs, objectiveCombo, singleObjective, ignoredCharIds? }` and renders no duplicate shared header/roster/skill panel. The workspace supplies the effective shared objective and environment. Ignored combo contributors do not suppress an explicitly selected single-skill objective.
+
+Implemented migrations: local team store 22 -> 23, cloud team envelope 4 -> 5, derived result cache 5 -> 6, session navigation 0 -> 1. Sparse future changes use `{ charId, constellation, formulaId, delta }`; legacy exact count maps retain exact semantics as `legacyCountOverrides`. Divergent old investment setup is retained in inspectable `legacyInputs`, with explicit adopt/reset actions. Shared damage configuration has canonical precedence. Migration tests exercise persisted hydration and cloud adapter boundaries. Persisted comparison/investment results require matching input signatures; obsolete artifact runtime cache fields are removed.
+
+Shortcut reconciliation: on a configured constellation change, rebuild a character's stored default counts only if its aggregate formula/count map exactly matches the old constellation's catalog defaults. Preserve matching reaction settings. Edited/custom count maps remain untouched; the existing explicit Reset combo action remains available. This avoids applying old-constellation defaults after C0/R1 reset without destroying authored rotations or requiring guessed provenance.
+
+Validation: the integrated full suite passed 290 test files, with 9,952 tests passing and 2 skipped. Production build and dependency checks passed. Browser checks covered English and Chinese at 320px, Energy at 768px, and Characters at 1440px. At narrow widths the five local modes use a readable 12px, three-column/two-row selector without outer overflow. Canonical team/mode URLs and the shared input hierarchy were verified. Account equipment search requires a selected weapon for every nonempty roster slot and cannot apply a partial team result.
+
+After the full suite, the final completeness guard and canonical owned-weapon collector passed 17 targeted tests across five files. The current revision then passed production build, repository lint (877 files), and dependency checks (861 modules / 4,469 dependencies). The canonical collector deduplicates equipped/inventory physical IDs before creating comparison refinement candidates.

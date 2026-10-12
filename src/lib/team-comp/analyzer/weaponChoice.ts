@@ -266,7 +266,7 @@ function buildPerChar(
 
 /**
  * Build setKeysByChar from charConfigs artifact configurations.
- * Mirrors the logic in DamageDetail's generate handler.
+ * Uses the same artifact assumptions as the analysis workspace generator.
  */
 /** @internal Exported for testing only. */
 export function buildSetKeysByChar(

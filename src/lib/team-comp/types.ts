@@ -13,7 +13,6 @@ import type { TeamBuild } from "../dmgcalc/core/teamBuild";
 import type {
   CalcContext,
   ComboFormula,
-  DamageResult,
   ExtraBuff,
   OptionMap,
   ReactionOverride,
@@ -21,6 +20,7 @@ import type {
 } from "../dmgcalc/types";
 import type {
   ComboCountOverrides,
+  InvestmentCountChange,
   MinErOverrides,
   StoredAnalyzerCharConfig,
 } from "./analyzer/types";
@@ -116,12 +116,6 @@ export interface TeamOptimizerOptions {
 // These describe the persisted / in-memory team state. The Zustand
 // store in src/stores/useTeamStore.ts holds instances of these, and
 // pure team logic across src/lib/ reads them as inputs.
-export interface OptimizationResult {
-  artifacts: Record<string, ArtifactData>;
-  damage: DamageResult;
-  erTargets: Record<string, number>;
-}
-
 interface ChoiceRankingBase {
   damage: number;
   percentOfBest: number; // 0-100
@@ -178,14 +172,23 @@ export interface WeaponChoiceCharConfig {
   minCr: number;
 }
 
-/** Analyzer-specific configuration, grouped under team.analyzer. */
-export interface AnalyzerConfig {
+export interface TeamInvestmentConfig {
   configs?: StoredAnalyzerCharConfig[];
-  comboOverrides?: ComboCountOverrides;
+  /** Exact older authored counts are retained until explicitly reset. */
+  legacyCountOverrides?: ComboCountOverrides;
+  futureCountChanges?: InvestmentCountChange[];
   minErOverrides?: MinErOverrides;
-  reactionOverrides?: Record<string, ReactionOverride>;
-  enemyAura?: Element;
-  extraBuffs?: ExtraBuff[];
+  /** Prior independent inputs retained for inspection/explicit reconciliation.
+   *  All new calculations use damage's shared inputs. */
+  legacyInputs?: {
+    reactionOverrides?: Record<string, ReactionOverride>;
+    enemyAura?: Element;
+    extraBuffs?: ExtraBuff[];
+    startingValues?: Record<
+      string,
+      { constellation: number; refinement: number }
+    >;
+  };
 }
 
 export interface TeamCompSlot {
@@ -232,8 +235,6 @@ export interface TeamEnergyConfig {
   /** How fractional particle data is resolved. Absent means "expected". */
   particleMode?: ParticleMode;
 }
-
-export type TeamInvestmentConfig = AnalyzerConfig;
 
 export interface TeamSetupConfig {
   combatOptions: OptionMap;

@@ -45,7 +45,7 @@ export interface ReactionPartControlsProps {
 
 /**
  * Per-part reaction controls: checkbox + ability label + hit count dropdown.
- * Shared between ReactionSelector, FormulaSelectorCard, and AnalyzerComboTab.
+ * Shared between ReactionSelector and FormulaSelectorCard.
  */
 export function ReactionPartControls({
   formulaEntry,

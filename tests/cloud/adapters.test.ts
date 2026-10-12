@@ -24,6 +24,7 @@ import { createEnvelope, verifyEnvelopePayload } from "@/cloud/payload";
 import type { ArtifactData, Build, WeaponData } from "@/data/types";
 import { getDefaultBuildPresetId } from "@/lib/artifact-builds/buildPresetRegistry";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/lib/artifact-builds/computeFilters";
+import type { TeamInvestmentConfig } from "@/lib/team-comp/types";
 import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
 describe("account cloud adapter", () => {
@@ -349,7 +350,7 @@ describe("cloud source adapters", () => {
     expect(partitions[0]).toMatchObject({
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 4,
+      schemaVersion: 5,
     });
     expect(partitions[0].payload).not.toHaveProperty("resultsByTeamId");
     expect(teamFromCloud(partitions)).toEqual({
@@ -451,7 +452,7 @@ describe("cloud source adapters", () => {
             comboOverrides: {
               "skirk|6|skirk-c6-normal-coord": 4,
             },
-          },
+          } as unknown as TeamInvestmentConfig,
         },
       },
     };
@@ -468,7 +469,7 @@ describe("cloud source adapters", () => {
     expect(restored.damage?.combo?.buffOverrides).toEqual({
       1: { retained: { 0: 1 } },
     });
-    expect(restored.investment?.comboOverrides).toEqual({});
+    expect(restored.investment?.legacyCountOverrides).toEqual({});
 
     legacyPartition.schemaVersion = 3;
     const current = teamFromCloud([legacyPartition]).configsByTeamId.legacy;

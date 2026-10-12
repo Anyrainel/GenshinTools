@@ -22,10 +22,41 @@ describe("owned weapon comparison candidates", () => {
       extraArtifacts: [],
       extraWeapons: [weapon("duplicate", 2), weapon("r3", 3), weapon("r4", 4)],
     };
-    expect(collectOwnedWeaponChoices(account)).toEqual([
-      { weaponId: "staff_of_homa", refinement: 2 },
-      { weaponId: "staff_of_homa", refinement: 3 },
-      { weaponId: "staff_of_homa", refinement: 4 },
-    ]);
+    const choices = collectOwnedWeaponChoices(account);
+    expect(choices).toHaveLength(3);
+    expect(choices).toEqual(
+      expect.arrayContaining([
+        { weaponId: "staff_of_homa", refinement: 2 },
+        { weaponId: "staff_of_homa", refinement: 3 },
+        { weaponId: "staff_of_homa", refinement: 4 },
+      ])
+    );
+  });
+
+  it("does not invent another rank when inventory repeats an equipped physical ID", () => {
+    const account: AccountData = {
+      characters: [
+        {
+          key: "hu_tao",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 10, skill: 10, burst: 10 },
+          artifacts: {},
+          weapon: weapon("same-copy", 2),
+        },
+      ],
+      extraArtifacts: [],
+      extraWeapons: [weapon("same-copy", 5), weapon("real-second-copy", 3)],
+    };
+    expect(collectOwnedWeaponChoices(account)).toEqual(
+      expect.arrayContaining([
+        { weaponId: "staff_of_homa", refinement: 2 },
+        { weaponId: "staff_of_homa", refinement: 3 },
+      ])
+    );
+    expect(collectOwnedWeaponChoices(account)).not.toContainEqual({
+      weaponId: "staff_of_homa",
+      refinement: 5,
+    });
   });
 });

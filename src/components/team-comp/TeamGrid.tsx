@@ -138,6 +138,7 @@ export interface TeamGridProps {
   enableTour?: boolean;
   /** Extra content rendered below the filter/button row, above the grid */
   headerExtra?: React.ReactNode;
+  selectionCue?: string;
 }
 
 export function TeamGrid({
@@ -152,6 +153,7 @@ export function TeamGrid({
   emptyState,
   enableTour,
   headerExtra,
+  selectionCue,
 }: TeamGridProps) {
   const { t } = useLanguage();
   const tour = useTour();
@@ -525,6 +527,11 @@ export function TeamGrid({
       header={
         showEmptyState ? null : (
           <div className="space-y-3">
+            {selectionCue && (
+              <h2 className="text-center text-lg font-semibold">
+                {selectionCue}
+              </h2>
+            )}
             {/* Search bar — centered, prominent (matches Archive pages) */}
             <div className="relative max-w-2xl mx-auto">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />

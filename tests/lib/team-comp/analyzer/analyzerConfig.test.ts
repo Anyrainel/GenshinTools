@@ -1,0 +1,57 @@
+import { describe, expect, it } from "vitest";
+import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
+import { reconcileConfigs } from "@/lib/team-comp/analyzer/analyzerConfig";
+import type { StoredAnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
+
+const roster = (weaponId: string): TeamSlotConfig => ({
+  charId: "hu_tao",
+  charLevel: 90,
+  constellation: 2,
+  weaponId,
+  refinement: 3,
+  artifactSet: null,
+});
+const stored = (
+  altWeapon: StoredAnalyzerCharConfig["altWeapon"]
+): StoredAnalyzerCharConfig[] => [
+  {
+    charId: "hu_tao",
+    altWeapon,
+    maxConstellation: 6,
+    maxRefinement: 5,
+  },
+];
+
+describe("investment alternate reconciliation after shared roster edits", () => {
+  it("does not reinterpret a saved four-star alternate as a five-star target", () => {
+    const [config] = reconcileConfigs(
+      stored({ id: "dragons_bane", refinement: 4 }),
+      [roster("favonius_lance")]
+    );
+    expect(config.weapon4Star).toEqual({ id: "favonius_lance", refinement: 3 });
+    expect(config.weapon5Star).toBeUndefined();
+    expect(config.startRefinement).toBe(0);
+    expect(config.maxRefinement).toBe(0);
+    expect(config.startConstellation).toBe(2);
+  });
+  it("does not reinterpret a saved five-star alternate as a four-star fallback", () => {
+    const [config] = reconcileConfigs(stored({ id: "staff_of_homa" }), [
+      roster("engulfing_lightning"),
+    ]);
+    expect(config.weapon5Star).toEqual({ id: "engulfing_lightning" });
+    expect(config.weapon4Star).toBeUndefined();
+    expect(config.startRefinement).toBe(3);
+  });
+  it("retains valid opposite-rarity targets and imported fallback refinement", () => {
+    expect(
+      reconcileConfigs(stored({ id: "dragons_bane", refinement: 4 }), [
+        roster("staff_of_homa"),
+      ])[0].weapon4Star
+    ).toEqual({ id: "dragons_bane", refinement: 4 });
+    expect(
+      reconcileConfigs(stored({ id: "staff_of_homa" }), [
+        roster("dragons_bane"),
+      ])[0].weapon5Star
+    ).toEqual({ id: "staff_of_homa" });
+  });
+});

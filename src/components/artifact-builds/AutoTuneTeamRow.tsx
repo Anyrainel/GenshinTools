@@ -6,6 +6,7 @@ import type { AccountData } from "@/data/types";
 import { buildTeamLabel } from "@/lib/artifact-builds/teamLabel";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
+import { resolveRosterWeaponCopies } from "@/lib/team-comp/weaponCopies";
 
 interface AutoTuneTeamRowProps {
   teamComp: TeamComp;
@@ -28,6 +29,11 @@ export function AutoTuneTeamRow({
 }: AutoTuneTeamRowProps) {
   const { t } = useLanguage();
   const { characters, weapons, artifacts } = teamCompToArrays(teamComp);
+  const weaponCopies = resolveRosterWeaponCopies(
+    teamComp,
+    setupConfig,
+    accountData
+  );
 
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is a controlled component inside the label
@@ -74,9 +80,7 @@ export function AutoTuneTeamRow({
             const weaponId = weapons[idx];
             const wpnRes = weaponId ? weaponsById[weaponId] : null;
             const refinement =
-              weaponId && charId
-                ? resolveRefinement(charId, weaponId, setupConfig, accountData)
-                : undefined;
+              weaponId && charId ? weaponCopies[idx].refinement : undefined;
             return (
               <div key={`w${idx}`} className="flex justify-center">
                 {wpnRes ? (
@@ -120,29 +124,4 @@ function resolveConstellation(
   if (combatOverride !== undefined) return Number(combatOverride);
   const acctChar = accountData?.characters.find((c) => c.key === charId);
   return acctChar ? acctChar.constellation : 0;
-}
-
-/** Resolve refinement using the same logic as buildTeamSlotConfigs. */
-function resolveRefinement(
-  charId: string,
-  weaponId: string,
-  setupConfig: TeamSetupConfig,
-  accountData: AccountData | null
-): number {
-  const authored = setupConfig.charConfigs?.[charId]?.refinement;
-  if (authored !== undefined) return authored;
-  const combatOverride =
-    setupConfig.combatOptions?.[`${charId}.overrideRefinement`];
-  if (combatOverride !== undefined) return Number(combatOverride);
-  if (accountData) {
-    const refinements: number[] = [];
-    for (const c of accountData.characters) {
-      if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
-    }
-    for (const w of accountData.extraWeapons) {
-      if (w.key === weaponId) refinements.push(w.refinement);
-    }
-    if (refinements.length > 0) return Math.max(...refinements);
-  }
-  return 1;
 }

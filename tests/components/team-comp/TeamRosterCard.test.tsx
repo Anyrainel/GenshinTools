@@ -110,19 +110,7 @@ describe("TeamRosterCard", () => {
     expect(screen.queryByText("R1")).not.toBeInTheDocument();
   });
 
-  it("renders frozen card styling for frozen characters", () => {
-    const { container } = render(
-      <TestRoster
-        {...defaultProps({
-          frozenCharIds: new Set(["hu_tao"]),
-        })}
-      />
-    );
-    const frozenCards = container.querySelectorAll(".frozen-card");
-    expect(frozenCards.length).toBe(1);
-  });
-
-  it("does not render frozen styling when no characters are frozen", () => {
+  it("keeps roster interactions available independently of saved loadouts", () => {
     const { container } = render(<TestRoster {...defaultProps()} />);
     const frozenCards = container.querySelectorAll(".frozen-card");
     expect(frozenCards.length).toBe(0);

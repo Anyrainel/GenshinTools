@@ -251,6 +251,11 @@ export const useTeamStore = create<TeamState>()(
               ? updater(current)
               : { ...current, ...updater }
           );
+          if (
+            JSON.stringify(current) ===
+            JSON.stringify(normalizeTeamSetupConfig(nextConfig ?? {}))
+          )
+            return;
           if (nextConfig) {
             state.configsByTeamId[id] = nextConfig;
           } else {
@@ -258,6 +263,7 @@ export const useTeamStore = create<TeamState>()(
           }
           refreshDerivedTeamState(state);
           touchTeamState(state);
+          useTeamResultCacheStore.getState().clearForTeam(id);
         });
       },
 
@@ -459,7 +465,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 22,
+      version: 23,
       migrate: migrateTeamStore,
       partialize: (state) =>
         ({

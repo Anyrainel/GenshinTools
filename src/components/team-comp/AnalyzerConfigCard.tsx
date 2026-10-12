@@ -1,24 +1,7 @@
-import { Users } from "lucide-react";
-import { useCallback, useMemo } from "react";
-import { ArtifactTooltip } from "@/components/shared/ArtifactTooltip";
-import { CharacterTooltip } from "@/components/shared/CharacterTooltip";
-import { ItemIcon, type ItemIconSize } from "@/components/shared/ItemIcon";
+import { ItemIcon } from "@/components/shared/ItemIcon";
 import { ItemPicker } from "@/components/shared/ItemPicker";
-import { MixedSetTooltip } from "@/components/shared/MixedSetTooltip";
-import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  LightweightSelect,
-  LightweightSelectContent,
-  LightweightSelectItem,
-  LightweightSelectTrigger,
-  LightweightSelectValue,
-} from "@/components/ui/lightweight-select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Input } from "@/components/ui/input";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { charactersById, weaponsById } from "@/data/gameResources";
 import {
@@ -27,33 +10,10 @@ import {
   getWeaponDisplayMeta,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
-import type { WeaponResource } from "@/data/types";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import type { AnalyzerCharConfig } from "@/lib/team-comp/analyzer/types";
-import { cn } from "@/lib/utils";
-import {
-  CARD_BODY_CLS,
-  CARD_CLS,
-  CARD_HEADER_CLS,
-  CARD_TITLE_CLS,
-} from "./cardStyles";
+import { CARD_CLS, CARD_HEADER_CLS, CARD_TITLE_CLS } from "./cardStyles";
 import { TeamCharacterGrid } from "./TeamCharacterGrid";
-
-function getArtifactIconProps(bc: TeamSlotConfig): {
-  artifactSetId?: string;
-  halfSetIds?: [string, string];
-  imagePath?: string;
-} {
-  if (bc.artifactSet?.type === "4pc") {
-    return { artifactSetId: bc.artifactSet.setId };
-  }
-  if (bc.artifactSet?.type === "2pc+2pc") {
-    return {
-      halfSetIds: [bc.artifactSet.halfSetIds[0], bc.artifactSet.halfSetIds[1]],
-    };
-  }
-  return { imagePath: "" };
-}
 
 interface AnalyzerConfigCardProps {
   charConfigs: AnalyzerCharConfig[];
@@ -63,436 +23,166 @@ interface AnalyzerConfigCardProps {
     star: "4" | "5",
     weaponId: string | null
   ) => void;
-  onUpdateStart: (
-    charId: string,
-    field: "startConstellation" | "startRefinement",
-    value: number
-  ) => void;
   onUpdateMax: (
     charId: string,
     field: "maxConstellation" | "maxRefinement",
     value: number
   ) => void;
-  charIconSize: ItemIconSize;
-  subIconSize: ItemIconSize;
 }
 
 export function AnalyzerConfigCard({
   charConfigs,
   configs,
   onUpdateWeapon,
-  onUpdateStart,
   onUpdateMax,
-  charIconSize,
-  subIconSize,
 }: AnalyzerConfigCardProps) {
-  const { t } = useLanguage();
-
-  return (
-    <Card className={CARD_CLS}>
-      <CardHeader className={cn(CARD_HEADER_CLS, "py-2")}>
-        <span className={CARD_TITLE_CLS}>
-          <Users className="w-4 h-4 opacity-70" />
-          {t.ui("teamComp.investmentRange")}
-        </span>
-      </CardHeader>
-      <CardContent className={CARD_BODY_CLS}>
-        <p className="px-2 py-2 text-sm text-muted-foreground">
-          {t.ui("teamComp.investmentRangeDesc")}
-        </p>
-        <TeamCharacterGrid>
-          {charConfigs.map((cfg) => {
-            const bc = configs.find((b) => b.charId === cfg.charId);
-            if (!bc) return null;
-            return (
-              <div
-                key={cfg.charId}
-                className="flex flex-col rounded-lg bg-black/10 border border-border/10 p-1 gap-1 xl:p-2"
-              >
-                <CharConfigGroup
-                  config={cfg}
-                  baseConfig={bc}
-                  onUpdateWeapon={onUpdateWeapon}
-                  charIconSize={charIconSize}
-                  subIconSize={subIconSize}
-                />
-                <CharStartSelectors
-                  config={cfg}
-                  onUpdateStart={onUpdateStart}
-                />
-                <CharMaxSelectors config={cfg} onUpdateMax={onUpdateMax} />
-              </div>
-            );
-          })}
-        </TeamCharacterGrid>
-      </CardContent>
-    </Card>
-  );
-}
-
-// ─── Per-character group: [char] [artifact] [4★wep] [5★wep] ───
-
-function CharConfigGroup({
-  config,
-  baseConfig,
-  onUpdateWeapon,
-  charIconSize = "sm",
-  subIconSize = "xs",
-}: {
-  config: AnalyzerCharConfig;
-  baseConfig: TeamSlotConfig;
-  onUpdateWeapon: (
-    charId: string,
-    star: "4" | "5",
-    weaponId: string | null
-  ) => void;
-  charIconSize?: ItemIconSize;
-  subIconSize?: ItemIconSize;
-}) {
   const { t } = useLanguage();
   const characterStats = characterStatsResource.use();
   const weaponStats = weaponStatsResource.use();
-  const char = charactersById[config.charId];
-
-  const charWeaponType = useMemo(() => {
-    if (!char || !characterStats) return undefined;
-    return getCharacterDisplayMeta(char, characterStats[config.charId])
-      .weaponType;
-  }, [char, characterStats, config.charId]);
-
-  const makeFilter = useCallback(
-    (targetRarity: number) => {
-      return (w: WeaponResource) => {
-        if (!weaponStats) return w.rarity === targetRarity;
-        const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
-        if (meta.rarity !== targetRarity) return false;
-        if (charWeaponType && meta.type && meta.type !== charWeaponType)
-          return false;
-        return true;
-      };
-    },
-    [weaponStats, charWeaponType]
-  );
-
-  const filterLowStar = useMemo(() => {
-    return (w: WeaponResource) => {
-      if (!weaponStats) return w.rarity === 3 || w.rarity === 4;
-      const meta = getWeaponDisplayMeta(w, weaponStats[w.id]);
-      if (meta.rarity !== 3 && meta.rarity !== 4) return false;
-      if (charWeaponType && meta.type && meta.type !== charWeaponType)
-        return false;
-      return true;
-    };
-  }, [weaponStats, charWeaponType]);
-  const filter5Star = useMemo(() => makeFilter(5), [makeFilter]);
-  const artifactIcon = useMemo(
-    () => getArtifactIconProps(baseConfig),
-    [baseConfig]
-  );
-
-  const rosterWeapon = weaponsById[baseConfig.weaponId];
-  const rosterIs5Star = rosterWeapon?.rarity === 5;
-
-  const artifactTooltip = useMemo(() => {
-    if (baseConfig.artifactSet?.type === "4pc") {
-      return <ArtifactTooltip setId={baseConfig.artifactSet.setId} />;
-    }
-    if (baseConfig.artifactSet?.type === "2pc+2pc") {
-      return (
-        <MixedSetTooltip
-          id1={baseConfig.artifactSet.halfSetIds[0]}
-          id2={baseConfig.artifactSet.halfSetIds[1]}
-        />
-      );
-    }
-    return null;
-  }, [baseConfig.artifactSet]);
-
-  const SIZE_TO_W: Record<string, string> = {
-    xs: "w-10",
-    sm: "w-12",
-    md: "w-14",
-    lg: "w-16",
-    xl: "w-20",
-  };
-  const charW = SIZE_TO_W[charIconSize] ?? "w-12";
-  const subW = SIZE_TO_W[subIconSize] ?? "w-10";
-
   return (
-    <>
-      {/* Row 1: Icons — flat flex, uniform gaps */}
-      <div className="flex items-end gap-0.5 md:gap-1.5 lg:gap-0.5 2xl:gap-1.5">
-        {char ? (
-          <Tooltip disableHoverableContent>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <ItemIcon characterId={config.charId} size={charIconSize} />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
+    <Card className={CARD_CLS}>
+      <CardHeader className={CARD_HEADER_CLS}>
+        <h3 className={CARD_TITLE_CLS}>{t.ui("teamComp.investmentRange")}</h3>
+      </CardHeader>
+      <CardContent className="space-y-3 p-3">
+        <p className="text-sm text-muted-foreground">
+          {t.ui("teamComp.investmentRangeDesc")}
+        </p>
+        <TeamCharacterGrid>
+          {charConfigs.map((config) => (
+            <div
+              key={config.charId}
+              className="min-w-0 space-y-3 rounded-lg border border-border p-3"
             >
-              <CharacterTooltip characterId={config.charId} />
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <ItemIcon characterId={config.charId} size={charIconSize} />
-        )}
-        <Tooltip disableHoverableContent>
-          <TooltipTrigger asChild>
-            <span className="cursor-help">
-              <ItemIcon {...artifactIcon} size={subIconSize} />
-            </span>
-          </TooltipTrigger>
-          {artifactTooltip && (
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
-            >
-              {artifactTooltip}
-            </TooltipContent>
-          )}
-        </Tooltip>
-        {!rosterIs5Star && rosterWeapon ? (
-          <Tooltip disableHoverableContent>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <ItemIcon weaponId={baseConfig.weaponId} size={subIconSize} />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
-            >
-              <WeaponTooltip weaponId={baseConfig.weaponId} />
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <ItemPicker
-            type="weapon"
-            value={config.weapon4Star?.id ?? null}
-            onChange={(id) => onUpdateWeapon(config.charId, "4", id as string)}
-            onClear={() => onUpdateWeapon(config.charId, "4", null)}
-            filter={filterLowStar}
-            triggerSize={subIconSize}
-            menuSize="sm"
-          />
-        )}
-        {rosterIs5Star && rosterWeapon ? (
-          <Tooltip disableHoverableContent>
-            <TooltipTrigger asChild>
-              <span className="cursor-help">
-                <ItemIcon weaponId={baseConfig.weaponId} size={subIconSize} />
-              </span>
-            </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              className="p-0 border-none bg-transparent shadow-none"
-            >
-              <WeaponTooltip weaponId={baseConfig.weaponId} />
-            </TooltipContent>
-          </Tooltip>
-        ) : (
-          <ItemPicker
-            type="weapon"
-            value={config.weapon5Star?.id ?? null}
-            onChange={(id) => onUpdateWeapon(config.charId, "5", id as string)}
-            onClear={() => onUpdateWeapon(config.charId, "5", null)}
-            filter={filter5Star}
-            triggerSize={subIconSize}
-            menuSize="sm"
-          />
-        )}
-      </div>
-      {/* Row 2: Name + labels, widths matching icon sizes */}
-      <div className="flex items-baseline gap-0.5 md:gap-1.5 lg:gap-0.5 2xl:gap-1.5">
-        <span
-          className={cn(
-            "shrink-0 font-bold text-foreground/90 whitespace-nowrap text-sm md:text-base lg:text-sm xl:text-base ml-2 xl:ml-3",
-            charW
-          )}
-        >
-          {t.character(config.charId)}
-        </span>
-        <span className={cn("shrink-0", subW)} />
-        <span
-          className={cn(
-            "shrink-0 text-center text-xs xl:text-sm font-bold text-foreground",
-            subW
-          )}
-        >
-          3/4★
-        </span>
-        <span
-          className={cn(
-            "shrink-0 text-center text-xs xl:text-sm font-bold text-foreground",
-            subW
-          )}
-        >
-          5★
-        </span>
-      </div>
-    </>
-  );
-}
-
-// ─── Per-character start C/R selectors ───
-
-function CharStartSelectors({
-  config,
-  onUpdateStart,
-}: {
-  config: AnalyzerCharConfig;
-  onUpdateStart: (
-    charId: string,
-    field: "startConstellation" | "startRefinement",
-    value: number
-  ) => void;
-}) {
-  const { t } = useLanguage();
-  const is5Star = config.rarity >= 5;
-  const has5Wep = !!config.weapon5Star;
-  const hasBothWeps = !!config.weapon4Star && has5Wep;
-  const hasAnySelector = is5Star || has5Wep;
-
-  const weaponOptions = useMemo(() => {
-    if (!has5Wep) return null;
-    const opts: { value: string; label: string }[] = [];
-    if (hasBothWeps) {
-      opts.push({ value: "0", label: t.ui("teamComp.analyzerWeapon4StarR0") });
-    }
-    for (let r = 1; r <= 5; r++) {
-      opts.push({
-        value: String(r),
-        label: t.format("common.refinementFormat", r),
-      });
-    }
-    return opts;
-  }, [has5Wep, hasBothWeps, t]);
-
-  if (!hasAnySelector) return null;
-
-  return (
-    <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 md:px-2 md:py-1 lg:px-1 lg:py-0.5 xl:px-2 xl:py-1 w-full">
-      <div className="flex items-center justify-center gap-1">
-        <span className="text-[10px] md:text-sm lg:text-xs xl:text-sm font-bold text-foreground/70 whitespace-nowrap shrink-0">
-          {t.ui("teamComp.analyzerMinConfig")}
-        </span>
-        <div className="flex items-center gap-1">
-          {is5Star && (
-            <LightweightSelect
-              value={String(config.startConstellation)}
-              onValueChange={(v) =>
-                onUpdateStart(config.charId, "startConstellation", Number(v))
-              }
-            >
-              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
-                <LightweightSelectValue />
-              </LightweightSelectTrigger>
-              <LightweightSelectContent>
-                {Array.from({ length: 7 }, (_, i) => (
-                  <LightweightSelectItem key={i} value={String(i)}>
-                    {t.format("common.constellationFormat", i)}
-                  </LightweightSelectItem>
+              <div className="flex min-w-0 items-center gap-2">
+                <ItemIcon characterId={config.charId} size="sm" />
+                <span className="break-words font-semibold">
+                  {t.character(config.charId)}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center gap-3">
+                {(["4", "5"] as const).map((star) => (
+                  <div key={star} className="space-y-1 text-sm">
+                    <p>{star === "4" ? "3/4★" : "5★"}</p>
+                    {(weaponsById[
+                      configs.find((base) => base.charId === config.charId)!
+                        .weaponId
+                    ]?.rarity ===
+                      5) ===
+                    (star === "5") ? (
+                      <ItemIcon
+                        weaponId={
+                          configs.find((base) => base.charId === config.charId)!
+                            .weaponId
+                        }
+                        size="sm"
+                      />
+                    ) : (
+                      <ItemPicker
+                        type="weapon"
+                        value={
+                          star === "4"
+                            ? (config.weapon4Star?.id ?? null)
+                            : (config.weapon5Star?.id ?? null)
+                        }
+                        onChange={(id) =>
+                          onUpdateWeapon(config.charId, star, id as string)
+                        }
+                        onClear={() =>
+                          onUpdateWeapon(config.charId, star, null)
+                        }
+                        filter={(weapon) =>
+                          (star === "5"
+                            ? weapon.rarity === 5
+                            : weapon.rarity === 3 || weapon.rarity === 4) &&
+                          (!weaponStats ||
+                            !characterStats ||
+                            getWeaponDisplayMeta(weapon, weaponStats[weapon.id])
+                              .type ===
+                              getCharacterDisplayMeta(
+                                charactersById[config.charId],
+                                characterStats[config.charId]
+                              ).weaponType)
+                        }
+                        triggerSize="sm"
+                        menuSize="sm"
+                      />
+                    )}
+                  </div>
                 ))}
-              </LightweightSelectContent>
-            </LightweightSelect>
-          )}
-          {weaponOptions && (
-            <LightweightSelect
-              value={String(config.startRefinement)}
-              onValueChange={(v) =>
-                onUpdateStart(config.charId, "startRefinement", Number(v))
-              }
-            >
-              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
-                <LightweightSelectValue />
-              </LightweightSelectTrigger>
-              <LightweightSelectContent>
-                {weaponOptions.map((opt) => (
-                  <LightweightSelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </LightweightSelectItem>
-                ))}
-              </LightweightSelectContent>
-            </LightweightSelect>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Per-character max C/R selectors ───
-
-function CharMaxSelectors({
-  config,
-  onUpdateMax,
-}: {
-  config: AnalyzerCharConfig;
-  onUpdateMax: (
-    charId: string,
-    field: "maxConstellation" | "maxRefinement",
-    value: number
-  ) => void;
-}) {
-  const { t } = useLanguage();
-  const is5Star = config.rarity >= 5;
-  const has5Wep = !!config.weapon5Star;
-  const hasAnySelector = is5Star || has5Wep;
-
-  if (!hasAnySelector) return null;
-
-  return (
-    <div className="flex flex-col bg-black/10 rounded-md border border-border/30 px-1 py-0.5 md:px-2 md:py-1 lg:px-1 lg:py-0.5 xl:px-2 xl:py-1 w-full">
-      <div className="flex items-center justify-center gap-1">
-        <span className="text-[10px] md:text-sm lg:text-xs xl:text-sm font-bold text-foreground/70 whitespace-nowrap shrink-0">
-          {t.ui("teamComp.analyzerMaxConfig")}
-        </span>
-        <div className="flex items-center gap-1">
-          {is5Star && (
-            <LightweightSelect
-              value={String(config.maxConstellation)}
-              onValueChange={(v) =>
-                onUpdateMax(config.charId, "maxConstellation", Number(v))
-              }
-            >
-              <LightweightSelectTrigger className="w-16 md:w-20 lg:w-16 xl:w-20 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
-                <LightweightSelectValue />
-              </LightweightSelectTrigger>
-              <LightweightSelectContent>
-                {Array.from({ length: 7 }, (_, i) => (
-                  <LightweightSelectItem key={i} value={String(i)}>
-                    {t.format("common.constellationFormat", i)}
-                  </LightweightSelectItem>
-                ))}
-              </LightweightSelectContent>
-            </LightweightSelect>
-          )}
-          {has5Wep && (
-            <LightweightSelect
-              value={String(config.maxRefinement)}
-              onValueChange={(v) =>
-                onUpdateMax(config.charId, "maxRefinement", Number(v))
-              }
-            >
-              <LightweightSelectTrigger className="w-20 md:w-24 lg:w-20 xl:w-24 bg-white/5 border-border/30 [&>span]:text-center [&>span]:w-full font-bold h-6 px-1 text-xs md:h-7 md:px-1.5 md:text-sm lg:h-6 lg:px-1 lg:text-xs xl:h-7 xl:px-1.5 xl:text-sm">
-                <LightweightSelectValue />
-              </LightweightSelectTrigger>
-              <LightweightSelectContent>
-                {Array.from({ length: 6 }, (_, i) => (
-                  <LightweightSelectItem key={i} value={String(i)}>
-                    {i === 0
-                      ? t.ui("teamComp.noWeapon5Star")
-                      : t.format("common.refinementFormat", i)}
-                  </LightweightSelectItem>
-                ))}
-              </LightweightSelectContent>
-            </LightweightSelect>
-          )}
-        </div>
-      </div>
-    </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {t.ui("teamComp.analyzerMinConfig")}:{" "}
+                {t.format(
+                  "common.constellationFormat",
+                  config.startConstellation
+                )}{" "}
+                /{" "}
+                {config.startRefinement > 0
+                  ? t.format("common.refinementFormat", config.startRefinement)
+                  : "3/4★"}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {config.rarity === 5 && (
+                  <label
+                    htmlFor={`investment-max-c-${config.charId}`}
+                    className="min-w-0 flex-1 text-sm"
+                  >
+                    {t.ui("teamComp.analyzerMaxConfig")}{" "}
+                    {t.format(
+                      "common.constellationFormat",
+                      config.maxConstellation
+                    )}
+                    <Input
+                      id={`investment-max-c-${config.charId}`}
+                      type="number"
+                      min={config.startConstellation}
+                      max={6}
+                      value={config.maxConstellation}
+                      onChange={(event) =>
+                        onUpdateMax(
+                          config.charId,
+                          "maxConstellation",
+                          Math.max(
+                            config.startConstellation,
+                            Math.min(6, Number(event.target.value))
+                          )
+                        )
+                      }
+                    />
+                  </label>
+                )}
+                {config.weapon5Star && (
+                  <label
+                    htmlFor={`investment-max-r-${config.charId}`}
+                    className="min-w-0 flex-1 text-sm"
+                  >
+                    {t.ui("teamComp.analyzerMaxConfig")}{" "}
+                    {t.format("common.refinementFormat", config.maxRefinement)}
+                    <Input
+                      id={`investment-max-r-${config.charId}`}
+                      type="number"
+                      min={config.startRefinement}
+                      max={5}
+                      value={config.maxRefinement}
+                      onChange={(event) =>
+                        onUpdateMax(
+                          config.charId,
+                          "maxRefinement",
+                          Math.max(
+                            config.startRefinement,
+                            Math.min(5, Number(event.target.value))
+                          )
+                        )
+                      }
+                    />
+                  </label>
+                )}
+              </div>
+            </div>
+          ))}
+        </TeamCharacterGrid>
+      </CardContent>
+    </Card>
   );
 }

@@ -175,14 +175,14 @@ describe("StatSheetPanel", () => {
   describe("freeze/unfreeze", () => {
     it("does not show freeze button when character has no artifacts", () => {
       render(<TestPanel {...defaultProps()} />);
-      expect(screen.queryByText("Freeze")).not.toBeInTheDocument();
+      expect(screen.queryByText("Save")).not.toBeInTheDocument();
     });
 
     it("shows unfreeze button for frozen characters", () => {
       render(
         <TestPanel {...defaultProps({ frozenCharIds: new Set(["hu_tao"]) })} />
       );
-      expect(screen.getByText("Thaw")).toBeInTheDocument();
+      expect(screen.getByText("Remove")).toBeInTheDocument();
     });
 
     it("calls onUnfreezeChar when thaw is clicked", async () => {
@@ -196,7 +196,7 @@ describe("StatSheetPanel", () => {
           })}
         />
       );
-      await user.click(screen.getByText("Thaw"));
+      await user.click(screen.getByText("Remove"));
       expect(onUnfreezeChar).toHaveBeenCalledWith("hu_tao");
     });
   });

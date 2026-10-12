@@ -26,7 +26,7 @@ export function AutoTuneEmptyState({
       ? {
           label: t.ui("batchAutoTune.goToTeams"),
           icon: ExternalLink,
-          href: "/team-comp/damage",
+          href: "/team-comp/analysis",
         }
       : undefined;
 
@@ -35,7 +35,7 @@ export function AutoTuneEmptyState({
       ? {
           label: t.ui("batchAutoTune.goToTeams"),
           icon: ExternalLink,
-          href: "/team-comp/damage",
+          href: "/team-comp/analysis",
         }
       : undefined;
 

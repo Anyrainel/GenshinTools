@@ -105,8 +105,6 @@ function teamSnapshot() {
         {
           charId: "qiqi",
           altWeapon: { id: "weapon_sword", refinement: 5 },
-          startConstellation: 0,
-          startRefinement: 1,
           maxConstellation: 6,
           maxRefinement: 5,
         },
@@ -424,7 +422,7 @@ describe("released 7.1 weapon ID persistence", () => {
       "new_bough",
       "weapon_catalyst",
     ]);
-    expect(teamToCloud(teamSnapshot())[0].schemaVersion).toBe(4);
+    expect(teamToCloud(teamSnapshot())[0].schemaVersion).toBe(5);
     expect(
       tiersToCloud({
         character: { ...tier, tierLists: {} },

@@ -22,7 +22,13 @@ interface AccountInvestmentCardProps {
   charConfigs: AnalyzerCharConfig[];
   options: Pick<
     AnalyzerOptions,
-    "teamBuild" | "templateCombo" | "comboOverrides" | "calcContext"
+    | "teamBuild"
+    | "templateCombo"
+    | "comboOverrides"
+    | "calcContext"
+    | "futureCountChanges"
+    | "singleObjective"
+    | "ignoredContributorIds"
   >;
 }
 
@@ -46,6 +52,9 @@ export function AccountInvestmentCard({
     charConfigs,
     combo: options.templateCombo,
     overrides: options.comboOverrides,
+    future: options.futureCountChanges,
+    single: options.singleObjective,
+    ignored: options.ignoredContributorIds,
     context: options.calcContext,
     combat: options.teamBuild.combatOpts,
     aura: options.teamBuild.enemyAura,

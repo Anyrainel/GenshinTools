@@ -3,20 +3,6 @@ import { charactersById, weaponsById } from "@/data/gameResources";
 import type { TeamSlotConfig } from "@/lib/dmgcalc/types";
 import type { AnalyzerCharConfig, StoredAnalyzerCharConfig } from "./types";
 
-/** Re-reconcile already-expanded full configs when baseConfigs change (char added/removed/swapped). */
-export function rereconcileConfigs(
-  prev: AnalyzerCharConfig[],
-  baseConfigs: TeamSlotConfig[]
-): AnalyzerCharConfig[] {
-  const baseIds = new Set(baseConfigs.map((b) => b.charId));
-  const kept = prev.filter((c) => baseIds.has(c.charId));
-  const keptIds = new Set(kept.map((c) => c.charId));
-  const added = buildDefaultCharConfigs(
-    baseConfigs.filter((b) => !keptIds.has(b.charId))
-  );
-  const byId = new Map([...kept, ...added].map((c) => [c.charId, c]));
-  return baseConfigs.map((b) => byId.get(b.charId)!);
-}
 /** Reconcile stored (persisted) configs into full AnalyzerCharConfigs using roster data. */
 export function reconcileConfigs(
   stored: StoredAnalyzerCharConfig[],
@@ -44,24 +30,36 @@ function storedToFull(
   const rarity = (charRes?.rarity ?? 5) as Rarity;
   const rosterWeapon = weaponsById[bc.weaponId];
   const rosterIs5Star = rosterWeapon?.rarity === 5;
+  const altRarity = sc.altWeapon
+    ? weaponsById[sc.altWeapon.id]?.rarity
+    : undefined;
+  // A saved alternate belongs to its real rarity, even after a roster Apply
+  // switches the current weapon between the five-star and lower-rarity groups.
+  const weapon4Star = rosterIs5Star
+    ? sc.altWeapon &&
+      altRarity !== undefined &&
+      altRarity >= 3 &&
+      altRarity <= 4
+      ? { id: sc.altWeapon.id, refinement: sc.altWeapon.refinement ?? 5 }
+      : undefined
+    : { id: bc.weaponId, refinement: bc.refinement };
+  const weapon5Star = rosterIs5Star
+    ? { id: bc.weaponId }
+    : sc.altWeapon && altRarity === 5
+      ? { id: sc.altWeapon.id }
+      : undefined;
 
   return {
     charId: sc.charId,
     rarity,
-    weapon4Star: rosterIs5Star
-      ? sc.altWeapon
-        ? { id: sc.altWeapon.id, refinement: sc.altWeapon.refinement ?? 5 }
-        : undefined
-      : { id: bc.weaponId, refinement: bc.refinement },
-    weapon5Star: rosterIs5Star
-      ? { id: bc.weaponId }
-      : sc.altWeapon
-        ? { id: sc.altWeapon.id }
-        : undefined,
-    startConstellation: sc.startConstellation,
-    startRefinement: sc.startRefinement,
-    maxConstellation: sc.maxConstellation,
-    maxRefinement: sc.maxRefinement,
+    weapon4Star,
+    weapon5Star,
+    startConstellation: bc.constellation,
+    startRefinement: rosterIs5Star ? bc.refinement : 0,
+    maxConstellation: Math.max(bc.constellation, sc.maxConstellation),
+    maxRefinement: weapon5Star
+      ? Math.max(rosterIs5Star ? bc.refinement : 0, sc.maxRefinement)
+      : 0,
   };
 }
 /** Strip a full config down to the stored form (only alt weapon). */
@@ -83,8 +81,6 @@ export function fullToStored(
   return {
     charId: cfg.charId,
     altWeapon,
-    startConstellation: cfg.startConstellation,
-    startRefinement: cfg.startRefinement,
     maxConstellation: cfg.maxConstellation,
     maxRefinement: cfg.maxRefinement,
   };
@@ -105,8 +101,8 @@ function buildDefaultCharConfigs(
         ? { id: bc.weaponId, refinement: bc.refinement }
         : undefined,
       weapon5Star: is5StarWeapon ? { id: bc.weaponId } : undefined,
-      startConstellation: rarity >= 5 ? 0 : bc.constellation,
-      startRefinement: is5StarWeapon ? 1 : 0,
+      startConstellation: bc.constellation,
+      startRefinement: is5StarWeapon ? bc.refinement : 0,
       maxConstellation: rarity >= 5 ? 6 : bc.constellation,
       maxRefinement: is5StarWeapon ? 5 : 0,
     };

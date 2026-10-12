@@ -296,6 +296,68 @@ const TeamDamageConfigSchema = z
   })
   .loose();
 
+const TeamInvestmentConfigSchema = z
+  .object({
+    configs: z
+      .array(
+        z
+          .object({
+            charId: z.string(),
+            altWeapon: z
+              .object({ id: z.string(), refinement: z.number().optional() })
+              .optional(),
+            maxConstellation: z.number(),
+            maxRefinement: z.number(),
+          })
+          .loose()
+      )
+      .optional()
+      .catch(undefined),
+    futureCountChanges: z
+      .array(z.unknown())
+      .transform((items) =>
+        items.flatMap((item) => {
+          const parsed = z
+            .object({
+              charId: z.string(),
+              constellation: z.number().int().min(1).max(6),
+              formulaId: z.string(),
+              delta: z.number().finite(),
+            })
+            .safeParse(item);
+          return parsed.success ? [parsed.data] : [];
+        })
+      )
+      .optional()
+      .catch(undefined),
+    legacyCountOverrides: z
+      .record(z.string(), z.number())
+      .optional()
+      .catch(undefined),
+    minErOverrides: z
+      .record(z.string(), z.number())
+      .optional()
+      .catch(undefined),
+    legacyInputs: z
+      .object({
+        reactionOverrides: z.record(z.string(), z.unknown()).optional(),
+        enemyAura: z.string().optional(),
+        extraBuffs: z.array(z.unknown()).optional(),
+        startingValues: z
+          .record(
+            z.string(),
+            z.object({ constellation: z.number(), refinement: z.number() })
+          )
+          .optional(),
+      })
+      .loose()
+      .optional()
+      .catch(undefined),
+  })
+  .loose()
+  .optional()
+  .catch(undefined);
+
 const TeamSetupConfigSchema = z
   .object({
     combatOptions: z.record(z.string(), z.string()).catch({}),
@@ -316,7 +378,7 @@ const TeamSetupConfigSchema = z
       })
       .loose()
       .optional(),
-    investment: z.unknown().optional(),
+    investment: TeamInvestmentConfigSchema,
   })
   .loose()
   .catch({ combatOptions: {} });
@@ -628,22 +690,28 @@ const ViewSettingsSchema = z
 export const PersistedSessionNavStoreSchema = z.object({
   viewSettings: z
     .object({
-      damage: ViewSettingsSchema,
-      investment: ViewSettingsSchema,
-      weaponChoice: ViewSettingsSchema,
+      analysis: ViewSettingsSchema,
     })
     .catch({
-      damage: DEFAULT_VIEW_SETTINGS,
-      investment: DEFAULT_VIEW_SETTINGS,
-      weaponChoice: DEFAULT_VIEW_SETTINGS,
+      analysis: DEFAULT_VIEW_SETTINGS,
     }),
+  analysisModes: z
+    .record(
+      z.string(),
+      z
+        .enum(["artifacts", "builds", "investment", "characters", "energy"])
+        .catch("artifacts")
+    )
+    .catch({}),
 });
 
 const TeamResultCacheEntrySchema = z.object({
-  optimizationResult: z.unknown().nullable().optional(),
   investmentResult: z.unknown().nullable().optional(),
   weaponChoiceResult: z.unknown().nullable().optional(),
+  weaponChoiceInputKey: z.string().optional(),
   artifactChoiceResult: z.unknown().nullable().optional(),
+  artifactChoiceInputKey: z.string().optional(),
+  investmentInputKey: z.string().optional(),
 });
 
 export const PersistedTeamResultCacheStoreSchema = z.object({

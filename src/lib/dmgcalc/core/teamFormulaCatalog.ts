@@ -394,7 +394,7 @@ export class TeamFormulaCatalog {
  * Returns e.g. `["none", "melt"]` for a Pyro formula on a team with Cryo.
  * Returns `["none"]` for Anemo/Geo/Physical or when team can't trigger reactions.
  *
- * Used by FormulaSelectorCard (combo/single mode) and AnalyzerComboTab.
+ * Used by FormulaSelectorCard's combo and single modes.
  */
 export function getFormulaReactions(
   charId: string,

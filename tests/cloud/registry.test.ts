@@ -27,7 +27,7 @@ describe("cloud backup registry", () => {
     ]);
     expect(
       included.find((descriptor) => descriptor.id === "teams")
-    ).toMatchObject({ currentVersion: 4 });
+    ).toMatchObject({ currentVersion: 5 });
   });
 
   it("explicitly classifies cache, session, and device-local stores as excluded", () => {

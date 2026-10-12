@@ -408,8 +408,16 @@ describe("buildTeamSlotConfigs", () => {
   it("picks highest weapon refinement from account", () => {
     const acct = createAccountData({
       extraWeapons: [
-        createWeaponData({ key: "staff_of_homa", refinement: 1 }),
-        createWeaponData({ key: "staff_of_homa", refinement: 3 }),
+        createWeaponData({
+          id: "homa-low",
+          key: "staff_of_homa",
+          refinement: 1,
+        }),
+        createWeaponData({
+          id: "homa-high",
+          key: "staff_of_homa",
+          refinement: 3,
+        }),
       ],
     });
     const configs = buildConfigs(baseTeam, acct);

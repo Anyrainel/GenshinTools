@@ -33,6 +33,7 @@ import type {
   CalcContext,
   ComboFormula,
   ComboLine,
+  ExtraBuff,
   OptionMap,
   ReactionOverride,
   TeamSlotConfig,
@@ -45,6 +46,7 @@ import { TeamMeta } from "../../dmgcalc/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "../generator/substatBudget";
+import { deriveFutureInvestmentCombo } from "./investmentCounts";
 import type {
   AnalyzerCharConfig,
   AnalyzerDAG,
@@ -455,8 +457,27 @@ export function deriveComboForAllocation(
   allocation: TeamInvestment,
   templateCombo: ComboFormula,
   teamBuild: TeamBuild,
-  comboOverrides?: ComboCountOverrides
+  comboOverrides?: ComboCountOverrides,
+  options?: Pick<
+    AnalyzerOptions,
+    | "baselineConstellations"
+    | "futureCountChanges"
+    | "singleObjective"
+    | "ignoredContributorIds"
+  >
 ): ComboFormula {
+  if (options?.baselineConstellations) {
+    return deriveFutureInvestmentCombo(
+      allocation,
+      templateCombo,
+      teamBuild,
+      options.baselineConstellations,
+      options.futureCountChanges,
+      comboOverrides,
+      options.singleObjective,
+      options.ignoredContributorIds
+    );
+  }
   // Build per-char default counts at current constellation
   const descriptorCounts: Record<string, Record<string, number>> = {};
   for (const [charId, inv] of Object.entries(allocation)) {
@@ -661,7 +682,8 @@ function evalWithCachedArtifacts(
   combo: ComboFormula,
   calcContext: CalcContext,
   charBuildCache?: Map<string, CharBuild>,
-  hasAnyStackLimited?: boolean
+  hasAnyStackLimited?: boolean,
+  extraBuffs: ExtraBuff[] = []
 ): number {
   try {
     const configs = baseConfigs.map((bc) => {
@@ -686,7 +708,14 @@ function evalWithCachedArtifacts(
       }
     }
 
-    const tb = new TeamBuild(configs, combatOpts, enemyAura, [], cachedBuilds);
+    const tb = new TeamBuild(
+      configs,
+      combatOpts,
+      enemyAura,
+      extraBuffs,
+      cachedBuilds,
+      calcContext
+    );
 
     // Compute greedy buff allocation for this specific constellation state.
     // Filter to valid lines (formulas that exist at this constellation).
@@ -737,7 +766,8 @@ function evalAndCache(
   combo: ComboFormula,
   calcContext: CalcContext,
   charBuildCache?: Map<string, CharBuild>,
-  hasAnyStackLimited?: boolean
+  hasAnyStackLimited?: boolean,
+  extraBuffs: ExtraBuff[] = []
 ): CachedNode {
   const id = allocationNodeId(allocation);
   const existing = cache.get(id);
@@ -753,7 +783,8 @@ function evalAndCache(
     combo,
     calcContext,
     charBuildCache,
-    hasAnyStackLimited
+    hasAnyStackLimited,
+    extraBuffs
   );
   const jin = computeM(allocation, configs);
   const node: CachedNode = { id, jin, allocation: { ...allocation }, damage };
@@ -770,13 +801,21 @@ async function runGeneration(
   enemyAura: Element | undefined,
   combo: ComboFormula,
   perChar?: Record<string, { minEr: number; minCr: number }>,
-  calcContext?: CalcContext
+  calcContext?: CalcContext,
+  extraBuffs: ExtraBuff[] = []
 ): Promise<Record<string, StatSheet>> {
   const configs = baseConfigs.map((bc) => {
     const inv = allocation[bc.charId];
     return inv ? investmentToConfig(inv, bc) : bc;
   });
-  const teamBuild = new TeamBuild(configs, combatOpts, enemyAura);
+  const teamBuild = new TeamBuild(
+    configs,
+    combatOpts,
+    enemyAura,
+    extraBuffs,
+    undefined,
+    calcContext
+  );
   const carryCharId =
     combo.lines.find((l) => l.count > 0)?.charId ?? configs[0].charId;
 
@@ -890,7 +929,8 @@ async function* computePhase1(
       allocation,
       templateCombo,
       teamBuild,
-      opts.comboOverrides
+      opts.comboOverrides,
+      opts
     );
     const effectivePerChar = buildEffectivePerChar(
       allocation,
@@ -904,7 +944,8 @@ async function* computePhase1(
       enemyAura,
       derivedCombo,
       effectivePerChar,
-      opts.calcContext
+      opts.calcContext,
+      teamBuild.extraBuffs
     );
 
     snapshotCache[snapshot.id] = result;
@@ -1037,7 +1078,8 @@ async function* computePhase2(
           alloc,
           templateCombo,
           teamBuild,
-          opts.comboOverrides
+          opts.comboOverrides,
+          opts
         );
         const activeCombo = {
           ...derivedCombo,
@@ -1053,7 +1095,8 @@ async function* computePhase2(
           activeCombo,
           opts.calcContext,
           charBuildCache,
-          hasAnyStackLimited
+          hasAnyStackLimited,
+          teamBuild.extraBuffs
         );
         cache.add({ id, jin: totalM, allocation: { ...alloc }, damage });
       }
@@ -1195,7 +1238,8 @@ async function* computePhase3(
           up.allocation,
           templateCombo,
           teamBuild,
-          opts.comboOverrides
+          opts.comboOverrides,
+          opts
         );
         const activeCombo = {
           ...derivedCombo,
@@ -1212,7 +1256,8 @@ async function* computePhase3(
           activeCombo,
           opts.calcContext,
           charBuildCache,
-          hasAnyStackLimited
+          hasAnyStackLimited,
+          teamBuild.extraBuffs
         );
         if (!bestUp || cached.damage > bestUp.cached.damage) {
           bestUp = { cached, charId: up.charId, upgrade: up.upgrade };

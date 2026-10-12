@@ -384,12 +384,12 @@ export const FrozenView = forwardRef<FrozenViewHandle>(
                 icon={Snowflake}
                 iconColor="text-cyan-500"
                 glowColor="bg-cyan-500/20"
-                title={t.ui("teamComp.frozenEmptyTitle")}
+                title={t.ui("teamComp.tabLoadouts")}
                 description={t.ui("teamComp.frozenEmptyDesc")}
                 action={{
                   label: t.ui("teamComp.optimizeTeamDamage"),
                   icon: Swords,
-                  href: "/team-comp/damage",
+                  href: "/team-comp/analysis",
                 }}
               />
             </div>

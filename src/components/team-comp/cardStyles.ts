@@ -1,4 +1,4 @@
-/** Shared card style constants for DamageDetail cards (Roster, Formula, Damage). */
+/** Shared card style constants for the team analysis workspace. */
 
 export const CARD_CLS =
   "bg-gradient-card border-border overflow-hidden shadow-lg";

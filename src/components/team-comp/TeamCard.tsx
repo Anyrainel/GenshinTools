@@ -237,7 +237,7 @@ export const TeamCard = memo(
         <div
           className={cn(
             "px-2 xl:px-3 py-1.5 xl:py-2",
-            isFrozen && "frozen-card pointer-events-none"
+            isFrozen && "ring-1 ring-primary/30"
           )}
         >
           <div className="grid grid-cols-[auto_repeat(4,auto)] gap-1.5 xl:gap-3 w-fit mx-auto pr-1 xl:pr-2 justify-items-center items-center">

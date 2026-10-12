@@ -33,7 +33,7 @@ describe("ErCalcCard", () => {
   beforeEach(() => {
     act(() => {
       useTeamStore.getState().clearTeams();
-      useSessionNavStore.getState().setErCalcExpanded("damage", true);
+      useSessionNavStore.getState().setErCalcExpanded("analysis", true);
     });
   });
 
@@ -250,11 +250,15 @@ describe("ErCalcCard", () => {
       // A funnel pointing at Xingqiu, who is about to leave.
       act(() => {
         fireEvent.change(
-          document.getElementById("funnel-source") as HTMLSelectElement,
+          document.getElementById(
+            `funnel-source-${teamId}`
+          ) as HTMLSelectElement,
           { target: { value: "bennett" } }
         );
         fireEvent.change(
-          document.getElementById("funnel-target") as HTMLSelectElement,
+          document.getElementById(
+            `funnel-target-${teamId}`
+          ) as HTMLSelectElement,
           { target: { value: "xingqiu" } }
         );
       });

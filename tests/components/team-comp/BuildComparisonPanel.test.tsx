@@ -1,15 +1,18 @@
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { WeaponChoiceDetail } from "@/components/team-comp/WeaponChoiceDetail";
+import { BuildComparisonPanel } from "@/components/team-comp/BuildComparisonPanel";
 import type { WeaponChoiceResultCard } from "@/components/team-comp/WeaponChoiceResultCard";
 import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/data/gameStatsLoader";
 import type { AccountData } from "@/data/types";
+import { TeamBuild } from "@/lib/dmgcalc/core/teamBuild";
 import type { WeaponChoiceResult as ComputeResult } from "@/lib/team-comp/analyzer/weaponChoice";
+import { buildTeamSlotConfigs } from "@/lib/team-comp/teamConfigUtils";
 import { teamCompInputToComp } from "@/lib/team-comp/teamDeltas";
+import { useTeamResultCacheStore } from "@/stores/useTeamResultCacheStore";
 import { fireEvent, render, screen } from "../../utils/render";
 import "@/lib/dmgcalc";
 
@@ -19,9 +22,6 @@ const state = vi.hoisted(() => ({
   start: vi.fn(),
   stop: vi.fn(),
 }));
-vi.mock("@/hooks/useActiveAccount", () => ({
-  useActiveAccountData: () => state.account,
-}));
 vi.mock("@/hooks/useAsyncWeaponChoice", () => ({
   useAsyncWeaponChoice: () => ({
     result: state.result,
@@ -30,15 +30,6 @@ vi.mock("@/hooks/useAsyncWeaponChoice", () => ({
     start: state.start,
     stop: state.stop,
   }),
-}));
-vi.mock("@/components/team-comp/TeamRosterCard", () => ({
-  TeamRosterCard: () => null,
-}));
-vi.mock("@/components/team-comp/FormulaSelectorCard", () => ({
-  FormulaSelectorCard: () => null,
-}));
-vi.mock("@/components/team-comp/TeamDetailAspectLinks", () => ({
-  TeamDetailAspectLinks: () => null,
 }));
 vi.mock(
   "@/components/team-comp/WeaponChoiceResultCard",
@@ -75,7 +66,23 @@ const teamComp = teamCompInputToComp({
   reactions: [],
 });
 const setupConfig = { combatOptions: {} };
-const props = { teamComp, setupConfig, onBack: vi.fn() };
+function TestPanel() {
+  const configs = buildTeamSlotConfigs(teamComp, setupConfig, state.account);
+  return (
+    <BuildComparisonPanel
+      teamComp={teamComp}
+      setupConfig={setupConfig}
+      accountData={state.account}
+      configs={configs}
+      teamBuild={new TeamBuild(configs)}
+      objectiveCombo={{
+        id: "shared",
+        label: { en: "Shared", zh: "共享" },
+        lines: [],
+      }}
+    />
+  );
+}
 const account: AccountData = {
   characters: [],
   extraArtifacts: [],
@@ -98,23 +105,24 @@ describe("owned comparison scope", () => {
     state.account = account;
     state.result = null;
     vi.clearAllMocks();
+    useTeamResultCacheStore.setState({ resultsByTeamId: {} });
   });
 
   it("clears account-scoped rankings after inventory changes and can leave owned mode after account removal", async () => {
-    const view = render(<WeaponChoiceDetail {...props} />);
+    const view = render(<TestPanel />);
     await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
     fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     expect(state.start.mock.calls[0][0].ownedWeaponChoices).toEqual([
       { weaponId: "staff_of_homa", refinement: 3 },
     ]);
     state.result = result("weapon", 22);
-    view.rerender(<WeaponChoiceDetail {...props} />);
+    view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("22");
     state.account = { ...account, extraWeapons: [] };
-    view.rerender(<WeaponChoiceDetail {...props} />);
+    view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("empty");
     state.account = null;
-    view.rerender(<WeaponChoiceDetail {...props} />);
+    view.rerender(<TestPanel />);
     expect(screen.getByRole("button", { name: "Run Analysis" })).toBeDisabled();
     expect(screen.getByRole("tab", { name: "All weapons" })).not.toBeDisabled();
     await userEvent.click(screen.getByRole("tab", { name: "All weapons" }));
@@ -123,35 +131,54 @@ describe("owned comparison scope", () => {
     ).not.toBeDisabled();
   });
 
-  it("keeps an artifact comparison running when owned inventory changes", async () => {
-    const view = render(<WeaponChoiceDetail {...props} />);
+  it("keeps an artifact comparison running when unrelated owned inventory changes", async () => {
+    const view = render(<TestPanel />);
     await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
     await userEvent.click(screen.getByRole("tab", { name: "Artifact sets" }));
     fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     state.stop.mockClear();
-    state.account = { ...account, extraWeapons: [] };
-    view.rerender(<WeaponChoiceDetail {...props} />);
+    state.account = {
+      ...account,
+      extraWeapons: [
+        ...account.extraWeapons,
+        {
+          id: "extra-tassel",
+          key: "black_tassel",
+          refinement: 5,
+          level: 90,
+          lock: false,
+        },
+      ],
+    };
+    view.rerender(<TestPanel />);
     expect(state.stop).not.toHaveBeenCalled();
     state.result = result("artifact", 33);
-    view.rerender(<WeaponChoiceDetail {...props} />);
+    view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("33");
   });
 
-  it("restores the catalog cache when leaving owned mode", async () => {
-    const resultCache = { weaponChoiceResult: result("weapon", 11) };
-    const view = render(
-      <WeaponChoiceDetail {...props} resultCache={resultCache} />
-    );
+  it("restores a computed catalog result when leaving owned mode", async () => {
+    const view = render(<TestPanel />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    state.result = result("weapon", 11);
+    view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("11");
     await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
     expect(screen.getByTestId("result")).toHaveTextContent("empty");
     fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
     state.result = result("weapon", 22);
-    view.rerender(<WeaponChoiceDetail {...props} resultCache={resultCache} />);
+    view.rerender(<TestPanel />);
     expect(screen.getByTestId("result")).toHaveTextContent("22");
     await userEvent.click(screen.getByRole("tab", { name: "All weapons" }));
     expect(screen.getByTestId("result")).toHaveTextContent("11");
     await userEvent.click(screen.getByRole("tab", { name: "Owned weapons" }));
     expect(screen.getByTestId("result")).toHaveTextContent("22");
+  });
+  it("ignores persisted catalog results without a matching calculation signature", () => {
+    useTeamResultCacheStore
+      .getState()
+      .setChoiceResult(teamComp.id, "weapon", result("weapon", 11));
+    render(<TestPanel />);
+    expect(screen.getByTestId("result")).toHaveTextContent("empty");
   });
 });

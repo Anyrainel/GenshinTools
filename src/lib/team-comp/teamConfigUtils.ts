@@ -4,6 +4,8 @@ import {
   artifactHalfSetsById,
   artifactIdToHalfSetId,
   artifactsById,
+  charactersById,
+  weaponsById,
 } from "@/data/gameResources";
 import { getCharacterLevelTier } from "@/data/gameStatsLoader";
 import type {
@@ -30,6 +32,7 @@ import type {
 } from "../dmgcalc/types";
 import { getHalfSetIds, getSetId } from "../dmgcalc/utils";
 import { teamCompToArrays } from "./teamDeltas";
+import { resolveRosterWeaponCopies } from "./weaponCopies";
 
 type FormulaSelection = { charId: string; formulaId: string };
 
@@ -200,30 +203,67 @@ function resolveTalentOverrides(
   };
 }
 
-/** Resolve the effective refinement for a weapon, checking account data + overrides. */
-function resolveRefinement(
-  charId: string,
-  weaponId: string,
-  setupConfig: TeamSetupConfig,
-  accountData: AccountData | null
-): number {
-  const authoredRefinement = setupConfig.charConfigs?.[charId]?.refinement;
-  if (authoredRefinement !== undefined) return authoredRefinement;
-  let defaultRefine = 1;
-  if (accountData) {
-    const refinements: number[] = [];
-    for (const c of accountData.characters) {
-      if (c.weapon?.key === weaponId) refinements.push(c.weapon.refinement);
+/** Fill only account-backed values; unmatched characters/copies stay explicit planning inputs. */
+export function useAccountRosterConfig(
+  comp: TeamComp,
+  setup: TeamSetupConfig,
+  account: AccountData
+): TeamSetupConfig {
+  const next: TeamSetupConfig = {
+    ...setup,
+    combatOptions: { ...setup.combatOptions },
+    charConfigs: { ...setup.charConfigs },
+  };
+  const assignments = resolveRosterWeaponCopies(
+    comp,
+    { combatOptions: {} },
+    account
+  );
+  comp.slots.forEach((slot, index) => {
+    if (!slot.charId) return;
+    const character = account.characters.find(
+      (char) => char.key === slot.charId
+    );
+    const config = { ...next.charConfigs?.[slot.charId] };
+    if (character) {
+      config.level = Number(getCharacterLevelTier(character.level));
+      config.constellation = character.constellation;
+      config.talentLevels = { ...character.talent };
+      for (const field of [
+        "Level",
+        "Constellation",
+        "TalentAuto",
+        "TalentSkill",
+        "TalentBurst",
+      ])
+        delete next.combatOptions[`${slot.charId}.override${field}`];
     }
-    for (const w of accountData.extraWeapons) {
-      if (w.key === weaponId) refinements.push(w.refinement);
+    if (assignments[index]?.copy) {
+      config.refinement = assignments[index].copy.refinement;
+      delete next.combatOptions[`${slot.charId}.overrideRefinement`];
     }
-    if (refinements.length > 0) defaultRefine = Math.max(...refinements);
+    next.charConfigs![slot.charId] = config;
+  });
+  return next;
+}
+
+export function resetFiveStarRosterConfig(
+  comp: TeamComp,
+  setup: TeamSetupConfig
+): TeamSetupConfig {
+  const next: TeamSetupConfig = {
+    ...setup,
+    charConfigs: { ...setup.charConfigs },
+  };
+  for (const slot of comp.slots) {
+    if (!slot.charId) continue;
+    const config = { ...next.charConfigs?.[slot.charId] };
+    if (charactersById[slot.charId]?.rarity === 5) config.constellation = 0;
+    if (slot.weaponId && weaponsById[slot.weaponId]?.rarity === 5)
+      config.refinement = 1;
+    next.charConfigs![slot.charId] = config;
   }
-  return setupConfig.combatOptions?.[`${charId}.overrideRefinement`] !==
-    undefined
-    ? Number(setupConfig.combatOptions[`${charId}.overrideRefinement`])
-    : defaultRefine;
+  return next;
 }
 
 function getTeamCharConfig(
@@ -243,6 +283,11 @@ export function buildTeamSlotConfigs(
   accountData: AccountData | null
 ): TeamSlotConfig[] {
   const configs: TeamSlotConfig[] = [];
+  const weaponCopies = resolveRosterWeaponCopies(
+    comp,
+    setupConfig,
+    accountData
+  );
   const { characters, weapons, artifacts } = teamCompToArrays(comp);
   for (let i = 0; i < 4; i++) {
     const charId = characters[i];
@@ -256,12 +301,7 @@ export function buildTeamSlotConfigs(
     );
 
     const weaponId = weapons[i]!;
-    const refinement = resolveRefinement(
-      charId,
-      weaponId,
-      setupConfig,
-      accountData
-    );
+    const refinement = weaponCopies[i].refinement;
 
     let artifactSet: ArtifactSetConfig | null = null;
 
@@ -421,9 +461,11 @@ export function resolveBuildInfo(
   const { characters, weapons, artifacts } = teamCompToArrays(comp);
   const idx = characters.indexOf(charId);
   const weaponId = idx >= 0 ? weapons[idx] : null;
-  const weaponRefine = weaponId
-    ? resolveRefinement(charId, weaponId, setupConfig, accountData)
-    : 1;
+  const weaponRefine =
+    idx >= 0
+      ? resolveRosterWeaponCopies(comp, setupConfig, accountData)[idx]
+          .refinement
+      : 1;
   const artConfig = idx >= 0 ? artifacts[idx] : null;
   return { charLevel, charConst, weaponId, weaponRefine, artConfig };
 }

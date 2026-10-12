@@ -230,10 +230,19 @@ export function migrateLegacyFormulaUnitConfigs(
       ? migrateComboLines(combo.lines, combo.buffOverrides)
       : undefined;
     const comboOverrides = migrateComboOverrides(
-      config.investment?.comboOverrides
+      (
+        config.investment as
+          | { comboOverrides?: Record<string, number> }
+          | undefined
+      )?.comboOverrides
     );
     const investmentChanged =
-      comboOverrides !== config.investment?.comboOverrides;
+      comboOverrides !==
+      (
+        config.investment as
+          | { comboOverrides?: Record<string, number> }
+          | undefined
+      )?.comboOverrides;
 
     if (!migratedCombo?.changed && !investmentChanged) {
       nextConfigs[teamId] = config;
@@ -260,7 +269,7 @@ export function migrateLegacyFormulaUnitConfigs(
             investment: {
               ...config.investment,
               comboOverrides,
-            },
+            } as TeamSetupConfig["investment"],
           }
         : {}),
     };
@@ -285,10 +294,19 @@ export function migrateLegacySkirkFormulaUnitConfigs(
       ? migrateSkirkComboLines(combo.lines, combo.buffOverrides)
       : undefined;
     const comboOverrides = migrateSkirkComboOverrides(
-      config.investment?.comboOverrides
+      (
+        config.investment as
+          | { comboOverrides?: Record<string, number> }
+          | undefined
+      )?.comboOverrides
     );
     const investmentChanged =
-      comboOverrides !== config.investment?.comboOverrides;
+      comboOverrides !==
+      (
+        config.investment as
+          | { comboOverrides?: Record<string, number> }
+          | undefined
+      )?.comboOverrides;
 
     if (!migratedCombo?.changed && !investmentChanged) {
       nextConfigs[teamId] = config;
@@ -315,7 +333,7 @@ export function migrateLegacySkirkFormulaUnitConfigs(
             investment: {
               ...config.investment,
               comboOverrides,
-            },
+            } as TeamSetupConfig["investment"],
           }
         : {}),
     };

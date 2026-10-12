@@ -183,7 +183,7 @@ describe("DamageCard", () => {
     expect(screen.getByText(/Press Run Optimization/i)).toBeInTheDocument();
   });
 
-  it("shows freeze button when onFreezeAll is provided in optimize tab", async () => {
+  it("offers saving the optimized artifact loadout", async () => {
     const user = userEvent.setup({ delay: null });
     const onFreezeAll = vi.fn();
     render(
@@ -207,10 +207,10 @@ describe("DamageCard", () => {
     );
     const optimizeBtns = screen.getAllByText("Optimize");
     await user.click(optimizeBtns[0]);
-    expect(screen.getByText("Freeze All")).toBeInTheDocument();
+    expect(screen.getByText("Save loadout")).toBeInTheDocument();
   });
 
-  it("shows unfreeze button when team is frozen", async () => {
+  it("offers explicit removal of an existing saved loadout", async () => {
     const user = userEvent.setup({ delay: null });
     const onUnfreezeAll = vi.fn();
     render(
@@ -223,22 +223,29 @@ describe("DamageCard", () => {
     );
     const optimizeBtns = screen.getAllByText("Optimize");
     await user.click(optimizeBtns[0]);
-    expect(screen.getByText("Thaw All")).toBeInTheDocument();
+    expect(screen.getByText("Remove loadout")).toBeInTheDocument();
   });
 
-  it("disables optimize button when fully frozen", async () => {
+  it("permits another optimization while the team has a saved loadout", async () => {
     const user = userEvent.setup({ delay: null });
+    const handleOptimize = vi.fn();
     render(
       <TestCard
         {...defaultProps({
-          isFullyFrozen: true,
+          isFrozen: true,
+          frozenCharIds: new Set(["hu_tao", "xingqiu"]),
+          handleOptimize,
+          comboLines: [{ charId: "hu_tao", formulaId: "charged", count: 1 }],
           resolvedFormula: { charId: "hu_tao", formulaId: "charged" },
         })}
       />
     );
     const optimizeBtns = screen.getAllByText("Optimize");
     await user.click(optimizeBtns[0]);
-    expect(screen.getByText("Frozen")).toBeInTheDocument();
+    const run = screen.getByRole("button", { name: "Optimize" });
+    expect(run).not.toBeDisabled();
+    await user.click(run);
+    expect(handleOptimize).toHaveBeenCalledTimes(1);
   });
 
   it("shows inventory warning when account has characters but no extra artifacts", async () => {

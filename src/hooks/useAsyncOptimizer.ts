@@ -15,6 +15,7 @@ export interface AsyncOptimizerState {
   error: Error | null;
   start: (opts: TeamOptimizerOptions) => void;
   stop: () => void;
+  reset: () => void;
 }
 
 export function useAsyncOptimizer(): AsyncOptimizerState {
@@ -40,11 +41,22 @@ export function useAsyncOptimizer(): AsyncOptimizerState {
     setProgress(null);
   }, []);
 
-  const { result, isComputing, error, start, stop } = useAsyncComputation<
+  const {
+    result,
+    isComputing,
+    error,
+    start,
+    stop,
+    reset: resetComputation,
+  } = useAsyncComputation<
     TeamOptYield,
     TeamOptimizationResult,
     TeamOptimizerOptions
   >(runTeamOptimization, onYield, onStart);
 
-  return { progress, result, isComputing, error, start, stop };
+  const reset = useCallback(() => {
+    setProgress(null);
+    resetComputation();
+  }, [resetComputation]);
+  return { progress, result, isComputing, error, start, stop, reset };
 }

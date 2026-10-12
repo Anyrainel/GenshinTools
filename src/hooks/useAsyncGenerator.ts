@@ -11,6 +11,7 @@ export interface AsyncGeneratorState {
   error: Error | null;
   start: (opts: GeneratorOptions) => void;
   stop: () => void;
+  reset: () => void;
 }
 
 export function useAsyncGenerator(): AsyncGeneratorState {

@@ -1,5 +1,13 @@
-import { ArrowLeft, Info } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  ArrowLeft,
+  Gem,
+  Info,
+  Sword,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { ArtifactDataHoverCard } from "@/components/shared/ArtifactDataHoverCard";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -21,6 +29,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { MainStat, MainStatSlot, Slot } from "@/data/enums";
 import { allSlots } from "@/data/enums";
@@ -66,6 +75,9 @@ import type {
   ReactionOverride,
 } from "@/lib/dmgcalc/types";
 import { resolveCalcContext } from "@/lib/dmgcalc/utils";
+import type { AccountEquipmentResult } from "@/lib/team-comp/accountEquipmentTypes";
+import type { AnalysisMode } from "@/lib/team-comp/analysisTypes";
+import { reconcileDefaultCombo } from "@/lib/team-comp/reconcileDefaultCombo";
 import {
   buildTeamSlotConfigs,
   getEffectiveCombo,
@@ -99,29 +111,36 @@ import {
   detectFrozenArtifactConflicts,
   getMatchingSetIds,
 } from "../../lib/artifact/inventory";
+import { AccountEquipmentCard } from "./AccountEquipmentCard";
 import { ArtifactSwapDialog } from "./ArtifactSwapDialog";
+import { BuildComparisonPanel } from "./BuildComparisonPanel";
+import { CharacterReplacementDetail } from "./CharacterReplacementDetail";
 import { DamageCard } from "./DamageCard";
 import { ErCalcCard } from "./ErCalcCard";
 import { FormulaSelectorCard } from "./FormulaSelectorCard";
+import { InvestmentPanel } from "./InvestmentPanel";
 import type { ReuseEntry } from "./StatSheetPanel";
-import { TeamDetailAspectLinks } from "./TeamDetailAspectLinks";
 import { TeamRosterCard } from "./TeamRosterCard";
 
 const limitMap = { en: limitEnRaw, zh: limitZhRaw };
 
-export interface DamageDetailProps {
+export interface AnalysisWorkspaceProps {
   teamComp: TeamComp;
   setupConfig: TeamSetupConfig;
   onBack: () => void;
   viewId?: ViewId;
+  mode: AnalysisMode;
+  onModeChange: (mode: AnalysisMode) => void;
 }
 
-export function DamageDetail({
+export function AnalysisWorkspace({
   teamComp,
   setupConfig,
   onBack,
-  viewId = "damage",
-}: DamageDetailProps) {
+  viewId = "analysis",
+  mode,
+  onModeChange,
+}: AnalysisWorkspaceProps) {
   const { t, language } = useLanguage();
   const teamId = teamComp.id;
   const { characters, artifacts } = useMemo(
@@ -143,8 +162,70 @@ export function DamageDetail({
   const isMobile = useMediaQuery("(max-width: 1023px)");
   const accountData = useActiveAccountData();
   const storeUpdateTeamComp = useTeamStore((state) => state.updateTeamComp);
-  const updateTeamSetupConfig = useTeamStore(
+  const storeUpdateTeamSetupConfig = useTeamStore(
     (state) => state.updateTeamSetupConfig
+  );
+  const updateTeamSetupConfig = useCallback(
+    (
+      id: string,
+      updater:
+        | Partial<TeamSetupConfig>
+        | ((config: TeamSetupConfig) => TeamSetupConfig)
+    ) => {
+      storeUpdateTeamSetupConfig(id, (current) => {
+        const next =
+          typeof updater === "function"
+            ? updater(current)
+            : { ...current, ...updater };
+        if (
+          id !== teamId ||
+          !current.damage?.combo ||
+          next.damage?.combo !== current.damage.combo
+        )
+          return next;
+        const beforeConfigs = buildTeamSlotConfigs(
+          teamComp,
+          current,
+          accountData
+        );
+        const afterConfigs = buildTeamSlotConfigs(teamComp, next, accountData);
+        const beforeById = new Map(
+          beforeConfigs.map((config) => [config.charId, config])
+        );
+        const changed = new Set(
+          afterConfigs
+            .filter(
+              (config) =>
+                config.constellation !==
+                beforeById.get(config.charId)?.constellation
+            )
+            .map((config) => config.charId)
+        );
+        if (!changed.size) return next;
+        const before = new TeamBuild(
+          beforeConfigs,
+          current.combatOptions,
+          current.damage.enemyAura,
+          current.damage.extraBuffs
+        );
+        const after = new TeamBuild(
+          afterConfigs,
+          next.combatOptions,
+          next.damage?.enemyAura,
+          next.damage?.extraBuffs
+        );
+        const combo = reconcileDefaultCombo(
+          current.damage.combo,
+          before,
+          after,
+          changed
+        );
+        return combo === current.damage.combo
+          ? next
+          : { ...next, damage: { ...next.damage, combo } };
+      });
+    },
+    [storeUpdateTeamSetupConfig, teamId, teamComp, accountData]
   );
   const checkAutoDisableOwned = useAutoDisableOwnedFilter(viewId);
   const updateTeamComp = useCallback(
@@ -199,15 +280,6 @@ export function DamageDetail({
     () => new Set(frozenCharIds),
     [frozenCharIds]
   );
-  const teamCharIds = useMemo(
-    () => characters.filter((id): id is string => id != null),
-    [characters]
-  );
-  const isFullyFrozen =
-    isFrozen &&
-    teamCharIds.length > 0 &&
-    teamCharIds.every((id) => frozenCharIdSet.has(id));
-  const isPartiallyFrozen = isFrozen && !isFullyFrozen;
 
   const forceReusedCharIds = useMemo(
     () => new Set(Object.keys(teamInventory.forceReuseChars)),
@@ -240,6 +312,10 @@ export function DamageDetail({
   // Restored artifacts from unfreeze — treated like optimizer results so
   // freeze/unfreeze/re-freeze all work without special-case state management.
   const [restoredArtifacts, setRestoredArtifacts] = useState<Record<
+    string,
+    Record<string, ArtifactData>
+  > | null>(null);
+  const pendingAppliedArtifacts = useRef<Record<
     string,
     Record<string, ArtifactData>
   > | null>(null);
@@ -282,6 +358,7 @@ export function DamageDetail({
     error: teamError,
     start: startTeamOpt,
     stop: stopTeamOpt,
+    reset: resetTeamOpt,
   } = useAsyncOptimizer();
 
   useEffect(() => {
@@ -659,8 +736,8 @@ export function DamageDetail({
     for (let ci = 0; ci < characters.length; ci++) {
       const cid = characters[ci];
       if (!cid) continue;
-      // Skip frozen and force-reused characters — their artifacts are locked
-      if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) continue;
+      // Only explicit cross-team force reuse holds equipment fixed.
+      if (forceReusedCharIds.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const goalArtSet = getGoalArtifactSet(cid);
       const cs = charConfigs[cid];
@@ -690,7 +767,7 @@ export function DamageDetail({
       );
     } catch (e) {
       console.warn(
-        "[DamageDetail] TeamBuild construction failed, using original:",
+        "[AnalysisWorkspace] TeamBuild construction failed, using original:",
         e
       );
       optTeamBuild = teamBuild;
@@ -820,8 +897,7 @@ export function DamageDetail({
     }
 
     // Layer 2: Non-locked chars — optimizer results, restored artifacts, or intermediate results
-    const isLocked = (cid: string) =>
-      frozenEntry?.frozenCharIds.includes(cid) || forceReusedCharIds.has(cid);
+    const isLocked = (cid: string) => forceReusedCharIds.has(cid);
 
     if (teamResult?.done) {
       for (const [charId, arts] of Object.entries(
@@ -937,6 +1013,7 @@ export function DamageDetail({
     error: genError,
     start: startGenerator,
     stop: stopGenerator,
+    reset: resetGenerator,
   } = useAsyncGenerator();
 
   useEffect(() => {
@@ -1028,6 +1105,100 @@ export function DamageDetail({
   };
 
   // Freeze a character's equipped artifacts from the current tab
+  const calculationInputKey = JSON.stringify({
+    configs,
+    damageConfig,
+    combatOptions,
+    charConfigs,
+    optimizerBuildMatchByChar,
+    tierAssignments,
+    displayCombo,
+    buffOverrides,
+    accountData,
+    preferredMainStats,
+    inventory: teamInventory.availableArtifacts,
+    extras: teamInventory.perCharExtraArtifacts,
+  });
+  const previousCalculationInput = useRef(calculationInputKey);
+  useEffect(() => {
+    if (previousCalculationInput.current === calculationInputKey) return;
+    previousCalculationInput.current = calculationInputKey;
+    resetTeamOpt();
+    resetGenerator();
+    setSwapOverrides({});
+    setRestoredArtifacts(pendingAppliedArtifacts.current);
+    pendingAppliedArtifacts.current = null;
+  }, [calculationInputKey, resetTeamOpt, resetGenerator]);
+
+  const saveAllocation = (
+    allocation: Record<string, Record<Slot, ArtifactData | null>>
+  ) => {
+    const ids = Object.values(allocation).flatMap((pieces) =>
+      Object.values(pieces)
+        .filter((piece): piece is ArtifactData => piece !== null)
+        .map((piece) => piece.id)
+    );
+    if (new Set(ids).size !== ids.length)
+      throw new Error("A saved allocation cannot assign one artifact twice.");
+    const action = () => {
+      unfreezeTeamAction(teamId);
+      freezeCharacters(teamId, Object.keys(allocation), allocation);
+    };
+    const conflicts = detectFrozenArtifactConflicts(
+      allocation,
+      teamInventory.frozenArtifactIds,
+      useFreezeStore.getState().frozenTeams,
+      teamId
+    );
+    if (conflicts.length)
+      setPendingFreezeAction({ action, reason: "conflict", conflicts });
+    else action();
+  };
+
+  const applyEquipment = (result: AccountEquipmentResult) => {
+    const previews = Object.fromEntries(
+      Object.entries(result.artifactsByChar).map(([charId, pieces]) => [
+        charId,
+        Object.fromEntries(
+          Object.entries(pieces).filter(([, piece]) => piece !== null)
+        ),
+      ])
+    ) as Record<string, Record<string, ArtifactData>>;
+    pendingAppliedArtifacts.current = previews;
+    setRestoredArtifacts(previews);
+    const configsById = new Map(
+      result.configs.map((config) => [config.charId, config])
+    );
+    updateTeamComp(teamId, {
+      ...teamComp,
+      slots: teamComp.slots.map((slot) => {
+        const config = slot.charId ? configsById.get(slot.charId) : undefined;
+        return config
+          ? {
+              ...slot,
+              weaponId: config.weaponId,
+              artifactSet: config.artifactSet,
+            }
+          : slot;
+      }),
+    });
+    updateSetupConfig((config) => ({
+      ...config,
+      charConfigs: {
+        ...config.charConfigs,
+        ...Object.fromEntries(
+          result.configs.map((candidate) => [
+            candidate.charId,
+            {
+              ...config.charConfigs?.[candidate.charId],
+              refinement: candidate.refinement,
+            },
+          ])
+        ),
+      },
+    }));
+  };
+
   const handleFreezeCharFromCurrent = useCallback(
     (charId: string) => {
       const arts = equippedArtifactsByChar[charId];
@@ -1186,12 +1357,11 @@ export function DamageDetail({
     setSwapOverrides({});
   }, []);
 
-  // Only allow swapping when there's a non-fully-frozen result to edit
+  // Saved allocations remain editable previews; saving updates them explicitly.
   const canSwap =
-    !isFullyFrozen &&
-    ((teamResult?.done === true && teamResult.bestDamage > 0) ||
-      frozenEntry?.artifactsByChar != null ||
-      restoredArtifacts != null);
+    (teamResult?.done === true && teamResult.bestDamage > 0) ||
+    frozenEntry?.artifactsByChar != null ||
+    restoredArtifacts != null;
 
   return (
     <ScrollLayout>
@@ -1205,11 +1375,12 @@ export function DamageDetail({
         <div className="flex items-center gap-2 px-0.5 lg:px-1">
           <Button
             variant="ghost"
-            size="icon"
+            size="sm"
             onClick={onBack}
-            className="shrink-0 h-10 w-10 -ml-2 hover:bg-white/10"
+            className="shrink-0 h-10 px-2 -ml-2 hover:bg-accent"
           >
-            <ArrowLeft className="w-5 h-5 text-foreground/70" />
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            {t.ui("teamComp.switchTeam")}
           </Button>
           <h2 className="text-xl md:text-2xl font-black bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/60 tracking-tight truncate flex-1">
             {teamComp.name || t.ui("teamComp.teamOptimization")}
@@ -1236,7 +1407,6 @@ export function DamageDetail({
             weaponStats={weaponStats!}
             isMobile={isMobile}
             t={t}
-            frozenCharIds={frozenCharIdSet}
           />
         )}
 
@@ -1287,153 +1457,273 @@ export function DamageDetail({
           t={t}
         />
 
-        {/* ER Requirements — collapsible; applies to team charSettings.minEr */}
-        {<ErCalcCard teamComp={teamComp} setupConfig={setupConfig} />}
-
-        {/* Card 3 — Equipment & Damage */}
-        <DamageCard
-          teamComp={teamComp}
-          setupConfig={setupConfig}
-          characters={characters}
-          artifacts={artifacts}
-          onSetupConfigChange={updateSetupConfig}
-          resolvedFormula={resolvedFormula}
-          hasOptResult={hasOptResult}
-          allCharsResolved={allCharsResolved}
-          isFrozen={isFrozen}
-          isFullyFrozen={isFullyFrozen}
-          isPartiallyFrozen={isPartiallyFrozen}
-          frozenCharIds={frozenCharIdSet}
-          onFreezeAll={() => {
-            if (
-              !teamResult?.done &&
-              !isFrozen &&
-              !restoredArtifacts &&
-              !hasPreResolved
-            )
-              return;
-            // Freeze all chars with current view artifacts
-            // Skip only chars with nothing equipped
-            const byChar: Record<
-              string,
-              Record<Slot, ArtifactData | null>
-            > = {};
-            const freezableCharIds: string[] = [];
-            for (const [charId, arts] of Object.entries(
-              optimizedArtifactsByChar
-            )) {
-              if (!Object.values(arts).some(Boolean)) continue;
-              const charArts: Record<string, ArtifactData | null> = {};
-              for (const [slot, art] of Object.entries(arts)) {
-                if (art) {
-                  charArts[slot] = art as ArtifactData;
+        <Tabs
+          className="space-y-2"
+          value={mode}
+          onValueChange={(value) => onModeChange(value as AnalysisMode)}
+        >
+          <TabsList className="grid h-auto w-full grid-cols-3 gap-1 min-[420px]:grid-cols-5">
+            <TabsTrigger
+              value="artifacts"
+              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+            >
+              <Gem className="h-4 w-4 shrink-0" />
+              {t.ui("accountData.artifacts")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="builds"
+              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+            >
+              <Sword className="h-4 w-4 shrink-0" />
+              {t.ui("app.navArtifactFilter")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="investment"
+              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+            >
+              <TrendingUp className="h-4 w-4 shrink-0" />
+              {t.ui("teamComp.modeInvestment")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="characters"
+              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+            >
+              <Users className="h-4 w-4 shrink-0" />
+              {t.ui("accountData.characters")}
+            </TabsTrigger>
+            <TabsTrigger
+              value="energy"
+              className="min-w-0 flex-col gap-1 px-1 text-xs sm:flex-row sm:text-sm"
+            >
+              <Zap className="h-4 w-4 shrink-0" />
+              {t.ui("teamComp.modeEnergy")}
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent forceMount value="energy" hidden={mode !== "energy"}>
+            <ErCalcCard teamComp={teamComp} setupConfig={setupConfig} />
+          </TabsContent>
+          <TabsContent forceMount value="builds" hidden={mode !== "builds"}>
+            <BuildComparisonPanel
+              teamComp={teamComp}
+              setupConfig={setupConfig}
+              accountData={accountData}
+              teamBuild={teamBuild}
+              configs={configs}
+              objectiveCombo={displayCombo}
+            />
+            <div className="mt-2">
+              <AccountEquipmentCard
+                teamComp={teamComp}
+                setupConfig={setupConfig}
+                accountData={accountData}
+                configs={configs}
+                objectiveCombo={displayCombo}
+                calcContext={activeContext}
+                baseSheets={artifactSheets}
+                onApply={applyEquipment}
+                onSave={(result) => {
+                  applyEquipment(result);
+                  saveAllocation(result.artifactsByChar);
+                }}
+              />
+            </div>
+          </TabsContent>
+          <TabsContent
+            forceMount
+            value="investment"
+            hidden={mode !== "investment"}
+          >
+            {teamBuild && (
+              <InvestmentPanel
+                teamComp={teamComp}
+                setupConfig={setupConfig}
+                teamBuild={teamBuild}
+                configs={configs}
+                objectiveCombo={displayCombo}
+                singleObjective={formulaMode === "single"}
+                ignoredCharIds={ignoredCharIds}
+              />
+            )}
+          </TabsContent>
+          <TabsContent
+            forceMount
+            value="characters"
+            hidden={mode !== "characters"}
+          >
+            {gameStatsReady && (
+              <CharacterReplacementDetail
+                teamComp={teamComp}
+                setupConfig={setupConfig}
+                accountData={accountData}
+                characterStats={characterStats}
+                weaponStats={weaponStats}
+                objective={displayCombo}
+                calcContext={activeContext}
+                updateTeamComp={updateTeamComp}
+                updateTeamSetupConfig={updateTeamSetupConfig}
+                ignoredCharIds={ignoredCharIds}
+                onIgnoredCharIdsChange={setIgnoredCharIds}
+                onSaveLoadout={(result) =>
+                  saveAllocation(result.artifactsByChar)
                 }
-              }
-              byChar[charId] = charArts as Record<Slot, ArtifactData | null>;
-              freezableCharIds.push(charId);
-            }
-            if (freezableCharIds.length === 0) return;
-
-            freezeCharacters(teamId, freezableCharIds, byChar);
-            setSwapOverrides({});
-          }}
-          onUnfreezeAll={
-            isFrozen
-              ? () => {
-                  // Snapshot current artifacts as restored before clearing freeze
-                  const snapshot: Record<
-                    string,
-                    Record<string, ArtifactData>
-                  > = {};
-                  for (const [charId, arts] of Object.entries(
-                    optimizedArtifactsByChar
-                  )) {
-                    if (Object.values(arts).some(Boolean)) {
-                      snapshot[charId] = { ...arts };
+              />
+            )}
+          </TabsContent>
+          <TabsContent
+            forceMount
+            value="artifacts"
+            hidden={mode !== "artifacts"}
+          >
+            {frozenEntry?.frozenCharIds.some(
+              (charId) => !characters.includes(charId)
+            ) && (
+              <p className="rounded-lg border border-border p-3 text-sm text-muted-foreground">
+                {t.ui("teamComp.savedLoadoutOutdated")}
+              </p>
+            )}
+            {/* Card 3 — Equipment & Damage */}
+            <DamageCard
+              teamComp={teamComp}
+              setupConfig={setupConfig}
+              characters={characters}
+              artifacts={artifacts}
+              onSetupConfigChange={updateSetupConfig}
+              resolvedFormula={resolvedFormula}
+              hasOptResult={hasOptResult}
+              allCharsResolved={allCharsResolved}
+              isFrozen={isFrozen}
+              frozenCharIds={frozenCharIdSet}
+              onFreezeAll={() => {
+                if (
+                  !teamResult?.done &&
+                  !isFrozen &&
+                  !restoredArtifacts &&
+                  !hasPreResolved
+                )
+                  return;
+                // Freeze all chars with current view artifacts
+                // Skip only chars with nothing equipped
+                const byChar: Record<
+                  string,
+                  Record<Slot, ArtifactData | null>
+                > = {};
+                const freezableCharIds: string[] = [];
+                for (const [charId, arts] of Object.entries(
+                  optimizedArtifactsByChar
+                )) {
+                  if (!Object.values(arts).some(Boolean)) continue;
+                  const charArts: Record<string, ArtifactData | null> = {};
+                  for (const [slot, art] of Object.entries(arts)) {
+                    if (art) {
+                      charArts[slot] = art as ArtifactData;
                     }
                   }
-                  setRestoredArtifacts(
-                    Object.keys(snapshot).length > 0 ? snapshot : null
-                  );
-                  unfreezeTeamAction(teamId);
+                  byChar[charId] = charArts as Record<
+                    Slot,
+                    ArtifactData | null
+                  >;
+                  freezableCharIds.push(charId);
                 }
-              : undefined
-          }
-          onFreezeChar={(charId: string) => {
-            // Freeze a single character using current view artifacts
-            const arts = optimizedArtifactsByChar[charId];
-            if (!arts || !Object.values(arts).some(Boolean)) return;
-            const charArts: Record<string, ArtifactData | null> = {};
-            for (const [slot, art] of Object.entries(arts)) {
-              if (art) charArts[slot] = art as ArtifactData;
-            }
+                if (freezableCharIds.length === 0) return;
 
-            freezeCharacters(teamId, [charId], {
-              [charId]: charArts as Record<Slot, ArtifactData | null>,
-            });
-          }}
-          onUnfreezeChar={(charId: string) => {
-            // Capture ALL current artifacts so unfrozen chars keep their display
-            const snapshot: Record<string, Record<string, ArtifactData>> = {};
-            for (const [cid, arts] of Object.entries(
-              optimizedArtifactsByChar
-            )) {
-              if (Object.values(arts).some(Boolean)) {
-                snapshot[cid] = { ...arts };
+                saveAllocation(byChar);
+                setSwapOverrides({});
+              }}
+              onUnfreezeAll={
+                isFrozen
+                  ? () => {
+                      // Snapshot current artifacts as restored before clearing freeze
+                      const snapshot: Record<
+                        string,
+                        Record<string, ArtifactData>
+                      > = {};
+                      for (const [charId, arts] of Object.entries(
+                        optimizedArtifactsByChar
+                      )) {
+                        if (Object.values(arts).some(Boolean)) {
+                          snapshot[charId] = { ...arts };
+                        }
+                      }
+                      setRestoredArtifacts(
+                        Object.keys(snapshot).length > 0 ? snapshot : null
+                      );
+                      unfreezeTeamAction(teamId);
+                    }
+                  : undefined
               }
-            }
-            setRestoredArtifacts(
-              Object.keys(snapshot).length > 0 ? snapshot : null
-            );
-            unfreezeCharacters(teamId, [charId]);
-          }}
-          isMobile={isMobile}
-          equippedArtifactsByChar={equippedArtifactsByChar}
-          currentDisplayResult={currentDisplayResult}
-          formulaMode={formulaMode}
-          comboLines={displayCombo.lines}
-          comboId={displayCombo.id}
-          teamBuild={teamBuild}
-          accountData={accountData}
-          activeContext={activeContext}
-          isComputing={isComputing}
-          teamProgress={teamProgress}
-          teamResult={teamResult}
-          teamError={teamError}
-          handleOptimize={handleOptimize}
-          timeBudgetSec={timeBudgetSec}
-          onTimeBudgetChange={setTimeBudgetSec}
-          optimizedArtifactsByChar={optimizedArtifactsByChar}
-          optimizedDisplayResult={optimizedDisplayResult}
-          minErRaw={minErRaw}
-          genComputing={genComputing}
-          genResult={genResult}
-          genError={genError}
-          handleGenerate={handleGenerate}
-          genArtifactsByChar={genArtifactsByChar}
-          genDisplayResult={genDisplayResult}
-          onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
-          hasSwapOverrides={hasSwapOverrides}
-          onRestoreOriginal={
-            hasSwapOverrides ? handleRestoreOriginal : undefined
-          }
-          forceReusedCharIds={forceReusedCharIds}
-          reuseInfo={reuseInfo}
-          tierAssignments={tierAssignments}
-          onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
-          onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
-          currentTabFrozenCharIds={currentTabFrozenCharIds}
-          preferredMainStats={preferredMainStats}
-          onPreferredMainStatsChange={handlePreferredMainStatsChange}
-          preferredMainStatsDisabled={isComputing}
-        />
+              onFreezeChar={(charId: string) => {
+                // Freeze a single character using current view artifacts
+                const arts = optimizedArtifactsByChar[charId];
+                if (!arts || !Object.values(arts).some(Boolean)) return;
+                const charArts: Record<string, ArtifactData | null> = {};
+                for (const [slot, art] of Object.entries(arts)) {
+                  if (art) charArts[slot] = art as ArtifactData;
+                }
 
-        <TeamDetailAspectLinks
-          teamId={teamId}
-          currentAspect="damage"
-          showFrozenLink={isFrozen}
-        />
-
+                freezeCharacters(teamId, [charId], {
+                  [charId]: charArts as Record<Slot, ArtifactData | null>,
+                });
+              }}
+              onUnfreezeChar={(charId: string) => {
+                // Capture ALL current artifacts so unfrozen chars keep their display
+                const snapshot: Record<
+                  string,
+                  Record<string, ArtifactData>
+                > = {};
+                for (const [cid, arts] of Object.entries(
+                  optimizedArtifactsByChar
+                )) {
+                  if (Object.values(arts).some(Boolean)) {
+                    snapshot[cid] = { ...arts };
+                  }
+                }
+                setRestoredArtifacts(
+                  Object.keys(snapshot).length > 0 ? snapshot : null
+                );
+                unfreezeCharacters(teamId, [charId]);
+              }}
+              isMobile={isMobile}
+              equippedArtifactsByChar={equippedArtifactsByChar}
+              currentDisplayResult={currentDisplayResult}
+              formulaMode={formulaMode}
+              comboLines={displayCombo.lines}
+              comboId={displayCombo.id}
+              teamBuild={teamBuild}
+              accountData={accountData}
+              activeContext={activeContext}
+              isComputing={isComputing}
+              teamProgress={teamProgress}
+              teamResult={teamResult}
+              teamError={teamError}
+              handleOptimize={handleOptimize}
+              timeBudgetSec={timeBudgetSec}
+              onTimeBudgetChange={setTimeBudgetSec}
+              optimizedArtifactsByChar={optimizedArtifactsByChar}
+              optimizedDisplayResult={optimizedDisplayResult}
+              minErRaw={minErRaw}
+              genComputing={genComputing}
+              genResult={genResult}
+              genError={genError}
+              handleGenerate={handleGenerate}
+              genArtifactsByChar={genArtifactsByChar}
+              genDisplayResult={genDisplayResult}
+              onArtifactSwap={canSwap ? handleArtifactSwap : undefined}
+              hasSwapOverrides={hasSwapOverrides}
+              onRestoreOriginal={
+                hasSwapOverrides ? handleRestoreOriginal : undefined
+              }
+              forceReusedCharIds={forceReusedCharIds}
+              reuseInfo={reuseInfo}
+              tierAssignments={tierAssignments}
+              onFreezeCharFromCurrent={handleFreezeCharFromCurrent}
+              onUnfreezeCharFromCurrent={handleUnfreezeCharFromCurrent}
+              currentTabFrozenCharIds={currentTabFrozenCharIds}
+              preferredMainStats={preferredMainStats}
+              onPreferredMainStatsChange={handlePreferredMainStatsChange}
+              preferredMainStatsDisabled={isComputing}
+            />
+          </TabsContent>
+        </Tabs>
         {/* Artifact Swap Dialog */}
         {swapTarget && (
           <ArtifactSwapDialog
@@ -1458,7 +1748,7 @@ export function DamageDetail({
             side="right"
             className="w-[min(85vw,400px)] md:w-[min(85vw,520px)] xl:w-[min(85vw,640px)] sm:max-w-none p-0 flex flex-col"
           >
-            <SheetHeader className="px-5 pt-5 pb-3 border-b border-border/40">
+            <SheetHeader className="px-5 pt-5 pb-3 border-b border-border">
               <SheetTitle className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-primary" />
                 {t.ui("calcLimitations.title")}
@@ -1573,7 +1863,7 @@ export function DamageDetail({
                           characterId={c.charId}
                           size={isMobile ? "xs" : "sm"}
                         />
-                        <div className="w-4 md:w-6 border-t border-dashed border-border/40" />
+                        <div className="w-4 md:w-6 border-t border-dashed border-border" />
                         <ArtifactDataHoverCard
                           artifact={c.artifact}
                           slot={c.artifact.slotKey}
@@ -1590,7 +1880,7 @@ export function DamageDetail({
                             />
                           </div>
                         </ArtifactDataHoverCard>
-                        <div className="w-4 md:w-6 border-t border-border/60" />
+                        <div className="w-4 md:w-6 border-t border-border" />
                         <ItemIcon
                           characterId={c.frozenCharId}
                           frozen

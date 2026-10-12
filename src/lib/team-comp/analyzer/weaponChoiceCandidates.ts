@@ -1,14 +1,11 @@
 import type { WeaponStatsMap } from "@/data/gameStatsLoader";
 import type { AccountData } from "@/data/types";
+import { collectOwnedWeaponCopies } from "../weaponCopies";
 
 /** Comparison evaluates each owned weapon at its imported refinement. */
 export function collectOwnedWeaponChoices(account: AccountData) {
   const choices = new Map<string, { weaponId: string; refinement: number }>();
-  const copies = [
-    ...account.characters.flatMap((char) => (char.weapon ? [char.weapon] : [])),
-    ...account.extraWeapons,
-  ];
-  for (const weapon of copies) {
+  for (const weapon of collectOwnedWeaponCopies(account)) {
     choices.set(`${weapon.key}:${weapon.refinement}`, {
       weaponId: weapon.key,
       refinement: weapon.refinement,

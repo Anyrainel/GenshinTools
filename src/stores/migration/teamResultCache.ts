@@ -51,5 +51,10 @@ export function migrateTeamResultCacheStore(
     // cannot be reconciled without recomputing them.
     state.resultsByTeamId = {};
   }
+  if (version < 6) {
+    // Shared objectives/environment and account slot ownership change all
+    // damage/optimizer/investment assumptions. Old results cannot be reconciled.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

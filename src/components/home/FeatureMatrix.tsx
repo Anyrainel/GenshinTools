@@ -59,22 +59,22 @@ function getFeatureMatrixGroups(
         {
           label: t.ui("app.featureOptimizeDamage"),
           description: t.ui("app.featureOptimizeDamageDesc"),
-          href: "/team-comp/damage",
+          href: "/team-comp/analysis",
         },
         {
-          label: t.ui("app.featureManageFrozen"),
+          label: t.ui("teamComp.tabLoadouts"),
           description: t.ui("app.featureManageFrozenDesc"),
-          href: "/team-comp/frozen",
+          href: "/team-comp/loadouts",
         },
         {
           label: t.ui("app.featureCompareInvestment"),
           description: t.ui("app.featureCompareInvestmentDesc"),
-          href: "/team-comp/investment",
+          href: "/team-comp/analysis?mode=investment",
         },
         {
           label: t.ui("app.featureChooseLoadout"),
           description: t.ui("app.featureChooseLoadoutDesc"),
-          href: "/team-comp/weapon",
+          href: "/team-comp/analysis?mode=builds",
         },
       ],
     },

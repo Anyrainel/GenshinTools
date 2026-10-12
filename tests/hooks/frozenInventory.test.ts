@@ -3,12 +3,12 @@ import type { Slot } from "@/data/enums";
 /**
  * Comprehensive tests for frozen artifact inventory filtering.
  *
- * Tests the pure `computeTeamInventory` function extracted from `useTeamInventory`
+ * Tests the pure `computeTeamInventory` function used by `useTeamInventory`
  * to verify that frozen artifacts are correctly excluded from the optimizer pool
  * across all reuse modes, team configurations, and edge cases.
  *
  * Scenarios covered:
- * 1. Same-team frozen: artifacts from frozen chars in the current team are excluded
+ * 1. Own saved loadout: pieces stay available for replacement allocation
  * 2. Cross-team frozen: artifacts frozen in OTHER teams are excluded from the pool
  * 3. Standalone frozen: individually frozen artifacts are excluded
  * 4. Reuse mode "none": no frozen artifacts are reusable by anyone
@@ -23,7 +23,7 @@ import type { ArtifactData } from "@/data/types";
 import {
   type ComputeInventoryParams,
   computeTeamInventory,
-} from "@/hooks/useTeamInventory";
+} from "@/lib/team-comp/artifactInventory";
 import type { ArtifactReuseMode, FrozenTeam } from "@/stores/useFreezeStore";
 
 let artCounter = 0;
@@ -91,7 +91,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
   // 1. Same-team frozen characters
 
   describe("same-team frozen characters", () => {
-    it("excludes same-team frozen artifacts from available pool (reuseMode=none)", () => {
+    it("includes owning-team saved artifacts in the available pool (reuseMode=none)", () => {
       const huTaoArts = makeFullSet("crimson_witch_of_flames", "hutao");
       const xqArts = makeFullSet("emblem_of_severed_fate", "xq");
       const allArtifacts = [
@@ -113,10 +113,10 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
         })
       );
 
-      // Hu Tao's frozen artifacts must NOT be in available pool
+      // Saved pieces remain available to their owning team's optimization.
       for (const id of artIds(huTaoArts)) {
-        expect(result.availableArtifacts.map((a) => a.id)).not.toContain(id);
-        expect(result.frozenArtifactIds.has(id)).toBe(true);
+        expect(result.availableArtifacts.map((a) => a.id)).toContain(id);
+        expect(result.frozenArtifactIds.has(id)).toBe(false);
       }
       // Xingqiu's artifacts should still be available
       for (const id of artIds(xqArts)) {
@@ -126,7 +126,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
       expect(Object.keys(result.perCharExtraArtifacts)).toHaveLength(0);
     });
 
-    it("excludes same-team frozen artifacts regardless of reuse mode", () => {
+    it("includes owning-team saved artifacts regardless of reuse mode", () => {
       const arts = makeFullSet("crimson_witch_of_flames", "same-team-reuse");
       const allArtifacts = Object.values(arts);
 
@@ -147,8 +147,8 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
           })
         );
 
-        // Same-team frozen arts ALWAYS excluded from available pool
-        expect(result.availableArtifacts).toHaveLength(0);
+        expect(result.availableArtifacts).toHaveLength(5);
+        expect(result.frozenArtifactIds.size).toBe(0);
         // Same-team frozen chars do NOT get per-char extras
         expect(result.perCharExtraArtifacts.hu_tao).toBeUndefined();
       }
@@ -477,7 +477,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
           teamCharacters: ["hu_tao", "xingqiu"],
           reuseMode: "none",
           frozenTeams: {
-            team1: frozenTeam(["hu_tao"], {
+            otherTeam: frozenTeam(["hu_tao"], {
               hu_tao: huTaoArts,
               // xingqiu data exists but NOT in frozenCharIds
               xingqiu: xqArts,
@@ -517,7 +517,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
           teamCharacters: ["hu_tao"],
           reuseMode: "none",
           frozenTeams: {
-            team1: frozenTeam(["hu_tao"], { hu_tao: partialArts }),
+            otherTeam: frozenTeam(["hu_tao"], { hu_tao: partialArts }),
           },
         })
       );
@@ -799,9 +799,7 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
       }
     });
 
-    it("same-team frozen: even with sameChar mode, frozen chars' artifacts are invisible to all", () => {
-      // Team1 has hu_tao frozen. When Team1 runs optimizer for xingqiu,
-      // xingqiu must NOT see hu_tao's frozen arts even via extras.
+    it("own saved pieces can move to another member during replacement optimization", () => {
       const frozenArts = makeFullSet("crimson_witch_of_flames", "opt-st");
       const xqArts = makeFullSet("emblem_of_severed_fate", "opt-st-xq");
       const allArtifacts = [
@@ -822,11 +820,12 @@ describe("computeTeamInventory — frozen artifact exclusion", () => {
         })
       );
 
-      // xingqiu's inventory should NOT contain hu_tao's frozen arts
+      // A saved allocation is a snapshot, not immutable equipment.
       const xqInv = getCharInventory(result, "xingqiu");
-      for (const art of xqInv) {
-        expect(frozenIds.has(art.id)).toBe(false);
-      }
+      expect(
+        [...frozenIds].every((id) => xqInv.some((art) => art.id === id))
+      ).toBe(true);
+      expect(result.frozenArtifactIds.size).toBe(0);
 
       // hu_tao also should NOT get extras from same team
       expect(result.perCharExtraArtifacts.hu_tao).toBeUndefined();

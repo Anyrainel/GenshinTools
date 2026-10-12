@@ -2,10 +2,8 @@ import {
   ChevronsUpDown,
   Crosshair,
   Download,
-  Medal,
   Monitor,
   Snowflake,
-  TrendingUp,
 } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
@@ -37,32 +35,45 @@ export default function TeamCompPreview({ t }: PreviewProps) {
   return (
     <TabPreview
       tabs={[
-        { id: "damage", icon: Crosshair, label: t.ui("teamComp.tabDamage") },
-        { id: "frozen", icon: Snowflake, label: t.ui("teamComp.tabFrozen") },
         {
-          id: "investment",
-          icon: TrendingUp,
-          label: t.ui("teamComp.tabInvestment"),
+          id: "analysis",
+          icon: Crosshair,
+          label: t.ui("teamComp.tabAnalysis"),
         },
-        { id: "weapon", icon: Medal, label: t.ui("teamComp.tabWeaponChoice") },
+        {
+          id: "loadouts",
+          icon: Snowflake,
+          label: t.ui("teamComp.tabLoadouts"),
+        },
       ]}
       t={t}
       panels={[
         {
-          content: <DamageContent t={t} />,
+          content: (
+            <div className="space-y-4">
+              <div className="flex flex-wrap justify-center gap-2 text-xs font-semibold text-primary">
+                <span>{t.ui("accountData.artifacts")}</span>
+                <span>{t.ui("app.navArtifactFilter")}</span>
+                <span>{t.ui("teamComp.modeInvestment")}</span>
+                <span>{t.ui("accountData.characters")}</span>
+                <span>{t.ui("teamComp.modeEnergy")}</span>
+              </div>
+              <DamageContent t={t} />
+              <p className="text-xs text-muted-foreground">
+                {t.ui("greeting.previewInvestment")}
+              </p>
+              <InvestmentContent t={t} />
+              <p className="text-xs text-muted-foreground">
+                {t.ui("greeting.previewWeapon")}
+              </p>
+              <WeaponContent t={t} />
+            </div>
+          ),
           description: t.ui("greeting.previewDamage"),
         },
         {
           content: <FrozenContent t={t} />,
           description: t.ui("greeting.previewFrozen"),
-        },
-        {
-          content: <InvestmentContent t={t} />,
-          description: t.ui("greeting.previewInvestment"),
-        },
-        {
-          content: <WeaponContent t={t} />,
-          description: t.ui("greeting.previewWeapon"),
         },
       ]}
     />
@@ -142,7 +153,7 @@ function FrozenContent({ t }: PreviewProps) {
           <span className="flex-1" />
           <span className="flex items-center gap-1 h-6 px-2.5 rounded-md text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 whitespace-nowrap">
             <Snowflake className="w-3 h-3 shrink-0" />
-            {t.ui("teamComp.freezeChar")}
+            {t.ui("common.save")}
           </span>
         </div>
         {/* Artifacts grid — matches ArtifactSlotGrid layout with frozen-card overlay */}

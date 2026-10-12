@@ -11,11 +11,7 @@ import {
   type TeamCompDelta,
 } from "@/lib/team-comp/teamDeltas";
 import { getCachedTeamPreset } from "@/lib/team-comp/teamPresetRegistry";
-import type {
-  AnalyzerConfig,
-  TeamComp,
-  TeamSetupConfig,
-} from "@/lib/team-comp/types";
+import type { TeamComp, TeamSetupConfig } from "@/lib/team-comp/types";
 import {
   createTeamPersistenceFromLegacyTeams,
   type LegacyCharSettings,
@@ -23,6 +19,10 @@ import {
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
 import { migrateReleasedTeamWeapons } from "./releasedWeaponIds";
+import {
+  type LegacyAnalyzerConfig,
+  migrateTeamAnalysisConfigs,
+} from "./teamAnalysis";
 import {
   migrateLegacyFormulaUnitConfigs,
   migrateLegacySkirkFormulaUnitConfigs,
@@ -339,7 +339,7 @@ export function migrateTeamStore(
         t.analyzerReactionOverrides ||
         t.analyzerEnemyAura ||
         t.analyzerExtraBuffs;
-      const analyzer: AnalyzerConfig | undefined = hasAnalyzer
+      const analyzer: LegacyAnalyzerConfig | undefined = hasAnalyzer
         ? {
             ...(t.analyzerConfigs ? { configs: t.analyzerConfigs } : {}),
             ...(t.analyzerComboOverrides
@@ -604,6 +604,11 @@ export function migrateTeamStore(
 
   if (version < 22) {
     Object.assign(state, migrateReleasedTeamWeapons(state));
+  }
+  if (version < 23) {
+    state.configsByTeamId = migrateTeamAnalysisConfigs(
+      state.configsByTeamId ?? {}
+    );
   }
   state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});
 

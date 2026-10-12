@@ -471,7 +471,7 @@ export function StatSheetPanel({
                   className="flex items-center gap-0.5 md:gap-1 h-5 md:h-6 px-1.5 md:px-2.5 rounded-md text-[10px] md:text-xs font-bold border border-cyan-400/40 bg-cyan-500/10 text-cyan-300 ring-1 ring-cyan-400/20 hover:bg-cyan-500/15 hover:text-cyan-200 hover:ring-cyan-400/40 transition-colors whitespace-nowrap"
                 >
                   <Snowflake className="w-2.5 h-2.5 md:w-3 md:h-3 shrink-0" />
-                  {t.ui("teamComp.freezeChar")}
+                  {t.ui("common.save")}
                 </button>
               ) : null}
             </div>
@@ -493,7 +493,7 @@ export function StatSheetPanel({
                   artifactsObj={artifactsObj}
                   t={t}
                   onSwap={
-                    onArtifactSwap && !isFrozen
+                    onArtifactSwap
                       ? (slot, art) => onArtifactSwap(charId, slot, art)
                       : undefined
                   }

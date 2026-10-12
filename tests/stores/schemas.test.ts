@@ -891,24 +891,25 @@ describe("PersistedSessionNavStoreSchema", () => {
   it("heals view settings", () => {
     const result = PersistedSessionNavStoreSchema.parse({
       viewSettings: {
-        damage: { activeTeamId: "team-1", teamSort: "tier" },
-        investment: { ownedOnly: true, erCalcExpanded: true },
-        weaponChoice: { teamSort: "bad" },
+        analysis: {
+          activeTeamId: "team-1",
+          teamSort: "tier",
+          ownedOnly: true,
+          erCalcExpanded: true,
+        },
       },
+      analysisModes: { "team-1": "investment", "team-2": "bad" },
     });
-    expect(result.viewSettings.damage).toEqual({
+    expect(result.viewSettings.analysis).toEqual({
       activeTeamId: "team-1",
-      ownedOnly: null,
-      teamSort: "tier",
-      erCalcExpanded: false,
-    });
-    expect(result.viewSettings.investment).toEqual({
-      activeTeamId: null,
       ownedOnly: true,
-      teamSort: "default",
+      teamSort: "tier",
       erCalcExpanded: true,
     });
-    expect(result.viewSettings.weaponChoice.teamSort).toBe("default");
+    expect(result.analysisModes).toEqual({
+      "team-1": "investment",
+      "team-2": "artifacts",
+    });
   });
 });
 

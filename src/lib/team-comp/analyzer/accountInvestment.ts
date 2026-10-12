@@ -144,7 +144,13 @@ export function computeAccountInvestments(
   selected: AnalyzerCharConfig[],
   options: Pick<
     AnalyzerOptions,
-    "teamBuild" | "templateCombo" | "comboOverrides" | "calcContext"
+    | "teamBuild"
+    | "templateCombo"
+    | "comboOverrides"
+    | "calcContext"
+    | "futureCountChanges"
+    | "singleObjective"
+    | "ignoredContributorIds"
   >
 ): AccountInvestmentResult {
   const sheets = Object.fromEntries(
@@ -180,7 +186,15 @@ export function computeAccountInvestments(
       allocation,
       options.templateCombo,
       team,
-      options.comboOverrides
+      options.comboOverrides,
+      {
+        baselineConstellations: Object.fromEntries(
+          baseline.map((c) => [c.charId, c.constellation])
+        ),
+        futureCountChanges: options.futureCountChanges,
+        singleObjective: options.singleObjective,
+        ignoredContributorIds: options.ignoredContributorIds,
+      }
     );
     return team.getComboDamageResult(combo, sheets, options.calcContext)
       .totalDamage;

@@ -31,10 +31,17 @@ export type StoredAnalyzerCharConfig = {
   charId: string;
   /** Weapon not from the team roster. 3/4★ alt includes refinement; 5★ alt does not. */
   altWeapon?: { id: string; refinement?: number };
-  startConstellation: number;
-  startRefinement: number;
   maxConstellation: number;
   maxRefinement: number;
+};
+
+/** Replace the default count delta at this future constellation threshold.
+ *  Reaction formulaId is the base rx- ID; negative deltas are valid. */
+export type InvestmentCountChange = {
+  charId: string;
+  constellation: number;
+  formulaId: string;
+  delta: number;
 };
 
 export type AnalyzerNode = {
@@ -110,6 +117,10 @@ export type AnalyzerOptions = {
   /** Per-(charId, constellation) minEr overrides */
   minErOverrides?: MinErOverrides;
   calcContext: CalcContext;
+  baselineConstellations?: Record<string, number>;
+  futureCountChanges?: InvestmentCountChange[];
+  singleObjective?: boolean;
+  ignoredContributorIds?: string[];
 };
 // ─── Tier Snapshot IDs ───
 export type TierSnapshot = {

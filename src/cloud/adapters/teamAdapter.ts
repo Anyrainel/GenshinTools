@@ -5,10 +5,12 @@ import {
 } from "@/lib/team-comp/teamDeltas";
 import type { TeamSetupConfig } from "@/lib/team-comp/types";
 import { migrateReleasedTeamWeapons } from "@/stores/migration/releasedWeaponIds";
+import { migrateTeamAnalysisConfigs } from "@/stores/migration/teamAnalysis";
 import {
   migrateLegacyFormulaUnitConfigs,
   migrateLegacySkirkFormulaUnitConfigs,
 } from "@/stores/migration/teamFormulaUnits";
+import { PersistedTeamStoreSchema } from "@/stores/schemas";
 
 export type TeamCloudSnapshot = {
   activePresetId: string | null;
@@ -39,7 +41,7 @@ export function teamToCloud(
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 4,
+      schemaVersion: 5,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -68,6 +70,9 @@ export function teamFromCloud(
   if (partition && partition.schemaVersion < 3) {
     configsByTeamId = migrateLegacySkirkFormulaUnitConfigs(configsByTeamId);
   }
+  if (partition && partition.schemaVersion < 5) {
+    configsByTeamId = migrateTeamAnalysisConfigs(configsByTeamId);
+  }
   const restored = {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],
@@ -77,9 +82,19 @@ export function teamFromCloud(
     updatedAt:
       getMetadataUpdatedAt(partition) ?? current?.updatedAt ?? Date.now(),
   };
-  return partition && partition.schemaVersion < 4
-    ? migrateReleasedTeamWeapons(restored)
-    : restored;
+  const migrated =
+    partition && partition.schemaVersion < 4
+      ? migrateReleasedTeamWeapons(restored)
+      : restored;
+  const parsed = PersistedTeamStoreSchema.parse(migrated);
+  return {
+    ...migrated,
+    activePresetId: parsed.activePresetId,
+    compDeltas: parsed.compDeltas as TeamCompDelta[],
+    configsByTeamId: parsed.configsByTeamId as Record<string, TeamSetupConfig>,
+    author: parsed.author,
+    description: parsed.description,
+  };
 }
 
 function getMetadataUpdatedAt(

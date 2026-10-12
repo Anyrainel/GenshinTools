@@ -16,7 +16,7 @@ interface FormulaLabelProps {
 
 /**
  * Shared formula label: minC badge → i18n label → off-field suffix.
- * Used in FormulaSelectorCard (single & combo modes) and AnalyzerComboTab.
+ * Used in FormulaSelectorCard's single and combo modes.
  */
 export function FormulaLabel({
   label,

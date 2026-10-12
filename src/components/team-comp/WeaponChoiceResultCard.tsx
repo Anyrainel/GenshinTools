@@ -241,18 +241,25 @@ function WeaponDetailContent({
   weapons,
   charId,
   t,
+  onApply,
 }: {
   entry: ChoiceRanking;
   characters?: (string | null)[];
   weapons?: (string | null)[];
   charId: string;
   t: WeaponChoiceResultCardProps["t"];
+  onApply?: () => void;
 }) {
   const charIndex = characters?.indexOf(charId) ?? -1;
   const currentWeaponId = weapons && charIndex >= 0 ? weapons[charIndex] : null;
 
   return (
     <div className="space-y-2 text-xs">
+      {onApply && (
+        <Button size="sm" className="w-full" onClick={onApply}>
+          {t.ui("teamComp.applyToRoster")}
+        </Button>
+      )}
       {/* Header: weapon + artifact set icons */}
       <div className="flex items-center gap-2">
         {entry.type === "artifact" ? (
@@ -381,6 +388,7 @@ function WeaponEntryRow({
   isTop,
   isMobile,
   t,
+  onApply,
 }: {
   entry: ChoiceRanking;
   characters?: (string | null)[];
@@ -390,6 +398,7 @@ function WeaponEntryRow({
   isTop: boolean;
   isMobile: boolean;
   t: WeaponChoiceResultCardProps["t"];
+  onApply?: () => void;
 }) {
   let icon: ReactNode = null;
   let label = "";
@@ -423,7 +432,7 @@ function WeaponEntryRow({
     }
   }
 
-  const hasDetail = !!(entry.mainStats || entry.substatRolls);
+  const hasDetail = !!(entry.mainStats || entry.substatRolls || onApply);
 
   const row = (
     <button
@@ -474,6 +483,7 @@ function WeaponEntryRow({
               weapons={weapons}
               charId={charId}
               t={t}
+              onApply={onApply}
             />
           </div>
         </DrawerContent>
@@ -495,6 +505,7 @@ function WeaponEntryRow({
           weapons={weapons}
           charId={charId}
           t={t}
+          onApply={onApply}
         />
       </PopoverContent>
     </Popover>
@@ -510,6 +521,7 @@ export function CharacterWeaponPanel({
   scopeHint,
   isMobile,
   t,
+  onApply,
 }: {
   charId: string;
   characters?: (string | null)[];
@@ -518,6 +530,7 @@ export function CharacterWeaponPanel({
   scopeHint?: string;
   isMobile: boolean;
   t: WeaponChoiceResultCardProps["t"];
+  onApply?: (entry: ChoiceRanking) => void;
 }) {
   const highlightCount = getHighlightCount(rankings);
   const [showAll, setShowAll] = useState(false);
@@ -553,6 +566,7 @@ export function CharacterWeaponPanel({
             isTop={rankings.indexOf(entry) < highlightCount}
             isMobile={isMobile}
             t={t}
+            onApply={onApply ? () => onApply(entry) : undefined}
           />
         ))}
       </div>
@@ -780,6 +794,30 @@ export function WeaponChoiceResultCard({
 
   const hasResult = result && Object.keys(result.perCharacter).length > 0;
   const scopeHint = t.ui("teamComp.choiceOthersUnchanged");
+  const applyChoice = (charId: string, entry: ChoiceRanking) => {
+    const next = {
+      ...teamComp,
+      slots: teamComp.slots.map((slot) =>
+        slot.charId !== charId
+          ? slot
+          : entry.type === "artifact"
+            ? { ...slot, artifactSet: entry.artifactSet }
+            : { ...slot, weaponId: entry.weaponId }
+      ),
+    };
+    onTeamCompChange(next);
+    if (entry.type !== "artifact")
+      onSetupConfigChange((config) => ({
+        ...config,
+        charConfigs: {
+          ...config.charConfigs,
+          [charId]: {
+            ...config.charConfigs?.[charId],
+            refinement: entry.refinement,
+          },
+        },
+      }));
+  };
   const formatProgressTarget = useCallback(
     (target?: string) => {
       if (!target) return "";
@@ -824,6 +862,9 @@ export function WeaponChoiceResultCard({
         </Button>
       </CardHeader>
       <CardContent className={cn(CARD_BODY_CLS, "space-y-2")}>
+        <p className="px-2 text-xs text-muted-foreground">
+          {t.ui("teamComp.buildsIndependent")}
+        </p>
         <Tabs
           value={comparisonTab}
           onValueChange={(value) =>
@@ -1053,6 +1094,7 @@ export function WeaponChoiceResultCard({
                         scopeHint={scopeHint}
                         isMobile={isMobile}
                         t={t}
+                        onApply={(entry) => applyChoice(charId, entry)}
                       />
                     );
                   }

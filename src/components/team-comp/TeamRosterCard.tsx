@@ -1,6 +1,8 @@
 import { Users } from "lucide-react";
 import { useEffect, useMemo } from "react";
+import { toast } from "sonner";
 import { ItemPicker } from "@/components/shared/ItemPicker";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   LightweightSelect,
@@ -42,7 +44,11 @@ import {
   isChoiceEnabled,
 } from "@/lib/dmgcalc/core/registry";
 import { TeamMeta } from "@/lib/dmgcalc/core/teamMeta";
-import { detectEquippedSets } from "@/lib/team-comp/teamConfigUtils";
+import {
+  detectEquippedSets,
+  resetFiveStarRosterConfig,
+  useAccountRosterConfig,
+} from "@/lib/team-comp/teamConfigUtils";
 import {
   teamCompInputToComp,
   teamCompToArrays,
@@ -52,6 +58,7 @@ import type {
   TeamComp,
   TeamSetupConfig,
 } from "@/lib/team-comp/types";
+import { resolveRosterWeaponCopies } from "@/lib/team-comp/weaponCopies";
 import { cn, getAssetUrl } from "@/lib/utils";
 import {
   CARD_BODY_CLS,
@@ -76,7 +83,6 @@ interface TeamRosterCardProps {
   weaponStats: Record<string, WeaponStats>;
   isMobile: boolean;
   t: ReturnType<typeof useLanguage>["t"];
-  frozenCharIds?: Set<string>;
 }
 
 export function TeamRosterCard({
@@ -89,7 +95,6 @@ export function TeamRosterCard({
   weaponStats,
   isMobile,
   t,
-  frozenCharIds,
 }: TeamRosterCardProps) {
   // 3-tier icon sizing: narrow (<560px) → mid (560-1023px) → desktop (≥1024px)
   const isNarrow = useMediaQuery("(max-width: 559px)");
@@ -101,6 +106,20 @@ export function TeamRosterCard({
   );
   const combatOptions = setupConfig.combatOptions;
   const charConfigs = setupConfig.charConfigs ?? {};
+  const weaponCopies = resolveRosterWeaponCopies(
+    teamComp,
+    setupConfig,
+    accountData
+  );
+  const applyShortcut = (next: TeamSetupConfig, label: string) => {
+    updateTeamSetupConfig(teamComp.id, next);
+    toast.success(label, {
+      action: {
+        label: t.ui("roster.undo"),
+        onClick: () => updateTeamSetupConfig(teamComp.id, setupConfig),
+      },
+    });
+  };
 
   const handleOptionChange = (entityId: string, val: string) => {
     const match = entityId.match(
@@ -335,6 +354,34 @@ export function TeamRosterCard({
             <span>{t.ui("teamComp.teamRoster")}</span>
           </span>
         </h3>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!accountData}
+            onClick={() =>
+              accountData &&
+              applyShortcut(
+                useAccountRosterConfig(teamComp, setupConfig, accountData),
+                t.ui("roster.accountPrefilled")
+              )
+            }
+          >
+            {t.ui("roster.useAccountData")}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              applyShortcut(
+                resetFiveStarRosterConfig(teamComp, setupConfig),
+                t.ui("roster.resetDone")
+              )
+            }
+          >
+            {t.ui("roster.resetFiveStar")}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className={CARD_BODY_CLS}>
         <TeamCharacterGrid>
@@ -439,23 +486,8 @@ export function TeamRosterCard({
                 ? Number(charConfigs[charId]?.constellation)
                 : (acctChar?.constellation ?? 0);
 
-            let defaultRefine = 1;
-            if (weaponId && accountData) {
-              const refinements: number[] = [];
-              for (const c of accountData.characters) {
-                if (c.weapon?.key === weaponId)
-                  refinements.push(c.weapon.refinement);
-              }
-              for (const w of accountData.extraWeapons) {
-                if (w.key === weaponId) refinements.push(w.refinement);
-              }
-              if (refinements.length > 0)
-                defaultRefine = Math.max(...refinements);
-            }
-            const weaponRefine =
-              charConfigs[charId]?.refinement !== undefined
-                ? Number(charConfigs[charId]?.refinement)
-                : defaultRefine;
+            const weaponAssignment = weaponCopies[i];
+            const weaponRefine = weaponAssignment.refinement;
 
             // Talent levels: from override → account data → default 10
             const info = charInfo[charId];
@@ -479,17 +511,31 @@ export function TeamRosterCard({
             const skillHasBonus = c3Bonus === "E" || c5Bonus === "E";
             const burstHasBonus = c3Bonus === "Q" || c5Bonus === "Q";
 
-            const isCharFrozen = frozenCharIds?.has(charId) ?? false;
-
             return (
               <div
                 key={i}
-                className={cn(
-                  "flex flex-col rounded-lg bg-black/10 border border-border/10 p-1 gap-1 xl:p-2",
-                  isCharFrozen &&
-                    "frozen-card pointer-events-none ring-1 ring-cyan-400/20"
-                )}
+                className="flex flex-col rounded-lg bg-black/10 border border-border/10 p-1 gap-1 xl:p-2"
               >
+                {accountData && !acctChar && (
+                  <p className="text-xs text-primary">
+                    {t.ui("roster.unownedCharacter")}
+                  </p>
+                )}
+                {weaponId && accountData && !weaponAssignment.copy && (
+                  <p className="text-xs text-primary">
+                    {t.ui("roster.weaponShortage")}
+                  </p>
+                )}
+                {weaponId && weaponAssignment.hypothetical && (
+                  <p className="text-xs text-primary">
+                    {t.format("roster.hypotheticalRefinement", weaponRefine)}
+                  </p>
+                )}
+                {!accountData && (
+                  <p className="text-xs text-muted-foreground">
+                    {t.ui("roster.accountMissing")}
+                  </p>
+                )}
                 {/* Row 1: Interactive icons */}
                 <div className="flex items-end gap-0.5 md:gap-1.5">
                   <ItemPicker

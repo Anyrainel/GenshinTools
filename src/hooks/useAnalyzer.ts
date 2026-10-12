@@ -46,7 +46,7 @@ function buildCacheKey(opts: AnalyzerOptions): string {
     ? JSON.stringify(opts.minErOverrides)
     : "";
 
-  return `${charParts}::${comboPart}::${overridePart}::${minErPart}`;
+  return `${charParts}::${comboPart}::${overridePart}::${minErPart}::${JSON.stringify({ configs: opts.configs, baseConfigs: opts.baseConfigs, objective: opts.templateCombo, context: opts.calcContext, starts: opts.baselineConstellations, changes: opts.futureCountChanges, single: opts.singleObjective, ignored: opts.ignoredContributorIds, perChar: opts.perChar, combat: opts.teamBuild.combatOpts, aura: opts.teamBuild.enemyAura, buffs: opts.teamBuild.extraBuffs })}`;
 }
 
 export interface UseAnalyzerState {
@@ -58,7 +58,10 @@ export interface UseAnalyzerState {
   stop: () => void;
 }
 
-export function useAnalyzer(teamId: string): UseAnalyzerState {
+export function useAnalyzer(
+  teamId: string,
+  inputKey?: string
+): UseAnalyzerState {
   const cacheGet = useAnalyzerCacheStore((s) => s.get);
   const cacheSet = useAnalyzerCacheStore((s) => s.set);
   const getInvestmentResult = useTeamResultCacheStore(
@@ -69,13 +72,17 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
   );
 
   const [progress, setProgress] = useState<AnalyzerProgress | null>(null);
-  const [result, setResult] = useState<AnalyzerResult | null>(
-    () => getInvestmentResult(teamId) ?? null
+  const [result, setResult] = useState<AnalyzerResult | null>(() =>
+    inputKey !== undefined
+      ? (getInvestmentResult(teamId, inputKey) ?? null)
+      : null
   );
   const [isComputing, setIsComputing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const abortRef = useRef(false);
+  const generation = useRef(0);
+  const previousInput = useRef(inputKey);
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -87,9 +94,20 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
   }, []);
 
   const stop = useCallback(() => {
+    generation.current++;
     abortRef.current = true;
     setIsComputing(false);
   }, []);
+
+  useEffect(() => {
+    if (previousInput.current === inputKey) return;
+    previousInput.current = inputKey;
+    stop();
+    setResult(null);
+    setProgress(null);
+    setError(null);
+    setInvestmentResult(teamId, null);
+  }, [inputKey, stop, setInvestmentResult, teamId]);
 
   const start = useCallback(
     async (opts: AnalyzerOptions, force?: boolean) => {
@@ -98,6 +116,7 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
         return;
       }
       stop();
+      const runGeneration = generation.current;
       abortRef.current = false;
       setProgress(null);
       setError(null);
@@ -108,6 +127,7 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
         const cached = cacheGet(key);
         if (cached) {
           setResult(cached);
+          setInvestmentResult(teamId, cached, inputKey);
           return;
         }
       }
@@ -119,27 +139,32 @@ export function useAnalyzer(teamId: string): UseAnalyzerState {
         const gen = runAnalysis(opts);
 
         for await (const yielded of gen) {
-          if (abortRef.current || !isMounted.current) break;
+          if (
+            abortRef.current ||
+            !isMounted.current ||
+            runGeneration !== generation.current
+          )
+            break;
 
           if (isAnalyzerResult(yielded)) {
             setResult(yielded);
             cacheSet(key, yielded);
-            setInvestmentResult(teamId, yielded);
+            setInvestmentResult(teamId, yielded, inputKey);
           } else {
             setProgress(yielded);
           }
         }
       } catch (err) {
-        if (isMounted.current) {
+        if (isMounted.current && runGeneration === generation.current) {
           setError(err instanceof Error ? err : new Error(String(err)));
         }
       } finally {
-        if (isMounted.current) {
+        if (isMounted.current && runGeneration === generation.current) {
           setIsComputing(false);
         }
       }
     },
-    [stop, cacheGet, cacheSet, setInvestmentResult, teamId]
+    [stop, cacheGet, cacheSet, setInvestmentResult, teamId, inputKey]
   );
 
   return { progress, result, isComputing, error, start, stop };

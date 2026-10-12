@@ -9,16 +9,12 @@ import {
 } from "@/components/ui/collapsible";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charInfo } from "@/data/charInfo";
-import type { Element } from "@/data/enums";
 import { characterStatsResource } from "@/data/gameStatsLoader";
-import type { AccountData } from "@/data/types";
 import { useActiveAccountData } from "@/hooks/useActiveAccount";
 import {
   DIRECT_PARTICLE_ACTIONS,
   ORB_MULTIPLIER,
   PATTERN_ACTIONS,
-  particles,
 } from "@/lib/ercalc/constants";
 import {
   autoPlaceFavonius,
@@ -51,6 +47,7 @@ import type {
   TimelineAction,
 } from "@/lib/ercalc/types";
 import { weaponEnergyById } from "@/lib/ercalc/weaponEnergy";
+import { buildEnergyTeamSlots } from "@/lib/team-comp/energyTeamSlots";
 import { teamCompToArrays } from "@/lib/team-comp/teamDeltas";
 import type {
   TeamComp,
@@ -140,88 +137,6 @@ function hasFavoniusDefaultsDiff(
   });
 }
 
-function resolveCharCtx(
-  charId: string,
-  setupConfig: TeamSetupConfig,
-  accountData: AccountData | null,
-  weaponId: string | undefined
-): {
-  constellation: number;
-  talentLevels: [number, number, number];
-  /** 0-4 for R1-R5, matching TeamSlot.refinement. Store and account data both
-   *  use 1-5, so this is offset by one. */
-  refinement: number;
-} {
-  const acctChar = accountData?.characters.find((c) => c.key === charId);
-  const defaultConst = acctChar ? acctChar.constellation : 0;
-  const constellation =
-    setupConfig.charConfigs?.[charId]?.constellation ??
-    (setupConfig.combatOptions?.[`${charId}.overrideConstellation`] !==
-    undefined
-      ? Number(setupConfig.combatOptions[`${charId}.overrideConstellation`])
-      : defaultConst);
-  const acct = acctChar?.talent ?? { auto: 10, skill: 10, burst: 10 };
-  const authoredTalent = setupConfig.charConfigs?.[charId]?.talentLevels;
-  const overrideAuto =
-    setupConfig.combatOptions?.[`${charId}.overrideTalentAuto`];
-  const overrideSkill =
-    setupConfig.combatOptions?.[`${charId}.overrideTalentSkill`];
-  const overrideBurst =
-    setupConfig.combatOptions?.[`${charId}.overrideTalentBurst`];
-  const base: [number, number, number] = [
-    authoredTalent?.auto !== undefined
-      ? authoredTalent.auto
-      : overrideAuto !== undefined && overrideAuto !== ""
-        ? Number(overrideAuto)
-        : acct.auto,
-    authoredTalent?.skill !== undefined
-      ? authoredTalent.skill
-      : overrideSkill !== undefined && overrideSkill !== ""
-        ? Number(overrideSkill)
-        : acct.skill,
-    authoredTalent?.burst !== undefined
-      ? authoredTalent.burst
-      : overrideBurst !== undefined && overrideBurst !== ""
-        ? Number(overrideBurst)
-        : acct.burst,
-  ];
-
-  // Apply constellation +3 talent bonuses (C3 / C5) — matches CharacterBase
-  // effective-level calc in dmgcalc, so ercalc stays aligned with what the UI
-  // displays in the talent dropdowns.
-  const info = charInfo[charId];
-  const c3Bonus = constellation >= 3 && info ? 3 : 0;
-  const c5Bonus = constellation >= 5 && info ? 3 : 0;
-  const bonusFor = (slot: "A" | "E" | "Q") =>
-    (info?.c3Talent === slot ? c3Bonus : 0) +
-    (info?.c5Talent === slot ? c5Bonus : 0);
-  const talentLevels: [number, number, number] = [
-    base[0] + bonusFor("A"),
-    base[1] + bonusFor("E"),
-    base[2] + bonusFor("Q"),
-  ];
-  // Refinement: authored override wins, else the best refinement of this
-  // weapon anywhere in the account, else R1. Same precedence TeamRosterCard
-  // uses. Converted from the stored 1-5 to the 0-4 index the energy tables
-  // are keyed by.
-  let refine1to5 = 1;
-  if (weaponId && accountData) {
-    const owned: number[] = [];
-    for (const c of accountData.characters) {
-      if (c.weapon?.key === weaponId) owned.push(c.weapon.refinement);
-    }
-    for (const w of accountData.extraWeapons) {
-      if (w.key === weaponId) owned.push(w.refinement);
-    }
-    if (owned.length > 0) refine1to5 = Math.max(...owned);
-  }
-  const authored = setupConfig.charConfigs?.[charId]?.refinement;
-  if (authored !== undefined) refine1to5 = Number(authored);
-  const refinement = Math.min(4, Math.max(0, refine1to5 - 1));
-
-  return { constellation, talentLevels, refinement };
-}
-
 interface BoundaryParticleBridge {
   particleCount: number;
   favoniusBonus: number;
@@ -288,56 +203,6 @@ function getBoundaryParticleBridge(
   };
 }
 
-function teamToSlots(
-  comp: TeamComp,
-  setupConfig: TeamSetupConfig,
-  accountData: AccountData | null,
-  characterStats: ReturnType<typeof characterStatsResource.use>
-): TeamSlot[] {
-  const { characters, weapons, artifacts } = teamCompToArrays(comp);
-  const charIds = characters.filter((id): id is string => id != null);
-
-  return charIds
-    .map((charId, i) => {
-      const info = charInfo[charId];
-      const pData = particles[charId];
-      const element = (pData?.element ?? "Anemo") as Element;
-      const burstCost = info?.energy ?? 60;
-      const specialBurstCost = info?.specialBurstCost;
-      const weaponId = weapons[i] ?? undefined;
-      const { constellation, talentLevels, refinement } = resolveCharCtx(
-        charId,
-        setupConfig,
-        accountData,
-        weaponId
-      );
-      // healAction: only set if this character actually heals at the current
-      // constellation. Default action is Q when data hasn't specified one.
-      const isHealer =
-        info?.healerC !== undefined && constellation >= info.healerC;
-      const healAction: "E" | "Q" | undefined = isHealer
-        ? (info?.healAction ?? "Q")
-        : undefined;
-      return {
-        charId,
-        element,
-        burstCost,
-        specialBurstCost,
-        constellation,
-        weaponId,
-        refinement,
-        artifactSet:
-          artifacts[i]?.type === "4pc" && artifacts[i]?.setId === "scholar"
-            ? null
-            : artifacts[i],
-        weaponType: characterStats?.[charId]?.weaponType,
-        talentLevels,
-        healAction,
-      };
-    })
-    .filter((s) => particles[s.charId]);
-}
-
 interface ErCalcCardProps {
   teamComp: TeamComp;
   setupConfig: TeamSetupConfig;
@@ -354,21 +219,22 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
   );
   // Persist open/closed across refresh via session store (sessionStorage-backed).
   const expanded = useSessionNavStore(
-    (s) => s.viewSettings.damage.erCalcExpanded
+    (s) => s.viewSettings.analysis.erCalcExpanded
   );
   const setErCalcExpanded = useSessionNavStore((s) => s.setErCalcExpanded);
   const collapsed = !expanded;
   const setCollapsed = useCallback(
     (updater: boolean | ((prev: boolean) => boolean)) => {
       const next = typeof updater === "function" ? updater(collapsed) : updater;
-      setErCalcExpanded("damage", !next);
+      setErCalcExpanded("analysis", !next);
     },
     [collapsed, setErCalcExpanded]
   );
 
   const charIds = characters.filter((id): id is string => id != null);
   const erTeam = useMemo(
-    () => teamToSlots(teamComp, setupConfig, accountData, characterStats),
+    () =>
+      buildEnergyTeamSlots(teamComp, setupConfig, accountData, characterStats),
     [teamComp, setupConfig, accountData, characterStats]
   );
 
@@ -1169,7 +1035,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                         {t.ui("erCalc.sourceCharacter")}
                       </span>
                       <select
-                        id="funnel-source"
+                        id={`funnel-source-${teamComp.id}`}
                         className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
                       >
                         {erTeam.map((m) => (
@@ -1189,7 +1055,7 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                         {t.ui("erCalc.targetCharacter")}
                       </span>
                       <select
-                        id="funnel-target"
+                        id={`funnel-target-${teamComp.id}`}
                         className="w-full h-8 px-2 bg-card border border-border rounded focus:outline-none focus:ring-1 focus:ring-primary/40"
                       >
                         {erTeam.map((m) => (
@@ -1204,10 +1070,10 @@ export function ErCalcCard({ teamComp, setupConfig }: ErCalcCardProps) {
                       type="button"
                       onClick={() => {
                         const srcSelect = document.getElementById(
-                          "funnel-source"
+                          `funnel-source-${teamComp.id}`
                         ) as HTMLSelectElement;
                         const tgtSelect = document.getElementById(
-                          "funnel-target"
+                          `funnel-target-${teamComp.id}`
                         ) as HTMLSelectElement;
                         if (srcSelect && tgtSelect) {
                           const src = srcSelect.value;

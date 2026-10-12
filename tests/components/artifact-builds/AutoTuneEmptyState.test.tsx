@@ -28,7 +28,7 @@ describe("AutoTuneEmptyState", () => {
     );
 
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/team-comp/damage");
+    expect(link).toHaveAttribute("href", "/team-comp/analysis");
   });
 
   it("shows both links when neither builds nor teams exist", () => {
@@ -43,7 +43,7 @@ describe("AutoTuneEmptyState", () => {
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute("href", "/artifact-filter/configure");
-    expect(links[1]).toHaveAttribute("href", "/team-comp/damage");
+    expect(links[1]).toHaveAttribute("href", "/team-comp/analysis");
   });
 
   it("shows 'Show All' button when builds and teams both exist", () => {

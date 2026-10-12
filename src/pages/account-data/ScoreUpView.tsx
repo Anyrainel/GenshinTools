@@ -607,7 +607,7 @@ export function ScoreUpView({
       </Label>
       {frozenArtifactIdsForRecommendations.length > 0 && (
         <Link
-          to="/team-comp/frozen"
+          to="/team-comp/loadouts"
           className="flex items-center gap-0.5 whitespace-nowrap text-xs text-amber-400/70 hover:text-amber-400 transition-colors"
         >
           {t.ui("accountData.manageFrozen")}
@@ -888,7 +888,7 @@ export function ScoreUpView({
               <span key={i}>
                 {part}
                 <Link
-                  to="/team-comp/damage"
+                  to="/team-comp/analysis"
                   className="underline text-foreground hover:text-primary"
                 >
                   {t.ui("accountData.hintDamageLink")}

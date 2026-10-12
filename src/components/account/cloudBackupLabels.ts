@@ -44,7 +44,7 @@ export function metadataRowLabelParts(
       case "artifacts":
         return t.ui("accountData.artifacts");
       case "frozen":
-        return t.ui("accountSystem.metadata.frozen");
+        return t.ui("teamComp.tabLoadouts");
       case "settings":
         return t.ui("accountSystem.metadata.settings");
       case "builds":

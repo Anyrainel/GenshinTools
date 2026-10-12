@@ -173,7 +173,8 @@ describe("migrateTeamStore — v20 formula entry units", () => {
 
   it("normalizes analyzer counts but preserves unrelated and custom counts", () => {
     expect(
-      comboLineState().configsByTeamId["team-1"]?.investment?.comboOverrides
+      comboLineState().configsByTeamId["team-1"]?.investment
+        ?.legacyCountOverrides
     ).toEqual({
       "yae_miko|6|yae_miko-skill": 1,
       "yae_miko|6|yae_miko-skill:aggravate": 1,
@@ -283,7 +284,7 @@ describe("migrateTeamStore — v21 Skirk C6 shared stack pool", () => {
       0: { burstBuff: { 0: 1 } },
       1: { shenheBuff: { 0: 1 } },
     });
-    expect(config.investment?.comboOverrides).toEqual({});
+    expect(config.investment?.legacyCountOverrides).toEqual({});
   });
 
   it("keeps a Normal-only branch once and preserves its line overrides", () => {
@@ -300,7 +301,7 @@ describe("migrateTeamStore — v21 Skirk C6 shared stack pool", () => {
       0: { normalBuff: { 0: 0 } },
       1: { furinaBuff: { 0: 1 } },
     });
-    expect(config.investment?.comboOverrides).toEqual({
+    expect(config.investment?.legacyCountOverrides).toEqual({
       "skirk|6|skirk-c6-normal-coord": 1,
       "skirk|6|skirk-c6-burst-coord": 0,
     });
@@ -312,7 +313,9 @@ describe("migrateTeamStore — v21 Skirk C6 shared stack pool", () => {
       formulaId: "skirk-c6-normal-coord",
       count: 4,
     });
-    expect(configs["both-branches"].investment?.comboOverrides).toMatchObject({
+    expect(
+      configs["both-branches"].investment?.legacyCountOverrides
+    ).toMatchObject({
       "skirk|6|skirk-c6-normal-coord": 4,
     });
   });

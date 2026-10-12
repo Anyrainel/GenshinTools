@@ -62,15 +62,65 @@ describe("migrateTeamResultCacheStore", () => {
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(
       JSON.parse(window.localStorage.getItem("team-result-cache")!).version
-    ).toBe(5);
+    ).toBe(6);
     window.localStorage.removeItem("team-result-cache");
   });
 
-  it("preserves v5 results", () => {
+  it("clears v5 results computed under separate analysis inputs", () => {
     const resultsByTeamId = {
       "team-1": { investmentResult: { timestamp: 1 } },
     };
     const result = migrateTeamResultCacheStore({ resultsByTeamId }, 5);
-    expect(result.resultsByTeamId).toBe(resultsByTeamId);
+    expect(result.resultsByTeamId).toEqual({});
+  });
+
+  it("preserves current v6 results", () => {
+    const resultsByTeamId = {
+      "team-1": {
+        weaponChoiceResult: { mode: "weapon", timestamp: 1, perCharacter: {} },
+        weaponChoiceInputKey: "inputs",
+      },
+    };
+    expect(
+      migrateTeamResultCacheStore({ resultsByTeamId }, 6).resultsByTeamId
+    ).toBe(resultsByTeamId);
+  });
+
+  it("hydrates independent comparison signatures and clears both with their results", async () => {
+    localStorage.setItem(
+      "team-result-cache",
+      JSON.stringify({
+        version: 6,
+        state: {
+          resultsByTeamId: {
+            team: {
+              weaponChoiceResult: {
+                mode: "weapon",
+                timestamp: 1,
+                perCharacter: {},
+              },
+              weaponChoiceInputKey: "weapons:C2:R3",
+              artifactChoiceResult: {
+                mode: "artifact",
+                timestamp: 2,
+                perCharacter: {},
+              },
+              artifactChoiceInputKey: "artifacts:C2:R3",
+            },
+          },
+        },
+      })
+    );
+    await useTeamResultCacheStore.persist.rehydrate();
+    expect(useTeamResultCacheStore.getState().getForTeam("team")).toMatchObject(
+      {
+        weaponChoiceInputKey: "weapons:C2:R3",
+        artifactChoiceInputKey: "artifacts:C2:R3",
+      }
+    );
+    useTeamResultCacheStore.getState().clearChoiceResults("team");
+    expect(
+      useTeamResultCacheStore.getState().getForTeam("team")
+    ).toBeUndefined();
   });
 });

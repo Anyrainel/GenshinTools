@@ -3,7 +3,6 @@ import { persist } from "zustand/middleware";
 import type { AnalyzerResult } from "@/lib/team-comp/analyzer/types";
 import type {
   ChoiceResultCache,
-  OptimizationResult,
   WeaponChoiceResult,
 } from "@/lib/team-comp/types";
 import { migrateTeamResultCacheStore } from "./migration/teamResultCache";
@@ -24,24 +23,31 @@ type SerializedAnalyzerResult = Omit<
 };
 
 export interface TeamResultCacheEntry {
-  optimizationResult?: OptimizationResult | null;
   investmentResult?: SerializedAnalyzerResult | null;
+  investmentInputKey?: string;
   weaponChoiceResult?: WeaponChoiceResult | null;
+  weaponChoiceInputKey?: string;
   artifactChoiceResult?: WeaponChoiceResult | null;
+  artifactChoiceInputKey?: string;
 }
-
-export type TeamResultCachePatch = Partial<TeamResultCacheEntry>;
 
 interface TeamResultCacheState {
   resultsByTeamId: Record<string, TeamResultCacheEntry>;
   getForTeam: (teamId: string) => TeamResultCacheEntry | undefined;
-  patchForTeam: (teamId: string, patch: TeamResultCachePatch) => void;
-  getInvestmentResult: (teamId: string) => AnalyzerResult | undefined;
-  setInvestmentResult: (teamId: string, result: AnalyzerResult | null) => void;
+  getInvestmentResult: (
+    teamId: string,
+    inputKey?: string
+  ) => AnalyzerResult | undefined;
+  setInvestmentResult: (
+    teamId: string,
+    result: AnalyzerResult | null,
+    inputKey?: string
+  ) => void;
   setChoiceResult: (
     teamId: string,
     mode: "weapon" | "artifact",
-    result: WeaponChoiceResult | null
+    result: WeaponChoiceResult | null,
+    inputKey?: string
   ) => void;
   clearChoiceResults: (teamId: string) => void;
   clearForTeam: (teamId: string) => void;
@@ -50,7 +56,6 @@ interface TeamResultCacheState {
 
 function isEmptyEntry(entry: TeamResultCacheEntry): boolean {
   return (
-    entry.optimizationResult === undefined &&
     entry.investmentResult === undefined &&
     entry.weaponChoiceResult === undefined &&
     entry.artifactChoiceResult === undefined
@@ -92,11 +97,14 @@ function normalizeEntry(value: unknown): TeamResultCacheEntry {
   if (!value || typeof value !== "object") return {};
   const raw = value as Record<string, unknown>;
   return {
-    ...(raw.optimizationResult !== undefined
-      ? {
-          optimizationResult:
-            raw.optimizationResult as OptimizationResult | null,
-        }
+    ...(typeof raw.investmentInputKey === "string"
+      ? { investmentInputKey: raw.investmentInputKey }
+      : {}),
+    ...(typeof raw.weaponChoiceInputKey === "string"
+      ? { weaponChoiceInputKey: raw.weaponChoiceInputKey }
+      : {}),
+    ...(typeof raw.artifactChoiceInputKey === "string"
+      ? { artifactChoiceInputKey: raw.artifactChoiceInputKey }
       : {}),
     ...(raw.investmentResult !== undefined
       ? {
@@ -144,22 +152,27 @@ export function choiceResultsFromTeamResultCache(
 
 function setInvestmentResultOnEntry(
   entry: TeamResultCacheEntry | undefined,
-  result: AnalyzerResult | null
+  result: AnalyzerResult | null,
+  inputKey?: string
 ): TeamResultCacheEntry {
   return {
     ...(entry ?? {}),
     investmentResult: result ? serializeAnalyzerResult(result) : null,
+    investmentInputKey: result ? inputKey : undefined,
   };
 }
 
 function setChoiceResultOnEntry(
   entry: TeamResultCacheEntry | undefined,
   mode: "weapon" | "artifact",
-  result: WeaponChoiceResult | null
+  result: WeaponChoiceResult | null,
+  inputKey?: string
 ): TeamResultCacheEntry {
   return {
     ...(entry ?? {}),
     [mode === "weapon" ? "weaponChoiceResult" : "artifactChoiceResult"]: result,
+    [mode === "weapon" ? "weaponChoiceInputKey" : "artifactChoiceInputKey"]:
+      result ? inputKey : undefined,
   };
 }
 
@@ -169,6 +182,8 @@ function clearChoiceResultsFromEntry(
   const {
     weaponChoiceResult: _weaponChoiceResult,
     artifactChoiceResult: _artifactChoiceResult,
+    weaponChoiceInputKey: _weaponChoiceInputKey,
+    artifactChoiceInputKey: _artifactChoiceInputKey,
     ...rest
   } = entry ?? {};
   return rest;
@@ -181,34 +196,38 @@ export const useTeamResultCacheStore = create<TeamResultCacheState>()(
 
       getForTeam: (teamId) => get().resultsByTeamId[teamId],
 
-      patchForTeam: (teamId, patch) =>
-        set((state) => ({
-          resultsByTeamId: writeEntry(state.resultsByTeamId, teamId, {
-            ...(state.resultsByTeamId[teamId] ?? {}),
-            ...patch,
-          }),
-        })),
-
-      getInvestmentResult: (teamId) => {
-        const result = get().resultsByTeamId[teamId]?.investmentResult;
+      getInvestmentResult: (teamId, inputKey) => {
+        const entry = get().resultsByTeamId[teamId];
+        if (inputKey !== undefined && entry?.investmentInputKey !== inputKey)
+          return undefined;
+        const result = entry?.investmentResult;
         return result ? deserializeAnalyzerResult(result) : undefined;
       },
 
-      setInvestmentResult: (teamId, result) =>
+      setInvestmentResult: (teamId, result, inputKey) =>
         set((state) => ({
           resultsByTeamId: writeEntry(
             state.resultsByTeamId,
             teamId,
-            setInvestmentResultOnEntry(state.resultsByTeamId[teamId], result)
+            setInvestmentResultOnEntry(
+              state.resultsByTeamId[teamId],
+              result,
+              inputKey
+            )
           ),
         })),
 
-      setChoiceResult: (teamId, mode, result) =>
+      setChoiceResult: (teamId, mode, result, inputKey) =>
         set((state) => ({
           resultsByTeamId: writeEntry(
             state.resultsByTeamId,
             teamId,
-            setChoiceResultOnEntry(state.resultsByTeamId[teamId], mode, result)
+            setChoiceResultOnEntry(
+              state.resultsByTeamId[teamId],
+              mode,
+              result,
+              inputKey
+            )
           ),
         })),
 
@@ -232,7 +251,7 @@ export const useTeamResultCacheStore = create<TeamResultCacheState>()(
     }),
     {
       name: "team-result-cache",
-      version: 5,
+      version: 6,
       migrate: migrateTeamResultCacheStore,
       partialize: (state) => ({ resultsByTeamId: state.resultsByTeamId }),
       merge: (persistedState, currentState) => {
