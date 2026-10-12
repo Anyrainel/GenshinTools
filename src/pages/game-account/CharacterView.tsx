@@ -339,6 +339,8 @@ function VirtualizedCharacterGrid({
     );
   });
   const [headerHeight, setHeaderHeight] = useState(0);
+  // Share CharacterCard's max-w-3xl limit across the settings and every row.
+  const gridMaxWidth = `calc(${numColumns} * var(--container-3xl) + ${numColumns - 1} * var(--spacing) * 3)`;
 
   // Observe container width → derive column count
   // biome-ignore lint/correctness/useExhaustiveDependencies: scrollRef.current is a ref and should not be a dependency
@@ -396,14 +398,18 @@ function VirtualizedCharacterGrid({
       style={{ scrollBehavior: "auto" }}
     >
       {/* Non-virtual header — scrolls with the list, mb-3 matches old space-y-3 */}
-      <div ref={headerRef} className="space-y-3 mb-3">
+      <div
+        ref={headerRef}
+        className="space-y-3 mb-3 mx-auto w-full"
+        style={{ maxWidth: gridMaxWidth }}
+      >
         <ArtifactScoreGlobalSettings />
       </div>
 
       {/* Virtual rows */}
       <div
-        className="relative w-full pb-1"
-        style={{ height: virtualizer.getTotalSize() }}
+        className="relative w-full pb-1 mx-auto"
+        style={{ height: virtualizer.getTotalSize(), maxWidth: gridMaxWidth }}
       >
         {virtualizer.getVirtualItems().map((virtualRow) => (
           <div
