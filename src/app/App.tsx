@@ -37,9 +37,6 @@ const AuthCallbackPage = lazy(
   () => import("../pages/profile/AuthCallbackPage")
 );
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
-const LabPreviewPage = import.meta.env.DEV
-  ? lazy(() => import("../pages/preview/LabPreviewPage"))
-  : null;
 
 const SITE_NAME = "GGArtifact";
 
@@ -71,10 +68,7 @@ function App() {
   useEffect(() => {
     const base = `/${location.pathname.split("/")[1]}`;
     const page = PAGE_TITLES[location.pathname] ?? PAGE_TITLES[base];
-    const pageTitle =
-      import.meta.env.DEV && base === "/__lab"
-        ? t.ui("labPreview.title")
-        : (page ?? NOT_FOUND_TITLE)[language];
+    const pageTitle = (page ?? NOT_FOUND_TITLE)[language];
     document.title = isHomePage ? homeTitle : `${pageTitle} — ${SITE_NAME}`;
     document
       .querySelector('meta[name="description"]')
@@ -85,7 +79,7 @@ function App() {
     document
       .querySelector('meta[property="og:description"]')
       ?.setAttribute("content", description);
-  }, [isHomePage, location.pathname, language, homeTitle, description, t]);
+  }, [isHomePage, location.pathname, language, homeTitle, description]);
 
   // Tier B preload — fire-and-forget at app boot. Tooltip / table consumers
   // call resource.use() themselves and render skeletons until ready, so this
@@ -112,9 +106,6 @@ function App() {
           >
             <Suspense fallback={null}>
               <Routes>
-                {LabPreviewPage && (
-                  <Route path="/__lab/:section?" element={<LabPreviewPage />} />
-                )}
                 <Route path="/" element={<Home />} />
                 <Route path="/account-data" element={<AccountDataPage />} />
                 <Route
@@ -162,10 +153,7 @@ function App() {
               } as CSSProperties
             }
           />
-          {!isScannerDownloadPage &&
-            !(
-              import.meta.env.DEV && location.pathname.startsWith("/__lab")
-            ) && <GreetingGate />}
+          {!isScannerDownloadPage && <GreetingGate />}
         </div>
       </TourProvider>
     </PageErrorBoundary>

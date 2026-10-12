@@ -5,7 +5,6 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { exportJWK, generateKeyPair, SignJWT } from "jose";
 import { defineConfig } from "vite";
-import { labPreview } from "./scripts/dev/vite-plugin-lab-preview.ts";
 import { presetWatcher } from "./scripts/dev/vite-plugin-preset-watcher.ts";
 
 // Chunk assignment shared between the main app graph and each worker graph.
@@ -156,7 +155,6 @@ export default defineConfig(({ command }) => {
           : undefined,
       }),
       presetWatcher(),
-      labPreview(),
       {
         name: "e2e-fake-logto",
         enforce: "pre",
