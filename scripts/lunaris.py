@@ -14,11 +14,11 @@ Pipeline (always cleanup first, then scrape):
   2. Scrape: always re-fetch beta entities from lunaris API and write data.
      Images are skipped if already present on disk.
 
-Output files (under src/data/game/):
+Output files (under src/generated/catalog/):
   character_beta_stats.json.gz, character_beta_en.json.gz, character_beta_zh.json.gz
   weapon_beta_stats.json.gz, weapon_beta_en.json.gz, weapon_beta_zh.json.gz
   artifact_beta_en.json.gz, artifact_beta_zh.json.gz
-  src/data/resources_beta.ts
+  src/generated/catalog/resources_beta.ts
   public/character/{id}.webp, public/weapon/{id}.webp, public/artifact/{id}{N}.webp
 """
 

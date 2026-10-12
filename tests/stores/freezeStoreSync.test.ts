@@ -10,8 +10,8 @@ import type { AccountData, ArtifactData } from "@/domain/models";
 import {
   mergeAccountData,
   mergePartialAccountData,
-} from "@/services/account/mergeAccountData";
-import { rebuildAccountFromSnapshot } from "@/services/scanner-manager/storeSync";
+} from "@/services/game-account/mergeAccountData";
+import { rebuildAccountFromSnapshot } from "@/services/scanner/storeSync";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {
   collectAllArtifactIds,

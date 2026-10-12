@@ -13,8 +13,8 @@ import type {
   CharacterKit,
   CharacterSkill,
 } from "@/domain/models";
-import { i18nBetaData } from "@/generated/i18n-beta";
-import { i18nGameData } from "@/generated/i18n-game";
+import { i18nBetaData } from "@/generated/translations/i18n-beta";
+import { i18nGameData } from "@/generated/translations/i18n-game";
 import { useResource } from "@/hooks/useResource";
 import { i18nAppData } from "@/i18n/gameTerms";
 import { i18nUiData } from "@/i18n/messages";

@@ -30,25 +30,25 @@ import {
   useArtifactScannerJob,
 } from "@/hooks/useArtifactScannerJob";
 import {
-  convertGOODToAccountData,
-  type GOODData,
-} from "@/providers/scanner/goodConversion";
-import {
   createRecentArtifactScanRequest,
   parseRecentArtifactLimit,
   RECENT_ARTIFACT_SCAN_DEFAULT_LIMIT,
   RECENT_ARTIFACT_SCAN_MAX_LIMIT,
   RECENT_ARTIFACT_SCAN_MIN_LIMIT,
-} from "@/providers/scanner-manager/scanRequest";
+} from "@/providers/scanner/companion/scanRequest";
 import type {
   CategoryProgress,
   ScanProgress,
   ScanRequest,
-} from "@/providers/scanner-manager/types";
+} from "@/providers/scanner/companion/types";
+import {
+  convertGOODToAccountData,
+  type GOODData,
+} from "@/providers/scanner/formats/goodConversion";
 import {
   mergePartialAccountData,
   mergeRecentArtifactsIntoAccount,
-} from "@/services/account/mergeAccountData";
+} from "@/services/game-account/mergeAccountData";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { ConnectionStatus, SetupInstructions } from "./managerSharedUI";

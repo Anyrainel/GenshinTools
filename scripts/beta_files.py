@@ -4,11 +4,11 @@ Beta file management: paths, I/O, cleanup, TypeScript generation.
 This module owns everything related to the beta data surface:
 
   Beta JSON (gzipped, GitHub-search-hidden):
-    src/data/game/{character,weapon,artifact}_beta_*.json[.gz]
+    src/generated/catalog/{character,weapon,artifact}_beta_*.json[.gz]
 
   Beta TypeScript (visibility + i18n):
-    src/data/resources_beta.ts   — flagged-on entities visible in beta UI
-    src/generated/i18n-beta.ts        — display names for beta entities
+    src/generated/catalog/resources_beta.ts   — flagged-on entities visible in beta UI
+    src/generated/translations/i18n-beta.ts        — display names for beta entities
 
 The "beta" surface contains every unreleased entity (i.e. anything not in
 ``resources.ts``), regardless of where its data lives:
@@ -35,13 +35,13 @@ from pathlib import Path
 # Paths
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_ROOT / "src" / "data"
-GAME_DIR = DATA_DIR / "game"
+DATA_DIR = PROJECT_ROOT / "src" / "generated" / "catalog"
+GAME_DIR = DATA_DIR
 
 RESOURCES_PATH = DATA_DIR / "resources.ts"
 RESOURCES_BETA_PATH = DATA_DIR / "resources_beta.ts"
-I18N_GAME_PATH = PROJECT_ROOT / "src" / "generated" / "i18n-game.ts"
-I18N_BETA_PATH = PROJECT_ROOT / "src" / "generated" / "i18n-beta.ts"
+I18N_GAME_PATH = PROJECT_ROOT / "src" / "generated" / "translations" / "i18n-game.ts"
+I18N_BETA_PATH = PROJECT_ROOT / "src" / "generated" / "translations" / "i18n-beta.ts"
 
 # Official (released) game-data JSON, used as the safety oracle for cleanup.
 CHARACTER_4_EN_PATH = GAME_DIR / "character_4_en.json"
@@ -133,7 +133,7 @@ def generate_resources_beta_ts(
         "  ArtifactSetResource,",
         "  CharacterResource,",
         "  WeaponResource,",
-        '} from "../domain/models";',
+        '} from "../../domain/models";',
         "",
     ]
 

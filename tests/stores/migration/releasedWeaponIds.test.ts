@@ -5,7 +5,7 @@ import {
 } from "@/domain/combat/damage/core/statBuff";
 import type { AccountData, TierAssignment } from "@/domain/models";
 import type { TeamSetupConfig } from "@/domain/team/types";
-import { convertGOODToAccountData } from "@/providers/scanner/goodConversion";
+import { convertGOODToAccountData } from "@/providers/scanner/formats/goodConversion";
 import {
   accountFromCloud,
   accountToCloud,

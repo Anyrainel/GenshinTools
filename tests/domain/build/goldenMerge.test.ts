@@ -31,7 +31,7 @@ const UPDATE = process.env.UPDATE_GOLDEN === "1";
 function loadPresetBuilds(): BuildGroup[] {
   const filePath = resolve(
     __dirname,
-    "../../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
+    "../../../src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
   );
   const payload: BuildPayloadV5 = JSON.parse(readFileSync(filePath, "utf-8"));
 

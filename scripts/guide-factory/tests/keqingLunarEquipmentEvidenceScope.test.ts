@@ -1,4 +1,4 @@
-import characterStatsInput from "@/data/game/character_stats.json";
+import characterStatsInput from "@/generated/catalog/character_stats.json";
 import { describe, expect, it } from "vitest";
 import {
   authenticateKeqingLunarEquipmentScope,

@@ -9,12 +9,12 @@ import "@/providers/reference/statLoaders";
  */
 
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { characters } from "@/data/resources";
 import type { Tier } from "@/domain/enums";
 import type { CharacterFilters } from "@/domain/models";
 import { charactersById } from "@/domain/reference/catalog";
 import type { CharacterStatsMap } from "@/domain/reference/stats";
 import { getCharacterDisplayMeta } from "@/domain/reference/stats";
+import { characters } from "@/generated/catalog/resources";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,
@@ -26,8 +26,9 @@ describe("Integration: Character Build View Filter Flow", () => {
   let characterStatsMap: CharacterStatsMap | null = null;
 
   beforeAll(async () => {
-    characterStatsMap = (await import("@/data/game/character_stats.json"))
-      .default as CharacterStatsMap;
+    characterStatsMap = (
+      await import("@/generated/catalog/character_stats.json")
+    ).default as CharacterStatsMap;
   });
 
   beforeEach(() => {

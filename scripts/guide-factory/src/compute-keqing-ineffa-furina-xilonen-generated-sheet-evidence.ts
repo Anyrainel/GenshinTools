@@ -64,7 +64,7 @@ export async function writeKeqingIneffaFurinaXilonenGeneratedSheetEvidenceReport
 
 export async function runKeqingIneffaFurinaXilonenGeneratedSheetEvidenceCli(): Promise<void> {
   const readInput = (relativePath: string) =>
-    readJson(path.join(REPOSITORY_ROOT, relativePath));
+    readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)));
   const [
     sourceTechnicalReport,
     equipmentLatticeReport,

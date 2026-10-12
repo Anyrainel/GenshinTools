@@ -1,4 +1,4 @@
-import characterStatsInput from "@/data/game/character_stats.json";
+import characterStatsInput from "@/generated/catalog/character_stats.json";
 import { betaArtifactIds } from "@/domain/reference/catalog";
 import { buildArtifactSetChoiceCandidates } from "@/domain/combat/analyzer/weaponChoice";
 import type {

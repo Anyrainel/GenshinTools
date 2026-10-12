@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { getBarColor } from "@/domain/account/buildEvaluation";
+import { getBarColor } from "@/domain/game-account/buildEvaluation";
 import { cn } from "@/lib/utils";
 
 interface SlotProgressIndicatorProps {

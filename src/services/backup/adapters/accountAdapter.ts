@@ -1,6 +1,9 @@
-import type { AccountProfileId, AccountState } from "@/domain/account/types";
 import type { CloudExportPartition } from "@/domain/backup/types";
 import { allSlots, type Slot } from "@/domain/enums";
+import type {
+  AccountProfileId,
+  AccountState,
+} from "@/domain/game-account/types";
 import type {
   AccountData,
   ArtifactData,
@@ -8,7 +11,7 @@ import type {
   WeaponData,
 } from "@/domain/models";
 import { weaponsById } from "@/domain/reference/catalog";
-import { createLocatedCharacterPlaceholder } from "@/providers/scanner/locationCharacters";
+import { createLocatedCharacterPlaceholder } from "@/providers/scanner/formats/locationCharacters";
 import { encodePathSegment } from "@/services/backup/payload";
 import { migrateReleasedAccountWeapons } from "@/stores/migration/releasedWeaponIds";
 import {

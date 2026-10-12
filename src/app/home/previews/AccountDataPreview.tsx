@@ -1,7 +1,7 @@
 import { BarChart3, Box, Lightbulb, Lock, Monitor, Users } from "lucide-react";
-import { BuildEvaluationCard } from "@/components/account-data/BuildEvaluationCard";
-import { ScoreUpActionCard } from "@/components/account-data/ScoreUpActionCard";
-import { TriageCard } from "@/components/account-data/TriageCard";
+import { BuildEvaluationCard } from "@/components/game-account/BuildEvaluationCard";
+import { ScoreUpActionCard } from "@/components/game-account/ScoreUpActionCard";
+import { TriageCard } from "@/components/game-account/TriageCard";
 import { CharacterInfo } from "@/components/shared/CharacterInfo";
 import { ItemIcon } from "@/components/shared/ItemIcon";
 import { Button } from "@/components/ui/button";

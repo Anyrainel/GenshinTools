@@ -1,4 +1,4 @@
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import { useAccountStore } from "@/stores/useAccountStore";
 
 /** Character IDs that are always owned (Traveler, Manekin, Manekina variants). */

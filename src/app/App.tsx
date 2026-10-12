@@ -22,21 +22,19 @@ import {
 import Home from "../pages/home/HomePage";
 
 const AccountDataPage = lazy(
-  () => import("../pages/account-data/AccountDataPage")
+  () => import("../pages/game-account/AccountDataPage")
 );
 const ArtifactBuildsPage = lazy(() => import("../pages/builds/BuildsPage"));
-const TeamCompPage = lazy(
-  () => import("../pages/team-analysis/TeamAnalysisPage")
-);
+const TeamCompPage = lazy(() => import("../pages/teams/TeamAnalysisPage"));
 const TierListPage = lazy(() => import("../pages/tier-list/TierListPage"));
 const ArchivePage = lazy(() => import("../pages/archive/ArchivePage"));
-const AccountPage = lazy(() => import("../pages/account/AccountPage"));
-const CloudBackupPage = lazy(() => import("../pages/account/CloudBackupPage"));
-const SupportMePage = lazy(() => import("../pages/account/SupportMePage"));
-const FeedbackPage = lazy(() => import("../pages/account/FeedbackPage"));
+const AccountPage = lazy(() => import("../pages/profile/AccountPage"));
+const CloudBackupPage = lazy(() => import("../pages/profile/CloudBackupPage"));
+const SupportMePage = lazy(() => import("../pages/profile/SupportMePage"));
+const FeedbackPage = lazy(() => import("../pages/profile/FeedbackPage"));
 const ScannerDownloadPage = lazy(() => import("../pages/ScannerDownload"));
 const AuthCallbackPage = lazy(
-  () => import("../pages/account/AuthCallbackPage")
+  () => import("../pages/profile/AuthCallbackPage")
 );
 const NotFoundPage = lazy(() => import("../pages/NotFoundPage"));
 

@@ -1,4 +1,3 @@
-import { charInfo } from "@/data/characterInfo";
 import type {
   Element,
   Faction,
@@ -13,6 +12,7 @@ import {
   characterStatsResource,
   getCharacterDisplayMeta,
 } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import {
   LUNAR_SUPERSEDES,
   REACTION_AURA_TRIGGER,

@@ -1,4 +1,4 @@
-import type { AccountProfileId } from "@/domain/account/types";
+import type { AccountProfileId } from "@/domain/game-account/types";
 
 export type CloudNamespace =
   | "profile.app"

@@ -14,8 +14,8 @@ import { scoreAllSlots } from "@/domain/build/artifact/scoring/artifactScore";
 import {
   convertGOODToAccountData,
   type GOODData,
-} from "@/providers/scanner/goodConversion";
-import { mergeAccountData } from "@/services/account/mergeAccountData";
+} from "@/providers/scanner/formats/goodConversion";
+import { mergeAccountData } from "@/services/game-account/mergeAccountData";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { useTierStore } from "@/stores/useTierStore";

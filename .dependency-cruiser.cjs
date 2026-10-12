@@ -2,6 +2,22 @@
 module.exports = {
   forbidden: [
     {
+      name: "scanner-formats-do-not-depend-on-companion",
+      severity: "error",
+      from: { path: "^src/providers/scanner/formats/" },
+      to: { path: "^src/providers/scanner/companion/" },
+    },
+    {
+      name: "generated-outputs-have-no-runtime-source-dependencies",
+      severity: "error",
+      from: { path: "^src/generated/" },
+      to: {
+        path: "^src/",
+        pathNot: "^src/generated/",
+        dependencyTypesNot: ["type-only"],
+      },
+    },
+    {
       name: "leaf-code-is-framework-free",
       severity: "error",
       from: { path: "^src/(lib|providers)/" },
@@ -73,7 +89,7 @@ module.exports = {
     {
       name: "foundations-do-not-import-application-layers",
       severity: "error",
-      from: { path: "^src/(config|data|generated|presets|i18n)/" },
+      from: { path: "^src/(config|generated|i18n)/" },
       to: {
         path: "^src/(app|pages|components|hooks|contexts|providers|services|stores)/",
       },

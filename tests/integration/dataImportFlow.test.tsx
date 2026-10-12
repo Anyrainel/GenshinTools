@@ -15,7 +15,7 @@ import { scoreWithBuilds } from "@/domain/build/artifact/scoring/artifactScore";
 import {
   convertGOODToAccountData,
   type GOODData,
-} from "@/providers/scanner/goodConversion";
+} from "@/providers/scanner/formats/goodConversion";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import { render } from "../utils/render";

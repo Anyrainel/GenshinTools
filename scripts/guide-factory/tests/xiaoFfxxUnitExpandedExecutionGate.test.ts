@@ -92,9 +92,7 @@ let canonicalReport: XiaoFfxxUnitExpandedExecutionGateReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(
-      XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_REPORT_PATH,
-    ) as Promise<XiaoFfxxUnitExpandedExecutionGateReport>,
+    readJson(currentSourceLocation(XIAO_FFXX_UNIT_EXPANDED_EXECUTION_GATE_REPORT_PATH)) as Promise<XiaoFfxxUnitExpandedExecutionGateReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxUnitExpandedExecutionGateReport(fixture());
@@ -611,7 +609,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxUnitExpandedExecutionGateInpu
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
+      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([

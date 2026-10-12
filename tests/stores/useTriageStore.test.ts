@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
 import { migrateTriageStore } from "@/stores/migration/triage";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {

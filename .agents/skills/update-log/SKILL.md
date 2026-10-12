@@ -5,7 +5,7 @@ description: >
   TRIGGER when the user asks to write, update, draft, or publish the update log / changelog /
   "what's new" / 更新日志. Gathers commits since the last published entry, summarizes only
   user-facing changes (no infra/refactors, no engineering tone), proposes bilingual zh+en
-  entries for approval, then writes them to src/presets/updatelog/{en,zh}.md under the current date.
+  entries for approval, then writes them to src/content/updatelog/{en,zh}.md under the current date.
   Do NOT auto-run on commit or on a schedule — this is an on-demand, approval-gated flow.
 ---
 
@@ -14,8 +14,8 @@ description: >
 Drafts and publishes the in-app "What's New" entries. Output is two lockstep files,
 rendered by `src/components/shared/WhatsNew.tsx`:
 
-- `src/presets/updatelog/en.md` — English
-- `src/presets/updatelog/zh.md` — 简体中文
+- `src/content/updatelog/en.md` — English
+- `src/content/updatelog/zh.md` — 简体中文
 
 The flow is **always approval-gated**: gather → summarize → propose for review → only write after the user approves. Never write the files before approval.
 
@@ -53,10 +53,10 @@ The boundary is the commit that last touched the update log files, not a date gu
 
 ```bash
 # boundary commit (last time the log was published)
-git log -1 --format='%H %ci %s' -- src/presets/updatelog/en.md src/presets/updatelog/zh.md
+git log -1 --format='%H %ci %s' -- src/content/updatelog/en.md src/content/updatelog/zh.md
 
 # everything since, newest first. Use origin/main (not HEAD) as the tip if local is behind the remote.
-BASE=$(git log -1 --format=%H -- src/presets/updatelog/en.md src/presets/updatelog/zh.md)
+BASE=$(git log -1 --format=%H -- src/content/updatelog/en.md src/content/updatelog/zh.md)
 git log --format='%h %ci %s' "$BASE"..origin/main   # or "$BASE"..HEAD if local is ahead
 ```
 

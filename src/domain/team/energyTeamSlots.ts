@@ -1,9 +1,9 @@
-import { charInfo } from "@/data/characterInfo";
 import { particles } from "@/domain/combat/energy/constants";
 import type { TeamSlot } from "@/domain/combat/energy/types";
 import type { Element } from "@/domain/enums";
 import type { AccountData } from "@/domain/models";
 import type { CharacterStatsMap } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import { teamCompToArrays } from "./teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "./types";
 import { resolveRosterWeaponCopies } from "./weaponCopies";

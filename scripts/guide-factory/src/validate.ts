@@ -1,7 +1,8 @@
+import { currentSourceLocation } from "./sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
   buildArtifactChoiceSearchCoverageReport,
@@ -517,7 +518,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -530,7 +531,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -584,7 +585,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -596,7 +597,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -608,7 +609,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -620,7 +621,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -632,7 +633,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -644,7 +645,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -656,7 +657,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -676,7 +677,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -688,7 +689,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -700,7 +701,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -714,7 +715,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -726,7 +727,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             text: await readFile(
-              path.join(REPOSITORY_ROOT, relativePath),
+              currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)),
               "utf8",
             ),
           }),
@@ -740,7 +741,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
-              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+              await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)))
             ).toString("base64"),
           }),
         ),
@@ -751,7 +752,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
-              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+              await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)))
             ).toString("base64"),
           }),
         ),
@@ -764,7 +765,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
-              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+              await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)))
             ).toString("base64"),
           }),
         ),
@@ -777,7 +778,7 @@ export async function runValidation(
           async (relativePath) => ({
             path: relativePath,
             bytesBase64: (
-              await readFile(path.join(REPOSITORY_ROOT, relativePath))
+              await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)))
             ).toString("base64"),
           }),
         ),
@@ -2767,7 +2768,7 @@ async function hashRelativePaths(
   return Promise.all(
     relativePaths.map(async (relativePath) => ({
       path: relativePath,
-      sha256: await sha256File(path.join(REPOSITORY_ROOT, relativePath)),
+      sha256: await sha256File(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     }))
   );
 }

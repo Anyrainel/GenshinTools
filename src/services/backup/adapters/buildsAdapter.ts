@@ -6,6 +6,7 @@ import {
 import { getDefaultBuildPresetId } from "@/domain/build/buildPresetRegistry";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
 import type { ComputeOptions } from "@/domain/models";
+import { migrateBundledPresetId } from "@/stores/migration/presetIds";
 import { migrateReleasedCharacterWeapons } from "@/stores/migration/releasedWeaponIds";
 import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
@@ -53,7 +54,7 @@ export function buildsToCloud(
     {
       namespace: "builds",
       partitionKey: "all",
-      schemaVersion: 2,
+      schemaVersion: 3,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultBuildsSnapshot(snapshot),
       payload: {
@@ -132,14 +133,16 @@ function getMetadataUpdatedAt(
 function getCloudBuildPresetSelection(
   activePresetId: string | null
 ): string | null | undefined {
-  return isImplicitDefaultPreset(activePresetId) ? undefined : activePresetId;
+  const id = migrateBundledPresetId(activePresetId);
+  return isImplicitDefaultPreset(id) ? undefined : id;
 }
 
 function getRestoredBuildPresetSelection(
   payload: BuildsCloudPayload | undefined
 ): string | null {
   if (!payload) return null;
-  if ("activePresetId" in payload) return payload.activePresetId ?? null;
+  if ("activePresetId" in payload)
+    return migrateBundledPresetId(payload.activePresetId ?? null);
   return getDefaultBuildPresetId();
 }
 

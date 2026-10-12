@@ -1,14 +1,14 @@
 import { z } from "zod";
-import particlesData from "@/data/ercalc/particles.json";
-import fontaineSE from "@/data/ercalc/selfEnergy-fontaine.json";
-import inazumaSE from "@/data/ercalc/selfEnergy-inazuma.json";
-import liyueSE from "@/data/ercalc/selfEnergy-liyue.json";
-import mondstadtSE from "@/data/ercalc/selfEnergy-mondstadt.json";
-import natlanSE from "@/data/ercalc/selfEnergy-natlan.json";
-import nodKraiSE from "@/data/ercalc/selfEnergy-nod-krai.json";
-import noneSE from "@/data/ercalc/selfEnergy-none.json";
-import snezhnayaSE from "@/data/ercalc/selfEnergy-snezhnaya.json";
-import sumeruSE from "@/data/ercalc/selfEnergy-sumeru.json";
+import particlesData from "@/generated/combat/energy/particles.json";
+import fontaineSE from "@/generated/combat/energy/selfEnergy-fontaine.json";
+import inazumaSE from "@/generated/combat/energy/selfEnergy-inazuma.json";
+import liyueSE from "@/generated/combat/energy/selfEnergy-liyue.json";
+import mondstadtSE from "@/generated/combat/energy/selfEnergy-mondstadt.json";
+import natlanSE from "@/generated/combat/energy/selfEnergy-natlan.json";
+import nodKraiSE from "@/generated/combat/energy/selfEnergy-nod-krai.json";
+import noneSE from "@/generated/combat/energy/selfEnergy-none.json";
+import snezhnayaSE from "@/generated/combat/energy/selfEnergy-snezhnaya.json";
+import sumeruSE from "@/generated/combat/energy/selfEnergy-sumeru.json";
 import type {
   ActionType,
   NAPityConfig,

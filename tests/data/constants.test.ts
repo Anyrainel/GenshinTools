@@ -6,7 +6,7 @@ import {
   TIER_LIST_SUPPORT_ARTIFACT_SETS,
   TRIAGE_SUPPORT_ARTIFACT_SETS,
 } from "@/config/gameConstants";
-import { artifacts } from "@/data/resources";
+import { artifacts } from "@/generated/catalog/resources";
 
 describe("artifact support set constants", () => {
   it("assigns every released artifact set exactly one role", () => {

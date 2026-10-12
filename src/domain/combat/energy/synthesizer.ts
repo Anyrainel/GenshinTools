@@ -1,4 +1,4 @@
-import { charInfo } from "@/data/characterInfo";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import {
   PERIODIC_E_TRIGGERS,
   PERIODIC_Q_TRIGGERS,

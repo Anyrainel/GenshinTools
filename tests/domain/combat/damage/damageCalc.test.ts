@@ -1,7 +1,5 @@
 import "@/providers/reference/statLoaders";
 import { describe, expect, it } from "vitest";
-
-import { charInfo } from "@/data/characterInfo";
 import {
   isBuffApplicable,
   StatBuff,
@@ -15,6 +13,7 @@ import {
   getNextLevelTier,
   weaponStatsResource,
 } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 
 // Preload before any describe runs (describe callbacks create TeamBuild at collect time)
 await Promise.all([

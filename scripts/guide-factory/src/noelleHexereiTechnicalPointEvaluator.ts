@@ -2,7 +2,7 @@ import "@/providers/reference/statLoaders";
 import { createHash } from "node:crypto";
 
 import { betaEnabled } from "@/config/beta";
-import { charInfo } from "@/data/characterInfo";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import type { MainStat, StatKey } from "@/domain/enums";
 import { getTalentParam } from "@/domain/reference/stats";
 import type { StatEntry } from "@/domain/models";

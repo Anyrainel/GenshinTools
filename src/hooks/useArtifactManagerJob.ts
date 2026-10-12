@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { IGOODArtifact } from "@/providers/scanner/goodConversion";
 import {
   ArtifactManagerError,
   fetchArtifacts,
@@ -7,17 +6,18 @@ import {
   pollStatus,
   submitEquipJob,
   submitJob,
-} from "@/providers/scanner-manager/client";
+} from "@/providers/scanner/companion/client";
 import type {
   EquipPayload,
   ManagePayload,
   ResultResponse,
   SubmitResponse,
-} from "@/providers/scanner-manager/types";
+} from "@/providers/scanner/companion/types";
+import type { IGOODArtifact } from "@/providers/scanner/formats/goodConversion";
 import {
   applyEquipResults,
   applyJobResults,
-} from "@/services/scanner-manager/storeSync";
+} from "@/services/scanner/storeSync";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 
 export type JobPhase =

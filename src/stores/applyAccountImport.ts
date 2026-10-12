@@ -1,4 +1,4 @@
-import type { AccountProfileId } from "@/domain/account/types";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import type { AccountData } from "@/domain/models";
 import { useAccountStore } from "./useAccountStore";
 import { useAchievementStore } from "./useAchievementStore";

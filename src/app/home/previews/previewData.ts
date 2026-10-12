@@ -3,11 +3,11 @@
  * All data here is static sample data — never used in production logic.
  */
 
-import type { BuildEvaluation } from "@/domain/account/buildEvaluation";
-import type { ScoreUpAction } from "@/domain/account/scoreUpEngine";
-import type { TriageDecision } from "@/domain/account/triage/types";
 import type { I18nLabel } from "@/domain/combat/damage/types";
 import type { Slot } from "@/domain/enums";
+import type { BuildEvaluation } from "@/domain/game-account/buildEvaluation";
+import type { ScoreUpAction } from "@/domain/game-account/scoreUpEngine";
+import type { TriageDecision } from "@/domain/game-account/triage/types";
 import type { ArtifactData, Build } from "@/domain/models";
 import type { WeaponRanking } from "@/domain/team/types";
 

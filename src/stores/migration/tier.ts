@@ -1,6 +1,6 @@
-import { legacyAccountProfileIdToNumber } from "@/domain/account/accountProfile";
-import type { AccountProfileId } from "@/domain/account/types";
 import type { LuckExpectation } from "@/domain/enums";
+import { legacyAccountProfileIdToNumber } from "@/domain/game-account/accountProfile";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import type { TierAssignment, TierCustomization } from "@/domain/models";
 
 interface TierListInstanceMigration {

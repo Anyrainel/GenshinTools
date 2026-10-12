@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "./sourceLocations";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ArtifactChoiceSearchCoverageReport } from "./artifactChoiceSearchCoverage";
@@ -39,7 +40,7 @@ export function formatKeqingIneffaFurinaXilonenEquipmentCandidateLatticeSummary(
 export async function runKeqingIneffaFurinaXilonenEquipmentCandidateLatticeCli(): Promise<void> {
   const values = await Promise.all(
     KEQING_INEFFA_FURINA_XILONEN_EQUIPMENT_CANDIDATE_LATTICE_INPUT_PATHS.map(
-      (relativePath) => readJson(path.join(REPOSITORY_ROOT, relativePath)),
+      (relativePath) => readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     ),
   );
   const report =

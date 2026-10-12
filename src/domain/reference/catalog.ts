@@ -7,12 +7,12 @@ import {
   elementResources,
   weaponTypeResources as weaponResources,
   weapons,
-} from "../../data/resources";
+} from "../../generated/catalog/resources";
 import {
   betaArtifacts,
   betaCharacters,
   betaWeapons,
-} from "../../data/resources_beta";
+} from "../../generated/catalog/resources_beta";
 import { tiers } from "../enums";
 import type {
   ArtifactHalfSet,

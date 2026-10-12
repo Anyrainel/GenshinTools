@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
 import type { AccountData, ArtifactData } from "@/domain/models";
-import type { IGOODArtifact } from "@/providers/scanner/goodConversion";
 import type {
   EquipPayload,
   InstructionResult,
   ManagePayload,
-} from "@/providers/scanner-manager/types";
+} from "@/providers/scanner/companion/types";
+import type { IGOODArtifact } from "@/providers/scanner/formats/goodConversion";
 import {
   analyzeManageResults,
   applyEquipResults,
   applyJobResults,
   computeSnapshotDiff,
   rebuildAccountFromSnapshot,
-} from "@/services/scanner-manager/storeSync";
+} from "@/services/scanner/storeSync";
 
 function makeArtifact(overrides: Partial<ArtifactData> = {}): ArtifactData {
   return {

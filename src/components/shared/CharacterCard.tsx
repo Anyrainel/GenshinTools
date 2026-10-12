@@ -14,7 +14,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { charInfo as charInfoData } from "@/data/characterInfo";
 import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
 import type { MainStatSlot, Slot } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
@@ -24,6 +23,7 @@ import {
   charactersById,
   weaponsById,
 } from "@/domain/reference/catalog";
+import { charInfo as charInfoData } from "@/generated/catalog/characterInfo";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
 import { cn } from "@/lib/utils";
 import { StatDisplay } from "./StatDisplay";

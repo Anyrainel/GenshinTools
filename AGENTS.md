@@ -23,28 +23,28 @@ React 19 + TypeScript + Vite 7 app for Genshin Impact player tools. UI uses Tail
 
 ## Page Map
 
-Use this as the first routing hint when the user refers to a page or tab in natural language. Navigation is defined in `src/components/layout/appNavigation.tsx`.
+Use this as the first routing hint when the user refers to a page or tab in natural language. Navigation is defined in `src/config/navigation.tsx`.
 
-- Home (`/`) — `src/pages/Home.tsx`: app entry page with tool cards and onboarding links.
+- Home (`/`) — `src/pages/home/HomePage.tsx`: app entry page with tool cards and onboarding links.
 
-- Account Data (`/account-data`) — `src/pages/AccountData.tsx`: account import/export shell and tab router.
-  - Characters (`/account-data/characters`) — `src/pages/account-data/CharacterView.tsx`: imported character roster, ownership filters, edit mode, and artifact score display.
-  - Inventory (`/account-data/inventory`) — `src/pages/account-data/InventoryView.tsx`: imported weapons/artifacts inventory browsing, scanner entry, and edit/delete flows.
-  - Recommendations (`/account-data/recommendations`) — `src/pages/account-data/RecommendationView.tsx`: artifact upgrade recommendations from account data, build configs, and scoring thresholds.
-  - Evaluation (`/account-data/evaluation`) — `src/pages/account-data/EvaluationView.tsx`: build completion evaluation for owned characters against configured artifact builds.
-  - Resources (`/account-data/resources`) — `src/pages/account-data/ResourceView.tsx`: resource spending suggestions for craft, reroll, and artifact level-up actions.
-  - Triage (`/account-data/triage`) — `src/pages/account-data/TriageView.tsx`: artifact keep/lock/fodder triage using account data, build configs, and triage settings.
+- Account Data (`/account-data`) — `src/pages/game-account/AccountDataPage.tsx`: account import/export shell and tab router.
+  - Characters (`/account-data/characters`) — `src/pages/game-account/CharacterView.tsx`: imported character roster, ownership filters, edit mode, and artifact score display.
+  - Inventory (`/account-data/inventory`) — `src/pages/game-account/InventoryView.tsx`: imported weapons/artifacts inventory browsing, scanner entry, and edit/delete flows.
+  - Recommendations (`/account-data/recommendations`) — `src/pages/game-account/ScoreUpView.tsx`: artifact upgrade recommendations from account data, build configs, and scoring thresholds.
+  - Evaluation (`/account-data/evaluation`) — `src/pages/game-account/EvaluationView.tsx`: build completion evaluation for owned characters against configured artifact builds.
+  - Resources (`/account-data/resources`) — `src/pages/game-account/ResourceView.tsx`: resource spending suggestions for craft, reroll, and artifact level-up actions.
+  - Triage (`/account-data/triage`) — `src/pages/game-account/TriageView.tsx`: artifact keep/lock/fodder triage using account data, build configs, and triage settings.
 
-- Artifact Filter (`/artifact-filter`) — `src/pages/ArtifactBuilds.tsx`: artifact build import/export shell and tab router.
+- Artifact Filter (`/artifact-filter`) — `src/pages/builds/BuildsPage.tsx`: artifact build import/export shell and tab router.
   - Configure (`/artifact-filter/configure`) — `src/pages/builds/CharacterBuildView.tsx`: per-character artifact build target configuration.
   - Compute Filters (`/artifact-filter/filters`) — `src/pages/builds/ArtifactBuildsView.tsx`: computed artifact set/slot filters from configured character builds.
   - AutoTune (`/artifact-filter/weights`) — `src/pages/builds/AutoTuneView.tsx`: team-aware AutoTune workflow for deriving weighted artifact formulas.
 
-- Team Comp (`/team-comp`) — `src/pages/TeamComp.tsx`: team import/export shell and tab router.
-  - Analysis (/team-comp/analysis) — src/pages/team-analysis/AnalysisView.tsx: damage, investment, weapon choice and optimization workspace.
-  - Loadouts (/team-comp/loadouts) — src/pages/team-analysis/FrozenView.tsx: saved artifact/team loadouts and batch equip export.
+- Team Comp (`/team-comp`) — `src/pages/teams/TeamAnalysisPage.tsx`: team import/export shell and tab router.
+  - Analysis (/team-comp/analysis) — src/pages/teams/AnalysisView.tsx: damage, investment, weapon choice and optimization workspace.
+  - Loadouts (/team-comp/loadouts) — src/pages/teams/FrozenView.tsx: saved artifact/team loadouts and batch equip export.
 
-- Tier List (`/tier-list`) — `src/pages/TierList.tsx`: tier list import/export shell and tab router.
+- Tier List (`/tier-list`) — `src/pages/tier-list/TierListPage.tsx`: tier list import/export shell and tab router.
   - Characters (`/tier-list/characters`) — `src/pages/tier-list/CharacterTierListView.tsx`: editable character tier table with filters, presets, export, and customization.
   - Weapons (`/tier-list/weapons`) — `src/pages/tier-list/WeaponTierListView.tsx`: editable weapon tier table with weapon filters, presets, export, and customization.
 
@@ -64,7 +64,7 @@ general folder descriptions. Read it before reorganizing modules.
 
 - For Genshin game data, formulas, damage implementations, or calculator review, use the `genshin-knowledge` skill first.
 - For damage, energy, or gcsim batch work, use the dispatcher skills under `.agents/skills/`; they launch Codex `worker` subagents that read `.agents/agents/*.md`.
-- When a new or changed character, weapon, artifact, or resonance grants CRIT Rate, update `src/domain/account/maxCrBuff.ts` and its tests so score-up recommendations use the same CR budget.
+- When a new or changed character, weapon, artifact, or resonance grants CRIT Rate, update `src/domain/game-account/maxCrBuff.ts` and its tests so score-up recommendations use the same CR budget.
 - For persisted stores, imports, conversions, or artifact mutation flows, inspect the relevant store, migration code, and nearby tests before editing.
 
 ## UI Rules
@@ -103,7 +103,7 @@ general folder descriptions. Read it before reorganizing modules.
 
 - `src/i18n/messages.ts`: static UI strings. `t.ui()` calls must use string literals, never constructed keys.
 - `src/i18n/gameTerms.ts`: dynamic app terms and enum labels.
-- `src/generated/i18n-game.ts`: generated game entity names.
+- `src/generated/translations/i18n-game.ts`: generated game entity names.
 - UI strings should read like player-facing product text, not developer notes.
 - Chinese text must use natural community wording and official/game-appropriate names. Do not translate game concepts literally from English.
 

@@ -115,7 +115,7 @@ export function mulberry32(seed: number): () => number {
 
 export function loadTeamPreset(): TeamCompData {
   const presetPath = resolve(
-    "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json"
+    "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json"
   );
   const raw = readFileSync(presetPath, "utf-8");
   const parsed = JSON.parse(raw);

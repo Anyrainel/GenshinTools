@@ -104,9 +104,9 @@
     amount of healing a character receives. The engine's heal% key is Healing
     Bonus (治疗加成), the outgoing stat: src/i18n/gameTerms.ts L53 labels it
     "Healing Bonus"/"治疗加成", it is the circlet main stat in
-    src/data/constants.ts L94, and every existing user models outgoing healing
+    src/generated/catalog/constants.ts L94, and every existing user models outgoing healing
     (Kuki P1, Kaveh C1, Kokomi P4, Ocean-Hued Clam). There is no StatKey for
-    Incoming Healing Bonus in src/data/enums.ts.
+    Incoming Healing Bonus in src/generated/catalog/enums.ts.
 
     Emitting heal% for Furina's Q would therefore not be a missing buff, it
     would be a new bug: heal% feeds Kokomi P2's CrossScalingBuff

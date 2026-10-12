@@ -1,7 +1,7 @@
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
-import { inferTriageBackupAmountMode } from "@/domain/account/triage/settings";
-import type { TriageSettings } from "@/domain/account/triage/types";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
+import { inferTriageBackupAmountMode } from "@/domain/game-account/triage/settings";
+import type { TriageSettings } from "@/domain/game-account/triage/types";
 
 interface LegacyTriageState {
   settings?: Partial<TriageSettings> & {

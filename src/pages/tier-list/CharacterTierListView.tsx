@@ -75,7 +75,7 @@ import {
 import { useTierStore } from "@/stores/useTierStore";
 
 const presetModules = import.meta.glob<{ default: TierListData }>(
-  "@/presets/tier-list/*.json",
+  "@/config/presets/tier-list/*.json",
   {
     eager: false,
   }

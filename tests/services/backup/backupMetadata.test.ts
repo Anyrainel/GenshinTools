@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   formatBackupCount,
   formatOptionalBackupDate,
-} from "@/components/account/cloudBackupLabels";
+} from "@/components/profile/cloudBackupLabels";
 import type { CloudExportPartition } from "@/domain/backup/types";
 import type { BackupHead } from "@/providers/backup/apiClient";
 import {

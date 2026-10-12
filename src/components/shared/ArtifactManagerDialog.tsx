@@ -18,22 +18,22 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import type { JobInput } from "@/hooks/useArtifactManagerJob";
 import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
-import type { IGOODArtifact } from "@/providers/scanner/goodConversion";
-import { fetchArtifacts } from "@/providers/scanner-manager/client";
-import { filterUnchangedEquipInstructions } from "@/providers/scanner-manager/instructions";
+import { fetchArtifacts } from "@/providers/scanner/companion/client";
+import { filterUnchangedEquipInstructions } from "@/providers/scanner/companion/instructions";
 import type {
   EquipPayload,
   InstructionStatus,
   ManagePayload,
   ResultResponse,
-} from "@/providers/scanner-manager/types";
+} from "@/providers/scanner/companion/types";
+import type { IGOODArtifact } from "@/providers/scanner/formats/goodConversion";
 import {
   analyzeManageResults,
   computeSnapshotDiff,
   type JobAnalysis,
   rebuildAccountFromSnapshot,
   type SnapshotDiff,
-} from "@/services/scanner-manager/storeSync";
+} from "@/services/scanner/storeSync";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { ConnectionStatus, SetupInstructions } from "./managerSharedUI";

@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { ItemIcon } from "@/components/shared/ItemIcon";
-import { CharacterWeaponPanel } from "@/components/team-analysis/WeaponChoiceResultCard";
+import { CharacterWeaponPanel } from "@/components/teams/WeaponChoiceResultCard";
 import { Button } from "@/components/ui/button";
 import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import type { useLanguage } from "@/contexts/LanguageContext";

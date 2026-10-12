@@ -1445,7 +1445,7 @@ describe("marginal gain parity (compiled vs standard)", () => {
 // Picks random characters/weapons/artifacts to stress-test the
 // compiled pipeline against diverse buff combinations.
 
-import { artifacts, characters, weapons } from "@/data/resources";
+import { artifacts, characters, weapons } from "@/generated/catalog/resources";
 
 describe("random team fuzz (compiled vs standard)", () => {
   const rv = getRollValues();

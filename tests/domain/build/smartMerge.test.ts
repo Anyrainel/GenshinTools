@@ -106,7 +106,7 @@ describe("Silken Moon's Serenade preset regression", () => {
   function loadPresetBuilds(): BuildGroup[] {
     const filePath = resolve(
       __dirname,
-      "../../../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
+      "../../../src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json"
     );
     const payload: BuildPayloadV5 = JSON.parse(readFileSync(filePath, "utf-8"));
     // Run build-level migrations (test bypasses buildPresetRegistry which does this)

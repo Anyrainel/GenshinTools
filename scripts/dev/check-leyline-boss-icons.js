@@ -3,8 +3,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const bossInfoPath = path.join(repoRoot, "src/data/game/leyline_boss_info.json");
-const resourceMapPath = path.join(repoRoot, "src/data/resources_manual.ts");
+const bossInfoPath = path.join(repoRoot, "src/generated/catalog/leyline_boss_info.json");
+const resourceMapPath = path.join(repoRoot, "src/config/game/resourceOverrides.ts");
 const enemyAssetDir = path.join(repoRoot, "public/enemy");
 
 const bossInfo = JSON.parse(readFileSync(bossInfoPath, "utf8"));

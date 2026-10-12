@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import type { GameCatalogs } from "./catalogs";
 import { sha256Text, stableJson } from "./io";
 import {

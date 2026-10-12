@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
+import type { LuckExpectation, Tier } from "@/domain/enums";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
 import {
   cloneDefaultScoreUpSettings,
   normalizeScoreUpSettings,
   type ScoreUpSettings,
-} from "@/domain/account/scoreUpSettings";
-import type { AccountProfileId } from "@/domain/account/types";
-import type { LuckExpectation, Tier } from "@/domain/enums";
+} from "@/domain/game-account/scoreUpSettings";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import { migrateScoreUpSettingsStore } from "./migration/scoreUpSettings";
 import { PersistedScoreUpSettingsStoreSchema } from "./schemas";
 import { useAccountStore } from "./useAccountStore";

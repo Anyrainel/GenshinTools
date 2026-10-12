@@ -7,6 +7,7 @@ import { getBuildValidationErrors } from "@/domain/build/buildValidation";
 import type { SubStat } from "@/domain/enums";
 import type { Build, WeightedSubStat } from "@/domain/models";
 import { migrateBuild } from "@/stores/migration/buildLegacy";
+import { migrateBundledPresetId } from "./presetIds";
 import { migrateReleasedCharacterWeapons } from "./releasedWeaponIds";
 
 // Migrates old SubStat[] to WeightedSubStat[]. Uses default weight 100 when no
@@ -129,5 +130,7 @@ export function migrateBuildsStore(
       state.characterWeapons ?? {}
     );
   }
+  // v9 -> v10: selected bundled presets use stable, layout-independent IDs.
+  state.activePresetId = migrateBundledPresetId(state.activePresetId ?? null);
   return state as Record<string, unknown>;
 }

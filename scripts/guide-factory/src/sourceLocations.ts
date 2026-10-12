@@ -8,7 +8,12 @@ export function currentSourceLocation(filePath: string): string {
   const relative = path.relative(REPOSITORY_ROOT, filePath).replace(/\\/g, "/");
   const exact: Record<string, string> = {
     "src/data/betaState.ts": "src/stores/betaState.ts",
-    "src/data/charInfo.ts": "src/data/characterInfo.ts",
+    "src/data/charInfo.ts": "src/generated/catalog/characterInfo.ts",
+    "src/data/envBuffs.ts": "src/domain/combat/environmentBuffs.ts",
+    "src/data/resources_manual.ts": "src/config/game/resourceOverrides.ts",
+    "src/data/retiredWeaponIds.ts": "src/config/game/retiredWeaponIds.ts",
+    "src/generated/i18n-game.ts": "src/generated/translations/i18n-game.ts",
+    "src/generated/i18n-beta.ts": "src/generated/translations/i18n-beta.ts",
     "src/data/constants.ts": "src/config/gameConstants.ts",
     "src/data/enums.ts": "src/domain/enums.ts",
     "src/data/types.ts": "src/domain/models.ts",
@@ -18,6 +23,12 @@ export function currentSourceLocation(filePath: string): string {
     "src/data/utils.ts": "src/domain/build/statUtils.ts",
   };
   const prefixes = [
+    ["src/data/game/", "src/generated/catalog/"],
+    ["src/data/ercalc/", "src/generated/combat/energy/"],
+    ["src/data/", "src/generated/catalog/"],
+    ["src/presets/artifact-builds/", "src/config/presets/builds/"],
+    ["src/presets/team-comp/", "src/config/presets/teams/"],
+    ["src/presets/", "src/config/presets/"],
     ["src/lib/dmgcalc/", "src/domain/combat/damage/"],
     ["src/lib/artifact/", "src/domain/build/artifact/"],
     ["src/lib/team-comp/generator/", "src/domain/combat/generator/"],

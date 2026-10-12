@@ -1,15 +1,15 @@
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import type { AnalysisWorkspaceProps } from "@/components/team-analysis/AnalysisWorkspace";
-import type { TeamGridProps } from "@/components/team-analysis/TeamGrid";
-import { AnalysisView } from "@/pages/team-analysis/AnalysisView";
+import type { AnalysisWorkspaceProps } from "@/components/teams/AnalysisWorkspace";
+import type { TeamGridProps } from "@/components/teams/TeamGrid";
+import { AnalysisView } from "@/pages/teams/AnalysisView";
 import { DEFAULT_VIEW_SETTINGS } from "@/stores/schemas";
 import { useSessionNavStore } from "@/stores/useSessionNavStore";
 import { useTeamStore } from "@/stores/useTeamStore";
 import { render, screen, waitFor, within } from "../../utils/render";
 
-vi.mock("@/components/team-analysis/TeamGrid", () => ({
+vi.mock("@/components/teams/TeamGrid", () => ({
   TeamGrid: ({ setActiveTeamId, selectionCue }: TeamGridProps) => (
     <div>
       <h2>{selectionCue}</h2>
@@ -22,7 +22,7 @@ vi.mock("@/components/team-analysis/TeamGrid", () => ({
     </div>
   ),
 }));
-vi.mock("@/components/team-analysis/AnalysisWorkspace", () => ({
+vi.mock("@/components/teams/AnalysisWorkspace", () => ({
   AnalysisWorkspace: ({
     teamComp,
     mode,

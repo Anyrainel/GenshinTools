@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Merge per-source particle files into src/data/ercalc/particles.json (production).
+Merge per-source particle files into src/generated/combat/energy/particles.json (production).
 
 Priority (highest first):
   1. particles.gcsim.json   — source: "gcsim"   (authoritative when available)
@@ -29,7 +29,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-ERCALC = ROOT / "src" / "data" / "ercalc"
+ERCALC = ROOT / "src" / "generated" / "combat" / "energy"
 FANDOM_PATH = ERCALC / "particles.fandom.json"
 GCSIM_PATH = ERCALC / "particles.gcsim.json"
 OUT_PATH = ERCALC / "particles.json"

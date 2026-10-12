@@ -10,22 +10,22 @@ import { fetchGzipJson } from "@/providers/reference/fetchGzipJson";
 configureStatsLoaders(
   withBetaOverlay<CharacterStatsMap>(
     () =>
-      import("@/data/game/character_stats.json").then(
+      import("@/generated/catalog/character_stats.json").then(
         (m) => m.default as CharacterStatsMap
       ),
     () =>
-      import("@/data/game/character_beta_stats.json.gz?url").then((m) =>
+      import("@/generated/catalog/character_beta_stats.json.gz?url").then((m) =>
         fetchGzipJson<CharacterStatsMap>(m.default)
       ),
     betaEnabled
   ),
   withBetaOverlay<WeaponStatsMap>(
     () =>
-      import("@/data/game/weapon_stats.json").then(
+      import("@/generated/catalog/weapon_stats.json").then(
         (m) => m.default as WeaponStatsMap
       ),
     () =>
-      import("@/data/game/weapon_beta_stats.json.gz?url").then((m) =>
+      import("@/generated/catalog/weapon_beta_stats.json.gz?url").then((m) =>
         fetchGzipJson<WeaponStatsMap>(m.default)
       ),
     betaEnabled

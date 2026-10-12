@@ -1,7 +1,5 @@
 import "@/providers/reference/statLoaders";
 import { describe, expect, it } from "vitest";
-
-import weaponData from "@/data/game/weapon_en.json";
 import { allSelfEnergy, particles } from "@/domain/combat/energy/constants";
 import { calculateTeamER } from "@/domain/combat/energy/erCalculator";
 import type {
@@ -11,6 +9,7 @@ import type {
 } from "@/domain/combat/energy/types";
 import { weaponEnergyById } from "@/domain/combat/energy/weaponEnergy";
 import { characterStatsResource } from "@/domain/reference/stats";
+import weaponData from "@/generated/catalog/weapon_en.json";
 
 /**
  * Guards against silent data drift in the ER calculator's data layer. Both

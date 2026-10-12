@@ -242,9 +242,7 @@ describe("Itto request/account context applicability", () => {
 
   it("authenticates the durable output and rejects tampered output", async () => {
     const input = await fixture();
-    const durable = (await readJson(
-      ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH,
-    )) as IttoRequestContextApplicabilityReport;
+    const durable = (await readJson(currentSourceLocation(ITTO_REQUEST_CONTEXT_APPLICABILITY_REPORT_PATH))) as IttoRequestContextApplicabilityReport;
     expect(
       await authenticateIttoRequestContextApplicabilityReport(durable, input),
     ).toMatchObject({ authenticated: true });
@@ -537,10 +535,10 @@ async function fixture(): Promise<BuildIttoRequestContextApplicabilityInput> {
     sourceReportSnapshot,
     contextFixtureSnapshot,
   ] = await Promise.all([
-    readJson(KNOWLEDGE_REPOSITORY_PATH),
-    readJson(path.join(SOURCE_SNAPSHOT_ROOT, "kqm-itto-manual.json")),
-    readJson(MANUAL_SNAPSHOT_INDEX_PATH),
-    readJson(SOURCE_REGISTRY_PATH),
+    readJson(currentSourceLocation(KNOWLEDGE_REPOSITORY_PATH)),
+    readJson(currentSourceLocation(path.join(SOURCE_SNAPSHOT_ROOT, "kqm-itto-manual.json"))),
+    readJson(currentSourceLocation(MANUAL_SNAPSHOT_INDEX_PATH)),
+    readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
     loadGameCatalogs(),
     readHashedJsonSnapshot(
       REPOSITORY_ROOT,

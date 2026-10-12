@@ -1,5 +1,5 @@
-import type { AccountProfileId } from "@/domain/account/types";
 import type { CloudExportPartition } from "@/domain/backup/types";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import type { TierAssignment, TierCustomization } from "@/domain/models";
 import { migrateReleasedWeaponRecord } from "@/stores/migration/releasedWeaponIds";
 

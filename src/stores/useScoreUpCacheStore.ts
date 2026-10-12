@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { AllActions } from "@/domain/account/scoreUpEngine";
 import type { Tier } from "@/domain/enums";
+import type { AllActions } from "@/domain/game-account/scoreUpEngine";
 
 interface ScoreUpProgress {
   completedTierCount: number;

@@ -6,7 +6,7 @@ Combines data from Fandom and Hoyolab wikis.
 NOTE: Enemy data scraping/emission is disabled. The full enemy table
 (thousands of entries, ~30KB inlined into i18n-game.ts and a parallel
 array in resources.ts) was costing bundle size for ~20 leyline boss
-images that are now mapped explicitly in src/data/resources_manual.ts.
+images that are now mapped explicitly in src/config/game/resourceOverrides.ts.
 Enemy code paths below are commented out rather than removed so we can
 restore them if a future feature actually needs the table.
 """
@@ -124,8 +124,8 @@ def write_data(
     """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = os.path.abspath(os.path.join(script_dir, ".."))
-    data_dir = os.path.join(project_root, "src", "data")
-    game_dir = os.path.join(data_dir, "game")
+    data_dir = os.path.join(project_root, "src", "generated", "catalog")
+    game_dir = data_dir
     os.makedirs(game_dir, exist_ok=True)
 
     _write_resources_ts(
@@ -172,7 +172,7 @@ def _write_resources_ts(
     details: bool = True,
     # enemy_data: Sequence[EnemyOutput] = (),  # enemy disabled
 ) -> None:
-    """Write src/data/resources.ts with all entity arrays.
+    """Write src/generated/catalog/resources.ts with all entity arrays.
 
     Each entry is serialized on a single line for compactness.
     When details=False, only lean fields (id, rarity, imagePath/imagePaths) are
@@ -203,7 +203,7 @@ def _write_resources_ts(
             "  ElementResource,\n"
             "  WeaponResource,\n"
             "  WeaponTypeResource,\n"
-            "} from '../domain/models';\n\n"
+            "} from '../../domain/models';\n\n"
         )
         for var_name, ts_type, data, is_entity in exports:
             f.write(f"export const {var_name}: {ts_type} = ")
@@ -214,8 +214,8 @@ def _write_resources_ts(
 
 
 def _write_i18n_game_ts(data_dir: str, i18n_data: dict[str, dict[str, Any]]) -> None:
-    """Write src/generated/i18n-game.ts with names-only for weapons/artifacts."""
-    generated_dir = os.path.join(os.path.dirname(data_dir), "generated")
+    """Write src/generated/translations/i18n-game.ts with names-only for weapons/artifacts."""
+    generated_dir = os.path.join(os.path.dirname(data_dir), "translations")
     os.makedirs(generated_dir, exist_ok=True)
     path = os.path.join(generated_dir, "i18n-game.ts")
     with open(path, "w", encoding="utf-8") as f:
@@ -601,7 +601,7 @@ def main():
     # 2.5 Recompute Half Sets (if requested or if artifacts were updated)
     if args.half_set or args.artifact:
         print("=== [3/5] Computing Half Sets ===")
-        game_dir = os.path.join(project_root, "src", "data", "game")
+        game_dir = os.path.join(project_root, "src", "generated", "catalog")
 
         if args.artifact and args.details:
             # Artifacts freshly scraped with full details — use scraped i18n data

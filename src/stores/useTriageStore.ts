@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
-import type { TriageSettings } from "@/domain/account/triage/types";
-import type { AccountProfileId } from "@/domain/account/types";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
+import type { TriageSettings } from "@/domain/game-account/triage/types";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import { cloneData } from "@/lib/cloneData.ts";
 import { migrateTriageStore } from "./migration/triage";
 import { PersistedTriageStoreSchema } from "./schemas";

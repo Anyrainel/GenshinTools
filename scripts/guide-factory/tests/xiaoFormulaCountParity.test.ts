@@ -352,7 +352,7 @@ async function loadFixture(): Promise<BuildXiaoFormulaCountParityInput> {
       XIAO_FORMULA_COUNT_PARITY_SOURCE_FILE_PATHS.map(
         async (relativePath) => ({
           path: relativePath,
-          text: await readFile(path.join(REPOSITORY_ROOT, relativePath), "utf8"),
+          text: await readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)), "utf8"),
         }),
       ),
     ),

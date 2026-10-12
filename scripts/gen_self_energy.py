@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from beta_files import read_beta_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-GAME_DIR = ROOT / "src" / "data" / "game"
+GAME_DIR = ROOT / "src" / "generated" / "catalog"
 
 CHAR_ZH_PATHS = [
     GAME_DIR / "character_4_zh.json",

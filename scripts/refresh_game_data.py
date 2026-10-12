@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -11,22 +12,41 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def normalize_export_layout(root: Path) -> None:
     """Adapt upstream website exports to this repository's architecture."""
-    data = root / "src" / "data"
+    upstream = root / "src" / "data"
     generated = root / "src" / "generated"
-    for name in ("i18n-game.ts", "i18n-beta.ts"):
-        source = data / name
+    data = generated / "catalog"
+    translations = generated / "translations"
+    destinations = {
+        "i18n-game.ts": translations / "i18n-game.ts",
+        "i18n-beta.ts": translations / "i18n-beta.ts",
+        "charInfo.ts": data / "characterInfo.ts",
+        "characterInfo.ts": data / "characterInfo.ts",
+        "resources.ts": data / "resources.ts",
+        "resources_beta.ts": data / "resources_beta.ts",
+        "enkaIdMap.ts": data / "enkaIdMap.ts",
+    }
+    for name, target in destinations.items():
+        source = upstream / name
         if source.is_file():
-            generated.mkdir(parents=True, exist_ok=True)
-            source.replace(generated / name)
-    legacy_info = data / "charInfo.ts"
-    if legacy_info.is_file():
-        legacy_info.replace(data / "characterInfo.ts")
+            target.parent.mkdir(parents=True, exist_ok=True)
+            source.replace(target)
+    game = upstream / "game"
+    if game.is_dir():
+        if not game.resolve().is_relative_to(root.resolve()):
+            raise ValueError("Upstream game export must be inside the website checkout")
+        shutil.copytree(game, data, dirs_exist_ok=True)
+        # Remove only the copied upstream export tree, inside this checkout.
+        shutil.rmtree(game)
+    if upstream.is_dir() and not any(upstream.iterdir()):
+        upstream.rmdir()
     for name in ("resources.ts", "resources_beta.ts", "characterInfo.ts"):
         target = data / name
         if target.is_file():
             original = target.read_text(encoding="utf-8")
-            adapted = original.replace('from "./types"', 'from "../domain/models"')
-            adapted = adapted.replace("from './types'", "from '../domain/models'")
+            adapted = original.replace('from "./types"', 'from "../../domain/models"')
+            adapted = adapted.replace("from './types'", "from '../../domain/models'")
+            adapted = adapted.replace('from "../domain/models"', 'from "../../domain/models"')
+            adapted = adapted.replace("from '../domain/models'", "from '../../domain/models'")
             if adapted != original:
                 target.write_text(adapted, encoding="utf-8")
 

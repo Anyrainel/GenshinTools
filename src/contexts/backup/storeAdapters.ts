@@ -1,8 +1,11 @@
-import type { AccountProfileId, AccountState } from "@/domain/account/types";
 import type {
   CloudExportPartition,
   CloudRestorePlan,
 } from "@/domain/backup/types";
+import type {
+  AccountProfileId,
+  AccountState,
+} from "@/domain/game-account/types";
 import type { AccountData, ArtifactData, CharacterData } from "@/domain/models";
 import {
   type AccountCloudSnapshot,

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import logic from "@/data/game/achievements.json";
-import en from "@/data/game/achievements_en.json";
-import zh from "@/data/game/achievements_zh.json";
 import { expandAchievementReferenceData } from "@/domain/achievement/reference";
 import type { AchievementReferenceText } from "@/domain/models";
+import logic from "@/generated/catalog/achievements.json";
+import en from "@/generated/catalog/achievements_en.json";
+import zh from "@/generated/catalog/achievements_zh.json";
 
 describe("published split achievement data", () => {
   it("joins every title and description in both languages to the same groups", () => {

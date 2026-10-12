@@ -1,11 +1,5 @@
 import "@/providers/reference/statLoaders";
 import { beforeAll, describe, expect, it } from "vitest";
-import { artifactHalfSets } from "@/data/resources";
-import {
-  betaArtifacts,
-  betaCharacters,
-  betaWeapons,
-} from "@/data/resources_beta";
 import { DEFAULT_CALC_CONTEXT } from "@/domain/combat/damage/constants";
 import {
   compileComboTeamDamage,
@@ -33,6 +27,12 @@ import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/domain/reference/stats";
+import { artifactHalfSets } from "@/generated/catalog/resources";
+import {
+  betaArtifacts,
+  betaCharacters,
+  betaWeapons,
+} from "@/generated/catalog/resources_beta";
 
 // Import the public build entry directly: callers must not need an unrelated
 // page import to register the entities, and missing data must fail this suite.

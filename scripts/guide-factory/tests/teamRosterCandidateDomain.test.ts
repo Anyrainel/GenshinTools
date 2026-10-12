@@ -1,4 +1,4 @@
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import { describe, expect, it, vi } from "vitest";
 import { loadGameCatalogs } from "../src/catalogs";
 import { readJson } from "../src/io";

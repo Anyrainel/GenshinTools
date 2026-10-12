@@ -37,8 +37,8 @@ GCSIM_RELEASE_URL = (
 GCSIM_BIN_DIR = SCRIPT_DIR / "bin"
 GCSIM_DEFAULT_EXE = GCSIM_BIN_DIR / "gcsim.exe"
 
-PARTICLES_JSON = PROJECT_ROOT / "src" / "data" / "ercalc" / "particles.json"
-PRESETS_TS = PROJECT_ROOT / "src" / "data" / "ercalc" / "presetRotations.ts"
+PARTICLES_JSON = PROJECT_ROOT / "src" / "generated" / "combat" / "energy" / "particles.json"
+PRESETS_TS = PROJECT_ROOT / "src" / "generated" / "combat" / "energy" / "presetRotations.ts"
 
 # Our character IDs use underscored names (e.g. raiden_shogun, hu_tao).
 # gcsim uses short lowercase keys (e.g. raiden, hutao).

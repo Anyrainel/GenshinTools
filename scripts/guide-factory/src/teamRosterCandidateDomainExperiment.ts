@@ -1,4 +1,4 @@
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import { loadGameCatalogs } from "./catalogs";
 import { sha256Text, stableJson } from "./io";
 import type { KnowledgeRecord, KnowledgeRepository } from "./schemas";

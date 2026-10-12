@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react";
-import { getCrBudget } from "@/domain/account/maxCrBuff";
 import {
   type ArtifactScoreResult,
   scoreWithBuilds,
 } from "@/domain/build/artifact/scoring/artifactScore";
 import { areBuildsEqual } from "@/domain/build/buildUtils";
+import { getCrBudget } from "@/domain/game-account/maxCrBuff";
 import type { Build } from "@/domain/models";
 import {
   characterStatsResource,

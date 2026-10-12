@@ -5,13 +5,13 @@ description: Launch energy recovery worker subagents to populate selfEnergy data
 
 # Energy Recovery Agent Dispatch
 
-Launch specialized worker subagents to populate `src/data/ercalc/selfEnergy/<region>.json` with per-character energy recovery effects. Each worker reads character kits via `impl_audit.py` and writes to its own region file.
+Launch specialized worker subagents to populate `src/generated/combat/energy/selfEnergy/<region>.json` with per-character energy recovery effects. Each worker reads character kits via `impl_audit.py` and writes to its own region file.
 
 > **Note:** This skill is specifically for the energy recovery data pipeline. For other ER calculator work, use standard subagents.
 
 ## Data Files
 
-Each region has its own file under `src/data/ercalc/selfEnergy/`:
+Each region has its own file under `src/generated/combat/energy/selfEnergy/`:
 
 | File | Region |
 |------|--------|

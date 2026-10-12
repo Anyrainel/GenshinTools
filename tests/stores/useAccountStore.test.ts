@@ -2,9 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
-} from "@/domain/account/resourceTips";
-import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/account/scoreUpSettings";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
+} from "@/domain/game-account/resourceTips";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/game-account/scoreUpSettings";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
 import type { AccountData, CharacterData } from "@/domain/models";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { migrateAccountStore } from "@/stores/migration/account";

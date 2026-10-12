@@ -136,7 +136,7 @@ with (
         validate.assert_not_called()
 
     def test_missing_new_character_mapping_is_rejected(self):
-        game = self.root / "src/data/game"
+        game = self.root / "src/generated/catalog"
         good = self.root / "public/good"
         game.mkdir(parents=True)
         good.mkdir(parents=True)
@@ -165,12 +165,12 @@ with (
         self.assertEqual(result["101221"], "critRate_")
         self.assertEqual(result["FIGHT_PROP_WIND_ADD_HURT"], "anemo_dmg_")
         (self.root / "public/good").mkdir(parents=True)
-        (self.root / "src/data").mkdir(parents=True)
+        (self.root / "src/generated/catalog").mkdir(parents=True)
         (self.root / "public/good/genshin_scanner_data.json").write_text(
             json.dumps({"capture": cache}), encoding="utf-8"
         )
         run(self.root)
-        output = (self.root / "src/data/enkaIdMap.ts").read_text("utf-8")
+        output = (self.root / "src/generated/catalog/enkaIdMap.ts").read_text("utf-8")
         self.assertIn("export const statIdMap", output)
         self.assertNotIn("characterIdMap", output)
 
@@ -186,7 +186,7 @@ with (
             )
 
     def test_zero_or_nonfinite_stat_exports_cannot_pass_refresh_validation(self):
-        game = self.root / "src/data/game"
+        game = self.root / "src/generated/catalog"
         game.mkdir(parents=True)
         valid = {
             "character_stats.json": {
@@ -233,7 +233,7 @@ with (
                 )
 
     def test_released_catalog_regeneration_does_not_promote_beta_entries(self):
-        data = self.root / "src/data"
+        data = self.root / "src/generated/catalog"
         data.mkdir(parents=True)
         (data / "resources.ts").write_text(
             'export const characters = [{"id":"furina"}];\n',

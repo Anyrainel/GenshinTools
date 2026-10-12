@@ -6,18 +6,19 @@
  * instead of throwing — the app never crashes on corrupted localStorage.
  */
 import { z } from "zod";
-import {
-  DEFAULT_MIN_SCORE_DIFF,
-  DEFAULT_TIER_THRESHOLDS,
-} from "@/domain/account/resourceTips";
-import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/account/scoreUpSettings";
-import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/account/triage/constants";
-import { inferTriageBackupAmountMode } from "@/domain/account/triage/settings";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
 import { isCustomDelta, isPresetDelta } from "@/domain/build/presetDelta";
 import type { SortDirection } from "@/domain/enums";
+import {
+  DEFAULT_MIN_SCORE_DIFF,
+  DEFAULT_TIER_THRESHOLDS,
+} from "@/domain/game-account/resourceTips";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/game-account/scoreUpSettings";
+import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
+import { inferTriageBackupAmountMode } from "@/domain/game-account/triage/settings";
 import type { GlobalStatWeights } from "@/domain/models";
 import { ArtifactSetConfigSchema } from "@/domain/team/schemas";
+import { migrateBundledPresetId } from "@/stores/migration/presetIds";
 
 export const DEFAULT_GLOBAL_STAT_WEIGHTS: GlobalStatWeights = {
   flatAtk: 30,
@@ -231,7 +232,11 @@ const ComputeOptionsSchema = z
 
 export const PersistedBuildsStoreSchema = z.object({
   deltas: BuildDeltasSchema,
-  activePresetId: z.string().nullable().catch(null),
+  activePresetId: z
+    .string()
+    .nullable()
+    .catch(null)
+    .transform(migrateBundledPresetId),
   hasPromptedForPreset: z.boolean().catch(false),
   characterWeapons: z.record(z.string(), z.array(z.string())).catch({}),
   computeOptions: ComputeOptionsSchema,
@@ -416,7 +421,11 @@ const TeamCompDeltasSchema = z
   );
 
 export const PersistedTeamStoreSchema = z.object({
-  activePresetId: z.string().nullable().catch(null),
+  activePresetId: z
+    .string()
+    .nullable()
+    .catch(null)
+    .transform(migrateBundledPresetId),
   compDeltas: TeamCompDeltasSchema,
   configsByTeamId: z.record(z.string(), TeamSetupConfigSchema).catch({}),
   author: z.string().catch(""),

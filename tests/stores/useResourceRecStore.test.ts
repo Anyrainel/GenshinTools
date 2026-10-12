@@ -1,10 +1,10 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
-} from "@/domain/account/resourceTips";
+} from "@/domain/game-account/resourceTips";
 import { migrateResourceRecStore } from "@/stores/migration/resource";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {

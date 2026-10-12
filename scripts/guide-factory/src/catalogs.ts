@@ -1,11 +1,12 @@
+import { currentSourceLocation } from "./sourceLocations";
 import path from "node:path";
 import {
   artifactHalfSets,
   artifacts,
   characters,
   weapons,
-} from "@/data/resources";
-import { betaArtifacts, betaCharacters, betaWeapons } from "@/data/resources_beta";
+} from "@/generated/catalog/resources";
+import { betaArtifacts, betaCharacters, betaWeapons } from "@/generated/catalog/resources_beta";
 import { readJson } from "./io";
 import { REPOSITORY_ROOT } from "./paths";
 
@@ -105,24 +106,20 @@ const SUBSTAT_IDS = new Set([
 
 export async function loadGameCatalogs(): Promise<GameCatalogs> {
   const [characterStatsInput, weaponStatsInput] = await Promise.all([
-    readJson(
-      path.join(
+    readJson(currentSourceLocation(path.join(
         REPOSITORY_ROOT,
         "src",
         "data",
         "game",
         "character_stats.json"
-      )
-    ),
-    readJson(
-      path.join(
+      ))),
+    readJson(currentSourceLocation(path.join(
         REPOSITORY_ROOT,
         "src",
         "data",
         "game",
         "weapon_stats.json"
-      )
-    ),
+      ))),
   ]);
 
   const characterStats = characterStatsInput as Record<

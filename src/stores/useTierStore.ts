@@ -1,5 +1,5 @@
-import type { AccountProfileId } from "@/domain/account/types";
 import type { LuckExpectation } from "@/domain/enums";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import {
   createTierStore,
   type TierListInstanceBase,

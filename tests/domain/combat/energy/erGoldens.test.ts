@@ -1,7 +1,5 @@
 import "@/providers/reference/statLoaders";
 import { beforeAll, describe, expect, it } from "vitest";
-
-import { charInfo } from "@/data/characterInfo";
 import { particles } from "@/domain/combat/energy/constants";
 import {
   autoPlacePeriodic,
@@ -19,6 +17,7 @@ import type {
   TimelineAction,
 } from "@/domain/combat/energy/types";
 import { characterStatsResource } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 
 /**
  * Solved-ER goldens for canonical teams.

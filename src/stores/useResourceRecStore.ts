@@ -6,16 +6,16 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
+import type { Tier } from "@/domain/enums";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
 import {
   DEFAULT_MIN_SCORE_DIFF,
   DEFAULT_TIER_THRESHOLDS,
   type KindTierMinScore,
   type ResourceKind,
   type TierCompletenessThresholds,
-} from "@/domain/account/resourceTips";
-import type { AccountProfileId } from "@/domain/account/types";
-import type { Tier } from "@/domain/enums";
+} from "@/domain/game-account/resourceTips";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import { cloneData } from "@/lib/cloneData.ts";
 import { migrateResourceRecStore } from "./migration/resource";
 import { PersistedResourceRecStoreSchema } from "./schemas";

@@ -1,5 +1,4 @@
 import { SUBSTAT_COEFFICIENTS, statPools } from "@/config/gameConstants";
-import { charInfo } from "@/data/characterInfo";
 import { getMainStatValue } from "@/domain/build/statUtils";
 import type { MainStat, MainStatSlot, Slot, SubStat } from "@/domain/enums";
 import { allSlots, mainStatSlots } from "@/domain/enums";
@@ -11,6 +10,7 @@ import type {
   WeightedMainStat,
 } from "@/domain/models";
 import { artifactIdToHalfSetId } from "@/domain/reference/catalog";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import {
   MAIN_STAT_CD_EQUIV_4STAR,
   MAIN_STAT_CD_EQUIV_5STAR,

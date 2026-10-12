@@ -1,9 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type {
-  IGOODArtifact,
-  IGOODCharacter,
-  IGOODWeapon,
-} from "@/providers/scanner/goodConversion";
 import {
   ArtifactManagerError,
   fetchArtifacts,
@@ -12,12 +7,17 @@ import {
   getResult,
   pollStatus,
   submitScanJob,
-} from "@/providers/scanner-manager/client";
+} from "@/providers/scanner/companion/client";
 import type {
   ScanProgress,
   ScanRequest,
   ScanSubmitResponse,
-} from "@/providers/scanner-manager/types";
+} from "@/providers/scanner/companion/types";
+import type {
+  IGOODArtifact,
+  IGOODCharacter,
+  IGOODWeapon,
+} from "@/providers/scanner/formats/goodConversion";
 
 export type CategoryOutcome<T> =
   | { status: "success"; data: T[] }

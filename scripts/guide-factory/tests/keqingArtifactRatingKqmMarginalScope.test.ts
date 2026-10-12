@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { ArtifactRatingModelSnapshot } from "../src/artifactRatingModel";
@@ -43,7 +44,7 @@ beforeAll(async () => {
     kqmEquipmentReport,
   ] = await Promise.all(
     Object.values(PATHS).map((relativePath) =>
-      readJson(path.join(REPOSITORY_ROOT, relativePath)),
+      readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     ),
   );
   fixture = {

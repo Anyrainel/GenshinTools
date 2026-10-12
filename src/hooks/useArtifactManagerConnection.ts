@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArtifactManagerError,
   checkHealth,
-} from "@/providers/scanner-manager/client";
-import type { HealthResponse } from "@/providers/scanner-manager/types";
+} from "@/providers/scanner/companion/client";
+import type { HealthResponse } from "@/providers/scanner/companion/types";
 
 export type ConnectionState =
   | { status: "disconnected" }

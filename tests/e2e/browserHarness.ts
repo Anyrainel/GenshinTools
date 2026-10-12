@@ -4,9 +4,12 @@ import {
 } from "@/contexts/backup/manualBackupController";
 import { buildLocalBackupPartitions } from "@/contexts/backup/storeAdapters";
 import { readDownloadedPartitions } from "@/contexts/backup/syncClient";
-import type { AccountProfileId, AccountState } from "@/domain/account/types";
 import type { BuildDelta } from "@/domain/build/buildDeltas";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
+import type {
+  AccountProfileId,
+  AccountState,
+} from "@/domain/game-account/types";
 import type {
   AccountData,
   TierAssignment,

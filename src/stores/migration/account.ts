@@ -2,8 +2,11 @@ import {
   DEFAULT_ACCOUNT_PROFILE_ID,
   legacyAccountProfileIdToNumber,
   legacyAccountProfileIdToNumberOrDefault,
-} from "@/domain/account/accountProfile";
-import type { AccountProfileId, AccountState } from "@/domain/account/types";
+} from "@/domain/game-account/accountProfile";
+import type {
+  AccountProfileId,
+  AccountState,
+} from "@/domain/game-account/types";
 import type { AccountData } from "@/domain/models";
 import { migrateReleasedAccountWeapons } from "./releasedWeaponIds";
 

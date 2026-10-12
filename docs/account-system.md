@@ -21,10 +21,10 @@ The React app uses `@logto/react`:
 
 - `src/main.tsx` wraps the app in `LogtoProvider`.
 - `src/contexts/authConfig.ts` owns Logto endpoint, app id, scopes, and redirect helpers.
-- `src/pages/account/AuthCallbackPage.tsx` handles the sign-in callback and asks the app-session provider to create the first-party app session.
+- `src/pages/profile/AuthCallbackPage.tsx` handles the sign-in callback and asks the app-session provider to create the first-party app session.
 - `src/contexts/AppSessionContext.tsx` is the frontend account source of truth. It reads `/api/auth/me`, bootstraps once from the Logto ID token only when the app session is missing, and owns sign-in/sign-out helpers.
-- `src/pages/account/AccountPage.tsx` and `src/components/layout/AppBar.tsx` read visible account state from the app session, not from Logto local token storage.
-- `src/pages/account/CloudBackupPage.tsx` reads the same app session before enabling manual backup and restore actions. If a backup request returns `401`, it asks the app-session provider to refresh/bootstrap once.
+- `src/pages/profile/AccountPage.tsx` and `src/components/layout/AppBar.tsx` read visible account state from the app session, not from Logto local token storage.
+- `src/pages/profile/CloudBackupPage.tsx` reads the same app session before enabling manual backup and restore actions. If a backup request returns `401`, it asks the app-session provider to refresh/bootstrap once.
 - `src/services/auth/session.ts` creates `BackupApiClient` instances that use the first-party app session cookie via `credentials: "same-origin"`.
 
 Default frontend values:

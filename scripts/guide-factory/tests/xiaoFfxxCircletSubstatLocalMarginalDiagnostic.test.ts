@@ -143,9 +143,7 @@ let canonicalReport: XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(
-      XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_REPORT_PATH,
-    ) as Promise<XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport>,
+    readJson(currentSourceLocation(XIAO_FFXX_CIRCLET_SUBSTAT_LOCAL_MARGINAL_DIAGNOSTIC_REPORT_PATH)) as Promise<XiaoFfxxCircletSubstatLocalMarginalDiagnosticReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxCircletSubstatLocalMarginalDiagnosticReport(fixture());
@@ -1280,7 +1278,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxCircletSubstatLocalMarginalDi
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
+      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([

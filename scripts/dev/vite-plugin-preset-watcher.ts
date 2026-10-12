@@ -1,7 +1,7 @@
 import type { Plugin } from "vite";
 
 /**
- * Watches `src/presets/` for JSON file additions and deletions.
+ * Watches `src/config/presets/` for JSON file additions and deletions.
  * import.meta.glob patterns are resolved at transform time, so new files
  * aren't picked up until modules are re-transformed. This plugin
  * invalidates glob-consuming modules and triggers a page reload when
@@ -13,7 +13,7 @@ export function presetWatcher(): Plugin {
     apply: "serve",
     configureServer(server) {
       const isPresetJson = (filePath: string) =>
-        filePath.replace(/\\/g, "/").includes("src/presets/") &&
+        filePath.replace(/\\/g, "/").includes("src/config/presets/") &&
         filePath.endsWith(".json");
 
       const reload = (filePath: string) => {

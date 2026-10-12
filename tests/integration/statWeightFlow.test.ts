@@ -14,7 +14,7 @@ import { scoreAllSlots } from "@/domain/build/artifact/scoring/artifactScore";
 import {
   convertGOODToAccountData,
   type GOODData,
-} from "@/providers/scanner/goodConversion";
+} from "@/providers/scanner/formats/goodConversion";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 
 // Test data: Hu Tao with Crimson Witch artifacts

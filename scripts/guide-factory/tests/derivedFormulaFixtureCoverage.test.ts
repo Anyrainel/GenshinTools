@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import { beforeAll, describe, expect, it } from "vitest";
 import {
   buildDerivedFormulaFixtureCoverageReport,

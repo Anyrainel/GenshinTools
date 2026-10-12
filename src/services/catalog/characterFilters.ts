@@ -1,4 +1,3 @@
-import { charInfo } from "@/data/characterInfo";
 import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
 import type { CharacterUtility, Faction } from "@/domain/enums";
 import { tiers } from "@/domain/enums";
@@ -11,6 +10,7 @@ import type {
 import { charactersById } from "@/domain/reference/catalog";
 import type { CharacterStatsMap } from "@/domain/reference/stats";
 import { getCharacterDisplayMeta } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import { fuzzyMatch } from "@/lib/search/predicates";
 
 type OwnershipCheck = (id: string) => boolean;

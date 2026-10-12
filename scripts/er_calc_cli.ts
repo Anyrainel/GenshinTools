@@ -44,7 +44,7 @@ Options:
     "../src/domain/combat/energy/erCalculator.js"
   );
   const { TEAM_PRESETS: presetRotations } = await import(
-    "../src/data/ercalc/presetRotations.js"
+    "../src/generated/combat/energy/presetRotations.js"
   );
 
   if (command === "presets") {

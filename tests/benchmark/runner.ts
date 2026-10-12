@@ -49,7 +49,7 @@ import type {
 import {
   convertGOODToAccountData,
   type GOODData,
-} from "@/providers/scanner/goodConversion";
+} from "@/providers/scanner/formats/goodConversion";
 import { runTeamOptimization as runV2 } from "@/services/combat/optimizer/teamOptimization";
 import { runTeamOptimization as runAStar } from "./gen/astar";
 import { runTeamOptimization as runMona } from "./gen/mona";
@@ -58,7 +58,7 @@ import { runTeamOptimization as runV1 } from "./gen/v1";
 
 // ─── Build preset import ─────────────────────────────────────────────────────
 
-import allBuildsJson from "@/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
+import allBuildsJson from "@/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 
 const presetBuilds = allBuildsJson.builds as Record<string, Build>;
 const characterBuildIds = allBuildsJson.characterBuilds as Record<
@@ -177,7 +177,7 @@ export function loadAccountData(filePath: string): AccountData {
 
 export function loadTeamPreset(): TeamCompData {
   const presetPath = resolve(
-    "src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json"
+    "src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json"
   );
   const raw = readFileSync(presetPath, "utf-8");
   const parsed = JSON.parse(raw);

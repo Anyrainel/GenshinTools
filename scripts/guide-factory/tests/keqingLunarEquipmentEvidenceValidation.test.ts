@@ -1,5 +1,5 @@
 import { currentSourceLocation } from "../src/sourceLocations";
-import characterStatsInput from "@/data/game/character_stats.json";
+import characterStatsInput from "@/generated/catalog/character_stats.json";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -49,9 +49,7 @@ describe("Keqing Lunar equipment evidence structural validation", () => {
     const repositoryBefore = structuredClone(fixture.repository);
     const manualInputsBefore = structuredClone(fixture.manualInputs);
     const generatedFrom = await hashInputs();
-    const durable = await readJson(
-      KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH,
-    );
+    const durable = await readJson(currentSourceLocation(KEQING_LUNAR_EQUIPMENT_EVIDENCE_VALIDATION_REPORT_PATH));
 
     const report = buildKeqingLunarEquipmentEvidenceValidationReport(
       fixture.repository,
@@ -967,9 +965,9 @@ interface Fixture {
 async function loadFixture(): Promise<Fixture> {
   const [repositoryInput, manualIndexInput, sourceRegistryInput] =
     await Promise.all([
-      readJson(KNOWLEDGE_REPOSITORY_PATH),
-      readJson(MANUAL_SNAPSHOT_INDEX_PATH),
-      readJson(SOURCE_REGISTRY_PATH),
+      readJson(currentSourceLocation(KNOWLEDGE_REPOSITORY_PATH)),
+      readJson(currentSourceLocation(MANUAL_SNAPSHOT_INDEX_PATH)),
+      readJson(currentSourceLocation(SOURCE_REGISTRY_PATH)),
     ]);
   const manualIndex = ManualSnapshotIndexSchema.parse(manualIndexInput);
   const sourceRegistry = SourceRegistrySchema.parse(sourceRegistryInput);

@@ -49,15 +49,15 @@ new regression tests in `tests/domain/combat/energy/energyDataIntegrity.test.ts`
 | # | Fix | File |
 |---|---|---|
 | F1 | **`erScale` paid nothing at 100% ER.** Formula used `(ER-100)/100`; kits worded "restore X Energy for every 100% Energy Recharge" pay the full X *at* 100%. Every Sara and Dori team overstated ER for the whole party. | [erCalculator.ts:318](../src/domain/combat/energy/erCalculator.ts:318) |
-| F2 | **Venti A4 encoded twice**, second entry `target: "party"` which includes Venti → 30 energy on a 60-cost burst, plus 15 spurious to each teammate. | [selfEnergy-mondstadt.json](../src/data/ercalc/selfEnergy-mondstadt.json) |
+| F2 | **Venti A4 encoded twice**, second entry `target: "party"` which includes Venti → 30 energy on a 60-cost burst, plus 15 spurious to each teammate. | [selfEnergy-mondstadt.json](../src/generated/combat/energy/selfEnergy-mondstadt.json) |
 | F3 | **Angelos' Heptades registered as `seven_edicts_of_dust_and_light`**, an id that does not exist → 14–18 energy silently never fired. | [weaponEnergy.ts:269](../src/domain/combat/energy/weaponEnergy.ts:269) |
 | F4 | **Optimizer bailed out whenever any character was unsolvable** — exactly the zero-energy startup case where users need it. `scoreLess` already handles Infinity lexicographically. | [optimizer.ts:202](../src/domain/combat/energy/optimizer.ts:202) |
 | F5 | **`partyPlunge` weapon cooldown charged to the plunger, not the wearer** → alternating plungers bypassed the CD entirely, and the plunger's own weapon timestamp was clobbered. | [erCalculator.ts:823](../src/domain/combat/energy/erCalculator.ts:823) |
 | F6 | **Desert Sages / Rightful Reward refinement scaling wrong** — `[8,9,10,11,12]`, actual is `[8,10,12,14,16]`. | [weaponEnergy.ts:176](../src/domain/combat/energy/weaponEnergy.ts:176) |
-| F7 | **ER team picker offered 14 Manekin ids with no particle data**, silently defaulting to Anemo (a 3× element-multiplier error) and then getting filtered out, shrinking party size. | [TeamSetup.tsx:14](../src/components/team-analysis/TeamSetup.tsx:14) |
+| F7 | **ER team picker offered 14 Manekin ids with no particle data**, silently defaulting to Anemo (a 3× element-multiplier error) and then getting filtered out, shrinking party size. | [TeamSetup.tsx:14](../src/components/teams/TeamSetup.tsx:14) |
 | F9 | **Redesigned view recommended sub-100% ER** — the shipped default example recommends 85%, not a reachable stat. | [redesignedCalculator.ts:271](../src/domain/combat/energy/redesignedCalculator.ts:271) |
 | F10 | **Two element-less characters compared equal** (`"None" === "None"`) and batteried each other at the same-element rate → ~1.8× understatement. | [redesignedCalculator.ts:220](../src/domain/combat/energy/redesignedCalculator.ts:220) |
-| F11 | Easy Mode rendered raw `snake_case` ids instead of `t.character(...)` — unreadable in zh next to a localized timeline. | [ErCalcCard.tsx](../src/components/team-analysis/ErCalcCard.tsx) |
+| F11 | Easy Mode rendered raw `snake_case` ids instead of `t.character(...)` — unreadable in zh next to a localized timeline. | [ErCalcCard.tsx](../src/components/teams/ErCalcCard.tsx) |
 | F12 | Dead `qWindowCount`/`firstQSeen` pre-pass, computed and never read. | [erCalculator.ts:894](../src/domain/combat/energy/erCalculator.ts:894) |
 | F13 | NA pity doc comment: polearm `~7.04` hits → `~6.95`. | [constants.ts:130](../src/domain/combat/energy/constants.ts:130) |
 
@@ -384,9 +384,9 @@ doc §13 with a reason.
 
 ## 5. Retiring the time-based calculator (B17)
 
-Delete `src/pages/team-analysis/RedesignedErView.tsx`, `src/domain/combat/energy/redesignedParser.ts`, the
+Delete `src/pages/teams/RedesignedErView.tsx`, `src/domain/combat/energy/redesignedParser.ts`, the
 `Redesigned*` types, the nav entry ([appNavigation.tsx:131](../src/config/navigation.tsx:131))
-and the route ([TeamComp.tsx:245](../src/pages/team-analysis/TeamAnalysisPage.tsx:245)). Keep
+and the route ([TeamComp.tsx:245](../src/pages/teams/TeamAnalysisPage.tsx:245)). Keep
 `redesignedCalculator.ts` + its test for at most one release as an offline cross-check of the
 NGA reference numbers, then delete.
 

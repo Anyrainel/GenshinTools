@@ -73,7 +73,7 @@ import { useWeaponTierStore } from "@/stores/useWeaponTierStore";
 
 // Placeholder for weapon tier list presets
 const presetModules = import.meta.glob<{ default: TierListData }>(
-  "@/presets/weapon-tier-list/*.json",
+  "@/config/presets/weapon-tier-list/*.json",
   { eager: false }
 );
 

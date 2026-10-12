@@ -137,9 +137,7 @@ let canonicalReport: XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(
-      XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_REPORT_PATH,
-    ) as Promise<XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport>,
+    readJson(currentSourceLocation(XIAO_FFXX_FIVE_STAR_SOURCE_GROUP_VALIDATION_DIAGNOSTIC_REPORT_PATH)) as Promise<XiaoFfxxFiveStarSourceGroupValidationDiagnosticReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxFiveStarSourceGroupValidationDiagnosticReport(fixture());
@@ -810,7 +808,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxFiveStarSourceGroupValidation
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
+      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([

@@ -206,8 +206,8 @@ A simplified proxy that ignores these interactions produces misleading weights â
 
 Team compositions and builds come from curated preset data, not from guessing:
 
-1. **Flagship Teams** (`src/presets/team-comp/[GGArtifact] Flagship Teams.json`): ~30 meta teams with full 4-member builds (characters, weapons, artifact sets)
-2. **AllCharacterBuilds** (`src/presets/artifact-builds/[GGArtifact] AllCharacterBuilds.json`): 112 characters with curated builds (weapons, artifact sets, main stats)
+1. **Flagship Teams** (`src/config/presets/teams/[GGArtifact] Flagship Teams.json`): ~30 meta teams with full 4-member builds (characters, weapons, artifact sets)
+2. **AllCharacterBuilds** (`src/config/presets/builds/[GGArtifact] AllCharacterBuilds.json`): 112 characters with curated builds (weapons, artifact sets, main stats)
 
 For each DPS character appearing in a Flagship Team:
 - The full team composition (4 characters + 4 weapons + 4 artifact sets) is used to construct a `TeamBuild`

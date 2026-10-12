@@ -1,3 +1,4 @@
+import { currentSourceLocation } from "../src/sourceLocations";
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -52,9 +53,7 @@ let report: NoelleNormalPrefixFormulaProjectionReport;
 beforeAll(async () => {
   [baseInput, report] = await Promise.all([
     loadNoelleNormalPrefixFormulaProjectionInputFromWorkspace(),
-    readJson(
-      NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH,
-    ) as Promise<NoelleNormalPrefixFormulaProjectionReport>,
+    readJson(currentSourceLocation(NOELLE_NORMAL_PREFIX_FORMULA_PROJECTION_REPORT_PATH)) as Promise<NoelleNormalPrefixFormulaProjectionReport>,
   ]);
 });
 
@@ -139,7 +138,7 @@ describe("Noelle exact Normal-prefix formula projection", () => {
       if (cached) return cached;
       if (!/\.tsx?$/.test(sourcePath)) return [];
       const sourceText = await readFile(
-        path.join(REPOSITORY_ROOT, sourcePath),
+        currentSourceLocation(path.join(REPOSITORY_ROOT, sourcePath)),
         "utf8",
       );
       const sourceFile = ts.createSourceFile(

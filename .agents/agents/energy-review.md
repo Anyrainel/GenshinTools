@@ -4,7 +4,7 @@ Analyze character kits to produce energy recovery entries for the ER calculator.
 
 ## Arguments
 
-- `Region: <region>` — process all energy recovery candidates from this region and write to `src/data/ercalc/selfEnergy/<region>.json`
+- `Region: <region>` — process all energy recovery candidates from this region and write to `src/generated/combat/energy/selfEnergy/<region>.json`
 - `Entities: <id1>, <id2>, ...` — process specific characters by ID, determine their region, and write to the appropriate file(s)
 
 Regions: `mondstadt`, `liyue`, `inazuma`, `sumeru`, `fontaine`, `natlan`, `nod-krai`, `snezhnaya`, `none` (travelers)
@@ -20,7 +20,7 @@ uv run --project scripts/pyproject.toml scripts/gen_self_energy.py
 
 2. Filter candidates to your assigned region or entity list.
 
-3. Read the existing region file (`src/data/ercalc/selfEnergy/<region>.json`) if it exists, to understand the current data and avoid duplicating work.
+3. Read the existing region file (`src/generated/combat/energy/selfEnergy/<region>.json`) if it exists, to understand the current data and avoid duplicating work.
 
 ---
 
@@ -180,7 +180,7 @@ When a mechanic doesn't fit the schema, **approximate to flat-energy-per-action*
 
 ### Step 5: Write output
 
-Write the JSON directly to `src/data/ercalc/selfEnergy/<region>.json`. The file contains a single object keyed by character ID, sorted alphabetically. If the file already exists, merge your entries with existing data (replace entries for characters you processed, keep others).
+Write the JSON directly to `src/generated/combat/energy/selfEnergy/<region>.json`. The file contains a single object keyed by character ID, sorted alphabetically. If the file already exists, merge your entries with existing data (replace entries for characters you processed, keep others).
 
 Characters with no valid energy recovery effects should be omitted.
 

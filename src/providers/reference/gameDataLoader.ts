@@ -2,7 +2,7 @@
  * Lazy game-data resources.
  *
  * Each export below is a ``Resource<T>`` / ``LangResource<T>`` (see
- * ``src/data/resource.ts``). Consumers either:
+ * ``src/generated/catalog/resource.ts``). Consumers either:
  *
  *   - Call ``resource.use()`` from React to render once data is ready, or
  *   - Call ``resource.preload()`` from a worker / app-boot effect, then
@@ -25,7 +25,7 @@
 
 import { betaEnabled } from "@/config/beta";
 import { fetchGzipJson } from "@/providers/reference/fetchGzipJson";
-import { LEYLINE_BOSS_IMAGE_ENEMY_ID } from "../../data/resources_manual";
+import { LEYLINE_BOSS_IMAGE_ENEMY_ID } from "../../config/game/resourceOverrides";
 import { expandAchievementReferenceData } from "../../domain/achievement/reference";
 import type { ElementalOrPhysical } from "../../domain/enums";
 import { ELEMENT_KEYS } from "../../domain/enums";
@@ -86,14 +86,14 @@ type CharacterKitBundle = Record<string, CharacterKit>;
 
 const CHAR_RARITIES = ["4", "5"] as const;
 const characterModules = import.meta.glob<{ default: CharacterKitBundle }>(
-  "../../data/game/character_*_*.json",
+  "../../generated/catalog/character_*_*.json",
   { eager: false }
 );
 
 // Beta character kits are gzipped so their plaintext contents don't ship in
 // the released JS bundle. Resolved to a URL at build time, fetched at runtime.
 const betaCharacterModules = import.meta.glob<string>(
-  "../../data/game/character_beta_*.json.gz",
+  "../../generated/catalog/character_beta_*.json.gz",
   { eager: false, query: "?url", import: "default" }
 );
 
@@ -105,7 +105,7 @@ export const characterKitsResource: LangResource<CharacterKitBundle> =
           CHAR_RARITIES.map((r) =>
             loadFromGlob(
               characterModules,
-              `../../data/game/character_${r}_${lang}.json`
+              `../../generated/catalog/character_${r}_${lang}.json`
             )
           )
         );
@@ -116,7 +116,7 @@ export const characterKitsResource: LangResource<CharacterKitBundle> =
       () =>
         loadBetaGzip<CharacterKitBundle>(
           betaCharacterModules,
-          `../../data/game/character_beta_${lang}.json.gz`
+          `../../generated/catalog/character_beta_${lang}.json.gz`
         ),
       betaEnabled
     )()
@@ -128,10 +128,11 @@ export const characterKitsResource: LangResource<CharacterKitBundle> =
 
 const achievementModules = import.meta.glob<{
   default: AchievementReferenceText;
-}>("../../data/game/achievements_{en,zh}.json", { eager: false });
+}>("../../generated/catalog/achievements_{en,zh}.json", { eager: false });
 
 const achievementLogicResource = makeResource<AchievementReferenceData>(
-  async () => (await import("../../data/game/achievements.json")).default
+  async () =>
+    (await import("../../generated/catalog/achievements.json")).default
 );
 
 /** Route-lazy, per-language achievement metadata cached for the app lifetime. */
@@ -141,7 +142,7 @@ export const achievementTextResource: LangResource<AchievementData> =
       achievementLogicResource.preload(),
       loadFromGlob(
         achievementModules,
-        `../../data/game/achievements_${lang}.json`
+        `../../generated/catalog/achievements_${lang}.json`
       ),
     ]);
     return expandAchievementReferenceData(logic, text);
@@ -155,22 +156,26 @@ export const achievementTextResource: LangResource<AchievementData> =
 // match — so unrelated neighbors like ``weapon_stats.json`` (loaded as its own
 // resource) are not swept in.
 const weaponModules = import.meta.glob<{ default: WeaponGameData }>(
-  "../../data/game/weapon_{en,zh}.json",
+  "../../generated/catalog/weapon_{en,zh}.json",
   { eager: false }
 );
 const betaWeaponModules = import.meta.glob<string>(
-  "../../data/game/weapon_beta_{en,zh}.json.gz",
+  "../../generated/catalog/weapon_beta_{en,zh}.json.gz",
   { eager: false, query: "?url", import: "default" }
 );
 
 export const weaponTextResource: LangResource<WeaponGameData> =
   makeLangResource((lang) =>
     withBetaOverlay<WeaponGameData>(
-      () => loadFromGlob(weaponModules, `../../data/game/weapon_${lang}.json`),
+      () =>
+        loadFromGlob(
+          weaponModules,
+          `../../generated/catalog/weapon_${lang}.json`
+        ),
       () =>
         loadBetaGzip<WeaponGameData>(
           betaWeaponModules,
-          `../../data/game/weapon_beta_${lang}.json.gz`
+          `../../generated/catalog/weapon_beta_${lang}.json.gz`
         ),
       betaEnabled
     )()
@@ -203,11 +208,11 @@ export function formatWeaponEffect(
 // Same brace-expansion reasoning as weapons — excludes ``artifact_stat.json``
 // which is statically imported by ``constants.ts``.
 const artifactModules = import.meta.glob<{ default: ArtifactGameData }>(
-  "../../data/game/artifact_{en,zh}.json",
+  "../../generated/catalog/artifact_{en,zh}.json",
   { eager: false }
 );
 const betaArtifactModules = import.meta.glob<string>(
-  "../../data/game/artifact_beta_{en,zh}.json.gz",
+  "../../generated/catalog/artifact_beta_{en,zh}.json.gz",
   { eager: false, query: "?url", import: "default" }
 );
 
@@ -215,11 +220,14 @@ export const artifactTextResource: LangResource<ArtifactGameData> =
   makeLangResource((lang) =>
     withBetaOverlay<ArtifactGameData>(
       () =>
-        loadFromGlob(artifactModules, `../../data/game/artifact_${lang}.json`),
+        loadFromGlob(
+          artifactModules,
+          `../../generated/catalog/artifact_${lang}.json`
+        ),
       () =>
         loadBetaGzip<ArtifactGameData>(
           betaArtifactModules,
-          `../../data/game/artifact_beta_${lang}.json.gz`
+          `../../generated/catalog/artifact_beta_${lang}.json.gz`
         ),
       betaEnabled
     )()
@@ -309,11 +317,11 @@ interface RawLangBundle {
 }
 
 const bossInfoModules = import.meta.glob<{ default: RawInfoBundle }>(
-  "../../data/game/leyline_boss_info.json",
+  "../../generated/catalog/leyline_boss_info.json",
   { eager: false }
 );
 const bossLangModules = import.meta.glob<{ default: RawLangBundle }>(
-  "../../data/game/leyline_boss_*.json",
+  "../../generated/catalog/leyline_boss_*.json",
   { eager: false }
 );
 
@@ -489,9 +497,11 @@ function buildLeylineBossData(
 export const leylineBossResource: Resource<LeylineBossData> = makeResource(
   async () => {
     const infoLoader =
-      bossInfoModules["../../data/game/leyline_boss_info.json"];
-    const enLoader = bossLangModules["../../data/game/leyline_boss_en.json"];
-    const zhLoader = bossLangModules["../../data/game/leyline_boss_zh.json"];
+      bossInfoModules["../../generated/catalog/leyline_boss_info.json"];
+    const enLoader =
+      bossLangModules["../../generated/catalog/leyline_boss_en.json"];
+    const zhLoader =
+      bossLangModules["../../generated/catalog/leyline_boss_zh.json"];
     if (!infoLoader || !enLoader || !zhLoader) {
       throw new Error("Leyline boss data modules missing");
     }

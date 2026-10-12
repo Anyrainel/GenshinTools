@@ -1,7 +1,7 @@
-import characterStatsInput from "@/data/game/character_stats.json";
-import weaponStatsInput from "@/data/game/weapon_stats.json";
-import { weapons } from "@/data/resources";
-import { betaWeapons } from "@/data/resources_beta";
+import characterStatsInput from "@/generated/catalog/character_stats.json";
+import weaponStatsInput from "@/generated/catalog/weapon_stats.json";
+import { weapons } from "@/generated/catalog/resources";
+import { betaWeapons } from "@/generated/catalog/resources_beta";
 import {
   ARTIFACT_CHOICE_SEARCH_COVERAGE_INPUT_PATHS,
   buildArtifactChoiceSearchCoverageReport,

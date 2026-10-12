@@ -3,7 +3,7 @@
 Scrape elemental skill particle data from the Genshin Impact Fandom Wiki and
 write the ER calculator's v2 particle schema.
 
-Output: src/data/ercalc/particles.fandom.json  (per-source; v2 schema; source="fandom")
+Output: src/generated/combat/energy/particles.fandom.json  (per-source; v2 schema; source="fandom")
 
 Source files and the merge pipeline:
   - particles.fandom.json  — this script's output
@@ -47,7 +47,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from beta_files import read_beta_json  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.fandom.json"
+OUT_PATH = ROOT / "src" / "generated" / "combat" / "energy" / "particles.fandom.json"
 
 WIKI_API = (
     "https://genshin-impact.fandom.com/api.php"
@@ -646,13 +646,13 @@ def main():
 
     # Fallback: supplement missing characters from character_stats.json, then
     # from the Lunaris datamine dump for anyone character_stats has no energy for.
-    lunaris_path = ROOT / "src" / "data" / "ercalc" / "particles.lunaris.json"
+    lunaris_path = ROOT / "src" / "generated" / "combat" / "energy" / "particles.lunaris.json"
     lunaris: dict = {}
     if lunaris_path.exists():
         lunaris = json.loads(lunaris_path.read_text(encoding="utf-8"))
 
-    char_stats_path = ROOT / "src" / "data" / "game" / "character_stats.json"
-    beta_stats_path = ROOT / "src" / "data" / "game" / "character_beta_stats.json.gz"
+    char_stats_path = ROOT / "src" / "generated" / "catalog" / "character_stats.json"
+    beta_stats_path = ROOT / "src" / "generated" / "catalog" / "character_beta_stats.json.gz"
     all_stats = {}
     for sp in [char_stats_path, beta_stats_path]:
         if not sp.exists():
@@ -664,7 +664,7 @@ def main():
                 all_stats.update(json.load(f))
 
     # Validate against charInfo
-    char_info_path = ROOT / "src" / "data" / "characterInfo.ts"
+    char_info_path = ROOT / "src" / "generated" / "catalog" / "characterInfo.ts"
     # NPC template IDs to exclude from missing check
     npc_ids = {
         *[f"manekin_{e}" for e in ("anemo", "cryo", "dendro", "electro", "geo", "hydro", "pyro")],

@@ -1,7 +1,7 @@
 import { act, renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
-import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/account/scoreUpSettings";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
+import { DEFAULT_SCORE_UP_SETTINGS } from "@/domain/game-account/scoreUpSettings";
 import { useAccountStore } from "@/stores/useAccountStore";
 import {
   getActiveScoreUpSettings,

@@ -5,7 +5,7 @@ import { gunzipSync } from "node:zlib";
 // Tool/test transport for Vite asset URLs. Browser providers never import Node.
 export function installNodeReferenceFetch(root = process.cwd()) {
   const previous = globalThis.fetch;
-  const dataRoot = path.resolve(root, "src/data/game");
+  const dataRoot = path.resolve(root, "src/generated/catalog");
   globalThis.fetch = async (input, init) => {
     const url = typeof input === "string" ? input : input.url ?? String(input);
     if (!url.startsWith("http") && /\.json\.gz(?:\?|$)/.test(url)) {

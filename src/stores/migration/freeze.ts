@@ -1,5 +1,5 @@
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
 import { allSlots, type Slot } from "@/domain/enums";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
 import type { ArtifactData } from "@/domain/models";
 
 type ArtifactReuseMode = "none" | "sameChar" | "forceReuse";

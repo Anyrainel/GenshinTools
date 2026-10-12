@@ -1,5 +1,5 @@
-import { statIdMap } from "@/data/enkaIdMap";
-import artifactStatData from "@/data/game/artifact_stat.json";
+import artifactStatData from "@/generated/catalog/artifact_stat.json";
+import { statIdMap } from "@/generated/catalog/enkaIdMap";
 import type {
   ConversionWarning,
   GOODData,
@@ -7,8 +7,8 @@ import type {
   IGOODCharacter,
   IGOODSubstat,
   IGOODWeapon,
-} from "../scanner/goodConversion";
-import { DEFAULT_MULTI_ELEMENT_CHARACTER_ELEMENT } from "../scanner/multiElementCharacters";
+} from "../scanner/formats/goodConversion";
+import { DEFAULT_MULTI_ELEMENT_CHARACTER_ELEMENT } from "../scanner/formats/multiElementCharacters";
 
 // --- Precise substat decoding from appendPropIdList ---
 
@@ -115,10 +115,10 @@ async function ensureReverseMaps(): Promise<void> {
   if (charIdToKey) return;
 
   const [char4Mod, char5Mod, weaponMod, artifactMod] = await Promise.all([
-    import("@/data/game/character_4_en.json"),
-    import("@/data/game/character_5_en.json"),
-    import("@/data/game/weapon_en.json"),
-    import("@/data/game/artifact_en.json"),
+    import("@/generated/catalog/character_4_en.json"),
+    import("@/generated/catalog/character_5_en.json"),
+    import("@/generated/catalog/weapon_en.json"),
+    import("@/generated/catalog/artifact_en.json"),
   ]);
 
   charIdToKey = {

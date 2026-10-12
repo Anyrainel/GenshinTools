@@ -4,6 +4,7 @@ import {
   getCachedBuildPreset,
 } from "@/domain/build/buildPresetRegistry";
 import type { BuildPayload, BuildPayloadV5 } from "@/domain/models";
+import { cloneData } from "@/lib/cloneData";
 import { migrateBuild } from "@/stores/migration/buildLegacy";
 export async function loadBuildPreset(path: string): Promise<BuildPayloadV5> {
   if (getCachedBuildPreset(path)) return getCachedBuildPreset(path)!;
@@ -12,7 +13,9 @@ export async function loadBuildPreset(path: string): Promise<BuildPayloadV5> {
   if (!loader) throw new Error(`Preset not found: ${path}`);
 
   const mod = await loader();
-  const payload = mod.default;
+  // Imported JSON is shared. Hydration can freeze its previous consumers, and
+  // concurrent loads must not migrate the same exported object in place.
+  const payload = cloneData(mod.default);
 
   // Normalize to V5
   const v5 = normalizeToV5(payload);

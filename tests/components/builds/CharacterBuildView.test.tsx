@@ -105,8 +105,9 @@ vi.mock("@/config/gameConstants", async (importOriginal) => {
   };
 });
 
-vi.mock("@/data/resources", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/data/resources")>();
+vi.mock("@/generated/catalog/resources", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/generated/catalog/resources")>();
   return {
     ...actual,
     characters: [

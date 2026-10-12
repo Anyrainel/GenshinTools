@@ -511,7 +511,7 @@ describe("Keqing/Ineffa/Furina/Xilonen generated-sheet evidence", () => {
 async function loadInput(): Promise<BuildKeqingIneffaFurinaXilonenGeneratedSheetEvidenceInput> {
   const read = (relativePath: string) =>
     JSON.parse(
-      fs.readFileSync(path.join(REPOSITORY_ROOT, relativePath), "utf8"),
+      fs.readFileSync(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)), "utf8"),
     );
   return {
     sourceTechnicalReport:

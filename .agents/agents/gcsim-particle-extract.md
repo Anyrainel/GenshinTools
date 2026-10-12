@@ -32,7 +32,7 @@ scripts/out/particles.gcsim.batch_<N>.json
 - The batch number MUST come from the `Batch: <N>` argument. Do NOT pick your own.
 - If `scripts/out/` does not exist, create it.
 - If the target file already exists, **overwrite it** (idempotent re-runs are expected).
-- Do NOT write to any other path under `scripts/out/`, `src/data/ercalc/`, or elsewhere — you own exactly this one file.
+- Do NOT write to any other path under `scripts/out/`, `src/generated/combat/energy/`, or elsewhere — you own exactly this one file.
 - Do NOT modify `particles.json`, `particles.lunaris.json`, or `particles.gcsim.json` directly. The merge script handles combining batches.
 
 Parallel-safety guarantee: each agent owns exactly its batch file. The dispatcher assigns disjoint character sets per batch, so no two agents ever write the same key.

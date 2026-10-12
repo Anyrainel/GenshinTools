@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { AccountProfileId } from "@/domain/account/types";
 import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import { migrateAccountScoreCacheStore } from "./migration/accountScoreCache";
 import { PersistedAccountScoreCacheStoreSchema } from "./schemas";
 

@@ -87,9 +87,7 @@ let canonicalReport: XiaoFfxxGroupedReplayRepresentationPreflightReport;
 beforeAll(async () => {
   [baseInput, durableReport] = await Promise.all([
     loadFixture(),
-    readJson(
-      XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_REPORT_PATH,
-    ) as Promise<XiaoFfxxGroupedReplayRepresentationPreflightReport>,
+    readJson(currentSourceLocation(XIAO_FFXX_GROUPED_REPLAY_REPRESENTATION_PREFLIGHT_REPORT_PATH)) as Promise<XiaoFfxxGroupedReplayRepresentationPreflightReport>,
   ]);
   canonicalReport =
     await buildXiaoFfxxGroupedReplayRepresentationPreflightReport(fixture());
@@ -778,7 +776,7 @@ async function loadFixture(): Promise<BuildXiaoFfxxGroupedReplayRepresentationPr
   const parsedEntries = await Promise.all(
     JSON_INPUTS.map(async ([key, relativePath]) => [
       key,
-      await readJson(path.join(REPOSITORY_ROOT, relativePath)),
+      await readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath))),
     ]),
   );
   const [sourceFiles, generatedFrom] = await Promise.all([

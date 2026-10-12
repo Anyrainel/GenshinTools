@@ -1397,7 +1397,7 @@ def cmd_view(path_arg: str) -> None:
     """Pretty-print the contents of a gzipped beta JSON file to stdout.
 
     Accepts either an absolute path or a path relative to the project root
-    (e.g. ``src/data/game/character_beta_en.json.gz``).
+    (e.g. ``src/generated/catalog/character_beta_en.json.gz``).
     """
     candidate = Path(path_arg)
     if not candidate.is_absolute():
@@ -1476,7 +1476,7 @@ Commands:
                         already carry data in the offline-pipeline JSON.
                         If no mode is provided, lists all three.
   view <path>         Pretty-print a gzipped beta JSON file (e.g.
-                        ``src/data/game/character_beta_en.json.gz``) to stdout.
+                        ``src/generated/catalog/character_beta_en.json.gz``) to stdout.
   excel C <id>        Print Excel VBA damage logic for a character (to stdout).
   excel C --list      List all Excel characters with matched project IDs.
 

@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/account/accountProfile";
-import type { AccountProfileId } from "@/domain/account/types";
 import type { Slot } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
+import type { AccountProfileId } from "@/domain/game-account/types";
 import type { AccountData, ArtifactData } from "@/domain/models";
 import { cloneData } from "@/lib/cloneData.ts";
 import { migrateFreezeStore } from "./migration/freeze";

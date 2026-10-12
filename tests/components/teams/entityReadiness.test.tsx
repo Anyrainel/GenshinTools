@@ -1,0 +1,122 @@
+import "@/providers/reference/statLoaders";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { TeamCard } from "@/components/teams/TeamCard";
+import { TeamRosterCard } from "@/components/teams/TeamRosterCard";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { weaponsById } from "@/domain/reference/catalog";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
+import { teamCompInputToComp } from "@/domain/team/teamDeltas";
+import { render } from "../../utils/render";
+
+const pickers = vi.hoisted(
+  () =>
+    [] as {
+      type: string;
+      filter?: (item: { id: string }) => boolean;
+    }[]
+);
+
+vi.mock("@/components/shared/ItemPicker", () => ({
+  ItemPicker: (props: (typeof pickers)[number]) => {
+    pickers.push(props);
+    return null;
+  },
+}));
+
+beforeAll(async () => {
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
+});
+
+beforeEach(() => {
+  pickers.length = 0;
+});
+
+const team = teamCompInputToComp({
+  id: "readiness-team",
+  name: "",
+  characters: ["xingqiu", null, null, null],
+  weapons: [null, null, null, null],
+  artifacts: [null, null, null, null],
+  reactions: [],
+});
+
+function Roster({ teamComp = team }: { teamComp?: typeof team }) {
+  const { t } = useLanguage();
+  return (
+    <TeamRosterCard
+      teamComp={teamComp}
+      setupConfig={{ combatOptions: {} }}
+      updateTeamComp={vi.fn()}
+      updateTeamSetupConfig={vi.fn()}
+      accountData={null}
+      characterStats={characterStatsResource.peek() ?? {}}
+      weaponStats={weaponStatsResource.peek() ?? {}}
+      isMobile={false}
+      t={t}
+    />
+  );
+}
+
+describe("team picker calculator readiness", () => {
+  it.each([
+    "grid",
+    "roster",
+  ])("%s offers released and beta entities without implementation filtering", (view) => {
+    render(
+      view === "grid" ? (
+        <TeamCard teamComp={team} index={0} onUpdateComp={vi.fn()} />
+      ) : (
+        <Roster />
+      )
+    );
+    const characterFilter = pickers.find(
+      (picker) => picker.type === "character"
+    )?.filter;
+    const weaponFilter = pickers.find(
+      (picker) => picker.type === "weapon"
+    )?.filter;
+    expect(characterFilter).toBeDefined();
+    expect(weaponFilter).toBeDefined();
+    for (const id of ["mitya", "valeriy"]) {
+      expect(characterFilter?.({ id })).toBe(true);
+    }
+    expect(characterFilter?.({ id: "vesna" })).toBe(true);
+    // The selected Xingqiu takes swords. Catalyst availability is tested below
+    // with a compatible wearer, so type filtering still applies here.
+    expect(weaponFilter?.(weaponsById.weapon_catalyst)).toBe(false);
+    expect(weaponFilter?.(weaponsById.beyond_the_chrysalis)).toBe(true);
+    expect(weaponFilter?.(weaponsById.prized_isshin_blade)).toBe(true);
+  });
+
+  it.each([
+    "grid",
+    "roster",
+  ])("%s offers the beta catalyst to a compatible wearer", (view) => {
+    const catalystTeam = teamCompInputToComp({
+      id: "beta-catalyst-team",
+      name: "",
+      characters: ["lisa", null, null, null],
+      weapons: [null, null, null, null],
+      artifacts: [null, null, null, null],
+      reactions: [],
+    });
+    render(
+      view === "grid" ? (
+        <TeamCard teamComp={catalystTeam} index={0} onUpdateComp={vi.fn()} />
+      ) : (
+        <Roster teamComp={catalystTeam} />
+      )
+    );
+    const weaponFilter = pickers.find(
+      (picker) => picker.type === "weapon"
+    )?.filter;
+    expect(weaponFilter).toBeDefined();
+    expect(weaponFilter?.(weaponsById.weapon_catalyst)).toBe(true);
+  });
+});

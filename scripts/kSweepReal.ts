@@ -6,10 +6,10 @@
  */
 
 import accountJson from "../tests/benchmark/data/account.json";
-import buildPreset from "../src/presets/artifact-builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
-import tierListPreset from "../src/presets/tier-list/[GGArtifact] 培养优先级 Build Priority.json";
+import buildPreset from "../src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
+import tierListPreset from "../src/config/presets/tier-list/[GGArtifact] 培养优先级 Build Priority.json";
 import type { Build, TierAssignment } from "../src/domain/models";
-import { convertGOODToAccountData } from "../src/providers/scanner/goodConversion";
+import { convertGOODToAccountData } from "../src/providers/scanner/formats/formats/goodConversion";
 import {
   type ArtifactScoreResult,
   buildToWeightMap,
@@ -17,7 +17,7 @@ import {
   type NormalizedScoreInfo,
   type SubstatScoreResult,
 } from "../src/domain/build/artifact/scoring/artifactScore";
-import { runTierWaterfall } from "../src/domain/account/tierWaterfall";
+import { runTierWaterfall } from "../src/domain/game-account/tierWaterfall";
 
 const EMPTY_SLOT_SCORES = {
   flower: 0, plume: 0, sands: 0, goblet: 0, circlet: 0,

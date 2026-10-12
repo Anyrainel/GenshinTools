@@ -1,7 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ItemPicker } from "@/components/shared/ItemPicker";
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { render, screen, waitFor } from "../../utils/render";
 

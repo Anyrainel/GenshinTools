@@ -1,10 +1,10 @@
 import "@/providers/reference/statLoaders";
 import { describe, expect, it } from "vitest";
-import releasedCharacterStats from "@/data/game/character_stats.json";
-import { characters } from "@/data/resources";
 import type { CharacterResource, TierAssignment } from "@/domain/models";
 import type { CharacterStatsMap } from "@/domain/reference/stats";
 import { getCharacterDisplayMeta } from "@/domain/reference/stats";
+import releasedCharacterStats from "@/generated/catalog/character_stats.json";
+import { characters } from "@/generated/catalog/resources";
 import {
   defaultCharacterFilters,
   filterAndSortCharacters,

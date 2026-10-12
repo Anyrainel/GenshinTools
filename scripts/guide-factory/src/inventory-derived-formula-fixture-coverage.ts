@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { characters } from "@/data/resources";
+import { characters } from "@/generated/catalog/resources";
 import {
   buildDerivedFormulaFixtureCoverageReport,
   DERIVED_FORMULA_FIXTURE_COVERAGE_INPUT_PATHS,

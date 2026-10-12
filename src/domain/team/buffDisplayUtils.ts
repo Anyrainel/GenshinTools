@@ -3,7 +3,7 @@
  * consuming components in @/components/team-comp/BuffLabels.
  */
 
-import { envBuffsById } from "@/data/envBuffs";
+import { envBuffsById } from "@/domain/combat/environmentBuffs";
 import type { Element } from "@/domain/enums";
 import {
   artifactHalfSetsById,

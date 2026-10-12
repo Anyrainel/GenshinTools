@@ -1,10 +1,19 @@
+import { BUILTIN_TEAM_PRESET_ID } from "@/config/presets/ids";
 import type { TeamCompData } from "@/domain/team/types";
 import { loadPresetPayload } from "@/lib/resources/presets";
 
-const teamPresetModules = import.meta.glob<{ default: TeamCompData }>(
-  "@/presets/team-comp/*.json",
-  { eager: false }
+const modules = import.meta.glob<{ default: TeamCompData }>(
+  "@/config/presets/teams/*.json"
 );
+export const teamPresetModules: Record<
+  string,
+  () => Promise<{ default: TeamCompData }>
+> = {
+  [BUILTIN_TEAM_PRESET_ID]:
+    modules[
+      "/src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json"
+    ],
+};
 
 const loadedPresets: Record<string, TeamCompData> = {};
 

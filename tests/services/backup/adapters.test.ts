@@ -230,7 +230,7 @@ describe("cloud source adapters", () => {
     expect(partition).toMatchObject({
       namespace: "builds",
       partitionKey: "all",
-      schemaVersion: 2,
+      schemaVersion: 3,
       conflictPolicy: "explicit-choice",
     });
     expect(partition.payload).not.toHaveProperty("validationErrors");

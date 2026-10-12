@@ -7,11 +7,11 @@ import {
   LightweightSelectTrigger,
   LightweightSelectValue,
 } from "@/components/ui/lightweight-select";
-import { charInfo } from "@/data/characterInfo";
 import type { SkillLevel } from "@/domain/enums";
 import { SKILL_LEVELS } from "@/domain/enums";
 import type { CharacterSkill } from "@/domain/models";
 import { characterStatsResource } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import { useResource } from "@/hooks/useResource";
 import { renderTemplate } from "@/lib/game/talentRenderer";
 import { cn } from "@/lib/utils";

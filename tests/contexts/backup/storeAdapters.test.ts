@@ -4,13 +4,16 @@ import {
   buildCloudRestorePlan,
   buildLocalBackupPartitions,
 } from "@/contexts/backup/storeAdapters";
-import type { AccountProfileId, AccountState } from "@/domain/account/types";
 import type {
   CloudConflictPolicy,
   CloudExportPartition,
   CloudNamespace,
   CloudPartitionKey,
 } from "@/domain/backup/types";
+import type {
+  AccountProfileId,
+  AccountState,
+} from "@/domain/game-account/types";
 import type { ArtifactData, Build } from "@/domain/models";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useAchievementStore } from "@/stores/useAchievementStore";

@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Merge per-agent batch files into src/data/ercalc/particles.gcsim.json.
+Merge per-agent batch files into src/generated/combat/energy/particles.gcsim.json.
 
 Inputs:  scripts/out/particles.gcsim.batch_*.json
-Output:  src/data/ercalc/particles.gcsim.json
+Output:  src/generated/combat/energy/particles.gcsim.json
 
 Validates each entry against the v2 schema (loose — just shape, not every
 value). Reports:
@@ -25,7 +25,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 BATCH_DIR = ROOT / "scripts" / "out"
 BATCH_GLOB = "particles.gcsim.batch_*.json"
-OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.gcsim.json"
+OUT_PATH = ROOT / "src" / "generated" / "combat" / "energy" / "particles.gcsim.json"
 
 VALID_ELEMENTS = {"Pyro", "Hydro", "Electro", "Cryo", "Anemo", "Geo", "Dendro"}
 VALID_ACTION_KEYS = {"E", "holdE", "specialE", "Q", "specialQ", "NA", "CA", "PA"}

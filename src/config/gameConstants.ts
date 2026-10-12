@@ -1,4 +1,3 @@
-import artifactStatData from "../data/game/artifact_stat.json";
 import type {
   Element,
   MainStat,
@@ -6,6 +5,7 @@ import type {
   ReactionType,
   SubStat,
 } from "../domain/enums";
+import artifactStatData from "../generated/catalog/artifact_stat.json";
 
 /**
  * Explicit role assignments for every released artifact set.

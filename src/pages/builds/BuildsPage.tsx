@@ -13,13 +13,10 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { buildPresetModules as presetModules } from "@/domain/build/buildPresetRegistry";
 import { createBuildExportPayloadV5 } from "@/domain/build/buildUtils";
 import { getResolvedBuildValidationIssues } from "@/domain/build/buildValidation";
-import type {
-  BuildPayload,
-  BuildPayloadV5,
-  PresetOption,
-} from "@/domain/models";
+import type { BuildPayloadV5, PresetOption } from "@/domain/models";
 import { useCanonicalTabRoute } from "@/hooks/useCanonicalTabRoute";
 import {
   getCachedPresetMetadata,
@@ -41,11 +38,6 @@ const isValidArtifactBuildsTab = (
   tab: string | null
 ): tab is "configure" | "filters" | "weights" =>
   tab === "configure" || tab === "filters" || tab === "weights";
-
-const presetModules = import.meta.glob<{ default: BuildPayload }>(
-  "@/presets/artifact-builds/*.json",
-  { eager: false }
-);
 
 export default function ArtifactBuildsPage() {
   const { t } = useLanguage();

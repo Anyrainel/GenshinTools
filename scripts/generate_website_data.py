@@ -12,13 +12,14 @@ import sys
 from pathlib import Path
 
 from mappings import _to_good_key
+from refresh_game_data import normalize_export_layout
 from ts_reader import extract_json_from_ts
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
 def validate_stat_outputs(root: Path) -> None:
-    game = root / "src/data/game"
+    game = root / "src/generated/catalog"
     for filename, fields in (
         ("character_stats.json", ("baseHp", "baseAtk", "baseDef")),
         ("weapon_stats.json", ("baseAtk",)),
@@ -48,7 +49,7 @@ def validate_stat_outputs(root: Path) -> None:
 
 
 def validate_outputs(root: Path) -> None:
-    game = root / "src" / "data" / "game"
+    game = root / "src" / "generated" / "catalog"
     mappings = json.loads(
         (root / "public" / "good" / "genshin_scanner_data.json").read_text("utf-8")
     )["mappings"]
@@ -81,7 +82,7 @@ def validate_outputs(root: Path) -> None:
                 raise ValueError(f"{section}: missing Chinese name for {key}")
         print(f"Validated {section}: {len(actual)} GOOD mappings", flush=True)
 
-    resource_source = (root / "src" / "data" / "resources.ts").read_text("utf-8")
+    resource_source = (root / "src" / "generated" / "catalog" / "resources.ts").read_text("utf-8")
     roster = {entry["id"] for entry in extract_json_from_ts(resource_source, "characters")}
     for filename in sources["characters"]:
         required = json.loads((game / filename).read_text("utf-8"))
@@ -112,6 +113,10 @@ def generate(
     cached_sources: bool = False,
     dry_run: bool = False,
 ) -> int:
+    # Upstream exports retain their own layout. Adapt before generators read
+    # catalogs, not only after the complete refresh has already finished.
+    if not dry_run:
+        normalize_export_layout(root)
     commands: list[tuple[str, list[str], Path]] = []
     if not cached_sources:
         commands.append(

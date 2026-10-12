@@ -1,7 +1,7 @@
-import { charInfo } from "@/data/characterInfo";
 import { getArtifactEnergyImpl } from "@/domain/combat/energy/artifactEnergy";
 import { weaponEnergyById } from "@/domain/combat/energy/weaponEnergy";
 import { getTalentParam } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import {
   ASSUMED_BATTERY_ER,
   allSelfEnergy,

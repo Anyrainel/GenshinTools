@@ -1,5 +1,5 @@
 import { ARTIFACT_SET_ROLE_IDS } from "../../src/config/gameConstants";
-import { artifacts } from "../../src/data/resources";
+import { artifacts } from "../../src/generated/catalog/resources";
 
 const releasedIds = new Set(artifacts.map((artifact) => artifact.id));
 const assignments = Object.entries(ARTIFACT_SET_ROLE_IDS).flatMap(

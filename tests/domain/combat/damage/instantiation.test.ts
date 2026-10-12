@@ -74,7 +74,7 @@ function findDuplicateBuffKeys(
 
 const presetPath = resolve(
   __dirname,
-  "../../../../src/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json"
+  "../../../../src/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json"
 );
 const presetData = JSON.parse(readFileSync(presetPath, "utf-8")) as {
   teams: {

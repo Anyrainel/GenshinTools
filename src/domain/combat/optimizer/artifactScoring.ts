@@ -6,7 +6,6 @@
  * - Marginal-based: uses damage-formula-derived marginal weights (context-aware)
  */
 
-import { charInfo } from "@/data/characterInfo";
 import {
   getMainStatValueAtLevel,
   toInternal,
@@ -14,6 +13,7 @@ import {
 import type { StatKey } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
 import type { ArtifactData } from "@/domain/models";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import {
   type BuildMatchResult,
   getTargetMainStatsForSlot,

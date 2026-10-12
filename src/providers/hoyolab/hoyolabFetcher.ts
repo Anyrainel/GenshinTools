@@ -3,7 +3,7 @@ import {
   charNameMap,
   normalizeEntityName as normalize,
   weaponNameMap,
-} from "../scanner/entityMaps";
+} from "../scanner/formats/entityMaps";
 import type {
   ConversionWarning,
   GOODData,
@@ -11,12 +11,12 @@ import type {
   IGOODCharacter,
   IGOODSubstat,
   IGOODWeapon,
-} from "../scanner/goodConversion";
+} from "../scanner/formats/goodConversion";
 import {
   MULTI_ELEMENT_CHARACTER_NAMES,
   normalizeElementName,
   resolveMultiElementCharacterKey,
-} from "../scanner/multiElementCharacters";
+} from "../scanner/formats/multiElementCharacters";
 
 // HoYoLAB / 米游社 Battle Chronicle import.
 //

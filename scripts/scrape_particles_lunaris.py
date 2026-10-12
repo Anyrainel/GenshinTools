@@ -7,7 +7,7 @@ probabilistic per-event particle distribution (source, particles, chance, cd)
 — which maps cleanly onto the ER calculator's v2 Particles schema
 `[[count, chance], ...]`.
 
-Writes: src/data/ercalc/particles.lunaris.json
+Writes: src/generated/combat/energy/particles.lunaris.json
 
 Production particle data is produced by scripts/scrape_particles.py from the
 Fandom wiki and tagged `source: "fandom"`. This Lunaris file is mainly a
@@ -51,7 +51,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lunaris import API_BASE, RARITY_MAP, derive_id  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT_PATH = ROOT / "src" / "data" / "ercalc" / "particles.lunaris.json"
+OUT_PATH = ROOT / "src" / "generated" / "combat" / "energy" / "particles.lunaris.json"
 
 TRAVELER_ELEMENT_MAP = {
     "Anemo": "traveler_anemo",

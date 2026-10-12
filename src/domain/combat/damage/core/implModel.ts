@@ -1,4 +1,3 @@
-import { charInfo } from "@/data/characterInfo";
 import type { ReactionType } from "@/domain/enums";
 import type { StatEntry } from "@/domain/models";
 import {
@@ -6,6 +5,7 @@ import {
   resolveCharacterStats,
   resolveWeaponStats,
 } from "@/domain/reference/stats";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import type {
   ComboTemplate,
   ComboTemplateEntry,

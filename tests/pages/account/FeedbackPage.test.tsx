@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
-import FeedbackPage from "@/pages/account/FeedbackPage";
+import FeedbackPage from "@/pages/profile/FeedbackPage";
 
 const signIn = vi.hoisted(() => vi.fn(async () => undefined));
 vi.mock("@/components/layout/AppBar", () => ({ AppBar: () => null }));

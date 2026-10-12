@@ -16,8 +16,10 @@ src/
   vite-env.d.ts            Vite/browser environment declarations
   app/                     Routes, metadata, providers and feature composition
   config/                  Product constants, navigation, palettes, public settings
+    presets/               Bundled user configuration examples and defaults
+    game/                  Hand-maintained reference overrides and configuration
   domain/                  Canonical models, validation and pure game rules
-    account/               Account records, identities, equipment and merges
+    game-account/          Player records, game identities, equipment and merges
     build/                 Build configuration, scoring and equipment selection
     team/                  User-authored team plans and canonical team models
     combat/                Game-specific simulation, optimization and kits
@@ -25,8 +27,9 @@ src/
     tier-list/             Priority/ranking models and transformations
   providers/               External schemas, transports and normalization
     reference/             Generated-catalog loaders and provider definitions
-    scanner/               Scanner formats and conversion to canonical records
-    scanner-manager/       Companion protocol schemas and transport
+    scanner/               Scanner integrations
+      formats/             Import schemas and conversion to canonical records
+      companion/           GGScanner protocol schemas and transport
     auth/                  Authentication client transport
     community/             Feedback/comments transport
     <source>/              Game-specific sources (Enka, HoYoLAB, etc.)
@@ -36,7 +39,7 @@ src/
     backup/                Validated persistence-envelope import/export
     combat/                Catalog/account resolution, jobs and browser worker
     auth/                  Browser sign-in navigation workflow
-    scanner-manager/       Apply verified companion results to canonical records
+    scanner/               Scan workflows and verified result reconciliation
     navigation/            Cross-feature links and URL construction
     content/               Load and parse maintained player-facing content
   lib/                     Reusable, framework-free/platform utilities
@@ -55,18 +58,22 @@ src/
     ui/                    Stock/base primitives; only ui siblings and lib/utils
     shared/                Reusable controls and presentation across features
     layout/                Page shells, navigation chrome and action slots
-    account/               Import and account-access feature UI
-    account-data/          Owned inventory and resource feature UI
+    profile/               GGArtifact identity, settings and cloud access UI
+    game-account/          Game imports, characters, inventory, resources and triage
+      imports/             Game-account import controls
     builds/                Build-configuration feature UI
-    team-analysis/         Team simulation/comparison/optimization feature UI
+    teams/                 Team editing/simulation/comparison/optimization UI
     archive/               Reference browsing feature UI
     tier-list/             Ranking feature UI
     home/                  Home and onboarding feature UI
   pages/                   Route compositions, grouped by matching feature
   content/                 Maintained prose (e.g. bilingual update history)
-  data/                    Generated/checked static game inputs only
-  generated/               Generated reference inputs; never hand-edit
-  presets/                 Bundled user configuration examples and defaults
+  generated/               Outputs owned by their producing scripts
+    reference/             Normalized upstream reference outputs
+    catalog/               Packaged runtime game catalogs
+    translations/          Generated game names and descriptions
+    assets/                Generated asset lookup tables
+    combat/                Generated/checked combat reference inputs
 worker/                    Independent server entry, handlers and platform helpers
 tests/                     Tests grouped by source ownership; shared fixtures/helpers
 scripts/                   Executable tooling; workflow-specific supporting modules
@@ -80,6 +87,29 @@ not have to match folder names and must not change merely because code moves.
 Genshin's Energy model can be a combat subsystem; HSR Energy and Skill Points
 stay in its battle timeline. Server bindings and persistence namespaces remain
 product-specific.
+
+## Naming and generated ownership
+
+`profile` means the GGArtifact website identity and settings; `game-account`
+means player records from the game, regardless of import provider. UI imports
+and owned inventory share that feature. `teams` covers editing, simulation and
+optimization; optimization algorithms remain under `domain/combat`.
+Scanner formats and the live companion are separate modules within one scanner
+namespace, not separate features. GOOD imports remain independent of GGScanner
+transport.
+
+Presets are typed configuration inputs under `config/presets`; prose belongs in
+`content`. Generated subfolders describe pipeline roles, not file extensions.
+Hand-maintained mappings/settings belong under `config/game`, and maintained
+combat rules belong under `domain/combat`. Never hand-edit generator outputs.
+Only create subdivisions used by that repository. Both repositories use these
+names independently; existing routes, stored keys and wire formats are stable.
+
+Bundled preset selections use the stable IDs in `config/presets/ids.ts`, never
+Vite module paths. Genshin builds v10 (cloud partition v3) and the unpublished
+teams v23/cloud v5 migration preserve earlier file-path selections. The pure
+decoder in `stores/migration/presetIds.ts` also runs at persisted-schema and
+backup restore boundaries; custom IDs and explicit null choices are retained.
 
 ## Ownership and dependencies
 
@@ -107,7 +137,7 @@ product-specific.
   Shared never imports layout/feature components; layout never imports features;
   feature components never import another feature's components or route pages.
   Move genuinely reusable controls into shared; inject feature actions into layouts.
-- `config`, `data`, `generated` and `presets` are foundations. Config may refer
+- `config` (including presets), `generated` and `i18n` are foundations. Config may refer
   to typed localization keys and canonical type contracts; generated inputs and
   presets do not import executable app layers. Localization owns its React
   context but does not depend on feature UI or routes.

@@ -706,7 +706,7 @@ type RuleStep = {
 ### 新增文件
 
 ```
-src/domain/account/triage/
+src/domain/game-account/triage/
 ├── types.ts              — TriageLabel, EmbryoType, DemandProfile, SubstatGrade, TriageDecision, etc.
 ├── demandExtractor.ts    — 从 resolved builds 提取 DemandProfile[]（4pc/2pc demand），不生成 flex demand
 ├── embryoClassifier.ts   — Step 1: 为每个圣遗物枚举所有胚子类型（含稀有胚子检测）

@@ -17,7 +17,7 @@
   "ignore": [
     "scripts/.venv/**",
     "src/components/ui/**",
-    "src/data/resources.ts"
+    "src/generated/catalog/resources.ts"
   ],
   "ignoreBinaries": ["uvx"],
   "ignoreDependencies": [

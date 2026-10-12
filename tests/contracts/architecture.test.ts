@@ -19,9 +19,7 @@ it("keeps executable source under an explicit architecture owner", () => {
     "components",
     "pages",
     "content",
-    "data",
     "generated",
-    "presets",
   ]);
   const unowned = readdirSync(path.join(root, "src"), { withFileTypes: true })
     .filter((entry) =>
@@ -36,13 +34,19 @@ it("keeps executable source under an explicit architecture owner", () => {
 
 it("keeps executable loaders and transforms out of generated data", () => {
   const violations: string[] = [];
-  for (const folder of ["data", "generated"]) {
-    for (const file of readdirSync(path.join(root, "src", folder)).filter(
-      (file) => file.endsWith(".ts")
-    )) {
+  const walk = (folder: string) => {
+    for (const entry of readdirSync(path.join(root, "src", folder), {
+      withFileTypes: true,
+    })) {
+      const file = path.join(folder, entry.name);
+      if (entry.isDirectory()) {
+        walk(file);
+        continue;
+      }
+      if (!entry.name.endsWith(".ts")) continue;
       const source = ts.createSourceFile(
         file,
-        readFileSync(path.join(root, "src", folder, file), "utf8"),
+        readFileSync(path.join(root, "src", file), "utf8"),
         ts.ScriptTarget.Latest,
         true
       );
@@ -53,8 +57,9 @@ it("keeps executable loaders and transforms out of generated data", () => {
             ts.isClassDeclaration(statement)
         )
       )
-        violations.push(`${folder}/${file}`);
+        violations.push(file);
     }
-  }
+  };
+  walk("generated");
   expect(violations).toEqual([]);
 });

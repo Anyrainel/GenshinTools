@@ -18,6 +18,7 @@ import {
   type LegacyPersistedTeam,
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
+import { migrateBundledPresetId } from "./presetIds";
 import { migrateReleasedTeamWeapons } from "./releasedWeaponIds";
 import {
   type LegacyAnalyzerConfig,
@@ -606,6 +607,8 @@ export function migrateTeamStore(
     Object.assign(state, migrateReleasedTeamWeapons(state));
   }
   if (version < 23) {
+    // Consolidated into the unpublished v23 migration from origin's v22.
+    state.activePresetId = migrateBundledPresetId(state.activePresetId ?? null);
     state.configsByTeamId = migrateTeamAnalysisConfigs(
       state.configsByTeamId ?? {}
     );

@@ -5,7 +5,7 @@ description: Launch worker subagents that read gcsim character source code and e
 
 # gcsim Particle Extraction Dispatch
 
-Launch parallel worker subagents to extract per-character particle generation data from a local gcsim clone, and emit v2-schema batch JSON for later merge into `src/data/ercalc/particles.gcsim.json`.
+Launch parallel worker subagents to extract per-character particle generation data from a local gcsim clone, and emit v2-schema batch JSON for later merge into `src/generated/combat/energy/particles.gcsim.json`.
 
 Fandom (`particles.json`) and Lunaris (`particles.lunaris.json`) remain as-is for cross-validation. This skill produces a third, higher-fidelity reference sourced from gcsim's actual runtime logic (`done` flags, probability rolls, ICD gating, etc.).
 
@@ -51,7 +51,7 @@ Each agent writes to `scripts/out/particles.gcsim.batch_<N>.json`. After all age
 uv run --project scripts/pyproject.toml scripts/merge_gcsim_batches.py
 ```
 
-This merges batches into `src/data/ercalc/particles.gcsim.json`, validates each entry against the v2 schema, and reports:
+This merges batches into `src/generated/combat/energy/particles.gcsim.json`, validates each entry against the v2 schema, and reports:
 - Total entries merged
 - Entries with `_unmodeled` notes (for human review)
 - Duplicate keys across batches (should be zero if batches are disjoint)

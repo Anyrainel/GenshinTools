@@ -1,10 +1,11 @@
 import "@/providers/reference/statLoaders";
+import { currentSourceLocation } from "./sourceLocations";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 
 import { betaEnabled } from "@/config/beta";
-import { charInfo } from "@/data/characterInfo";
+import { charInfo } from "@/generated/catalog/characterInfo";
 import type { MainStat, StatKey } from "@/domain/enums";
 import { getTalentParam } from "@/domain/reference/stats";
 import type { StatEntry } from "@/domain/models";
@@ -2155,7 +2156,7 @@ function authenticateOuterInputs(
     }
     let workspaceBytes: Buffer;
     try {
-      workspaceBytes = readFileSync(path.join(REPOSITORY_ROOT, sourcePath));
+      workspaceBytes = readFileSync(currentSourceLocation(path.join(REPOSITORY_ROOT, sourcePath)));
     } catch {
       throw new Error(`CP55 workspace source file is unreadable at ${sourcePath}.`);
     }

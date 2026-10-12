@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
+import flagshipPreset from "@/config/presets/teams/[GGArtifact] 战舰队伍 Flagship Teams.json";
 import {
   cacheTeamPreset,
   validateTeamPreset,
 } from "@/domain/team/teamPresetRegistry";
 import type { ExportedTeam, TeamCompData } from "@/domain/team/types";
-import flagshipPreset from "@/presets/team-comp/[GGArtifact] 战舰队伍 Flagship Teams.json";
 
 function makeTeam(id: string): ExportedTeam {
   return {

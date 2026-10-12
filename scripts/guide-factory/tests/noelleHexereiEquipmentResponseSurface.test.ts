@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { existsSync, statSync } from "node:fs";
+import { currentSourceLocation } from "../src/sourceLocations";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
@@ -161,7 +162,7 @@ describe("Noelle Hexerei equipment response surface", () => {
         const sourceBytes = Buffer.from(source.bytesBase64, "base64");
         expect(generated?.sha256).toBe(sha256(sourceBytes));
         await expect(
-          readFile(path.join(REPOSITORY_ROOT, source.path)),
+          readFile(currentSourceLocation(path.join(REPOSITORY_ROOT, source.path))),
         ).resolves.toEqual(sourceBytes);
       }),
     );
@@ -190,7 +191,7 @@ describe("Noelle Hexerei equipment response surface", () => {
       if (cached) return cached;
       if (!/\.tsx?$/.test(sourcePath)) return [];
       const sourceText = await readFile(
-        path.join(REPOSITORY_ROOT, sourcePath),
+        currentSourceLocation(path.join(REPOSITORY_ROOT, sourcePath)),
         "utf8",
       );
       const sourceFile = ts.createSourceFile(

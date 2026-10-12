@@ -46,7 +46,7 @@ export function formatKeqingIneffaFurinaXilonenCachedPolicyAuditSummary(
 
 export async function runKeqingIneffaFurinaXilonenCachedPolicyAuditCli(): Promise<void> {
   const readInput = (relativePath: string) =>
-    readJson(path.join(REPOSITORY_ROOT, relativePath));
+    readJson(currentSourceLocation(path.join(REPOSITORY_ROOT, relativePath)));
   const [cp38Report, cp39Report, inputFiles] = await Promise.all([
     readInput(CP38_REPORT_PATH),
     readInput(CP39_REPORT_PATH),

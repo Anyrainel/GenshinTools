@@ -43,7 +43,26 @@ describe("Keqing Lunar source-conditioned candidate lattice", () => {
     );
 
     expect(repeated).toEqual(report);
-    expect(durable).toEqual(report);
+    // Pin both source versions: only the validator's four catalog imports moved.
+    // Keep the historical report intact and require the complete lattice payload
+    // and every other input hash to remain identical.
+    const validatorPath = "scripts/guide-factory/src/keqingLunarEquipmentEvidenceValidation.ts";
+    const historical = durable as typeof report;
+    const oldSource = historical.generatedFrom.find(({ path }) => path === validatorPath);
+    expect(oldSource).toEqual({
+      path: validatorPath,
+      sha256: "546148f2da695cfea544a7c9eab71a89e23251af680f64d7187ae91770de003d",
+    });
+    expect(report.generatedFrom.find(({ path }) => path === validatorPath)).toEqual({
+      path: validatorPath,
+      sha256: "f4debf51cf1dcad3988e31407d36e05f70787e5fdd243e546d90b973270ba6e3",
+    });
+    expect(historical).toEqual({
+      ...report,
+      generatedFrom: report.generatedFrom.map((source) =>
+        source.path === validatorPath ? oldSource : source,
+      ),
+    });
     expect(fixture.evidence).toEqual(evidenceBefore);
     expect(fixture.formulaDraft).toEqual(formulaBefore);
     expect(report).toMatchObject({

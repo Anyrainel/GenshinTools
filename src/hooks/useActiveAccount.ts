@@ -1,5 +1,5 @@
-import type { AccountState } from "@/domain/account/types";
 import type { ArtifactScoreResult } from "@/domain/build/artifact/scoring/artifactScore";
+import type { AccountState } from "@/domain/game-account/types";
 import type { AccountData } from "@/domain/models";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
