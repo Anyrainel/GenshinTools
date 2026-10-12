@@ -93,13 +93,11 @@ function ResourceKindToggle({
   kind,
   label,
   checked,
-  count,
   onCheckedChange,
 }: {
   kind: ResourceKind;
   label: string;
   checked: boolean;
-  count: number;
   onCheckedChange: (v: boolean) => void;
 }) {
   return (
@@ -118,9 +116,6 @@ function ResourceKindToggle({
       />
       <span className="text-xs md:text-sm font-medium text-foreground">
         {label}
-      </span>
-      <span className="hidden md:inline text-sm text-foreground font-mono ml-auto">
-        {count}
       </span>
     </label>
   );
@@ -216,10 +211,6 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
       cancelled = true;
     };
   }, [suggestions, globalConfig, globalConfigHash, recomputeTrigger]);
-
-  const craftCount = suggestions.filter((s) => s.kind === "craft").length;
-  const rerollCount = suggestions.filter((s) => s.kind === "reroll").length;
-  const levelupCount = suggestions.filter((s) => s.kind === "levelup").length;
 
   const [collapsedTiers, setCollapsedTiers] = useState<Set<Tier>>(
     () => new Set()
@@ -328,21 +319,18 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
               kind="levelup"
               label={t.ui("evaluation.sanctifyingEssence")}
               checked={showLevelup}
-              count={levelupCount}
               onCheckedChange={setShowLevelup}
             />
             <ResourceKindToggle
               kind="craft"
               label={t.ui("evaluation.sanctifyingElixir")}
               checked={showCraft}
-              count={craftCount}
               onCheckedChange={setShowCraft}
             />
             <ResourceKindToggle
               kind="reroll"
               label={t.ui("evaluation.dustOfEnlightenment")}
               checked={showReroll}
-              count={rerollCount}
               onCheckedChange={setShowReroll}
             />
             <div className="flex items-center gap-1.5 flex-wrap ml-2 md:ml-4 lg:ml-6">
