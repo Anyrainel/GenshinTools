@@ -5,6 +5,9 @@ For explicit edits, follow the user's instructions and the nearest existing patt
 
 - Inspect 2–3 sibling surfaces first. Reuse their layout, mode selectors and shared
   controls. A new calculation does not justify a new interaction pattern.
+  After changing a shared layout primitive, check callers on other pages too.
+  Give left/right header rows explicit full width; verify their right edge in
+  the browser. A shrinking row can pass overflow checks while losing alignment.
   Team calculator submodes use `OptionButtonRow`, `OptionButtonCell` and `OptionButton`.
   Group related calculation parameters in one wrapping row. Preserve existing
   picker triggers when changing labels; do not redesign their appearance unasked.

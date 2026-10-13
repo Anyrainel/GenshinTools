@@ -75,6 +75,125 @@ async function dismissInitialBuildPrompt(page: Page) {
     .click();
 }
 
+test("build-card weapons stay anchored to the right with placeholders and responsive caps", async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/artifact-filter/configure");
+  await dismissInitialBuildPrompt(page);
+  await page.getByPlaceholder("Search characters...").fill("Amber");
+  const card = page.locator('[data-slot="card"]').filter({
+    has: page.locator('a[href="/archive/characters?character=amber"]'),
+  });
+  const header = card.locator(':scope > [data-slot="card-header"]');
+  const gear = header.locator(":scope > div > div > div:last-child");
+  async function checkRightAnchor(
+    width: number,
+    language: string,
+    state: string
+  ) {
+    await page.setViewportSize({ width, height: 800 });
+    await expect(card).toBeVisible();
+    await expect
+      .poll(async () =>
+        gear.evaluate((element) => {
+          const header = element.closest('[data-slot="card-header"]')!;
+          const bounds = header.getBoundingClientRect();
+          const padding = parseFloat(getComputedStyle(header).paddingRight);
+          return Math.abs(
+            element.getBoundingClientRect().right - (bounds.right - padding)
+          );
+        })
+      )
+      .toBeLessThan(1);
+    const bounds = await header.boundingBox();
+    for (const control of await header.locator("button, a").all()) {
+      const item = await control.boundingBox();
+      expect(item!.x).toBeGreaterThanOrEqual(bounds!.x);
+      expect(item!.x + item!.width).toBeLessThanOrEqual(
+        bounds!.x + bounds!.width + 1
+      );
+    }
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth)
+    ).toBe(width);
+    await page.screenshot({
+      path: testInfo.outputPath(
+        `build-header-${state}-${language}-${width}.png`
+      ),
+    });
+  }
+  for (const width of [320, 768, 1280])
+    await checkRightAnchor(width, "en", "placeholder");
+  await page.setViewportSize({ width: 1280, height: 800 });
+  for (const id of [
+    "favonius_warbow",
+    "the_stringless",
+    "sacrificial_bow",
+    "rust",
+    "amos_bow",
+  ]) {
+    await gear.getByRole("button").last().click();
+    await page
+      .getByRole("dialog")
+      .getByRole("img", { name: `/weapon/${id}.webp`, exact: true })
+      .click();
+  }
+  for (const width of [320, 768, 1280]) {
+    await checkRightAnchor(width, "en", "weapons");
+    await expect(gear.getByRole("img")).toHaveCount(
+      width === 320 ? 1 : width === 768 ? 3 : 5
+    );
+  }
+  await page.getByRole("button", { name: "More", exact: true }).click();
+  await page
+    .getByRole("menuitem", { name: "Language", exact: true })
+    .press("ArrowRight");
+  await page.getByRole("menuitem", { name: "中文", exact: true }).click();
+  for (const width of [320, 768, 1280])
+    await checkRightAnchor(width, "zh", "weapons");
+  await page.setViewportSize({ width: 1280, height: 800 });
+  for (let i = 0; i < 5; i++) {
+    await gear.getByRole("button").first().click();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "清除", exact: true })
+      .click();
+  }
+  for (const width of [320, 768, 1280])
+    await checkRightAnchor(width, "zh", "placeholder");
+});
+
+test("long build-card names wrap before the right-hand weapon on phones", async ({
+  page,
+}, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/artifact-filter/configure");
+  await dismissInitialBuildPrompt(page);
+  await page.getByPlaceholder("Search characters...").fill("Sangonomiya");
+  const card = page.locator('[data-slot="card"]').filter({
+    has: page.locator(
+      'a[href="/archive/characters?character=sangonomiya_kokomi"]'
+    ),
+  });
+  await page.setViewportSize({ width: 320, height: 800 });
+  await expect(card).toBeVisible();
+  const header = card.locator(':scope > [data-slot="card-header"]');
+  const gear = await header
+    .locator(":scope > div > div > div:last-child")
+    .boundingBox();
+  const lines = await header.getByRole("heading").evaluate((element) => {
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    return Array.from(range.getClientRects(), ({ right }) => right);
+  });
+  expect(lines.length).toBeGreaterThan(1);
+  for (const right of lines) expect(right).toBeLessThanOrEqual(gear!.x);
+  await page.screenshot({
+    path: testInfo.outputPath("build-header-long-name-320.png"),
+  });
+});
+
 test("production chunks and nine themes render across responsive routes", async ({
   page,
 }, testInfo) => {

@@ -268,7 +268,7 @@ function CharacterBuildCardComponent({
         {/* Title card content (formerly TitleCard) */}
         <div
           className={cn(
-            "flex items-center",
+            "flex w-full min-w-0 items-center",
             isVeryNarrow ? "gap-2" : "gap-3 md:gap-4"
           )}
         >
@@ -286,10 +286,14 @@ function CharacterBuildCardComponent({
             </TooltipContent>
           </Tooltip>
 
-          <div className="flex-1 flex items-center justify-between gap-4">
-            <CharacterInfo character={character} />
+          <div className="flex min-w-0 flex-1 items-center justify-between gap-4">
+            <CharacterInfo
+              character={character}
+              className="min-w-0"
+              nameClassName="min-w-0 whitespace-normal break-words"
+            />
 
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               {visibleWeapons.map((weaponId, index) => (
                 <WeaponSlot
                   key={index}
