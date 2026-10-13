@@ -5,7 +5,7 @@
  * Each K value runs as a separate phase with memory logged between.
  */
 
-import accountJson from "../tests/benchmark/data/account.json";
+import { readFileSync } from "node:fs";
 import buildPreset from "../src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json";
 import tierListPreset from "../src/config/presets/tier-list/[GGArtifact] 培养优先级 Build Priority.json";
 import type { Build, TierAssignment } from "../src/domain/models";
@@ -57,6 +57,9 @@ function memMB(): string {
 }
 
 async function main() {
+  const accountJson: unknown = JSON.parse(
+    readFileSync(new URL("../tests/benchmark/data/account.json", import.meta.url), "utf8")
+  );
   const conversion = convertGOODToAccountData(
     accountJson as Parameters<typeof convertGOODToAccountData>[0]
   );
