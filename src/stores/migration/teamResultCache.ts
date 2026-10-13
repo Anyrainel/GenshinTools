@@ -63,7 +63,8 @@ export function migrateTeamResultCacheStore(
   }
   if (version < 8) {
     // v7 results counted free Traveler constellations as pulls and used
-    // Nicole's C6 as DEF reduction instead of DEF ignore. Recompute results.
+    // Nicole's C6 as DEF reduction instead of DEF ignore, and the gifted
+    // Exaiphanes' Blade as paid refinements. Recompute results.
     state.resultsByTeamId = {};
   }
   return state;

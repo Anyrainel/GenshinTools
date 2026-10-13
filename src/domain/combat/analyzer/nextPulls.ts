@@ -1,3 +1,4 @@
+import { hasPaidConstellations } from "./investmentCost";
 import type {
   AnalyzerCharConfig,
   AnalyzerResult,
@@ -34,7 +35,10 @@ export function getNextPullBranches(
       const state = node.allocation[config.charId];
       if (!state) continue;
       const changes: Partial<typeof state>[] = [];
-      if (config.rarity === 5 && state.constellation < config.maxConstellation)
+      if (
+        hasPaidConstellations(config) &&
+        state.constellation < config.maxConstellation
+      )
         changes.push({ constellation: state.constellation + 1 });
       if (state.is5StarWeapon && state.refinement < config.maxRefinement)
         changes.push({ refinement: state.refinement + 1 });

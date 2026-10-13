@@ -60,6 +60,30 @@ function account(): AccountData {
 }
 
 describe("slot-aware weapon copies", () => {
+  it("defaults the gift sword to R5 while preserving explicit refinements", () => {
+    const team = teamCompInputToComp({
+      id: "gift",
+      characters: ["traveler_cryo"],
+      weapons: ["exaiphanes_blade"],
+    });
+    expect(
+      resolveRosterWeaponCopies(team, { combatOptions: {} }, null)[0].refinement
+    ).toBe(5);
+    expect(
+      resolveRosterWeaponCopies(
+        team,
+        {
+          combatOptions: {},
+          charConfigs: { traveler_cryo: { refinement: 2 } },
+        },
+        null
+      )[0].refinement
+    ).toBe(2);
+    expect(
+      resetFiveStarRosterConfig(team, { combatOptions: {} }).charConfigs
+        ?.traveler_cryo.refinement
+    ).toBe(5);
+  });
   it("energy conversion uses the same assigned copies and preserves slot positions across empty slots", () => {
     const team = teamCompInputToComp({
       id: "energy",

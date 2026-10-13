@@ -75,6 +75,8 @@ uv run --project scripts/pyproject.toml scripts/impl_audit.py show <C|W|A> <id>
 ```
 Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and param templates. The last line shows the implementation location (e.g., `IMPL: character4Mondstadt.ts L713–L787`). Use the Read tool with the file path (`src/domain/combat/damage/impl/<filename>`) and the line range to read the implementation code.
 
+Verify that the export actually includes the entity's source clauses and parameters. If it contains only metadata or an implementation location, read the current generated catalog and stats files directly; an empty export is not evidence that the entity has no effects and cannot support a clean review.
+
 **b) Skip if no implementation.** Note the entity in the final summary as "not implemented" and move on.
 
 **c) Determine rule scope:**
@@ -82,6 +84,8 @@ Read the output file `scripts/data/<id>.txt`. This contains game text (i18n) and
 - Weapons (`W`) and Artifacts (`A`): apply Universal rules only (U-series).
 
 **d) Review each buff and formula against applicable rules.** Classify each item but **only record issues** — do not write down items that pass:
+
+For every combat-relevant buff clause, first derive its expected stat key or scaling output key from the source (U3/U4), then compare value, activation, recipients, and damage filter separately. Do not stop at matching the number, constellation, or receiver. In particular, compare DEF ignore and DEF reduction explicitly and check how each combines with a source of the other effect: they multiply as separate factors, even when both buffs target the whole team. U6 checks enemy-debuff recipients; it must never coerce a source's DEF ignore into DEF reduction. Track every mechanically determined key mismatch as a bug.
 
 - **[BUG]** — violates a rule and the fix is **mechanically determined**: a rule's table or definition maps the game text to exactly one correct value, with no interpretive judgment required. Create a tracker item with category `bug` so it can be fixed later.
 

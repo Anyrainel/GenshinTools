@@ -20,7 +20,12 @@ describe("free Traveler investment", () => {
       expect(characterInvestmentCost(investment, config)).toBe(0);
       expect(
         characterInvestmentCost(
-          { ...investment, is5StarWeapon: true, refinement: 3 },
+          {
+            ...investment,
+            weaponId: "mistsplitter_reforged",
+            is5StarWeapon: true,
+            refinement: 3,
+          },
           config
         )
       ).toBe(3);
@@ -33,5 +38,19 @@ describe("free Traveler investment", () => {
     expect(
       characterInvestmentCost(investment, { charId: "bennett", rarity: 4 })
     ).toBe(0);
+  });
+  it("never counts the gifted five-star Exaiphanes' Blade as pulls", () => {
+    expect(
+      characterInvestmentCost(
+        { ...investment, weaponId: "exaiphanes_blade", is5StarWeapon: true },
+        { charId: "traveler_cryo", rarity: 5 }
+      )
+    ).toBe(0);
+    expect(
+      characterInvestmentCost(
+        { ...investment, weaponId: "exaiphanes_blade", is5StarWeapon: true },
+        { charId: "jean", rarity: 5 }
+      )
+    ).toBe(7);
   });
 });

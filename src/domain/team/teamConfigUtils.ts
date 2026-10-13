@@ -14,6 +14,7 @@ import {
   weaponsById,
 } from "@/domain/reference/catalog";
 import { getCharacterLevelTier } from "@/domain/reference/stats";
+import { defaultWeaponRefinement } from "@/domain/reference/weaponInvestment";
 import type {
   CharBaseConfig,
   TeamCharConfig,
@@ -226,7 +227,9 @@ export function useAccountRosterConfig(
     );
     const config = { ...next.charConfigs?.[slot.charId] };
     config.constellation = character?.constellation ?? 0;
-    config.refinement = assignments[index]?.copy?.refinement ?? 1;
+    config.refinement =
+      assignments[index]?.copy?.refinement ??
+      defaultWeaponRefinement(slot.weaponId);
     delete next.combatOptions[`${slot.charId}.overrideConstellation`];
     delete next.combatOptions[`${slot.charId}.overrideRefinement`];
     if (character) {
@@ -259,7 +262,7 @@ export function resetFiveStarRosterConfig(
     const config = { ...next.charConfigs?.[slot.charId] };
     if (charactersById[slot.charId]?.rarity === 5) config.constellation = 0;
     if (slot.weaponId && weaponsById[slot.weaponId]?.rarity === 5)
-      config.refinement = 1;
+      config.refinement = defaultWeaponRefinement(slot.weaponId);
     next.charConfigs![slot.charId] = config;
   }
   return next;

@@ -57,6 +57,24 @@ function result(nodes: CachedNodeRef[]): AnalyzerResult {
   };
 }
 describe("next pulls from one investment result", () => {
+  it("does not offer free Traveler constellations as paid pulls even with a stale ceiling", () => {
+    const baseline = node(0, 0, 100);
+    const upgraded = node(1, 0, 120);
+    for (const item of [baseline, upgraded]) {
+      item.allocation.traveler_cryo = item.allocation.a;
+      delete item.allocation.a;
+    }
+    const prior = result([]);
+    prior.sequence[0].allocation = baseline.allocation;
+    prior.nodesByJin = new Map([[0, [baseline, upgraded]]]);
+    expect(
+      getNextPullBranches(
+        prior,
+        [{ ...configs[0], charId: "traveler_cryo" }],
+        1
+      )
+    ).toEqual([]);
+  });
   it("keeps different first choices reaching the same best terminal allocation as separate branches", () => {
     const branches = getNextPullBranches(
       result([

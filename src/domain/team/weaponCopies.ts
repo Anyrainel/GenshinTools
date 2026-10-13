@@ -1,4 +1,5 @@
 import type { AccountData, WeaponData } from "@/domain/models";
+import { defaultWeaponRefinement } from "@/domain/reference/weaponInvestment";
 import type { TeamComp, TeamSetupConfig } from "./types";
 
 /** Physical inventory, equipped copies first on conflicting duplicate IDs. */
@@ -53,7 +54,8 @@ export function resolveRosterWeaponCopies(
           : accountData
             ? "unowned"
             : "no-account";
-    const refinement = override ?? copy?.refinement ?? 1;
+    const refinement =
+      override ?? copy?.refinement ?? defaultWeaponRefinement(slot.weaponId);
     return {
       copy,
       refinement,

@@ -1,3 +1,4 @@
+import { isPaidFiveStarWeapon } from "@/domain/reference/weaponInvestment";
 import type { AnalyzerCharConfig, CharInvestment } from "./types";
 
 /** Traveler constellations are free and stay at the roster's current level. */
@@ -14,5 +15,10 @@ export function characterInvestmentCost(
   const character = hasPaidConstellations(config)
     ? investment.constellation + 1
     : 0;
-  return character + (investment.is5StarWeapon ? investment.refinement : 0);
+  return (
+    character +
+    (investment.is5StarWeapon && isPaidFiveStarWeapon(investment.weaponId)
+      ? investment.refinement
+      : 0)
+  );
 }

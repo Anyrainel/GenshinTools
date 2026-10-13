@@ -101,6 +101,8 @@ Characters never need `noStackId` (they appear at most once per team).
 
 For every `key` in every `StatEntry`:
 
+Derive the key from the exact source clause before checking its value, receiver, or filter. A correct percentage and recipient do not establish a correct stat zone; check static entries and scaling output keys independently.
+
 **1. Element damage:** "X元素伤害加成" or "X元素造成的伤害" → use the element-specific key (`pyro%`, `hydro%`, `cryo%`, `electro%`, `geo%`, `anemo%`, `dendro%`, `phys%`) **or** `dmg%` with `filter: { elements: ["X"] }` — both are equivalent. **[BUG]** if `dmg%` is used with no element scoping, incorrectly boosting all damage types. Truly universal damage ("所有伤害", "元素伤害或物理伤害") correctly uses bare `dmg%`.
 
 **2. Reaction-scoped keys:** Reaction damage bonuses and reaction CRIT must use dedicated keys with a `reactions` filter:
@@ -114,6 +116,7 @@ For every `key` in every `StatEntry`:
   - Note the deliberate asymmetry with U12: a `hasReaction()` **gate** must include the sibling (the base reaction is replaced at runtime), while a `reactions` **filter** must not (the bonus is text-scoped). A wide gate with a narrow filter on the same entity is correct.
 
 **3. Special keys:**
+- "无视敌人X%的防御力" / "ignores X% of opponents' DEF" → `defIgnore%`; "敌人防御力降低X%" / "opponents' DEF decreased by X%" → `defReduction%`. **[BUG]** if these are interchanged. They occupy separate factors: enemy DEF × `(1 - defReduction) × (1 - defIgnore)`. Check coexistence with another source of the other effect; a single-effect check cannot distinguish the two keys.
 - "擢升" → `elevated%`, not `dmg%`.
 - `ScalingBuff` output key must match semantic type: flat DMG gain ("造成相当于X%攻击力的伤害") → `"baseDmg"` (never `"dmg%"`); flat stat gain ("攻击力提升，提升值相当于X%某属性") → `"atk"` (never `"atk%"`).
 
@@ -140,6 +143,8 @@ For the last row, receiver follows from which source is boosted: all party membe
 ### U6. `resReduction%` / `defReduction%` Must Use `receiver: "team"`
 
 These are enemy debuffs — they benefit all party members equally. Scoping to `self`, `selfOnField`, or `teamOnField` means only that character's calculations see the debuff. **[BUG]** if either key has any receiver other than `"team"`. A `filter: { elements: [...] }` is valid when the text specifies an element. The only exception is xilonen's E approximate to `selfOnField` Geo resReduction% to avoid applying C2 effect prematurely.
+
+Apply U3 first: this receiver rule never converts `defIgnore%` into `defReduction%`. DEF ignore uses the recipients and damage scope stated in the source; a team-wide DEF-ignore grant legitimately uses `receiver: "team"` (for example, Nicole C6). Sharing a receiver with an enemy debuff does not make their stat keys interchangeable.
 
 ### U7. `BuffSource` Display Fields
 
