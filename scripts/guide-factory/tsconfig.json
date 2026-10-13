@@ -1,7 +1,0 @@
-{
-  "extends": "../../tsconfig.scripts.json",
-  "compilerOptions": {
-    "tsBuildInfoFile": "../../node_modules/.tmp/tsconfig.guide-factory.tsbuildinfo"
-  },
-  "include": ["src", "tests", "vitest.config.ts"]
-}

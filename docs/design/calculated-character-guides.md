@@ -17,19 +17,6 @@
 校验报告和未选定的草稿字段不能替代这些结论。
 后续开发预览仍使用不出现在应用导航栏的开发环境专用路由。
 
-## 当前实际状态
-
-此前 `/__lab/guides` 展示了六份诺艾尔研究草稿，`/__lab/sources`
-展示来源记录。二者均已撤掉。
-
-丝柯克的来源记录 `genshintools-presets:character-guide:skirk` 实际指向
-`src/config/presets/builds/[GGArtifact] 全角色配装 AllCharacterBuilds.json`
-中的 `skirk` 条目。它是本仓库的配装预设，不是伤害计算产生的推荐。
-来源页面只展示网址，遗漏了该文件定位信息。
-
-`scripts/guide-factory` 的报告通过测试，只能说明相应实验的数值、
-来源绑定或校验约束成立；不能说明上述完整攻略已经生成。
-
 ## 可复用的计算能力
 
 | 能力 | 当前实现 | 集成时的限制 |
