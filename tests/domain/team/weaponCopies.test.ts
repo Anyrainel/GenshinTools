@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { AccountData } from "@/domain/models";
 import { buildEnergyTeamSlots } from "@/domain/team/energyTeamSlots";
 import {
+  buildTeamSlotConfigs,
   resetFiveStarRosterConfig,
   useAccountRosterConfig,
 } from "@/domain/team/teamConfigUtils";
@@ -60,6 +61,40 @@ function account(): AccountData {
 }
 
 describe("slot-aware weapon copies", () => {
+  it("defaults Traveler to C6 while roster account values and overrides remain authoritative", () => {
+    const team = teamCompInputToComp({
+      id: "traveler",
+      characters: ["traveler_cryo"],
+      weapons: ["exaiphanes_blade"],
+    });
+    const setup = { combatOptions: {} };
+    expect(buildTeamSlotConfigs(team, setup, null)[0]).toMatchObject({
+      constellation: 6,
+      refinement: 5,
+    });
+    const imported = account();
+    imported.characters[0].key = "traveler_cryo";
+    imported.characters[0].constellation = 2;
+    imported.characters[0].weapon!.key = "exaiphanes_blade";
+    imported.characters[0].weapon!.refinement = 3;
+    expect(buildTeamSlotConfigs(team, setup, imported)[0]).toMatchObject({
+      constellation: 2,
+      refinement: 3,
+    });
+    expect(
+      buildTeamSlotConfigs(
+        team,
+        {
+          combatOptions: {},
+          charConfigs: { traveler_cryo: { constellation: 1, refinement: 2 } },
+        },
+        imported
+      )[0]
+    ).toMatchObject({ constellation: 1, refinement: 2 });
+    expect(
+      buildEnergyTeamSlots(team, setup, null, null)[0]?.constellation
+    ).toBe(6);
+  });
   it("defaults the gift sword to R5 while preserving explicit refinements", () => {
     const team = teamCompInputToComp({
       id: "gift",

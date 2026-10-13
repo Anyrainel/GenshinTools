@@ -78,19 +78,20 @@ describe("investment alternate reconciliation after shared roster edits", () => 
       config
     );
   });
-  it("keeps free Traveler constellations fixed for fresh and saved configs", () => {
+  it("uses free Traveler C6 for fresh and saved investment configs", () => {
     const base = {
       ...roster("favonius_sword"),
       charId: "traveler_anemo",
       constellation: 3,
     };
-    expect(reconcileConfigs([], [base])[0].maxConstellation).toBe(3);
+    expect(reconcileConfigs([], [base])[0].startConstellation).toBe(6);
+    expect(reconcileConfigs([], [base])[0].maxConstellation).toBe(6);
     expect(
       reconcileConfigs(
         [{ charId: base.charId, maxConstellation: 6, maxRefinement: 5 }],
         [base]
       )[0].maxConstellation
-    ).toBe(3);
+    ).toBe(6);
   });
   it("does not reinterpret a saved four-star alternate as a five-star target", () => {
     const [config] = reconcileConfigs(

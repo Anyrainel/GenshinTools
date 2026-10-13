@@ -40,6 +40,7 @@ import {
   charactersById,
   weaponsById,
 } from "@/domain/reference/catalog";
+import { defaultCharacterConstellation } from "@/domain/reference/characterDefaults";
 import type { CharacterStats, WeaponStats } from "@/domain/reference/stats";
 import {
   CHARACTER_LEVEL_TIERS,
@@ -269,7 +270,7 @@ export function TeamRosterCard({
     constellations[cid] =
       charConfigs[cid]?.constellation !== undefined
         ? Number(charConfigs[cid]?.constellation)
-        : (acct?.constellation ?? 0);
+        : defaultCharacterConstellation(cid, acct?.constellation);
   }
   const artSets: Record<string, string> = {};
   for (let i = 0; i < characters.length; i++) {
@@ -489,7 +490,10 @@ export function TeamRosterCard({
             const charConst =
               charConfigs[charId]?.constellation !== undefined
                 ? Number(charConfigs[charId]?.constellation)
-                : (acctChar?.constellation ?? 0);
+                : defaultCharacterConstellation(
+                    charId,
+                    acctChar?.constellation
+                  );
 
             const weaponRefine = weaponCopies[i].refinement;
 

@@ -67,11 +67,15 @@ function storedToFull(
     rarity,
     weapon4Star,
     weapon5Star,
-    startConstellation: bc.constellation,
+    startConstellation: sc.charId.startsWith("traveler_")
+      ? 6
+      : bc.constellation,
     startRefinement: rosterIs5Star ? bc.refinement : 0,
     maxConstellation: hasPaidConstellations({ charId: sc.charId, rarity })
       ? Math.max(bc.constellation, sc.maxConstellation)
-      : bc.constellation,
+      : sc.charId.startsWith("traveler_")
+        ? 6
+        : bc.constellation,
     maxRefinement: weapon5Star
       ? Math.max(rosterIs5Star ? bc.refinement : 0, sc.maxRefinement)
       : 0,
@@ -118,11 +122,15 @@ function buildDefaultCharConfigs(
           }
         : undefined,
       weapon5Star: is5StarWeapon ? { id: bc.weaponId } : undefined,
-      startConstellation: bc.constellation,
+      startConstellation: bc.charId.startsWith("traveler_")
+        ? 6
+        : bc.constellation,
       startRefinement: is5StarWeapon ? bc.refinement : 0,
       maxConstellation: hasPaidConstellations({ charId: bc.charId, rarity })
         ? 6
-        : bc.constellation,
+        : bc.charId.startsWith("traveler_")
+          ? 6
+          : bc.constellation,
       maxRefinement: is5StarWeapon ? 5 : 0,
     };
   });

@@ -2,6 +2,7 @@ import { particles } from "@/domain/combat/energy/constants";
 import type { TeamSlot } from "@/domain/combat/energy/types";
 import type { Element } from "@/domain/enums";
 import type { AccountData } from "@/domain/models";
+import { defaultCharacterConstellation } from "@/domain/reference/characterDefaults";
 import type { CharacterStatsMap } from "@/domain/reference/stats";
 import { charInfo } from "@/generated/catalog/characterInfo";
 import { teamCompToArrays } from "./teamDeltas";
@@ -21,7 +22,10 @@ export function resolveEnergyCharacterContext(
   refinement: number;
 } {
   const acctChar = accountData?.characters.find((c) => c.key === charId);
-  const defaultConst = acctChar ? acctChar.constellation : 0;
+  const defaultConst = defaultCharacterConstellation(
+    charId,
+    acctChar?.constellation
+  );
   const constellation =
     setupConfig.charConfigs?.[charId]?.constellation ??
     (setupConfig.combatOptions?.[`${charId}.overrideConstellation`] !==

@@ -64,7 +64,8 @@ export function migrateTeamResultCacheStore(
   if (version < 8) {
     // v7 results counted free Traveler constellations as pulls and used
     // Nicole's C6 as DEF reduction instead of DEF ignore, and the gifted
-    // Exaiphanes' Blade as paid refinements. Recompute results.
+    // Exaiphanes' Blade as paid refinements. Traveler investment now starts at
+    // free C6 instead of the roster constellation. Recompute results.
     state.resultsByTeamId = {};
   }
   return state;

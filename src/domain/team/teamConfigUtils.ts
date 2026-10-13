@@ -13,6 +13,7 @@ import {
   charactersById,
   weaponsById,
 } from "@/domain/reference/catalog";
+import { defaultCharacterConstellation } from "@/domain/reference/characterDefaults";
 import { getCharacterLevelTier } from "@/domain/reference/stats";
 import { defaultWeaponRefinement } from "@/domain/reference/weaponInvestment";
 import type {
@@ -135,7 +136,10 @@ function resolveCharBaseConfig(
   const defaultLevel = acctChar
     ? Number(getCharacterLevelTier(acctChar.level))
     : 90;
-  const defaultConst = acctChar ? acctChar.constellation : 0;
+  const defaultConst = defaultCharacterConstellation(
+    charId,
+    acctChar?.constellation
+  );
 
   const charLevel =
     charConfig?.level !== undefined
@@ -226,7 +230,10 @@ export function useAccountRosterConfig(
       (char) => char.key === slot.charId
     );
     const config = { ...next.charConfigs?.[slot.charId] };
-    config.constellation = character?.constellation ?? 0;
+    config.constellation = defaultCharacterConstellation(
+      slot.charId,
+      character?.constellation
+    );
     config.refinement =
       assignments[index]?.copy?.refinement ??
       defaultWeaponRefinement(slot.weaponId);
@@ -260,7 +267,8 @@ export function resetFiveStarRosterConfig(
   for (const slot of comp.slots) {
     if (!slot.charId) continue;
     const config = { ...next.charConfigs?.[slot.charId] };
-    if (charactersById[slot.charId]?.rarity === 5) config.constellation = 0;
+    if (charactersById[slot.charId]?.rarity === 5)
+      config.constellation = defaultCharacterConstellation(slot.charId);
     if (slot.weaponId && weaponsById[slot.weaponId]?.rarity === 5)
       config.refinement = defaultWeaponRefinement(slot.weaponId);
     next.charConfigs![slot.charId] = config;
