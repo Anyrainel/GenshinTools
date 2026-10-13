@@ -19,6 +19,7 @@ import {
 import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { ImportIcon } from "@/components/shared/importExportIcons";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -430,6 +431,12 @@ export function AppBar({
             </DropdownMenuItem>
           </>
         )}
+        <DropdownMenuItem asChild className="gap-2">
+          <Link to="/account-data/characters?import=1">
+            <ImportIcon className="w-4 h-4" />
+            {t.ui("accountData.importGameAccount")}
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild className="gap-2">
           <Link to={SCANNER_DOWNLOAD_PAGE}>
             <Download className="w-4 h-4" />

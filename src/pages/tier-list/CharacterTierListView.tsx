@@ -1,10 +1,8 @@
 import {
   ArrowLeftRight,
-  Download,
   FileDown,
   HelpCircle,
   Trash2,
-  Upload,
   Wrench,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -20,6 +18,7 @@ import { ExportControl } from "@/components/shared/ExportControl";
 import { FilterChip } from "@/components/shared/FilterChip";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportIcon, ImportIcon } from "@/components/shared/importExportIcons";
 import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
@@ -313,14 +312,14 @@ export function CharacterTierListView({
     const actions: ActionConfig[] = [
       {
         key: "import",
-        icon: Download,
+        icon: ImportIcon,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
       {
         key: "export",
-        icon: Upload,
+        icon: ExportIcon,
         label: t.ui("export.action"),
         onTrigger: () => exportRef.current?.open(),
         tourStepId: "tl-export",

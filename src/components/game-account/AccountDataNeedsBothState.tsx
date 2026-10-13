@@ -1,5 +1,6 @@
-import { Download, ExternalLink, HelpCircle, SearchCheck } from "lucide-react";
+import { ExternalLink, HelpCircle, SearchCheck } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ImportIcon } from "@/components/shared/importExportIcons";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface AccountDataNeedsBothStateProps {
@@ -31,7 +32,7 @@ export function AccountDataNeedsBothState({
     needsAccountData && onOpenImport
       ? {
           label: t.ui("import.titleAccountData"),
-          icon: Download,
+          icon: ImportIcon,
           onClick: onOpenImport,
         }
       : needsBuilds

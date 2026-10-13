@@ -12,7 +12,9 @@ describe("AccountDataNeedsBothState", () => {
       />
     );
 
-    const btn = screen.getByRole("button", { name: /Import Account Data/ });
+    const btn = screen.getByRole("button", {
+      name: /Import Game Account Data/,
+    });
     btn.click();
     expect(onOpenImport).toHaveBeenCalledOnce();
 
@@ -34,7 +36,7 @@ describe("AccountDataNeedsBothState", () => {
 
     // Import button should not show
     expect(
-      screen.queryByRole("button", { name: /Import Account Data/ })
+      screen.queryByRole("button", { name: /Import Game Account Data/ })
     ).toBeNull();
   });
 
@@ -50,7 +52,7 @@ describe("AccountDataNeedsBothState", () => {
 
     // Primary: import account data
     expect(
-      screen.getByRole("button", { name: /Import Account Data/ })
+      screen.getByRole("button", { name: /Import Game Account Data/ })
     ).toBeInTheDocument();
 
     // Secondary: builds link

@@ -1,4 +1,4 @@
-import { Download, Layers, Loader2 } from "lucide-react";
+import { Layers, Loader2 } from "lucide-react";
 import {
   forwardRef,
   useCallback,
@@ -6,8 +6,8 @@ import {
   useMemo,
   useState,
 } from "react";
-
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ImportIcon } from "@/components/shared/importExportIcons";
 import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import {
   AlertDialog,
@@ -47,7 +47,7 @@ interface ImportControlProps<T> {
  * const importRef = useRef<ControlHandle>(null);
  *
  * const actions: ActionConfig[] = [
- *   { key: "import", icon: Upload, label: "Import", onTrigger: () => importRef.current?.open() },
+ *   { key: "import", icon: ImportIcon, label: "Import", onTrigger: () => importRef.current?.open() },
  * ];
  *
  * <ImportControl ref={importRef} options={presets} loadPreset={load} onApply={apply} />
@@ -234,7 +234,7 @@ function ImportControlInner<T>(
                 className="gap-2 w-full relative overflow-hidden border border-border"
                 disabled={isBusy}
               >
-                <Download className="w-4 h-4" />
+                <ImportIcon className="w-4 h-4" />
                 {messages.importFromFile}
                 <input
                   type="file"

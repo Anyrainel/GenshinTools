@@ -1,7 +1,6 @@
-import { Upload } from "lucide-react";
 import { forwardRef, useImperativeHandle, useState } from "react";
-
 import type { ControlHandle } from "@/components/shared/controlHandle";
+import { ExportIcon } from "@/components/shared/importExportIcons";
 import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +31,7 @@ interface ExportControlProps {
  * const exportRef = useRef<ControlHandle>(null);
  *
  * const actions: ActionConfig[] = [
- *   { key: "export", icon: Download, label: "Export", onTrigger: () => exportRef.current?.open() },
+ *   { key: "export", icon: ExportIcon, label: "Export", onTrigger: () => exportRef.current?.open() },
  * ];
  *
  * <ExportControl ref={exportRef} onExport={handleExport} />
@@ -206,7 +205,7 @@ export const ExportControl = forwardRef<ControlHandle, ExportControlProps>(
               {t.ui("common.cancel")}
             </Button>
             <Button onClick={handleExport} className="gap-2">
-              <Upload className="w-4 h-4" />
+              <ExportIcon className="w-4 h-4" />
               {shared.confirmAction}
             </Button>
           </DialogFooter>

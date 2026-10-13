@@ -19,7 +19,6 @@ import type { LucideIcon } from "lucide-react";
 import {
   ArrowUpDown,
   Bookmark,
-  Download,
   HelpCircle,
   Plus,
   Search,
@@ -31,6 +30,7 @@ import { CategoryChip } from "@/components/shared/CategoryChip";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
+import { ImportIcon } from "@/components/shared/importExportIcons";
 import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { TeamCard } from "@/components/teams/TeamCard";
 import { Button } from "@/components/ui/button";
@@ -662,7 +662,7 @@ export function TeamGrid({
             description={t.ui("teamComp.emptyTeamDesc")}
             action={{
               label: t.ui("computeFilters.importPreset"),
-              icon: Download,
+              icon: ImportIcon,
               onClick: () => emptyState.importRef.current?.open(),
             }}
             helpAction={

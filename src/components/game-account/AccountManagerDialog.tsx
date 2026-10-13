@@ -1,5 +1,6 @@
-import { Check, Download, Edit2, Plus, Trash2, User } from "lucide-react";
+import { Check, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ImportIcon } from "@/components/shared/importExportIcons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -385,7 +386,7 @@ export function AccountManagerDialog({
                 onOpenImportControl();
               }}
             >
-              <Download className="w-4 h-4" />
+              <ImportIcon className="w-4 h-4" />
               {t.ui("accountData.addProfile")}
             </Button>
           )}
