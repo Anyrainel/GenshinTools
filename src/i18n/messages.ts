@@ -592,7 +592,6 @@ export const i18nUiData = {
       en: "Couldn't update feedback. Please try again.",
       zh: "反馈更新失败，请重试。",
     },
-    gameSite: { en: "Game site", zh: "游戏站点" },
     title: { en: "Send feedback", zh: "提交反馈" },
     ratingLabel: {
       en: "How satisfied are you with ggartifact.com?",

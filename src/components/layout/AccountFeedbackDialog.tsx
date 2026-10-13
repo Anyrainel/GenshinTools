@@ -241,16 +241,16 @@ export function AccountFeedbackDialog({
           <div className="flex items-center gap-2">
             <Checkbox
               id="feedback-hidden"
+              className="size-5 cursor-pointer border-2 border-primary bg-background dark:bg-background"
               checked={form.hidden}
               disabled={isSubmitting}
               onCheckedChange={(checked) =>
                 setForm((current) => ({ ...current, hidden: checked === true }))
               }
             />
-            <Label htmlFor="feedback-hidden">{t.ui("feedback.hide")}</Label>
-          </div>
-          <div className="text-sm text-foreground">
-            {t.ui("feedback.gameSite")}: {t.ui("app.gameGenshin")}
+            <Label htmlFor="feedback-hidden" className="cursor-pointer">
+              {t.ui("feedback.hide")}
+            </Label>
           </div>
           <RatingField
             label={t.ui("feedback.ratingLabel")}
