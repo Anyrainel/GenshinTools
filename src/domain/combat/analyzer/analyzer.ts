@@ -38,7 +38,7 @@ import type {
   TeamSlotConfig,
 } from "@/domain/combat/damage/types";
 import { getSetId } from "@/domain/combat/damage/utils";
-import type { Element, Rarity } from "@/domain/enums";
+import type { Element } from "@/domain/enums";
 import { CharBuild } from "../damage/core/charBuild";
 import { StatSheet } from "../damage/core/statSheet";
 import { TeamBuild } from "../damage/core/teamBuild";
@@ -46,6 +46,10 @@ import { TeamMeta } from "../damage/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "../generator/substatBudget";
+import {
+  characterInvestmentCost,
+  hasPaidConstellations,
+} from "./investmentCost";
 import { deriveAbsoluteInvestmentCombo } from "./investmentCounts";
 import type {
   AnalyzerCharConfig,
@@ -178,13 +182,6 @@ function getNearestSnapshot(inv: CharInvestment): string {
 
 // ─── M-count helpers ───
 
-/** Per-character M contribution: 5★ = constellation+1+R, 4★ = R */
-function charM(inv: CharInvestment, rarity: Rarity): number {
-  const cPart = rarity >= 5 ? inv.constellation + 1 : 0;
-  const rPart = inv.is5StarWeapon ? inv.refinement : 0;
-  return cPart + rPart;
-}
-
 /** Total M for a team allocation */
 function computeM(
   allocation: TeamInvestment,
@@ -193,7 +190,7 @@ function computeM(
   let total = 0;
   for (const cfg of cfgs) {
     const inv = allocation[cfg.charId];
-    if (inv) total += charM(inv, cfg.rarity);
+    if (inv) total += characterInvestmentCost(inv, cfg);
   }
   return total;
 }
@@ -266,7 +263,7 @@ function allocationNodeId(allocation: TeamInvestment): string {
 }
 
 function getBreakpointStates(cfg: AnalyzerCharConfig): BreakpointState[] {
-  const is5Star = cfg.rarity >= 5;
+  const is5Star = hasPaidConstellations(cfg);
   const has4Wep = !!cfg.weapon4Star;
   const has5Wep = !!cfg.weapon5Star;
   const sc = cfg.startConstellation;
@@ -417,7 +414,7 @@ function getCharOptions(
   base: TeamSlotConfig
 ): CharOption[] {
   const baseline = getBaselineState(cfg, base);
-  const baseM = charM(baseline, cfg.rarity);
+  const baseM = characterInvestmentCost(baseline, cfg);
   const options: CharOption[] = [{ inv: baseline, perCharM: baseM }];
 
   const breakpoints = getBreakpointStates(cfg);
@@ -435,7 +432,7 @@ function getCharOptions(
     const key = `${inv.constellation}:${inv.weaponId}:${inv.refinement}:${inv.is5StarWeapon}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    options.push({ inv, perCharM: charM(inv, cfg.rarity) });
+    options.push({ inv, perCharM: characterInvestmentCost(inv, cfg) });
   }
 
   return options;
@@ -886,7 +883,7 @@ async function* computePhase1(
     for (let ci = 0; ci < configs.length; ci++) {
       const cfg = configs[ci];
       const bc = baseConfigs[ci];
-      const is5Star = cfg.rarity >= 5;
+      const is5Star = hasPaidConstellations(cfg);
       const has4Wep = !!cfg.weapon4Star;
       const has5Wep = !!cfg.weapon5Star;
 
@@ -1309,7 +1306,10 @@ function getSingleStepUpgrades(
   for (const cfg of cfgs) {
     const inv = alloc[cfg.charId];
     if (!inv) continue;
-    if (cfg.rarity >= 5 && inv.constellation < cfg.maxConstellation) {
+    if (
+      hasPaidConstellations(cfg) &&
+      inv.constellation < cfg.maxConstellation
+    ) {
       const nc = inv.constellation + 1;
       ups.push({
         allocation: { ...alloc, [cfg.charId]: { ...inv, constellation: nc } },

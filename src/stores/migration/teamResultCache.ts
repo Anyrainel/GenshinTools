@@ -61,5 +61,10 @@ export function migrateTeamResultCacheStore(
     // result scope. Recompute prior results instead of mixing old assumptions.
     state.resultsByTeamId = {};
   }
+  if (version < 8) {
+    // v7 results counted free Traveler constellations as pulls and used
+    // Nicole's C6 as DEF reduction instead of DEF ignore. Recompute results.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

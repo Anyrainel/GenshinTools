@@ -7,10 +7,13 @@ import "@/providers/reference/statLoaders";
  * Game text: "该伤害受益于该角色的攻击力,并视为由该角色造成的伤害"
  */
 import { beforeAll, describe, expect, it } from "vitest";
+import { DEFAULT_CALC_CONTEXT } from "@/domain/combat/damage/constants";
 import {
   createCharacter,
   getOptionDef,
 } from "@/domain/combat/damage/core/registry";
+import { validateStatBuff } from "@/domain/combat/damage/core/statBuff";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
 import type { FormulaEntry, OptionMap } from "@/domain/combat/damage/types";
 import {
@@ -47,6 +50,37 @@ function nicoleWithTeam(
 function getEntries(char: { allFormulaEntries: Record<string, FormulaEntry> }) {
   return char.allFormulaEntries;
 }
+
+it("multiplies Nicole C6 defense ignore with Mavuika C2 defense reduction", () => {
+  const team = new TeamMeta(["nicole", "mavuika"], {
+    nicole: 6,
+    mavuika: 2,
+  });
+  const nicole = createCharacter("nicole", 90, 6, team);
+  const mavuika = createCharacter("mavuika", 90, 2, team);
+  const ignore = nicole.buffs.find((buff) => buff.source.origin === "C6")!;
+  const shred = mavuika.buffs.find(
+    (buff) => buff.source.origin === "C2" && buff.target.receiver === "other"
+  )!;
+  expect(ignore.staticBuffs).toEqual([{ key: "defIgnore%", value: 0.4 }]);
+  expect(() =>
+    validateStatBuff(ignore.staticBuffs, ignore.target, ignore.source)
+  ).not.toThrow();
+  expect(() =>
+    validateStatBuff(ignore.staticBuffs, ignore.target, {
+      ...ignore.source,
+      id: "unreviewed",
+    })
+  ).toThrow();
+  const formula = nicole.getFormulaEntry("nicole-skill")!.parts[0].formula;
+  const stats = new StatSheet([...ignore.staticBuffs, ...shred.staticBuffs]);
+  const context = { ...DEFAULT_CALC_CONTEXT, enemyLevel: 90, enemyRes: 0 };
+  expect(formula.calcBaseDmgMult(stats, 90, context)).toBeCloseTo(
+    1 / (1 + 0.8 * 0.6)
+  );
+  const c5 = createCharacter("nicole", 90, 5, team);
+  expect(c5.buffs.some((buff) => buff.source.origin === "C6")).toBe(false);
+});
 
 function talentMultipliers(entry: FormulaEntry) {
   return entry.parts.map((part) => part.formula.talentMultiplier);

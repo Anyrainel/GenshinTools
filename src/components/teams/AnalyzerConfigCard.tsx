@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { hasPaidConstellations } from "@/domain/combat/analyzer/investmentCost";
 import type { AnalyzerCharConfig } from "@/domain/combat/analyzer/types";
 import type { TeamSlotConfig } from "@/domain/combat/damage/types";
 import { charactersById, weaponsById } from "@/domain/reference/catalog";
@@ -117,9 +118,9 @@ export function AnalyzerConfigCard({
                       </div>
                     );
                   })}
-                {(config.rarity === 5 || config.weapon5Star) && (
+                {(hasPaidConstellations(config) || config.weapon5Star) && (
                   <div className="grid grid-cols-2 gap-2">
-                    {config.rarity === 5 && (
+                    {hasPaidConstellations(config) && (
                       <div className="space-y-1">
                         <span className="text-xs">
                           {t.ui("teamComp.investmentMaxConstellation")}

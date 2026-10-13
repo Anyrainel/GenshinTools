@@ -77,6 +77,13 @@ def run(project_root: Path = ROOT) -> None:
         *(f'  "{key}": {json.dumps(value)},' for key, value in sorted(stat_map.items())),
         "};",
         "",
+        'export const skillTypeMap: Record<string, "auto" | "skill" | "burst"> = {',
+        *(
+            f'  "{key}": {json.dumps(value.lower())},'
+            for key, value in sorted(cache["skill_type_map"].items())
+        ),
+        "};",
+        "",
     ]
     output.with_suffix(".ts.new").write_text("\n".join(lines), encoding="utf-8")
     output.with_suffix(".ts.new").replace(output)

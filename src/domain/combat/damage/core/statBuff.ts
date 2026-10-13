@@ -111,6 +111,9 @@ const KEY_CONSTRAINTS: Partial<Record<StatKey, KeyConstraint>> = {
  * Key: `${charOrWeaponId}/${origin}`, Value: set of constraint descriptions to skip.
  */
 const CONSTRAINT_ALLOWLIST: Record<string, Set<string>> = {
+  // Nicole C6 grants every party member DEF ignore while her Skill buff lasts.
+  // Unlike ordinary personal DEF ignore, the official effect is team-wide.
+  "nicole/C6": new Set(["defIgnore%:forbidsReceiver"]),
   // Mavuika C2 shreds enemy DEF only while she carries the Ring, so the buff is
   // split "selfOffField" + "other" instead of "team" — a team receiver would also
   // boost her on-field Flamestrider damage, which carries no Ring below C6.
@@ -227,7 +230,11 @@ export function validateStatBuff(
           `${label} ${key} must use receiver "${c.requiresReceiver}". Ask for review for this case.`
         );
       }
-      if (c.forbidsReceiver && target.receiver === c.forbidsReceiver) {
+      if (
+        c.forbidsReceiver &&
+        target.receiver === c.forbidsReceiver &&
+        !isAllowlisted(source, key, "forbidsReceiver")
+      ) {
         throw new Error(
           `${label} ${key} is not expected to use receiver "${c.forbidsReceiver}". Ask for review for this case.`
         );

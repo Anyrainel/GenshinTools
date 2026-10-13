@@ -1,6 +1,7 @@
 import type { TeamSlotConfig } from "@/domain/combat/damage/types";
 import type { Rarity } from "@/domain/enums";
 import { charactersById, weaponsById } from "@/domain/reference/catalog";
+import { hasPaidConstellations } from "./investmentCost";
 import type { AnalyzerCharConfig, StoredAnalyzerCharConfig } from "./types";
 
 /** Reconcile stored (persisted) configs into full AnalyzerCharConfigs using roster data. */
@@ -56,7 +57,9 @@ function storedToFull(
     weapon5Star,
     startConstellation: bc.constellation,
     startRefinement: rosterIs5Star ? bc.refinement : 0,
-    maxConstellation: Math.max(bc.constellation, sc.maxConstellation),
+    maxConstellation: hasPaidConstellations({ charId: sc.charId, rarity })
+      ? Math.max(bc.constellation, sc.maxConstellation)
+      : bc.constellation,
     maxRefinement: weapon5Star
       ? Math.max(rosterIs5Star ? bc.refinement : 0, sc.maxRefinement)
       : 0,
@@ -103,7 +106,9 @@ function buildDefaultCharConfigs(
       weapon5Star: is5StarWeapon ? { id: bc.weaponId } : undefined,
       startConstellation: bc.constellation,
       startRefinement: is5StarWeapon ? bc.refinement : 0,
-      maxConstellation: rarity >= 5 ? 6 : bc.constellation,
+      maxConstellation: hasPaidConstellations({ charId: bc.charId, rarity })
+        ? 6
+        : bc.constellation,
       maxRefinement: is5StarWeapon ? 5 : 0,
     };
   });

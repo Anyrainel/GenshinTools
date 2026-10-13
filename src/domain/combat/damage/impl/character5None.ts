@@ -1607,7 +1607,7 @@ class Nicole extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(cbs(this, "C6", ["E"]), { receiver: "team" }, [
-          { key: "defReduction%", value: 0.4 },
+          { key: "defIgnore%", value: 0.4 },
         ])
       );
     }

@@ -190,6 +190,54 @@ describe("enka", () => {
       expect(result.format).toBe("GOOD");
     });
 
+    it.each([
+      [10000005, 502, 100541],
+      [10000007, 702, 100551],
+    ])(
+      "maps Traveler %s talents by skill type, not numeric ID order",
+      async (avatarId, skillDepotId, autoId) => {
+        const { data } = await convertEnkaToGOOD(
+          createMinimalEnkaResponse({
+            avatarInfoList: [
+              {
+                avatarId,
+                skillDepotId,
+                skillLevelMap: {
+                  [autoId]: 7,
+                  "10097": 9,
+                  "10098": 10,
+                },
+              },
+            ],
+          })
+        );
+        expect(data.characters![0].talent).toEqual({
+          auto: 7,
+          skill: 9,
+          burst: 10,
+        });
+      }
+    );
+
+    it("does not shift remaining talents when a skill is missing", async () => {
+      const { data } = await convertEnkaToGOOD(
+        createMinimalEnkaResponse({
+          avatarInfoList: [
+            {
+              avatarId: 10000005,
+              skillDepotId: 502,
+              skillLevelMap: { "10098": 10, "100541": 7, "99999999": 4 },
+            },
+          ],
+        })
+      );
+      expect(data.characters![0].talent).toEqual({
+        auto: 7,
+        skill: 1,
+        burst: 10,
+      });
+    });
+
     it("handles missing skillLevelMap gracefully", async () => {
       const enkaData = createMinimalEnkaResponse({
         avatarInfoList: [

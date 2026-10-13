@@ -1,5 +1,5 @@
 import artifactStatData from "@/generated/catalog/artifact_stat.json";
-import { statIdMap } from "@/generated/catalog/enkaIdMap";
+import { skillTypeMap, statIdMap } from "@/generated/catalog/enkaIdMap";
 import type {
   ConversionWarning,
   GOODData,
@@ -391,6 +391,13 @@ export async function convertEnkaToGOOD(
       const elementMatch = charKey.match(
         /^(?:traveler|manekin|manekina)_(\w+)$/
       );
+      const talent = { auto: 1, skill: 1, burst: 1 };
+      for (const [skillId, level] of Object.entries(
+        avatar.skillLevelMap ?? {}
+      )) {
+        const type = skillTypeMap[skillId];
+        if (type) talent[type] = level;
+      }
       characters.push({
         key: charKey,
         level: Number(avatar.propMap?.["4001"]?.ival ?? 1),
@@ -400,20 +407,7 @@ export async function convertEnkaToGOOD(
           element:
             elementMatch[1].charAt(0).toUpperCase() + elementMatch[1].slice(1),
         }),
-        talent: {
-          auto:
-            avatar.skillLevelMap?.[
-              Object.keys(avatar.skillLevelMap ?? {})[0]
-            ] ?? 1,
-          skill:
-            avatar.skillLevelMap?.[
-              Object.keys(avatar.skillLevelMap ?? {})[1]
-            ] ?? 1,
-          burst:
-            avatar.skillLevelMap?.[
-              Object.keys(avatar.skillLevelMap ?? {})[2]
-            ] ?? 1,
-        },
+        talent,
       });
 
       // Equips

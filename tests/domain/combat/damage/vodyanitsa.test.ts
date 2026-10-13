@@ -1,13 +1,42 @@
 import "@/providers/reference/statLoaders";
 import { beforeAll, expect, it } from "vitest";
+import { CharBuild } from "@/domain/combat/damage/core/charBuild";
 import { createCharacter } from "@/domain/combat/damage/core/registry";
 import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
-import { characterStatsResource } from "@/domain/reference/stats";
+import {
+  characterStatsResource,
+  weaponStatsResource,
+} from "@/domain/reference/stats";
 import "@/domain/combat/damage/index";
 
 beforeAll(async () => {
-  await characterStatsResource.preload();
+  await Promise.all([
+    characterStatsResource.preload(),
+    weaponStatsResource.preload(),
+  ]);
+});
+
+it("includes ascension HP and both HP half sets in Vodyanitsa's idle HP", () => {
+  const build = new CharBuild(
+    {
+      charId: "vodyanitsa",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "thrilling_tales_of_dragon_slayers",
+      refinement: 5,
+      artifactSet: { type: "2pc+2pc", halfSetIds: ["hp%-20", "hp%-20"] },
+    },
+    new TeamMeta(["vodyanitsa"])
+  );
+  const idle = build.baseStatSheet.mergeEntries([
+    { key: "hp%", value: 3 * 0.466 + 0.4 },
+    { key: "hp", value: 4780 + 1000 },
+  ]);
+  expect(idle.get("baseHp", null)).toBe(14818);
+  expect(idle.get("hp", null)).toBeCloseTo(
+    14818 * (1 + 0.288 + 0.4 + 0.352 + 3 * 0.466 + 0.4) + 5780
+  );
 });
 
 it("uses released Vodyanitsa talent rows rather than healing, duration, or stamina", () => {
