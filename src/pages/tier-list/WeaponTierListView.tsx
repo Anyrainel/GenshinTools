@@ -1,11 +1,4 @@
-import {
-  ArrowLeftRight,
-  Download,
-  FileDown,
-  Settings,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { ArrowLeftRight, FileDown, Settings, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { ActionConfig } from "@/components/layout/AppBar";
@@ -17,6 +10,7 @@ import { ExportControl } from "@/components/shared/ExportControl";
 import { FilterChip } from "@/components/shared/FilterChip";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
 import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportIcon, ImportIcon } from "@/components/shared/importExportIcons";
 import { OwnedOnlyTooltip } from "@/components/shared/OwnedOnlyTooltip";
 import { WeaponTooltip } from "@/components/shared/WeaponTooltip";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
@@ -281,14 +275,14 @@ export function WeaponTierListView({ onActions }: WeaponTierListViewProps) {
     const actions: ActionConfig[] = [
       {
         key: "import",
-        icon: Download,
+        icon: ImportIcon,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
       {
         key: "export",
-        icon: Upload,
+        icon: ExportIcon,
         label: t.ui("export.action"),
         onTrigger: () => exportRef.current?.open(),
       },

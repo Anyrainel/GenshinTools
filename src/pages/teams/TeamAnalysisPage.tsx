@@ -1,4 +1,4 @@
-import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
+import { FileDown, HelpCircle, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -6,6 +6,7 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportIcon, ImportIcon } from "@/components/shared/importExportIcons";
 import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -132,7 +133,7 @@ export default function TeamCompPage() {
   const teamDataActions = [
     {
       key: "import",
-      icon: Download,
+      icon: ImportIcon,
       label: t.ui("import.action"),
       alwaysShow: true,
       tourStepId: "tc-import",
@@ -140,7 +141,7 @@ export default function TeamCompPage() {
     },
     {
       key: "export",
-      icon: Upload,
+      icon: ExportIcon,
       label: t.ui("export.action"),
       onTrigger: () => exportRef.current?.open(),
     },

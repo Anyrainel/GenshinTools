@@ -1,7 +1,6 @@
 import {
   AlertTriangle,
   Database,
-  Download,
   FileDown,
   FileJson,
   Globe,
@@ -11,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { BuildsDefaultPresetPrompt } from "@/components/builds/BuildsDefaultPresetPrompt";
 import { AccountImportControl } from "@/components/game-account/AccountImportControl";
@@ -20,6 +20,7 @@ import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ImportIcon } from "@/components/shared/importExportIcons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
@@ -106,7 +107,11 @@ const NoDataPlaceholder = ({
     icon={Database}
     title={t.ui("accountData.noData")}
     description={t.ui("accountData.importPrompt")}
-    action={{ label: t.ui("import.action"), icon: Download, onClick: onAction }}
+    action={{
+      label: t.ui("import.action"),
+      icon: ImportIcon,
+      onClick: onAction,
+    }}
     helpAction={{
       label: t.ui("buttons.help"),
       icon: HelpCircle,
@@ -162,6 +167,14 @@ export default function AccountDataPage() {
 
   // Control refs for ref-based dialog pattern
   const importRef = useRef<ControlHandle>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("import") !== "1") return;
+    importRef.current?.open();
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("import");
+    setSearchParams(nextParams, { replace: true });
+  }, [searchParams, setSearchParams]);
   const characterViewRef = useRef<CharacterViewHandle>(null);
 
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
@@ -512,7 +525,7 @@ export default function AccountDataPage() {
       },
       {
         key: "import",
-        icon: Download,
+        icon: ImportIcon,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         tourStepId: "ad-import",

@@ -1,4 +1,4 @@
-import { Download, FileDown, HelpCircle, Trash2, Upload } from "lucide-react";
+import { FileDown, HelpCircle, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -9,6 +9,7 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportIcon, ImportIcon } from "@/components/shared/importExportIcons";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useTour } from "@/components/ui/tour";
 import { getTabsForRoute } from "@/config/navigation";
@@ -166,7 +167,7 @@ export default function ArtifactBuildsPage() {
     return [
       {
         key: "import",
-        icon: Download,
+        icon: ImportIcon,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
@@ -174,7 +175,7 @@ export default function ArtifactBuildsPage() {
       },
       {
         key: "export",
-        icon: Upload,
+        icon: ExportIcon,
         label: t.ui("export.action"),
         onTrigger: handleExportTrigger,
       },

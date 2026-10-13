@@ -1,11 +1,4 @@
-import {
-  ArrowLeftRight,
-  Download,
-  FileDown,
-  Settings,
-  Trash2,
-  Upload,
-} from "lucide-react";
+import { ArrowLeftRight, FileDown, Settings, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { ActionConfig } from "@/components/layout/AppBar";
@@ -15,6 +8,7 @@ import { ClearAllControl } from "@/components/shared/ClearAllControl";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ExportControl } from "@/components/shared/ExportControl";
 import { ImportControl } from "@/components/shared/ImportControl";
+import { ExportIcon, ImportIcon } from "@/components/shared/importExportIcons";
 import { downloadTierListImage } from "@/components/tier-list/downloadTierListImage";
 import { SimpleTierListManagerDialog } from "@/components/tier-list/SimpleTierListManagerDialog";
 import { TierCustomizationDialog } from "@/components/tier-list/TierCustomizationDialog";
@@ -282,14 +276,14 @@ export function ArtifactTierListView({ onActions }: ArtifactTierListViewProps) {
     const actions: ActionConfig[] = [
       {
         key: "import",
-        icon: Download,
+        icon: ImportIcon,
         label: t.ui("import.action"),
         onTrigger: () => importRef.current?.open(),
         alwaysShow: true,
       },
       {
         key: "export",
-        icon: Upload,
+        icon: ExportIcon,
         label: t.ui("export.action"),
         onTrigger: () => exportRef.current?.open(),
       },

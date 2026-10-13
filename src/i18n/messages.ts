@@ -101,7 +101,7 @@ export const i18nUiData = {
         zh: "请先在上方技能面板选择可计算的技能或连招。",
       },
       noAccount: {
-        en: "Import account data to use owned characters or weapons.",
+        en: "Import game account data to use owned characters or weapons.",
         zh: "需要账号数据才能限定已拥有角色或武器。",
       },
       copyShortage: {
@@ -680,7 +680,10 @@ export const i18nUiData = {
     clearBeforeImport: { en: "Clear existing data", zh: "清除现有数据" },
     titleBuilds: { en: "Import builds", zh: "导入配装" },
     titleTierList: { en: "Import Tier List", zh: "导入榜单" },
-    titleAccountData: { en: "Import Account Data", zh: "导入账号数据" },
+    titleAccountData: {
+      en: "Import Game Account Data",
+      zh: "导入游戏账号数据",
+    },
     confirmBuilds: {
       en: "This will replace current builds with the selected preset.",
       zh: "此操作会用所选预设替换当前配装。",
@@ -843,6 +846,7 @@ export const i18nUiData = {
   },
 
   accountData: {
+    importGameAccount: { en: "Import game account", zh: "导入游戏账号" },
     characters: { en: "Characters", zh: "角色" },
     inventory: { en: "Inventory", zh: "仓库" },
     recommendations: { en: "Recommendations", zh: "提分推荐" },
@@ -910,8 +914,8 @@ export const i18nUiData = {
       zh: "需要账号数据与配装方案",
     },
     needsBothDesc: {
-      en: "This feature analyzes your artifacts against your build configurations. Import your account data and set up builds to get started.",
-      zh: "此功能根据配装方案分析你的圣遗物。导入账号数据并配置配装方案即可开始。",
+      en: "This feature analyzes your artifacts against your build configurations. Import your game account data and set up builds to get started.",
+      zh: "此功能根据配装方案分析你的圣遗物。导入游戏账号数据并配置配装方案即可开始。",
     },
     updatedJustNow: { en: "Updated just now", zh: "刚刚更新" },
     updatedMinutes: { en: "Updated {0} min ago", zh: "{0}分钟前更新" },
@@ -1714,8 +1718,8 @@ export const i18nUiData = {
       zh: "已拥有武器",
     },
     ownedWeaponComparisonNeedsAccount: {
-      en: "Import account data to compare owned weapons.",
-      zh: "导入账号数据后可比较已拥有武器。",
+      en: "Import game account data to compare owned weapons.",
+      zh: "导入游戏账号数据后可比较已拥有武器。",
     },
     noOwnedCompatibleWeapons: {
       en: "No owned weapons match this team’s weapon types.",
@@ -2202,7 +2206,7 @@ export const i18nUiData = {
     },
     ownedOnlyAccountDataTooltip: {
       en: "Uses imported account data to decide what you own.",
-      zh: "根据已导入的账号数据判断是否拥有。",
+      zh: "根据已导入的游戏账号数据判断是否拥有。",
     },
     elements: { en: "Elements", zh: "元素" },
     weaponTypes: { en: "Weapon Types", zh: "武器类型" },
@@ -2784,7 +2788,7 @@ export const i18nUiData = {
     },
     teamWorkflow: {
       en: "After importing account artifacts, use Analysis to optimize equipment, then save loadouts to reserve artifacts across teams.",
-      zh: "导入账号圣遗物后，可在「队伍分析」中优化装备，再保存配装方案，安排多队装备。",
+      zh: "导入游戏账号圣遗物后，可在「队伍分析」中优化装备，再保存配装方案，安排多队装备。",
     },
     getStarted: { en: "Get Started", zh: "使用教程" },
     // Step 1: Account Data
