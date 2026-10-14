@@ -57,13 +57,10 @@ export function useCanonicalTabRoute<T extends string>({
       nextSearch.delete("tab");
       const nextSearchString = nextSearch.toString();
 
-      navigate(
-        {
-          pathname: `${basePath}/${nextTab}`,
-          search: nextSearchString ? `?${nextSearchString}` : "",
-        },
-        { replace: true }
-      );
+      navigate({
+        pathname: `${basePath}/${nextTab}`,
+        search: nextSearchString ? `?${nextSearchString}` : "",
+      });
     },
     [
       basePath,

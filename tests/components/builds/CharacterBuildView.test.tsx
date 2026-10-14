@@ -1,9 +1,27 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { CharacterResource } from "@/domain/models";
 import { CharacterBuildView } from "@/pages/builds/CharacterBuildView";
 import { filterAndSortCharacters } from "@/services/catalog/characterFilters";
 import { useBuildsStore } from "@/stores/useBuildsStore";
-import { render, screen } from "../../utils/render";
+import { fireEvent, render, screen, waitFor } from "../../utils/render";
+
+function NavigationBackProbe() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <output data-testid="current-url">
+        {location.pathname}
+        {location.search}
+      </output>
+      <button type="button" onClick={() => navigate(-1)}>
+        Browser back
+      </button>
+    </>
+  );
+}
 
 // Mock dependencies
 vi.mock("@/contexts/LanguageContext", () => ({
@@ -190,5 +208,31 @@ describe("CharacterBuildView", () => {
     // Should show the empty state, not the sidebar layout
     expect(screen.getByTestId("builds-empty-state")).toBeInTheDocument();
     expect(screen.queryByTestId("sidebar-layout")).toBeNull();
+  });
+
+  it("consumes a linked character without trapping browser Back on this page", async () => {
+    window.history.replaceState(null, "", "/account-data/evaluation");
+    window.history.pushState(null, "", "/artifact-filter/configure?char=char1");
+
+    render(
+      <>
+        <CharacterBuildView />
+        <NavigationBackProbe />
+      </>
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId("current-url")).toHaveTextContent(
+        "/artifact-filter/configure"
+      )
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Browser back" }));
+
+    await waitFor(() =>
+      expect(screen.getByTestId("current-url")).toHaveTextContent(
+        "/account-data/evaluation"
+      )
+    );
   });
 });

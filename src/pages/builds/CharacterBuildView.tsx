@@ -93,11 +93,14 @@ export function CharacterBuildView({
     if (!targetCharacterId) return;
 
     const character = charactersById[targetCharacterId];
-    setSearchParams((prev) => {
-      const next = new URLSearchParams(prev);
-      next.delete("char");
-      return next;
-    });
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("char");
+        return next;
+      },
+      { replace: true }
+    );
     if (!character) return;
 
     const meta = getCharacterDisplayMeta(
