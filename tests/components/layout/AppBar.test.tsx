@@ -483,8 +483,11 @@ describe("AppBar", () => {
     expect(menuItems.indexOf("accountSystem.supportMe")).toBeGreaterThan(
       menuItems.indexOf("accountSystem.feedback")
     );
-    expect(menuItems.at(-2)).toBe("accountSystem.manageAccount");
-    expect(menuItems.at(-1)).toBe("accountSystem.signOut");
+    expect(menuItems.indexOf("accountSystem.signOut")).toBe(
+      menuItems.indexOf("accountSystem.manageAccount") + 1
+    );
+    expect(menuItems.at(-2)).toBe("accountSystem.feedback");
+    expect(menuItems.at(-1)).toBe("accountSystem.supportMe");
 
     await userEvent.click(screen.getByText("accountSystem.signOut"));
 
