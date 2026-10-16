@@ -115,13 +115,18 @@
 - id: klee-missing-normal-formula
   entity: klee
   rule: S7
-  status: completed
+  status: open
   category: missing-formula
   summary: >
-    Klee has no Normal Attack formula even though her Hexerei passive and C6 add
-    Boom-Boom Strike follow-up attacks from Normal Attack hits during her burst.
-    Missing NA coverage prevents those kit-signaled follow-ups from being modeled.
+    Klee's Normal Attack formula omits the Boom-Boom Strike follow-ups granted
+    by her Hexerei passive and C6 during her burst. The base three-hit formula
+    exists, but the kit-signaled follow-up damage is still unmodeled.
   detail: >
+    REOPENED 2026-10-15: the base Normal Attack formula now exists, but the
+    P1 Hexerei third-normal Boom-Boom Strike and C6 first/second-normal
+    follow-ups are still absent from its parts. Source character_5_zh.json
+    klee.passives[0] and constellations[5]. The completed fix added only
+    A param1/2/3, leaving the kit-signaled follow-ups described above unmodeled.
     Added a "klee-normal" formula with three parts (A param1/2/3) per S3, Pyro
     element (catalyst user, S10 exception #1), ability "normal". Provides a target
     for Normal-triggered follow-ups. Left out of the default comboDescriptor,
@@ -164,13 +169,19 @@
 - id: lohen-plunge-wrong-param
   entity: lohen
   rule: S5
-  status: completed
+  status: open
   category: bug
   summary: >
-    The optional plunge formula "lohen-e-plunge" uses this.param("E", 8) (Charged
-    Attack Stamina Cost = 10) and this.param("E", 10) (Low Plunge). param8 is a
-    stamina value, not a damage multiplier, producing nonsensical damage.
+    The optional "lohen-e-plunge" formula uses E9 during-fall damage plus E10
+    low-impact damage, omitting E11 high-impact damage. The previous stamina
+    parameter error was fixed, but the high-plunge convention is still unmet.
   detail: >
+    REOPENED 2026-10-15: current lohen-e-plunge uses E9 plus E10, which
+    are during-fall and LOW impact. Current E11 is the high-impact row;
+    use that single coefficient under the S5b high-plunge convention.
+    Source character_5_zh.json lohen.skills[1].details. The old stamina
+    coefficient is fixed, but the replacement still omits high impact.
+    Formula ID/unit changes must follow the persisted-ID migration rule.
     Changed the falling-part multiplier from this.param("E", 8) (stamina cost) to
     this.param("E", 9) (Plunge DMG, 126.4% at L10); kept this.param("E", 10) (Low
     Plunge, 253% at L10) for the impact. Cryo/plunge tag preserved. Added a code
@@ -379,3 +390,113 @@
     DirectFormula(this.param("E", 1), Cryo/skill/none) with hits: 5, on-field,
     comboDescriptor count 1 and unconditional. Q, plunge and NA left out of
     scope as instructed.
+
+- id: durin-white-p1-reaction-scope
+  entity: durin
+  rule: U5
+  status: open
+  category: bug
+  summary: >
+    White-form P1 incorrectly treats Vaporize/Melt as RES-shred triggers and grants Hydro/Cryo shred. Source only lists Burning, Overloaded, Pyro Swirl and Pyro Crystallize, plus Pyro/Dendro hits against Burning enemies.
+  detail: >
+    Source character_5_zh.json durin.passives[0]. weapon-independent issue at character5Mondstadt.ts L45: reactionEls includes vaporize/Hydro, melt/Cryo and burgeon/Dendro. Derive P1 elements separately from the broader C2 reaction scope; a pure Pyro+Hydro team cannot activate white P1 through Vaporize.
+
+- id: sucrose-p1-stellar-swirl-gate
+  entity: sucrose
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    P1 EM+50 disappears on Stellar-Swirl teams because it checks only hasReaction(swirl). Current source explicitly accepts Swirl and Stellar Swirl.
+  detail: >
+    Source character_4_zh.json sucrose.passives[0]. character4Mondstadt.ts L962: include stellarSwirl availability while retaining per-recipient element scoping.
+
+- id: venti-p4-stellar-swirl-gate
+  entity: venti
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    Hexerei P4 loses both active-character DMG+50% and Stormeye original-DMG+35% when Stellar Swirl replaces Swirl, despite accepting either reaction in source text.
+  detail: >
+    Source character_5_zh.json venti.passives[3]. character5Mondstadt.ts L1113 checks only hasReaction(swirl); include stellarSwirl.
+
+- id: prune-stellar-swirl-gate
+  entity: prune
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    Stellar-Swirl-only teams lose converted Skill and hammer formulas and their dependent P2/P4/C6 buffs because canSwirl checks base Swirl only. Current text explicitly allows Stellar Swirl for conversion and hammer procs.
+  detail: >
+    Source character_4_zh.json prune.skills[1], passives[0], passives[3], glossary[0]. character4Mondstadt.ts L94 and L135: include stellarSwirl both in setup and reaction gates, and preserve exact source-scoped filters.
+
+- id: varka-stellar-swirl-gates
+  entity: varka
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    Varka loses P2 stacks, C4 elemental bonuses and C6 stack CRIT DMG on Stellar-Swirl-only teams. All three depend on a Swirl-or-Stellar-Swirl trigger in the current source.
+  detail: >
+    Source character_5_zh.json varka.passives[1], constellations[3], constellations[5]. character5Mondstadt.ts L1713/L1727/L1742 check only hasReaction(swirl).
+
+- id: venti-c2-hold-skill-leak
+  entity: venti
+  rule: U5
+  status: open
+  category: bug
+  summary: >
+    C2 Wind's Genesis original-DMG+200% is applied to held Skill damage as well as tap Skill. The source explicitly limits the enhanced hit to tap Skill.
+  detail: >
+    Source character_5_zh.json venti.constellations[1]. character5Mondstadt.ts Venti buffs filters the C2 baseDmg% buff by all skill damage, while venti-skill-hold is skill-tagged. Attach it only to the tap formula, preserving the intended one-use condition.
+
+- id: varka-initial-skill-buff-leaks
+  entity: varka
+  rule: U5
+  status: open
+  category: bug
+  summary: >
+    P1 pair bonus and P2 Azure Fang damage bonus apply to the initial E cast, although source lists Stormward normal/charged attacks, special charged attack and special E only.
+  detail: >
+    Source character_5_zh.json varka.passives[0:2]. character5Mondstadt.ts Varka uses abilities normal/charge/skill for both buffs; varka-e is also skill-tagged. Scope to the named attacks and exclude initial E. Check the C2 additional hit separately rather than assuming all skill hits inherit.
+
+- id: fischl-p2-stellar-conduct-gate
+  entity: fischl
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    P2 Thundering Retribution becomes unavailable on a pure Stellar-Conduct team: its Electro-related-reaction gate includes Superconduct but omits its replacing Stellar sibling.
+  detail: >
+    Source character_4_zh.json fischl.passives[1] says Electro-related reaction. character4Mondstadt.ts fischl-p2.when checks base superconduct but not stellarConduct. Reproduce Fischl + Sandrone + Cryo with no other Electro-reaction pair.
+
+- id: lohen-p2-stellar-reaction-gates
+  entity: lohen
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    Lohen's Cryo-related-reaction P2 ATK buffs disappear when base Superconduct or Cryo Swirl is replaced by Stellar-Conduct or Stellar Swirl.
+  detail: >
+    Source character_5_zh.json lohen.passives[1]. character5Mondstadt.ts cryoReactionPresent checks superconduct/swirl but omits stellarConduct/stellarSwirl; preserve the Cryo-participation checks for the Swirl branch.
+
+- id: mona-p4-offfield-recipient
+  entity: mona
+  rule: U1
+  status: open
+  category: bug
+  summary: >
+    Mona P4's Vaporize reaction DMG bonus is restricted to otherOnField, but source allows other party members to consume the stacks by triggering Vaporize without an on-field requirement.
+  detail: >
+    Source character_5_zh.json mona.passives[3]. character5Mondstadt.ts L904 should include eligible off-field teammates; the three-stack consumption timing remains a separate rotation approximation.
+
+- id: mona-charged-formula-missing
+  entity: mona
+  rule: S7
+  status: open
+  category: missing-formula
+  summary: >
+    Mona has C6 Charged Attack DMG and original-DMG buffs but no selectable Charged Attack formula, so neither kit-signaled bonus can be evaluated on its intended attack.
+  detail: >
+    Source character_5_zh.json mona.skills[0] Charged Attack row and constellations[5]. character5Mondstadt.ts Mona formulaMap exposes only Skill and Burst. Add a Hydro/charge DirectFormula using the current A charged-attack parameter.

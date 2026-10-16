@@ -516,3 +516,23 @@
     is a pure party-composition buff and carries no trigger. The four genuine
     触发星烁反应 clauses (blade_of_atonement, emberwell, echoes_of_the_heart,
     song_of_the_vigil) keep "stellar-reaction".
+
+- id: kaguras-verity-stellar-conduct-bonus
+  entity: kaguras_verity
+  rule: U3
+  status: open
+  category: bug
+  summary: >
+    Kagura's Verity omits its Stellar-Conduct reaction DMG bonus. Current ZH grants the same per-stack percentage as Skill DMG, but only Skill and elemental DMG buffs are implemented.
+  detail: >
+    Source weapon_zh.json kaguras_verity.descHtmlTpl/refinements: R1 12% per stack, up to 3. weapon5Catalyst.ts KagurasVerity L398 needs reactionDmg% filtered to stellarConduct, 3 * refinement value (36% at R1).
+
+- id: astral-vulture-stellar-swirl-gate
+  entity: astral_vultures_crimson_plumage
+  rule: U12
+  status: open
+  category: bug
+  summary: >
+    The ATK bonus is gated only by base Swirl availability although current text explicitly allows Swirl or Stellar Swirl. It disappears on teams where Stellar Swirl replaces Swirl.
+  detail: >
+    Source weapon_zh.json astral_vultures_crimson_plumage.descHtmlTpl. weapon5Bow.ts L77: include hasReaction(stellarSwirl, this.charId), retaining the wielder-specific eligibility check. TeamMeta.hasReaction returns false for replaced base reactions.

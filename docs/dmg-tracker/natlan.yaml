@@ -408,3 +408,23 @@
     capped at 3 for E and 6 for Q) while keeping `eligibleElements` distinct,
     plus a decision on how to distribute duplicate-element conversions across
     the shell parts.
+
+- id: chasca-fractional-proc-flat-damage
+  entity: chasca
+  rule: S3
+  status: open
+  category: bug
+  summary: >
+    C2 and C4 each describe one 400% ATK explosion, but the implementation creates one 400%/N part per eligible element. Each artificial part independently receives flat baseDmg and consumes limited-hit buff stacks, distorting Nicole C4 and similar buffs.
+  detail: >
+    Source character_5_zh.json chasca.constellations[1] and [3], each at most once per respective action. character5Natlan.ts L941-L950 uses elems.map with multiplier 4.0/nElems. Expected-value element distribution must weight the entire evaluated hit including flat damage, rather than splitting only talentMultiplier. Distinct from the existing shell-count-per-member issue.
+
+- id: xilonen-c4-offfield-recipient
+  entity: xilonen
+  rule: U1
+  status: open
+  category: bug
+  summary: >
+    C4 Blooming Blessing flat Normal/Charged/Plunge damage is limited to teamOnField, but source grants it to all nearby party members without an on-field restriction.
+  detail: >
+    Source character_5_zh.json xilonen.constellations[3]. character5Natlan.ts L1177: use team with existing per-charId six-trigger budgets and ability filter. Ensure off-field-tagged eligible attacks receive their own independent budget.

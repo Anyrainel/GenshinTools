@@ -165,3 +165,13 @@
     absorbs. U1 maps this to receiver: teamOnField as the closest approximation,
     but the current engine cannot persistently bind the buff to the actual pickup
     recipient. The approximation is acceptable.
+
+- id: nicole-pre-c6-theosis-offfield
+  entity: nicole
+  rule: U1
+  status: open
+  category: bug
+  summary: >
+    Before C6, Nicole's P1 Theosis ATK+300 is granted to off-field allies through receiver team. Source explicitly reverts allies' Theosis when they leave the field; Nicole herself can retain it via P2.
+  detail: >
+    Source character_5_zh.json nicole.passives[0:2], constellations[5]. character5None.ts L1529-L1559: split self from otherOnField, respecting the selected eligibility mode. Keep the team-wide persistent grant at C6. The 11 flagship golden discrepancies use C6 and are not caused by this issue.

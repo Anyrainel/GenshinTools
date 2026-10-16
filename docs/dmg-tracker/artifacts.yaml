@@ -104,3 +104,13 @@
     RESOLVED: both 4pc buffs relabelled ["on-reaction"] -> ["stellarSwirl"], the
     specific label matching 星扩散 (not the 星烁 umbrella). The CRIT Rate buff
     carries no reactions filter, so the label is its only scope carrier.
+
+- id: celestial-gift-active-element-sharing
+  entity: celestial_gift
+  rule: U1
+  status: open
+  category: approximation
+  summary: >
+    Default conservative mode gives Mortal Hymn's additional active-character-element bonus only to otherOnField. Source grants that element bonus to all nearby party members, so same-element off-field teammates miss it.
+  detail: >
+    Source artifact_zh.json celestial_gift.effect4. artifact4pc.ts CelestialGift4pc L1412: self mode chooses otherOnField for non-wearer elements; team mode grants every represented team element to all recipients. Options bracket the effect but neither tracks which element was actually on field during application. Preserve an explicit approximation until active-element application is modeled.
