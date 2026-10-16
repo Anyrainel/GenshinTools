@@ -2643,6 +2643,10 @@ export const i18nUiData = {
     suggestReroll: { en: "Reroll", zh: "重铸" },
     suggestLevelup: { en: "Level Up", zh: "强化" },
     sanctifyingEssence: { en: "Sanctifying Essence", zh: "祝圣精华" },
+    onlyInitialFourSubstats: {
+      en: "Only initial 4 substats",
+      zh: "只看初始四词条",
+    },
     tierThresholds: { en: "Completeness goal", zh: "完成度目标" },
     minScoreDiff: { en: "Min score gain", zh: "最低收益" },
     gainLabel: { en: "Avg. Gain", zh: "平均收益" },

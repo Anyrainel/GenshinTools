@@ -39,6 +39,7 @@ import {
   suggestionCacheKey,
   summarizeResourceSuggestionsBySet,
 } from "@/domain/game-account/resourceTips";
+import { startedWithFourSubstats } from "@/domain/game-account/triage/initialSubstats";
 import { artifactsById } from "@/domain/reference/catalog";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
@@ -224,13 +225,16 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   });
   const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [onlyInitialFourSubstats, setOnlyInitialFourSubstats] = useState(false);
 
   const categoryFilteredSuggestions = suggestions.filter(
     (s) =>
       ((s.kind === "craft" && showCraft) ||
         (s.kind === "reroll" && showReroll) ||
         (s.kind === "levelup" && showLevelup)) &&
-      setCategoryFilters[getResourceSetCategory(s.setId)]
+      setCategoryFilters[getResourceSetCategory(s.setId)] &&
+      (!onlyInitialFourSubstats ||
+        (s.sourceArtifact && startedWithFourSubstats(s.sourceArtifact)))
   );
   const setSummaries = useMemo(
     () => summarizeResourceSuggestionsBySet(categoryFilteredSuggestions),
@@ -296,9 +300,6 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
               onClick={() => setHelpOpen(true)}
             />
             <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
-            <span className="text-sm text-muted-foreground">
-              ({suggestions.length})
-            </span>
             <div className="flex-1" />
             <Button
               type="button"
@@ -333,6 +334,19 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
               checked={showReroll}
               onCheckedChange={setShowReroll}
             />
+            {/* biome-ignore lint/a11y/noLabelWithoutControl: Checkbox is a Radix primitive wrapping an input */}
+            <label className="flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-border bg-gradient-card px-2 py-1.5 transition-colors hover:bg-muted/30 md:gap-2.5 md:px-3 md:py-2">
+              <Checkbox
+                checked={onlyInitialFourSubstats}
+                onCheckedChange={(checked) =>
+                  setOnlyInitialFourSubstats(checked === true)
+                }
+                className="h-3 w-3 md:h-4 md:w-4"
+              />
+              <span className="text-xs font-medium text-foreground md:text-sm">
+                {t.ui("evaluation.onlyInitialFourSubstats")}
+              </span>
+            </label>
             <div className="flex items-center gap-1.5 flex-wrap ml-2 md:ml-4 lg:ml-6">
               {RESOURCE_SET_CATEGORIES.map((category) => (
                 <CategoryChip
