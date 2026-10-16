@@ -15,6 +15,16 @@ class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
 }
 
 describe("reference resource lifecycle", () => {
+  it("observes on-demand language text without starting a request itself", async () => {
+    const load = vi.fn(async (language: string) => language);
+    const resource = makeLangResource(load);
+    const view = renderHook(() => useResource(resource, "zh", false));
+    expect(load).not.toHaveBeenCalled();
+    expect(view.result.current).toBeNull();
+    await resource.preload("zh");
+    await waitFor(() => expect(view.result.current).toBe("zh"));
+    expect(load).toHaveBeenCalledExactlyOnceWith("zh");
+  });
   it("delivers load failures to the React boundary without an unhandled rejection", async () => {
     const error = new Error("Broken bundled reference");
     const resource = makeResource(async () => {

@@ -32,15 +32,16 @@ const recommendationState = vi.hoisted(() => ({
 vi.mock("@/domain/reference/stats", async (importOriginal) => {
   const actual =
     await importOriginal<typeof import("@/domain/reference/stats")>();
+  const ready = {};
   return {
     ...actual,
     characterStatsResource: {
       ...actual.characterStatsResource,
-      peek: () => (gameStatReadiness.character ? {} : null),
+      peek: () => (gameStatReadiness.character ? ready : null),
     },
     weaponStatsResource: {
       ...actual.weaponStatsResource,
-      peek: () => (gameStatReadiness.weapon ? {} : null),
+      peek: () => (gameStatReadiness.weapon ? ready : null),
     },
   };
 });

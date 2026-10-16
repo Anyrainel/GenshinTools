@@ -16,6 +16,7 @@ import {
   getWeaponDisplayMeta,
   weaponStatsResource,
 } from "@/domain/reference/stats";
+import { useWeaponText } from "@/hooks/useGameText";
 import { useResource } from "@/hooks/useResource";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
 import {
@@ -47,6 +48,7 @@ function WeaponFilterChips({
   onSecondaryStatFilterChange: (nextValues: Set<MainStat>) => void;
 }) {
   const { t } = useLanguage();
+  useWeaponText();
 
   return (
     <>
@@ -124,6 +126,7 @@ function WeaponTypeSection({
   onToggle: () => void;
 }) {
   const { t } = useLanguage();
+  useWeaponText();
   const resource = weaponResourcesByName[type];
 
   return (
@@ -179,6 +182,7 @@ function WeaponTypeSection({
 
 export function WeaponArchiveView() {
   const { t } = useLanguage();
+  useWeaponText();
   const weaponStats = useResource(weaponStatsResource);
   const sortedWeaponSecondaryStats = useMemo(
     () => getSortedWeaponSecondaryStats(weaponStats ?? null),

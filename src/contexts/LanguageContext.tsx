@@ -79,12 +79,9 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  // Tier B (weapon + artifact text) is preloaded at app boot in App.tsx via
-  // resource.preload(); the resources subscribe their consumers via use().
-  // Tier C (character kits) is loaded by Archive routes via use(); accessors
-  // here just peek so non-Archive callers see null instead of triggering load.
-  const weaponData = useResource(weaponTextResource, language);
-  const artifactData = useResource(artifactTextResource, language);
+  // Observe route-loaded text without downloading catalogs on the home page.
+  const weaponData = useResource(weaponTextResource, language, false);
+  const artifactData = useResource(artifactTextResource, language, false);
 
   const getCharacterKit = useCallback(
     (characterId: string): CharacterKit | null =>

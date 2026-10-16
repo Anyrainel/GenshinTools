@@ -8,18 +8,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { TourProvider } from "@/components/ui/tour";
 import { SCANNER_DOWNLOAD_PAGE } from "@/config/scannerDownloads";
 import { useLanguage } from "@/contexts/LanguageContext";
-import {
-  characterStatsResource,
-  weaponStatsResource,
-} from "@/domain/reference/stats";
 import { useHydrateBuildPreset } from "@/hooks/useHydrateBuildPreset";
 import { useHydrateTeamPreset } from "@/hooks/useHydrateTeamPreset";
 import { cn } from "@/lib/utils";
-import {
-  artifactTextResource,
-  weaponTextResource,
-} from "@/providers/reference/gameDataLoader";
 import Home from "../pages/home/HomePage";
+import { RouteGameData } from "./RouteGameData";
 
 const AccountDataPage = lazy(
   () => import("../pages/game-account/AccountDataPage")
@@ -81,16 +74,6 @@ function App() {
       ?.setAttribute("content", description);
   }, [isHomePage, location.pathname, language, homeTitle, description]);
 
-  // Tier B preload — fire-and-forget at app boot. Tooltip / table consumers
-  // call resource.use() themselves and render skeletons until ready, so this
-  // is purely an optimization to start the network requests earlier.
-  useEffect(() => {
-    void characterStatsResource.preload();
-    void weaponStatsResource.preload();
-    void weaponTextResource.preload(language);
-    void artifactTextResource.preload(language);
-  }, [language]);
-
   const tours = useTours();
   const tourLabels = useTourLabels();
 
@@ -105,42 +88,44 @@ function App() {
             )}
           >
             <Suspense fallback={null}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/account-data" element={<AccountDataPage />} />
-                <Route
-                  path="/account-data/:tab"
-                  element={<AccountDataPage />}
-                />
-                <Route
-                  path="/artifact-filter"
-                  element={<ArtifactBuildsPage />}
-                />
-                <Route
-                  path="/artifact-filter/:tab"
-                  element={<ArtifactBuildsPage />}
-                />
-                <Route path="/tier-list" element={<TierListPage />} />
-                <Route path="/tier-list/:tab" element={<TierListPage />} />
-                <Route path="/archive" element={<ArchivePage />} />
-                <Route path="/archive/:tab" element={<ArchivePage />} />
-                <Route path="/team-comp" element={<TeamCompPage />} />
-                <Route path="/team-comp/:tab" element={<TeamCompPage />} />
-                <Route path="/callback" element={<AuthCallbackPage />} />
-                <Route path="/account" element={<AccountPage />} />
-                <Route
-                  path="/account/cloud-backup"
-                  element={<CloudBackupPage />}
-                />
-                <Route path="/account/support" element={<SupportMePage />} />
-                <Route path="/account/feedback" element={<FeedbackPage />} />
-                <Route path="/feedback" element={<FeedbackPage />} />
-                <Route
-                  path={SCANNER_DOWNLOAD_PAGE}
-                  element={<ScannerDownloadPage />}
-                />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
+              <RouteGameData pathname={location.pathname}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/account-data" element={<AccountDataPage />} />
+                  <Route
+                    path="/account-data/:tab"
+                    element={<AccountDataPage />}
+                  />
+                  <Route
+                    path="/artifact-filter"
+                    element={<ArtifactBuildsPage />}
+                  />
+                  <Route
+                    path="/artifact-filter/:tab"
+                    element={<ArtifactBuildsPage />}
+                  />
+                  <Route path="/tier-list" element={<TierListPage />} />
+                  <Route path="/tier-list/:tab" element={<TierListPage />} />
+                  <Route path="/archive" element={<ArchivePage />} />
+                  <Route path="/archive/:tab" element={<ArchivePage />} />
+                  <Route path="/team-comp" element={<TeamCompPage />} />
+                  <Route path="/team-comp/:tab" element={<TeamCompPage />} />
+                  <Route path="/callback" element={<AuthCallbackPage />} />
+                  <Route path="/account" element={<AccountPage />} />
+                  <Route
+                    path="/account/cloud-backup"
+                    element={<CloudBackupPage />}
+                  />
+                  <Route path="/account/support" element={<SupportMePage />} />
+                  <Route path="/account/feedback" element={<FeedbackPage />} />
+                  <Route path="/feedback" element={<FeedbackPage />} />
+                  <Route
+                    path={SCANNER_DOWNLOAD_PAGE}
+                    element={<ScannerDownloadPage />}
+                  />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </RouteGameData>
             </Suspense>
           </main>
           <Toaster

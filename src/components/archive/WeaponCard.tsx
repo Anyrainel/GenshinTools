@@ -23,6 +23,7 @@ import {
   getWeaponStatsAt90,
   weaponStatsResource,
 } from "@/domain/reference/stats";
+import { useWeaponText } from "@/hooks/useGameText";
 import { useIsOwned, useRefinement } from "@/hooks/useOwnership";
 import { useResource } from "@/hooks/useResource";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
@@ -31,6 +32,7 @@ import { getRarityColor } from "../shared/colors";
 
 export const WeaponCard = memo(({ weapon }: { weapon: WeaponResource }) => {
   const { t } = useLanguage();
+  useWeaponText();
   const weaponStats = useResource(weaponStatsResource);
   const meta = useMemo(
     () => getWeaponDisplayMeta(weapon, weaponStats?.[weapon.id]),
@@ -155,6 +157,7 @@ function WeaponDetailDrawer({
   refinement: number;
 }) {
   const { t } = useLanguage();
+  useWeaponText();
   const name = t.weapon(weapon.id);
   const effectHtml = t.weaponEffect(weapon.id);
   const statName =

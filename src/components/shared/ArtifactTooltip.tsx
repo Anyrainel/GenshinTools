@@ -1,5 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/domain/reference/catalog";
+import { useArtifactText } from "@/hooks/useGameText";
 import { cn } from "@/lib/utils";
 import { getRarityColor } from "./colors";
 
@@ -13,6 +14,7 @@ export function ArtifactTooltip({
   hideFourPieceEffect,
 }: ArtifactTooltipProps) {
   const { t } = useLanguage();
+  useArtifactText();
   const artifact = artifactsById[setId];
 
   if (!artifact) return null;

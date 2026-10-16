@@ -427,11 +427,13 @@ export type EnvBuff = {
 export interface Resource<T> {
   preload(): Promise<T>;
   peek(): T | null;
+  subscribe?(listener: () => void): () => void;
 }
 
 export interface LangResource<T> {
   preload(lang: Language): Promise<T>;
   peek(lang: Language): T | null;
+  subscribe?(listener: () => void): () => void;
 }
 
 /** Localized metadata for one in-game achievement category. */

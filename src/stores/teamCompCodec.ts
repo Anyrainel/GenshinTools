@@ -39,21 +39,17 @@ const halfSetToIdx = new Map(
 
 // ── Sorting ──
 
-// Build release-date sort key lazily from the already-loaded character stats cache.
-// By the time teams are sorted, gameStatsLoader has always loaded character_stats.json.
+// Do not cache a miss: presets can hydrate before a route requests stats.
 let charReleaseSortKey: Map<string, number> | null = null;
 
 function ensureSortKeys(): Map<string, number> {
   if (charReleaseSortKey) return charReleaseSortKey;
-  charReleaseSortKey = new Map();
   const stats = characterStatsResource.peek();
-  if (stats) {
-    for (const [id, entry] of Object.entries(stats)) {
-      const d = (entry as { releaseDate?: string }).releaseDate
-        ? new Date((entry as { releaseDate?: string }).releaseDate!).getTime()
-        : 0;
-      charReleaseSortKey.set(id, d > 0 ? -d : 0);
-    }
+  if (!stats) return new Map();
+  charReleaseSortKey = new Map();
+  for (const [id, entry] of Object.entries(stats)) {
+    const d = entry.releaseDate ? new Date(entry.releaseDate).getTime() : 0;
+    charReleaseSortKey.set(id, d > 0 ? -d : 0);
   }
   return charReleaseSortKey;
 }

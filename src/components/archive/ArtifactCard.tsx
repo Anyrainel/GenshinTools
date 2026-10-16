@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots } from "@/domain/enums";
 import type { ArtifactSetResource } from "@/domain/models";
 import { betaArtifactIds } from "@/domain/reference/catalog";
+import { useArtifactText } from "@/hooks/useGameText";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export const ArtifactCard = memo(
     onToggleExpanded: () => void;
   }) => {
     const { t } = useLanguage();
+    useArtifactText();
     const name = t.artifact(artifact.id);
     const effects = t.artifactEffects(artifact.id);
 

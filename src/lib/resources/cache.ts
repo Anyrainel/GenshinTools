@@ -15,6 +15,13 @@ import type { LangResource, Resource } from "../../domain/models";
 export function makeResource<T>(loader: () => Promise<T>): Resource<T> {
   let cache: T | null = null;
   let pending: Promise<T> | null = null;
+  const listeners = new Set<() => void>();
+  const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  };
 
   const preload = (): Promise<T> => {
     if (cache !== null) return Promise.resolve(cache);
@@ -24,6 +31,7 @@ export function makeResource<T>(loader: () => Promise<T>): Resource<T> {
         .then(
           (v) => {
             cache = v;
+            for (const listener of listeners) listener();
             pending = null;
             return v;
           },
@@ -38,7 +46,7 @@ export function makeResource<T>(loader: () => Promise<T>): Resource<T> {
 
   const peek = (): T | null => cache;
 
-  return { preload, peek };
+  return { preload, peek, subscribe };
 }
 
 /**
@@ -55,6 +63,13 @@ export function makeLangResource<T>(
 ): LangResource<T> {
   const cache = new Map<Language, T>();
   const pending = new Map<Language, Promise<T>>();
+  const listeners = new Set<() => void>();
+  const subscribe = (listener: () => void) => {
+    listeners.add(listener);
+    return () => {
+      listeners.delete(listener);
+    };
+  };
 
   const preload = (lang: Language): Promise<T> => {
     const cached = cache.get(lang);
@@ -66,6 +81,7 @@ export function makeLangResource<T>(
         .then(
           (v) => {
             cache.set(lang, v);
+            for (const listener of listeners) listener();
             pending.delete(lang);
             return v;
           },
@@ -81,7 +97,7 @@ export function makeLangResource<T>(
 
   const peek = (lang: Language): T | null => cache.get(lang) ?? null;
 
-  return { preload, peek };
+  return { preload, peek, subscribe };
 }
 
 /**

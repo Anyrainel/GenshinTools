@@ -1,18 +1,16 @@
 /**
  * Lazy game-data resources.
  *
- * Each export below is a ``Resource<T>`` / ``LangResource<T>`` (see
- * ``src/generated/catalog/resource.ts``). Consumers either:
+ * Each export below is a ``Resource<T>`` / ``LangResource<T>``. Consumers either:
  *
- *   - Call ``resource.use()`` from React to render once data is ready, or
- *   - Call ``resource.preload()`` from a worker / app-boot effect, then
+ *   - Call ``useResource(resource)`` from React to load on demand, or
+ *   - Call ``resource.preload()`` at a route or worker boundary, then
  *     ``resource.peek()`` synchronously thereafter.
  *
- * Tier B (preloaded at app boot, non-blocking):
+ * Loaded only by routes and consumers that need them:
  *   - ``weaponTextResource``    (per language)
  *   - ``artifactTextResource``  (per language)
  *
- * Tier C (loaded only when their consumer route mounts):
  *   - ``characterKitsResource`` (per language; consumed by Archive)
  *   - ``leylineBossResource``   (consumed by Archive)
  *

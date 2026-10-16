@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { ArtifactBuildConfigs } from "@/domain/models";
+import { useArtifactText } from "@/hooks/useGameText";
 import { ArtifactConfigCard } from "./ArtifactConfigCard";
 
 interface ArtifactCardProps {
@@ -17,6 +18,7 @@ export function ArtifactCard({
   onJumpToCharacter,
 }: ArtifactCardProps) {
   const { t } = useLanguage();
+  useArtifactText();
   const isMobile = !useMediaQuery("(min-width: 768px)");
   const effects = t.artifactEffects(setId);
 

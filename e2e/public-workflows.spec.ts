@@ -426,3 +426,34 @@ test("GOOD scanner upload reaches converted account and survives reload", async 
   await expect(replacement).toContainText(/[1-9][\d,.]*(?:[kmbKMB])? damage/);
   expect(errors).toEqual([]);
 });
+test("game reference catalogs stay out of home and load on their own routes", async ({
+  page,
+}) => {
+  const errors = bundleErrors(page);
+  const requests: string[] = [];
+  page.on("request", (request) => requests.push(request.url()));
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  expect(
+    requests.filter((url) =>
+      /\/(character_stats|weapon_stats|weapon_(en|zh)|artifact_(en|zh)|achievements(?:_(en|zh))?)-/.test(
+        url
+      )
+    )
+  ).toEqual([]);
+  requests.length = 0;
+  await page.goto("/archive/achievements");
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("main").first()).toContainText(
+    "Wonders of the World"
+  );
+  expect(requests.some((url) => /\/achievements_en-/.test(url))).toBe(true);
+  expect(
+    requests.some((url) =>
+      /\/(achievements_zh|character_stats|weapon_stats)-/.test(url)
+    )
+  ).toBe(false);
+  await page.goto("/archive/weapons");
+  await expect(page.getByRole("main").first()).toContainText("Aquila Favonia");
+  expect(errors).toEqual([]);
+});

@@ -1,14 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import type { Language } from "@/domain/enums";
 import type { LangResource, Resource } from "@/domain/models";
-export function useResource<T>(resource: Resource<T>): T | null;
+export function useResource<T>(
+  resource: Resource<T>,
+  language?: undefined,
+  enabled?: boolean
+): T | null;
 export function useResource<T>(
   resource: LangResource<T>,
-  language: Language
+  language: Language,
+  enabled?: boolean
 ): T | null;
 export function useResource<T>(
   resource: Resource<T> | LangResource<T>,
-  language?: Language
+  language?: Language,
+  enabled = true
 ): T | null {
   const [, force] = useState(0);
   const [failure, setFailure] = useState<{
@@ -23,8 +29,13 @@ export function useResource<T>(
         : (resource as LangResource<T>).peek(language),
     [resource, language]
   );
+  const subscribe = useCallback(
+    (listener: () => void) => resource.subscribe?.(listener) ?? (() => {}),
+    [resource]
+  );
+  const data = useSyncExternalStore(subscribe, peek, peek);
   useEffect(() => {
-    if (peek() !== null) return;
+    if (!enabled || peek() !== null) return;
     let cancelled = false;
     const load =
       language === undefined
@@ -41,8 +52,12 @@ export function useResource<T>(
     return () => {
       cancelled = true;
     };
-  }, [resource, language, peek]);
-  if (failure?.resource === resource && failure.language === language)
+  }, [resource, language, peek, enabled]);
+  if (
+    enabled &&
+    failure?.resource === resource &&
+    failure.language === language
+  )
     throw failure.error;
-  return peek();
+  return data;
 }

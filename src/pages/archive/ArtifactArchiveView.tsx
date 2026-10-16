@@ -10,12 +10,14 @@ import {
   artifactIdToHalfSetId,
   sortedArtifacts,
 } from "@/domain/reference/catalog";
+import { useArtifactText } from "@/hooks/useGameText";
 import { filterArchiveItems } from "@/lib/search/archiveFilters";
 import { fuzzyMatch } from "@/lib/search/predicates";
 import { useArchiveSessionStore } from "@/stores/useArchiveSessionStore";
 
 export function ArtifactArchiveView() {
   const { t } = useLanguage();
+  useArtifactText();
   const searchQuery = useArchiveSessionStore((s) => s.artifactSearch);
   const setSearchQuery = useArchiveSessionStore((s) => s.setArtifactSearch);
   const [halfSetFilter, setHalfSetFilter] = useState<Set<string>>(
