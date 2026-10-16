@@ -105,7 +105,7 @@ describe("useTriageStore", () => {
 
     expect(result.settingsByProfileId).toMatchObject({
       123456789: { backupAmountMode: "custom" },
-      234567890: { backupAmountMode: "extra" },
+      234567890: { backupAmountMode: "custom", fillerKeep: 5 },
     });
   });
 

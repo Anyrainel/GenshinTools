@@ -281,7 +281,7 @@ export function TriageSettingsPanel({
               label={t.ui("triage.qualityMargin")}
               value={settings.qualityMargin}
               onChange={(v) => update("qualityMargin", v)}
-              min={1}
+              min={0}
               max={10}
               step={1}
             />
@@ -289,7 +289,7 @@ export function TriageSettingsPanel({
               label={t.ui("triage.fillerKeep")}
               value={settings.fillerKeep}
               onChange={(v) => update("fillerKeep", v)}
-              min={1}
+              min={0}
               max={10}
               step={1}
             />

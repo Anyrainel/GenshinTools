@@ -3026,12 +3026,12 @@ export const i18nUiData = {
     backupAmountExtra: { en: "extra", zh: "额外" },
     backupAmountCustom: { en: "custom", zh: "自定义" },
     backupAmountNormalDesc: {
-      en: "Demand margin 5 · filler cap 3 · set-slot keep 3",
-      zh: "需求余量 5 · 过渡上限 3 · 套装部位保留 3",
+      en: "Demand margin 5 · filler cap 2 · set-slot keep 3",
+      zh: "需求余量 5 · 过渡上限 2 · 套装部位保留 3",
     },
     backupAmountExtraDesc: {
-      en: "Demand margin 10 · filler cap 5 · set-slot keep 3",
-      zh: "需求余量 10 · 过渡上限 5 · 套装部位保留 3",
+      en: "Demand margin 10 · filler cap 4 · set-slot keep 3",
+      zh: "需求余量 10 · 过渡上限 4 · 套装部位保留 3",
     },
     qualityMargin: {
       en: "Demand margin (extra keep above demand)",
@@ -3212,8 +3212,8 @@ export const i18nUiData = {
         zh: "此外还有套装部位最低保留，确保每个套装都能凑齐。",
       },
       backupAmountDetail: {
-        en: "Demand margin inflates each build target regardless of quality tier. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 3 / 3; extra is 10 / 5 / 3.",
-        zh: "需求余量会直接扩大每个配装目标，不区分品质档位；过渡装可参与填补，但受独立上限限制。分配时忽略特殊标签：凡按配装质量入选的圣遗物都会占用目标；分配完成后，再额外锁定其余符合充能、双暴与散件规则的圣遗物。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 3 / 3，额外为 10 / 5 / 3。",
+        en: "Demand margin inflates each build target regardless of quality tier. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 2 / 3; extra is 10 / 4 / 3.",
+        zh: "需求余量会直接扩大每个配装目标，不区分品质档位；过渡装可参与填补，但受独立上限限制。分配时忽略特殊标签：凡按配装质量入选的圣遗物都会占用目标；分配完成后，再额外锁定其余符合充能、双暴与散件规则的圣遗物。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 2 / 3，额外为 10 / 4 / 3。",
       },
       spTitle: { en: "Exceptions", zh: "例外规则" },
       spOverride: {

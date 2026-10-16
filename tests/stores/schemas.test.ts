@@ -638,7 +638,7 @@ describe("PersistedTriageStoreSchema", () => {
       settingsByProfileId: {
         "0": {
           qualityMargin: 10,
-          fillerKeep: 5,
+          fillerKeep: 4,
           setSlotKeep: 3,
         },
         "1": {

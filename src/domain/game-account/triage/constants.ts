@@ -7,12 +7,12 @@ import type {
 export const TRIAGE_BACKUP_AMOUNT_PRESETS = {
   normal: {
     qualityMargin: 5,
-    fillerKeep: 3,
+    fillerKeep: 2,
     setSlotKeep: 3,
   },
   extra: {
     qualityMargin: 10,
-    fillerKeep: 5,
+    fillerKeep: 4,
     setSlotKeep: 3,
   },
 } as const satisfies Record<
