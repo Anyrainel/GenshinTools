@@ -295,6 +295,7 @@ export function runUpgradePassForCharacter(
 type SlotMembership =
   | { kind: "fixed4pc"; mainSet: string }
   | { kind: "flex4pc"; mainSet: string }
+  | { kind: "flex5pc" }
   | { kind: "fixedConcrete2pc"; setKey: string }
   | { kind: "flex22" };
 
@@ -309,6 +310,9 @@ function classifySlot(
   if (composition === "4pc") {
     const mainSet = setConstraint.artifactSet;
     if (!mainSet) return null;
+    if (allSlots.every((s) => artifacts[s]?.setKey === mainSet)) {
+      return { kind: "flex5pc" };
+    }
     return equipped.setKey === mainSet
       ? { kind: "fixed4pc", mainSet }
       : { kind: "flex4pc", mainSet };
@@ -345,6 +349,7 @@ function matchesSlotMembership(
     case "fixedConcrete2pc":
       return candidate.setKey === membership.setKey;
     case "flex22":
+    case "flex5pc":
       return true;
   }
 }

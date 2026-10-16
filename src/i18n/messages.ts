@@ -1116,16 +1116,16 @@ export const i18nUiData = {
       zh: "圣遗物会按优先级内总分分配",
     },
     recommendationsHelpAllocationDesc: {
-      en: "Within a tier, artifacts are assigned to maximize the tier's total score, not by checking characters one at a time. The score assumes maximum Crit Rate buffs from character, weapon, and artifact effects; Crit Rate above 100% adds 0 score.",
-      zh: "在同一个优先级内，系统会分配圣遗物来最大化该优先级的总分，而不是逐个角色单独判断。评分会假设角色、武器和圣遗物效果提供的最大暴击率增益；超过 100% 的暴击率不再计分。",
+      en: "Artifacts are assigned to maximize each tier's total score, so an individual character may lose score. Current and allocated scores use actual artifact levels; the change is allocated score minus current score. Maximum Crit Rate buffs are assumed, and Crit Rate above 100% adds no score.",
+      zh: "系统按优先级内的总分分配圣遗物，个别角色的评分可能下降。当前评分与分配后评分都按圣遗物实际等级计算，括号内为分配后评分减去当前评分。评分假设最大暴击率增益，超过 100% 的暴击率不再计分。",
     },
     recommendationsHelpUpgradeTitle: {
       en: "Upgrade actions estimate future level-up value",
       zh: "强化操作会估算后续升级收益",
     },
     recommendationsHelpUpgradeDesc: {
-      en: "For an artifact that can still level up, the page estimates the average score gain from its remaining upgrade rolls. The luck selector changes the assumed roll value used for that estimate.",
-      zh: "如果圣遗物还能继续升级，页面会估算剩余强化次数带来的平均分数收益。词条期望会改变这个估算中使用的词条数值假设。",
+      en: "Each upgrade suggestion estimates the extra score beyond the allocated build, including main-stat growth and expected substat rolls. Suggestions are alternatives and their gains should not be added together. The luck selector changes the assumed roll values.",
+      zh: "每条强化建议显示在最佳分配基础上，升满该圣遗物预计额外增加的评分，包含主词条成长与副词条强化。各条建议是独立方案，收益不能直接相加；词条期望会改变副词条的估算数值。",
     },
     recommendationsCalculating: {
       en: "Calculating recommendations",

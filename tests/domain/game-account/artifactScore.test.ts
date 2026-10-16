@@ -5,6 +5,7 @@ import {
   matchBuild,
   type StatWeightMap,
   scoreAllSlots,
+  scoreMainStat,
   scoreWithBuilds,
 } from "@/domain/build/artifact/scoring/artifactScore";
 import { MAIN_STAT_CD_EQUIV_5STAR } from "@/domain/build/artifact/scoring/constants";
@@ -933,10 +934,14 @@ describe("normalizedScore", () => {
     it("awards CD-equiv per correct 5★ main stat slot", () => {
       const result = score(arlecchinoChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
-      // Arlecchino: sands=atk%(✓), goblet=pyro%(✓), circlet=cd(✓) → 3 × 62.1
-      expect(n.rawMainStatScore).toBeCloseTo(MAIN_STAT_CD_EQUIV_5STAR * 3, 1);
+      expect(n.rawMainStatScore).toBeCloseTo(
+        scoreMainStat("atk%", 5, 20) +
+          scoreMainStat("pyro%", 5, 20) +
+          scoreMainStat("cd", 5, 20),
+        8
+      );
       expect(n.slotMainStatScores.sands).toBeCloseTo(
-        MAIN_STAT_CD_EQUIV_5STAR,
+        scoreMainStat("atk%", 5, 20),
         1
       );
       expect(n.slotMainStatScores.goblet).toBeCloseTo(
@@ -998,12 +1003,12 @@ describe("normalizedScore", () => {
       const n = result.normalized!;
       // Only sands contributes main stat score
       expect(n.slotMainStatScores.sands).toBeCloseTo(
-        MAIN_STAT_CD_EQUIV_5STAR,
+        scoreMainStat("atk%", 5, 20),
         1
       );
       expect(n.slotMainStatScores.goblet).toBe(0);
       expect(n.slotMainStatScores.circlet).toBe(0);
-      expect(n.rawMainStatScore).toBeCloseTo(MAIN_STAT_CD_EQUIV_5STAR, 1);
+      expect(n.rawMainStatScore).toBeCloseTo(scoreMainStat("atk%", 5, 20), 8);
     });
 
     it("normalizedScore is lower with missing slots", () => {
@@ -1124,7 +1129,7 @@ describe("normalizedScore", () => {
       const result = score(mixedChar, [arlecchinoBuild], GLOBAL_CONFIG);
       const n = result.normalized!;
       expect(n.slotMainStatScores.sands).toBeCloseTo(
-        MAIN_STAT_CD_EQUIV_5STAR,
+        scoreMainStat("atk%", 5, 20),
         1
       );
       expect(n.slotMainStatScores.goblet).toBe(0);
@@ -1132,7 +1137,10 @@ describe("normalizedScore", () => {
         MAIN_STAT_CD_EQUIV_5STAR,
         1
       );
-      expect(n.rawMainStatScore).toBeCloseTo(MAIN_STAT_CD_EQUIV_5STAR * 2, 1);
+      expect(n.rawMainStatScore).toBeCloseTo(
+        scoreMainStat("atk%", 5, 20) + scoreMainStat("cd", 5, 20),
+        8
+      );
     });
   });
 
@@ -1151,7 +1159,7 @@ describe("normalizedScore", () => {
       const result = score(citlaliChar, [citlaliBuild1], GLOBAL_CONFIG);
       const n = result.normalized!;
       // Citlali: sands=em(✓), goblet=em(✓), circlet=em(✓)
-      expect(n.rawMainStatScore).toBeCloseTo(MAIN_STAT_CD_EQUIV_5STAR * 3, 1);
+      expect(n.rawMainStatScore).toBeCloseTo(scoreMainStat("em", 5, 20) * 3, 8);
     });
   });
 });

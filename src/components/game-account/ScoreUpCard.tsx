@@ -53,8 +53,6 @@ interface ScoreUpCardProps {
   recommendations?: ScoreUpAction[];
   allocatedBuild?: OptimizedBuild | null;
   allocationStatus?: "pending" | "allocated" | "unallocated";
-  /** Equipped-build score under the same engine formula as allocatedBuild.finalScore. */
-  currentScore?: number | null;
   score?: ArtifactScoreResult;
   artifactLookup: Map<string, ArtifactData>;
   onApplyCharacter?: (characterId: string) => void;
@@ -415,7 +413,6 @@ function ScoreUpCardComponent({
   recommendations,
   allocatedBuild,
   allocationStatus,
-  currentScore,
   score,
   artifactLookup,
   onApplyCharacter,
@@ -500,8 +497,6 @@ function ScoreUpCardComponent({
     }
     return slots;
   }, [allocatedBuild, currentArtifacts, allocationArtifacts]);
-  const allocationMatchesCurrent =
-    allocatedBuild != null && changedSlots.size === 0;
   const statRows = useMemo(
     () =>
       buildStatRows(
@@ -513,34 +508,15 @@ function ScoreUpCardComponent({
       ),
     [currentArtifacts, allocationArtifacts, char.key, char.level, char.weapon]
   );
-  const currentNormalizedScore = score
-    ? Math.min(300, Math.max(0, Math.round(score.normalized.normalizedScore)))
-    : null;
   const normalizedAllocationScore =
     allocatedBuild && score
-      ? allocationMatchesCurrent
-        ? currentNormalizedScore
-        : Math.min(
-            300,
-            Math.max(
-              0,
-              Math.round(
-                allocatedBuild.finalScore * score.normalized.normalizer
-              )
-            )
-          )
+      ? Math.round(allocatedBuild.finalScore * score.normalized.normalizer)
       : null;
-  // Gain must compare the allocated and equipped builds under the SAME
-  // scoring formula (the engine's), not against the normalized display
-  // score — mixing the two showed phantom gains for stat-wise downgrades.
+  // Both scorers use the same main-stat valuation and CR cap. Subtract the
+  // rounded values shown on the card so the visible numbers always add up.
   const normalizedScoreGain =
-    allocatedBuild && score && currentScore != null
-      ? allocationMatchesCurrent
-        ? 0
-        : Math.round(
-            (allocatedBuild.finalScore - currentScore) *
-              score.normalized.normalizer
-          )
+    normalizedAllocationScore != null && score
+      ? normalizedAllocationScore - Math.round(score.normalized.normalizedScore)
       : null;
 
   const charInfo = charactersById[char.key];
@@ -762,6 +738,7 @@ function ScoreUpCardComponent({
                       ].join("-")}
                       recommendation={rec}
                       artifactLookup={artifactLookup}
+                      scoreNormalizer={score?.normalized.normalizer}
                       inline
                     />
                   ))

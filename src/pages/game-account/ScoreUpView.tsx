@@ -159,7 +159,7 @@ export function ScoreUpView({
     APPLY_RECOMMENDATION_TIERS
   );
 
-  const recommendationCacheKey = useMemo(() => {
+  const allocationCacheKey = useMemo(() => {
     if (!activeAccount || !accountData || !hasAnyBuilds || !crBudgetDataReady) {
       return null;
     }
@@ -185,6 +185,10 @@ export function ScoreUpView({
     scores,
     tierAssignments,
   ]);
+
+  const recommendationCacheKey = allocationCacheKey
+    ? `${allocationCacheKey}:${hashString(JSON.stringify(luckExpectationByTier))}`
+    : null;
 
   const cachedRecommendations = recommendationCacheKey
     ? cacheGet(recommendationCacheKey)
@@ -233,6 +237,8 @@ export function ScoreUpView({
       !recommendationCacheKey ||
       activeRunKey !== recommendationCacheKey ||
       isComputing ||
+      recommendationError ||
+      progress.completedTierCount !== progress.totalTierCount ||
       !allRecs
     ) {
       return;
@@ -246,6 +252,7 @@ export function ScoreUpView({
     recommendationCacheKey,
     activeRunKey,
     isComputing,
+    recommendationError,
     allRecs,
     progress,
     cacheSet,
@@ -273,7 +280,10 @@ export function ScoreUpView({
         accountData &&
         recommendationCacheKey &&
         displayedRecommendations &&
-        !isCalculating
+        !isCalculating &&
+        !recommendationError &&
+        displayedProgress.completedTierCount ===
+          displayedProgress.totalTierCount
       ) {
         const recommendations = recomputeTierUpgrades(
           displayedRecommendations,
@@ -283,7 +293,13 @@ export function ScoreUpView({
           luckExpectation,
           allocationOptions
         );
-        cacheSet(recommendationCacheKey, {
+        const nextCacheKey = `${allocationCacheKey}:${hashString(
+          JSON.stringify({
+            ...luckExpectationByTier,
+            [tier]: luckExpectation,
+          })
+        )}`;
+        cacheSet(nextCacheKey, {
           recommendations,
           progress: displayedProgress,
         });
@@ -293,9 +309,12 @@ export function ScoreUpView({
     [
       accountData,
       recommendationCacheKey,
+      allocationCacheKey,
+      luckExpectationByTier,
       displayedRecommendations,
       tierAssignments,
       isCalculating,
+      recommendationError,
       allocationOptions,
       cacheSet,
       displayedProgress,
@@ -327,7 +346,6 @@ export function ScoreUpView({
         scoreResult: ArtifactScoreResult;
         recommendations: ScoreUpAction[];
         allocatedBuild: CharacterActions["allocatedBuild"];
-        currentScore: number | null;
         allocationStatus: "pending" | "allocated" | "unallocated";
       }[]
     > = {};
@@ -345,7 +363,6 @@ export function ScoreUpView({
       const charRecs = displayedRecommendations.perCharacter[char.key];
       const recommendations = charRecs?.actions ?? [];
       const allocatedBuild = charRecs?.allocatedBuild ?? null;
-      const currentScore = charRecs?.currentScore ?? null;
       const allocationStatus =
         !charRecs && isCalculating
           ? "pending"
@@ -358,7 +375,6 @@ export function ScoreUpView({
         scoreResult,
         recommendations,
         allocatedBuild,
-        currentScore,
         allocationStatus,
       } as const;
       if (!byTier[tier]) {
@@ -816,7 +832,6 @@ export function ScoreUpView({
                   scoreResult,
                   recommendations,
                   allocatedBuild,
-                  currentScore,
                   allocationStatus,
                 }) => (
                   <ScoreUpCard
@@ -826,7 +841,6 @@ export function ScoreUpView({
                     recommendations={recommendations}
                     allocatedBuild={allocatedBuild}
                     allocationStatus={allocationStatus}
-                    currentScore={currentScore}
                     score={scoreResult}
                     artifactLookup={artifactLookup}
                     onApplyCharacter={handleOpenCharacterApply}

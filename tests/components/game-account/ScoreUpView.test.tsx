@@ -5,13 +5,15 @@ import type {
   StatScoreBreakdown,
 } from "@/domain/build/artifact/scoring/artifactScore";
 import type { SubStat } from "@/domain/enums";
+import type { AllActions } from "@/domain/game-account/scoreUpEngine";
 import type { Build } from "@/domain/models";
 import { ScoreUpView } from "@/pages/game-account/ScoreUpView";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useScoreUpCacheStore } from "@/stores/useScoreUpCacheStore";
+import { useScoreUpSettingsStore } from "@/stores/useScoreUpSettingsStore";
 import { useTierStore } from "@/stores/useTierStore";
-import { render, screen, waitFor } from "../../utils/render";
+import { act, fireEvent, render, screen, waitFor } from "../../utils/render";
 
 const gameStatReadiness = vi.hoisted(() => ({
   character: true,
@@ -20,6 +22,11 @@ const gameStatReadiness = vi.hoisted(() => ({
 const recommendationSpies = vi.hoisted(() => ({
   start: vi.fn(),
   stop: vi.fn(),
+}));
+const recommendationState = vi.hoisted(() => ({
+  recommendations: null as AllActions | null,
+  error: null as Error | null,
+  progress: { completedTierCount: 1, totalTierCount: 1, currentTier: null },
 }));
 
 vi.mock("@/domain/reference/stats", async (importOriginal) => {
@@ -40,14 +47,10 @@ vi.mock("@/domain/reference/stats", async (importOriginal) => {
 
 vi.mock("@/hooks/useAsyncRecommendations", () => ({
   useAsyncScoreUp: () => ({
-    recommendations: null,
-    progress: {
-      completedTierCount: 0,
-      totalTierCount: 0,
-      currentTier: null,
-    },
+    recommendations: recommendationState.recommendations,
+    progress: recommendationState.progress,
     isComputing: false,
-    error: null,
+    error: recommendationState.error,
     start: recommendationSpies.start,
     stop: recommendationSpies.stop,
   }),
@@ -109,6 +112,14 @@ describe("ScoreUpView", () => {
     gameStatReadiness.weapon = true;
     recommendationSpies.start.mockClear();
     recommendationSpies.stop.mockClear();
+    recommendationState.recommendations = null;
+    recommendationState.error = null;
+    recommendationState.progress = {
+      completedTierCount: 1,
+      totalTierCount: 1,
+      currentTier: null,
+    };
+    useScoreUpSettingsStore.setState({ settingsByProfileId: {} });
     useAccountStore.getState().clearAccounts();
     useBuildsStore.getState().clearAll();
     useScoreUpCacheStore.getState().clear();
@@ -121,6 +132,98 @@ describe("ScoreUpView", () => {
     expect(
       screen.getByText("Account Data & Builds Required")
     ).toBeInTheDocument();
+  });
+
+  function prepareCachedRun() {
+    useAccountStore.getState().addOrUpdateAccount(0, {
+      data: {
+        characters: [
+          {
+            key: "hu_tao",
+            level: 90,
+            constellation: 0,
+            talent: { auto: 1, skill: 1, burst: 1 },
+            artifacts: {},
+          },
+        ],
+        extraArtifacts: [],
+        extraWeapons: [],
+      },
+    });
+    useBuildsStore.setState({
+      enabledResolvedBuildGroups: [
+        { characterId: "hu_tao", builds: [mockBuild], weapons: [] },
+      ],
+    });
+    useTierStore
+      .getState()
+      .setTierAssignments({ hu_tao: { tier: "S", position: 0 } });
+    recommendationState.recommendations = {
+      byActionType: { swap: [], equip: [], upgrade: [] },
+      perCharacter: {},
+    };
+  }
+
+  it("separates cached results by luck settings and reuses the matching cache", async () => {
+    prepareCachedRun();
+    render(<ScoreUpView scores={{ hu_tao: mockScoreResult }} />);
+    await waitFor(() =>
+      expect(useScoreUpCacheStore.getState().cache.size).toBe(1)
+    );
+    expect(recommendationSpies.start).toHaveBeenCalledTimes(1);
+    act(() =>
+      useScoreUpSettingsStore.getState().setTierLuckExpectation("S", "hopeful")
+    );
+    await waitFor(() =>
+      expect(recommendationSpies.start).toHaveBeenCalledTimes(2)
+    );
+    await waitFor(() =>
+      expect(useScoreUpCacheStore.getState().cache.size).toBe(2)
+    );
+    expect(
+      recommendationSpies.start.mock.lastCall?.[0].tierCustomization.S
+        .luckExpectation
+    ).toBe("hopeful");
+    act(() =>
+      useScoreUpSettingsStore.getState().setTierLuckExpectation("S", "balanced")
+    );
+    expect(recommendationSpies.start).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(["failed", "incomplete"])(
+    "does not cache %s calculations as complete results",
+    async (state) => {
+      prepareCachedRun();
+      if (state === "failed")
+        recommendationState.error = new Error("test failure");
+      else
+        recommendationState.progress = {
+          completedTierCount: 1,
+          totalTierCount: 2,
+          currentTier: null,
+        };
+      render(<ScoreUpView scores={{ hu_tao: mockScoreResult }} />);
+      await waitFor(() =>
+        expect(recommendationSpies.start).toHaveBeenCalledTimes(1)
+      );
+      expect(useScoreUpCacheStore.getState().cache.size).toBe(0);
+    }
+  );
+
+  it("stores an upgrade-only refresh under the newly selected luck setting", async () => {
+    prepareCachedRun();
+    render(<ScoreUpView scores={{ hu_tao: mockScoreResult }} />);
+    await waitFor(() =>
+      expect(useScoreUpCacheStore.getState().cache.size).toBe(1)
+    );
+    fireEvent.click(screen.getByRole("radio", { name: "Hopeful" }));
+    await waitFor(() =>
+      expect(useScoreUpCacheStore.getState().cache.size).toBe(2)
+    );
+    expect(recommendationSpies.start).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole("radio", { name: "Balanced" }));
+    expect(useScoreUpCacheStore.getState().cache.size).toBe(2);
+    expect(recommendationSpies.start).toHaveBeenCalledTimes(1);
   });
 
   it("renders tier headings when account data exists", () => {

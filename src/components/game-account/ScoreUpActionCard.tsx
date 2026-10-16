@@ -24,6 +24,8 @@ interface ScoreUpActionCardProps {
   tierColor?: string;
   /** When true, renders without character icon (used inside per-character cards) */
   inline?: boolean;
+  /** Convert engine CD-equivalent points to the character's displayed score. */
+  scoreNormalizer?: number;
 }
 
 function getActionIcon(actionType: string) {
@@ -122,6 +124,7 @@ function ScoreUpActionCardComponent({
   artifactLookup,
   tierColor,
   inline,
+  scoreNormalizer = 1,
 }: ScoreUpActionCardProps) {
   const { t } = useLanguage();
   const charInfo = charactersById[rec.characterId];
@@ -129,6 +132,7 @@ function ScoreUpActionCardComponent({
 
   const { icon: Icon, color, bg } = getActionIcon(rec.actionType);
   const borderClass = tierColor ?? getBorderColor(rec.slotScoreDiff);
+  const scoreDiff = rec.slotScoreDiff * scoreNormalizer;
 
   // Resolve artifacts by ID
   const currentArtifact = rec.currentArtifactId
@@ -204,17 +208,17 @@ function ScoreUpActionCardComponent({
 
         {inline ? (
           <span className="text-lg italic font-extrabold tracking-tighter leading-none bg-linear-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-xs">
-            {rec.slotScoreDiff > 0 ? "+" : ""}
-            {rec.slotScoreDiff.toFixed(1)}
+            {scoreDiff > 0 ? "+" : ""}
+            {scoreDiff.toFixed(1)}
           </span>
         ) : (
           <>
             <span className="text-sm font-semibold text-foreground">
               {t.character(rec.characterId)}
             </span>
-            {rec.slotScoreDiff > 0 && (
+            {scoreDiff > 0 && (
               <span className="text-base italic font-extrabold tracking-tighter bg-linear-to-br from-amber-100 via-orange-300 to-amber-500 bg-clip-text text-transparent drop-shadow-xs">
-                +{rec.slotScoreDiff.toFixed(1)}
+                +{scoreDiff.toFixed(1)}
               </span>
             )}
             <Icon className={cn("w-3.5 h-3.5 shrink-0", color)} />

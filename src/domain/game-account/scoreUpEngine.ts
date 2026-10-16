@@ -519,40 +519,12 @@ function currentBuildScore(
 ): number {
   if (!alloc.context) return 0;
   const { config } = alloc.context;
-  const completeArtifacts = {} as OptimizedBuild["artifacts"];
-  let isComplete = true;
-  for (const slot of allSlots) {
-    const eq = char.artifacts[slot];
-    if (!eq) {
-      isComplete = false;
-      break;
-    }
-    completeArtifacts[slot] = {
-      ...eq,
-      source: "current",
-      sourceArtifactId: eq.id,
-    };
-  }
-  if (isComplete) {
-    return scoreFullBuild(
-      completeArtifacts,
-      config.weights,
-      config.targetMainStatWeights,
-      config.crBudget
-    ).finalScore;
-  }
-
-  let total = 0;
-  for (const slot of allSlots) {
-    const eq = char.artifacts[slot];
-    if (!eq) continue;
-    total += scoreSlotWithMainStatWeights(
-      eq,
-      config.weights,
-      config.targetMainStatWeights[slot]
-    );
-  }
-  return total;
+  return scoreFullBuild(
+    char.artifacts,
+    config.weights,
+    config.targetMainStatWeights,
+    config.crBudget
+  ).finalScore;
 }
 
 /** Build a flat artifact lookup map from account data (keyed by artifact ID). */

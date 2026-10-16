@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { scoreWithBuilds } from "@/domain/build/artifact/scoring/artifactScore";
 import type { Slot } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
 import { scoreFullBuild } from "@/domain/game-account/buildOptimizer";
@@ -619,4 +620,45 @@ describe("recomputeTierUpgrades end-to-end", () => {
       originalUpgrade!.slotScoreDiff
     );
   });
+});
+
+describe("recommendation score baselines", () => {
+  it.each([false, true])(
+    "matches public scores before and after allocation (partial: %s)",
+    (partial) => {
+      const equipped = crReliefEquipped();
+      equipped.circlet = { ...equipped.circlet, level: 4 };
+      const account = makeDpsAccount(equipped, crReliefExtras());
+      if (partial) {
+        account.extraArtifacts.push(equipped.sands);
+        delete account.characters[0].artifacts.sands;
+      }
+      const globalConfig = { flatAtk: 100, flatHp: 100, flatDef: 100 };
+      const before = scoreWithBuilds(
+        account.characters[0],
+        [scoreUpBuild],
+        globalConfig,
+        0.05
+      )!;
+      const result = generateAllScoreActions(account, { dps: before }, dpsTier);
+      const entry = result.perCharacter.dps;
+      expect(entry.currentScore! * before.normalized.normalizer).toBeCloseTo(
+        before.normalized.normalizedScore,
+        8
+      );
+      expect(entry.allocatedBuild).not.toBeNull();
+      const after = scoreWithBuilds(
+        {
+          ...account.characters[0],
+          artifacts: entry.allocatedBuild!.artifacts,
+        },
+        [scoreUpBuild],
+        globalConfig,
+        0.05
+      )!;
+      expect(
+        entry.allocatedBuild!.finalScore * before.normalized.normalizer
+      ).toBeCloseTo(after.normalized.normalizedScore, 8);
+    }
+  );
 });

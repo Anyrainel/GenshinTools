@@ -23,6 +23,13 @@ import {
   computeWeightedCrDeduction,
 } from "@/domain/build/artifact/scoring/utils";
 import type { MainStat, Slot, SubStat } from "@/domain/enums";
+import { allSlots } from "@/domain/enums";
+import {
+  optimizeBuild,
+  scoreFullBuild,
+} from "@/domain/game-account/buildOptimizer";
+import type { CandidateArtifact } from "@/domain/game-account/candidatePool";
+import type { CrBudgetResult } from "@/domain/game-account/maxCrBuff";
 import type {
   ArtifactData,
   Build,
@@ -372,5 +379,152 @@ describe("scoreWithBuilds resolver form", () => {
     expect(
       unclamped.substatScore.subScore - resolved.substatScore.subScore
     ).toBeCloseTo(computeCrDeduction(0.3, 0.9, 100), 6);
+  });
+});
+
+describe("display and recommendation scoring agree", () => {
+  it.each([
+    {
+      level: 0,
+      rarity: 5,
+      crWeight: 100,
+      mainWeight: 100,
+      nonArtifactCr: 0.05,
+      partial: false,
+    },
+    {
+      level: 12,
+      rarity: 5,
+      crWeight: 20,
+      mainWeight: 100,
+      nonArtifactCr: 0.85,
+      partial: false,
+    },
+    {
+      level: 4,
+      rarity: 4,
+      crWeight: 100,
+      mainWeight: 20,
+      nonArtifactCr: 0.95,
+      partial: false,
+    },
+    {
+      level: 20,
+      rarity: 5,
+      crWeight: 0,
+      mainWeight: 100,
+      nonArtifactCr: 1.1,
+      partial: false,
+    },
+    {
+      level: 8,
+      rarity: 5,
+      crWeight: 100,
+      mainWeight: 50,
+      nonArtifactCr: 0.9,
+      partial: true,
+    },
+  ] as const)(
+    "uses identical main-stat and CR accounting: %j",
+    ({ level, rarity, crWeight, mainWeight, nonArtifactCr, partial }) => {
+      const build = makeBuild({
+        substats: [
+          { stat: "cr", weight: crWeight },
+          { stat: "cd", weight: 100 },
+        ],
+        gobletWeights: [{ stat: "pyro%", weight: 75, cdEquiv: 85 }],
+        circletWeights: [{ stat: "cr", weight: mainWeight }],
+      });
+      const char: CharacterData = {
+        key: "test-char",
+        level: 90,
+        constellation: 0,
+        talent: { auto: 1, skill: 1, burst: 1 },
+        artifacts: {
+          flower: artifact("flower", "hp", { cr: 15, cd: 10 }),
+          plume: artifact("plume", "atk", { cr: 15 }),
+          sands: artifact("sands", "atk%", {}, { level, rarity }),
+          goblet: artifact("goblet", "pyro%", {}, { level, rarity }),
+          circlet: artifact("circlet", "cr", { cd: 14 }, { level, rarity }),
+        },
+      };
+      if (partial) delete char.artifacts.plume;
+      const displayed = scoreWithBuilds(
+        char,
+        [build],
+        GLOBAL_CONFIG,
+        nonArtifactCr
+      )!;
+      const targetMainStatWeights = Object.fromEntries(
+        allSlots.map((slot) => [
+          slot,
+          getTargetMainStatWeightsForSlot(
+            slot,
+            build,
+            char.artifacts[slot],
+            char.key
+          ),
+        ])
+      ) as Record<Slot, Map<MainStat, number>>;
+      const crBudget = { totalNonArtifactCr: nonArtifactCr } as CrBudgetResult;
+      const evaluated = scoreFullBuild(
+        char.artifacts,
+        displayed.buildMatch.statWeights,
+        targetMainStatWeights,
+        crBudget
+      );
+      expect(
+        evaluated.finalScore * displayed.normalized.normalizer
+      ).toBeCloseTo(displayed.normalized.normalizedScore, 8);
+
+      const candidates = Object.fromEntries(
+        allSlots.map((slot) => [
+          slot,
+          char.artifacts[slot]
+            ? [{ ...char.artifacts[slot], source: "current" }]
+            : [],
+        ])
+      ) as Record<Slot, CandidateArtifact[]>;
+      const optimized = optimizeBuild({
+        candidates,
+        weights: displayed.buildMatch.statWeights,
+        crBudget,
+        targetMainStatWeights,
+        setConstraint: { composition: "4pc", artifactSet: "set_b" },
+      });
+      expect(optimized.currentScore).toBeCloseTo(evaluated.finalScore, 8);
+      if (!partial)
+        expect(optimized.builds[0].finalScore).toBeCloseTo(
+          evaluated.finalScore,
+          8
+        );
+    }
+  );
+
+  it("accepts the healer's healing circlet in both scoring paths", () => {
+    const build = makeBuild({
+      characterId: "barbara",
+      circletWeights: [{ stat: "hp%", weight: 100 }],
+    });
+    const circlet = artifact("circlet", "heal%", {}, { level: 4 });
+    const char: CharacterData = {
+      key: "barbara",
+      level: 90,
+      constellation: 0,
+      talent: { auto: 1, skill: 1, burst: 1 },
+      artifacts: { circlet },
+    };
+    const score = scoreWithBuilds(char, [build], GLOBAL_CONFIG)!;
+    const weights = getTargetMainStatWeightsForSlot(
+      "circlet",
+      build,
+      circlet,
+      char.key
+    );
+    expect(weights.get("heal%")).toBe(100);
+    expect(score.normalized.slotMainStatScores.circlet).toBeCloseTo(
+      scoreMainStat("heal%", 5, 4),
+      8
+    );
   });
 });

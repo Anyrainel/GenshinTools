@@ -1,5 +1,6 @@
 import type { Slot } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
+import type { ArtifactData } from "@/domain/models";
 import {
   type StatWeightMap,
   scoreSlotWithMainStatWeights,
@@ -55,7 +56,7 @@ export interface BuildOptimizerResult {
  * (decimal). Main-stat CR uses the at-level value so the cap accounting
  * matches the at-level credit from scoreSlotWithMainStatWeights.
  */
-function getCandidateCrParts(art: CandidateArtifact): {
+function getCandidateCrParts(art: ArtifactData): {
   mainCr: number;
   subCr: number;
 } {
@@ -244,18 +245,17 @@ export function optimizeBuild(
   const tracker = new TopNTracker(topN);
   let combinationsEvaluated = 0;
 
-  // Compute current score (sum of all "current" source candidates)
-  let currentScore = 0;
+  const currentArtifacts: Partial<Record<Slot, CandidateArtifact>> = {};
   for (const slot of slots) {
     const current = candidates[slot].find((c) => c.source === "current");
-    if (current) {
-      currentScore += scoreSlotWithMainStatWeights(
-        current,
-        weights,
-        targetMainStatWeights[slot]
-      );
-    }
+    if (current) currentArtifacts[slot] = current;
   }
+  const currentScore = scoreFullBuild(
+    currentArtifacts,
+    weights,
+    targetMainStatWeights,
+    crBudget
+  ).finalScore;
 
   // CR weight for penalty calculation
   const crWeight = weights.cr ?? 0;
@@ -520,7 +520,7 @@ export function optimizeBuildWithCrCdExploration(
  * "what if I swap this artifact for an upgraded variant".
  */
 export function scoreFullBuild(
-  artifacts: Record<Slot, CandidateArtifact>,
+  artifacts: Partial<Record<Slot, ArtifactData>>,
   weights: StatWeightMap,
   targetMainStatWeights: Record<Slot, ReadonlyMap<string, number>>,
   crBudget: CrBudgetResult

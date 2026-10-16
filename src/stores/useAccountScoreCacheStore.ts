@@ -160,7 +160,7 @@ export const useAccountScoreCacheStore = create<AccountScoreCacheStore>()(
     }),
     {
       name: "account-score-cache-storage",
-      version: 3,
+      version: 4,
       migrate: migrateAccountScoreCacheStore,
       partialize: (state) => ({
         scoresByProfileId: state.scoresByProfileId,

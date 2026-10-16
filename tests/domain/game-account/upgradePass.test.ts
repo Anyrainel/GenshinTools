@@ -92,6 +92,64 @@ function makeAllocatedBuild(
 }
 
 describe("runUpgradePassForCharacter", () => {
+  it("can replace any piece of a five-piece set with an upgraded off-set artifact", () => {
+    const artifacts = Object.fromEntries(
+      allSlots.map((slot) => [
+        slot,
+        candidate(artifact(slot, `current-${slot}`, "Main", 20, {})),
+      ])
+    ) as Record<Slot, CandidateArtifact>;
+    const build = makeAllocatedBuild(artifacts);
+    const allocation: AllocatedBuild = {
+      characterId: "hu_tao",
+      tier: "S",
+      build,
+      equipped: artifacts,
+      luckExpectation: "balanced",
+      context: {
+        config: {
+          weights,
+          candidates: {
+            flower: [],
+            plume: [],
+            sands: [],
+            goblet: [],
+            circlet: [],
+          },
+          crBudget,
+          targetMainStatWeights,
+          setConstraint: { composition: "4pc", artifactSet: "Main" },
+        },
+        crBudget,
+        scoreResult: null as never,
+      },
+    };
+    const offSet = artifact("flower", "off-set-upgrade", "Off", 0, {
+      cd: 7.8,
+      cr: 3.9,
+      "atk%": 5.8,
+      er: 6.5,
+    });
+    const result = runUpgradePassForCharacter(allocation, [
+      ...Object.values(artifacts),
+      offSet,
+    ]);
+    expect(result.recommendations).toContainEqual(
+      expect.objectContaining({ upgradeArtifactId: offSet.id, strategy: 1 })
+    );
+    artifacts.plume = candidate(
+      artifact("plume", "already-off-set", "Off", 20, {})
+    );
+    allocation.build = makeAllocatedBuild(artifacts);
+    expect(
+      runUpgradePassForCharacter(allocation, [
+        ...Object.values(artifacts),
+        offSet,
+      ]).recommendations
+    ).not.toContainEqual(
+      expect.objectContaining({ upgradeArtifactId: offSet.id })
+    );
+  });
   it("does not use blocked same-or-higher-tier artifacts as compound swap partners", () => {
     const allocatedArtifacts = {
       flower: candidate(artifact("flower", "current-flex", "Off", 20, {})),

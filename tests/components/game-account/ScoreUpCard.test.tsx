@@ -8,7 +8,7 @@ import {
   createArtifactScoreResult,
   createCharacterData,
 } from "../../fixtures";
-import { render, screen } from "../../utils/render";
+import { fireEvent, render, screen } from "../../utils/render";
 
 const SLOT_MAINS: Record<Slot, MainStat> = {
   flower: "hp",
@@ -120,8 +120,10 @@ describe("ScoreUpCard", () => {
   });
 
   describe("score gain badge", () => {
-    // Fixture score: normalizedScore = 150, normalizer = 3.
-    const score = createArtifactScoreResult();
+    // Current raw score 70, normalized to 210 (normalizer = 3).
+    const score = createArtifactScoreResult({
+      normalized: { normalizedScore: 210 },
+    });
     const equippedChar = createCharacterData({
       key: "hu_tao",
       level: 90,
@@ -129,10 +131,7 @@ describe("ScoreUpCard", () => {
       artifacts: makeEquippedArtifacts("equipped"),
     });
 
-    it("shows a negative rose gain from (finalScore - currentScore) * normalizer, not vs normalizedScore", () => {
-      // finalScore 60 * normalizer 3 = display 180 > normalizedScore 150, so a
-      // comparison against the normalized display score would show a phantom
-      // +30; the engine-formula gain is (60 - 70) * 3 = -30.
+    it("shows a negative gain matching the visible before and after scores", () => {
       const allocatedBuild = makeOptimizedBuild(60);
       render(
         <ScoreUpCard
@@ -140,7 +139,6 @@ describe("ScoreUpCard", () => {
           tier="S"
           allocatedBuild={allocatedBuild}
           allocationStatus="allocated"
-          currentScore={70}
           score={score}
           artifactLookup={makeLookup(
             equippedChar.artifacts,
@@ -164,7 +162,6 @@ describe("ScoreUpCard", () => {
           tier="S"
           allocatedBuild={allocatedBuild}
           allocationStatus="allocated"
-          currentScore={70}
           score={score}
           artifactLookup={makeLookup(
             equippedChar.artifacts,
@@ -183,35 +180,33 @@ describe("ScoreUpCard", () => {
       const idsBySlot = Object.fromEntries(
         allSlots.map((slot) => [slot, `equipped-${slot}`])
       ) as Record<Slot, string>;
-      // Score mismatch (60 vs 70) must be ignored when every slot keeps the
-      // currently equipped artifact.
-      const allocatedBuild = makeOptimizedBuild(60, idsBySlot);
+      const allocatedBuild = makeOptimizedBuild(70, idsBySlot);
       render(
         <ScoreUpCard
           char={equippedChar}
           tier="S"
           allocatedBuild={allocatedBuild}
           allocationStatus="allocated"
-          currentScore={70}
           score={score}
           artifactLookup={makeLookup(equippedChar.artifacts)}
         />
       );
 
-      // Allocation score falls back to the current normalized score (150).
-      expect(screen.getAllByText("150").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("210")).toHaveLength(2);
       expect(screen.queryByText(/^\([+-]\d+\)$/)).not.toBeInTheDocument();
     });
 
-    it("hides the gain badge when currentScore is absent but still shows the allocation score", () => {
-      const allocatedBuild = makeOptimizedBuild(80);
+    it("shows -3 when the visible scores are 195 and 192", () => {
+      const allocatedBuild = makeOptimizedBuild(64);
       render(
         <ScoreUpCard
           char={equippedChar}
           tier="S"
           allocatedBuild={allocatedBuild}
           allocationStatus="allocated"
-          score={score}
+          score={createArtifactScoreResult({
+            normalized: { normalizedScore: 195 },
+          })}
           artifactLookup={makeLookup(
             equippedChar.artifacts,
             allocatedBuild.artifacts
@@ -219,8 +214,64 @@ describe("ScoreUpCard", () => {
         />
       );
 
-      expect(screen.getByText("240")).toHaveClass("text-amber-400");
-      expect(screen.queryByText(/^\([+-]\d+\)$/)).not.toBeInTheDocument();
+      expect(screen.getByText("192")).toHaveClass("text-amber-400");
+      expect(screen.getByText("195")).toBeInTheDocument();
+      expect(screen.getByText("(-3)")).toBeInTheDocument();
+    });
+
+    it("subtracts rounded endpoints and preserves scores above 300", () => {
+      const allocatedBuild = makeOptimizedBuild(100.2);
+      render(
+        <ScoreUpCard
+          char={equippedChar}
+          tier="S"
+          allocatedBuild={allocatedBuild}
+          score={createArtifactScoreResult({
+            normalized: { normalizedScore: 299.4 },
+          })}
+          artifactLookup={makeLookup(
+            equippedChar.artifacts,
+            allocatedBuild.artifacts
+          )}
+        />
+      );
+      expect(screen.getByText("301")).toBeInTheDocument();
+      expect(screen.getByText("299")).toBeInTheDocument();
+      expect(screen.getByText("(+2)")).toBeInTheDocument();
+    });
+
+    it("shows additional upgrade gains in the same units as the build score", () => {
+      const allocatedBuild = makeOptimizedBuild(70);
+      render(
+        <ScoreUpCard
+          char={equippedChar}
+          tier="S"
+          allocatedBuild={allocatedBuild}
+          score={score}
+          artifactLookup={makeLookup(
+            equippedChar.artifacts,
+            allocatedBuild.artifacts
+          )}
+          recommendations={[
+            {
+              actionType: "upgrade",
+              characterId: "hu_tao",
+              slot: "flower",
+              sourceArtifactId: "alloc-flower",
+              currentArtifactId: "alloc-flower",
+              setKey: "Main",
+              slotScoreDiff: 5,
+              buildScoreDiff: 5,
+              maxPotentialScore: 75,
+            },
+          ]}
+        />
+      );
+      fireEvent.click(
+        screen.getByRole("button", { name: "Upgrade suggestions" })
+      );
+      expect(screen.getByText("+15.0")).toBeInTheDocument();
+      expect(screen.queryByText("+5.0")).not.toBeInTheDocument();
     });
   });
 });
