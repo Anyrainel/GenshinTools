@@ -234,6 +234,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
         (s.kind === "levelup" && showLevelup)) &&
       setCategoryFilters[getResourceSetCategory(s.setId)] &&
       (!onlyInitialFourSubstats ||
+        s.kind === "craft" ||
         (s.sourceArtifact && startedWithFourSubstats(s.sourceArtifact)))
   );
   const setSummaries = useMemo(
