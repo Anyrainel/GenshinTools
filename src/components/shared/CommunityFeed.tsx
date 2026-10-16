@@ -10,18 +10,21 @@ export function CommunityFeed<T extends { id: string }>({
   path,
   revision = 0,
   includeOwn = false,
+  compact = false,
   renderItem,
 }: {
   path: string;
   revision?: number;
   includeOwn?: boolean;
+  compact?: boolean;
   renderItem: (item: T) => React.ReactNode;
 }) {
   return (
     <FeedPage<T>
-      key={`${path}:${revision}`}
+      key={`${path}:${revision}:${includeOwn}`}
       path={path}
       includeOwn={includeOwn}
+      compact={compact}
       renderItem={renderItem}
     />
   );
@@ -31,10 +34,12 @@ function FeedPage<T extends { id: string }>({
   path,
   renderItem,
   includeOwn,
+  compact,
 }: {
   path: string;
   renderItem: (item: T) => React.ReactNode;
   includeOwn: boolean;
+  compact: boolean;
 }) {
   const { t } = useLanguage();
   const [cursors, setCursors] = useState<(string | null)[]>([null]);
@@ -77,41 +82,47 @@ function FeedPage<T extends { id: string }>({
         data.items.map((item) => (
           <article
             key={item.id}
-            className="rounded-lg border border-border bg-gradient-card p-4 space-y-2 break-words"
+            className={
+              compact
+                ? "min-w-0 space-y-2 break-words py-2"
+                : "rounded-lg border border-border bg-gradient-card p-4 space-y-2 break-words"
+            }
           >
             {renderItem(item)}
           </article>
         ))
       )}
-      <nav
-        className="flex items-center justify-between gap-3"
-        aria-label={t.ui("community.pagination")}
-      >
-        <Button
-          variant="outline"
-          disabled={page === 0 || !data}
-          onClick={() =>
-            setRequest({ page: page - 1, cursor: cursors[page - 1] })
-          }
+      {(page > 0 || data?.nextCursor) && (
+        <nav
+          className="flex items-center justify-between gap-3"
+          aria-label={t.ui("community.pagination")}
         >
-          {t.ui("community.previous")}
-        </Button>
-        <span>{page + 1}</span>
-        <Button
-          variant="outline"
-          disabled={!data?.nextCursor}
-          onClick={() => {
-            if (!data?.nextCursor) return;
-            setCursors((values) => [
-              ...values.slice(0, page + 1),
-              data.nextCursor,
-            ]);
-            setRequest({ page: page + 1, cursor: data.nextCursor });
-          }}
-        >
-          {t.ui("community.next")}
-        </Button>
-      </nav>
+          <Button
+            variant="outline"
+            disabled={page === 0 || !data}
+            onClick={() =>
+              setRequest({ page: page - 1, cursor: cursors[page - 1] })
+            }
+          >
+            {t.ui("community.previous")}
+          </Button>
+          <span>{page + 1}</span>
+          <Button
+            variant="outline"
+            disabled={!data?.nextCursor}
+            onClick={() => {
+              if (!data?.nextCursor) return;
+              setCursors((values) => [
+                ...values.slice(0, page + 1),
+                data.nextCursor,
+              ]);
+              setRequest({ page: page + 1, cursor: data.nextCursor });
+            }}
+          >
+            {t.ui("community.next")}
+          </Button>
+        </nav>
+      )}
     </div>
   );
 }

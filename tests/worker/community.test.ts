@@ -7,9 +7,10 @@ import gameMigration from "../../migrations/0006_feedback_game.sql?raw";
 import commentSchema from "../../migrations/0007_character_comments.sql?raw";
 import publicMigration from "../../migrations/0008_public_feedback.sql?raw";
 import controlsMigration from "../../migrations/0009_feedback_controls.sql?raw";
+import threadMigration from "../../migrations/0010_comment_threads.sql?raw";
 import { handleCommunityRequest } from "../../worker/community";
+import { maskFeedbackEmail } from "../../worker/communityAuthor";
 import { handleFeedbackRequest } from "../../worker/feedback";
-import { maskFeedbackEmail } from "../../worker/feedbackFeed";
 import { sha256Hex } from "./jwtTestUtils";
 
 beforeAll(async () => {
@@ -20,6 +21,7 @@ beforeAll(async () => {
     gameMigration,
     commentSchema,
     publicMigration,
+    threadMigration,
   ]) {
     for (const sql of schema
       .replace(/^--.*$/gm, "")
@@ -205,13 +207,13 @@ describe("Public community API with migrated D1", () => {
   it("paginates equal timestamps without duplicates and isolates character/game threads", async () => {
     for (let i = 0; i < 23; i++) {
       await env.BACKUP_DB.prepare(
-        "INSERT INTO character_comments VALUES (?, 'social-user', 'GI', 'amber', ?, 100)"
+        "INSERT INTO character_comments (id, user_id, game, character_id, body, created_at) VALUES (?, 'social-user', 'GI', 'amber', ?, 100)"
       )
         .bind(`id_${String(i).padStart(2, "0")}`, `Post ${i}`)
         .run();
     }
     await env.BACKUP_DB.prepare(
-      "INSERT INTO character_comments VALUES ('other', 'social-user', 'HSR', 'amber', 'Other game', 200)"
+      "INSERT INTO character_comments (id, user_id, game, character_id, body, created_at) VALUES ('other', 'social-user', 'HSR', 'amber', 'Other game', 200)"
     ).run();
     const url = new URL(
       "https://example.com/api/community/v1/characters/amber/comments"
@@ -273,5 +275,123 @@ describe("Public community API with migrated D1", () => {
     expect(
       (await handleCommunityRequest(new Request(url), url, env)).status
     ).toBe(422);
+  });
+  it("masks authors, enforces ownership and one reply level, paginates five replies and preserves them on deletion", async () => {
+    const db = env.BACKUP_DB;
+    await db
+      .prepare(
+        "INSERT INTO auth_identities VALUES ('logto', 'social-subject', 'social-user', 'traveler@example.com', 'Private identity', 1, 1)"
+      )
+      .run();
+    await db
+      .prepare(
+        "INSERT INTO app_users (id, created_at, updated_at) VALUES ('other-user', 1, 1)"
+      )
+      .run();
+    await db
+      .prepare(
+        "INSERT INTO character_comments (id, user_id, game, character_id, body, created_at) VALUES ('root', 'social-user', 'GI', 'amber', 'Original', 1), ('foreign', 'other-user', 'GI', 'amber', 'Foreign', 1)"
+      )
+      .run();
+    const base =
+      "https://example.com/api/community/v1/characters/amber/comments";
+    const call = async (
+      suffix = "",
+      method = "GET",
+      body?: string,
+      authenticated = true
+    ) => {
+      const url = new URL(base + suffix);
+      return handleCommunityRequest(
+        new Request(url, {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            ...(authenticated
+              ? { Cookie: "ggartifact_session=social-token" }
+              : {}),
+          },
+          ...(body === undefined ? {} : { body: JSON.stringify({ body }) }),
+        }),
+        url,
+        env
+      );
+    };
+    const own = (await (await call()).json()) as {
+      items: Array<Record<string, unknown>>;
+    };
+    expect(own.items.find((item) => item.id === "root")).toMatchObject({
+      authorEmail: "t***r@e***e.com",
+      isOwner: true,
+    });
+    expect(JSON.stringify(own)).not.toContain("traveler@example.com");
+    expect(JSON.stringify(own)).not.toContain("social-user");
+    const anonymous = (await (
+      await call("", "GET", undefined, false)
+    ).json()) as typeof own;
+    expect(anonymous.items.every((item) => item.isOwner === false)).toBe(true);
+    expect((await call("/foreign", "PATCH", "Stolen")).status).toBe(404);
+    expect((await call("/foreign", "DELETE")).status).toBe(404);
+    expect((await call("/root", "PATCH", "Edited", false)).status).toBe(401);
+    expect((await call("/root", "PATCH", "  ")).status).toBe(422);
+    expect((await call("/root", "PATCH", "Edited")).status).toBe(200);
+    expect((await call("/root/replies", "POST", "Reply")).status).toBe(201);
+    const child = await db
+      .prepare("SELECT id FROM character_comments WHERE parent_id = 'root'")
+      .first<{ id: string }>();
+    expect((await call(`/${child!.id}/replies`, "POST", "Nested")).status).toBe(
+      404
+    );
+    expect((await call("/missing/replies", "POST", "Orphan")).status).toBe(404);
+    const foreignUrl = new URL(
+      `${base.replace("/amber/", "/lisa/")}/root/replies`
+    );
+    expect(
+      (await handleCommunityRequest(new Request(foreignUrl), foreignUrl, env))
+        .status
+    ).toBe(404);
+    for (let i = 0; i < 6; i++) {
+      await db
+        .prepare(
+          "INSERT INTO character_comments (id, user_id, game, character_id, body, created_at, parent_id) VALUES (?, 'social-user', 'GI', 'amber', 'More replies', 2, 'root')"
+        )
+        .bind(`reply_${i}`)
+        .run();
+    }
+    const first = (await (await call("/root/replies")).json()) as {
+      items: { id: string }[];
+      nextCursor: string;
+    };
+    expect(first.items).toHaveLength(5);
+    const second = (await (
+      await call(`/root/replies?cursor=${encodeURIComponent(first.nextCursor)}`)
+    ).json()) as typeof first;
+    expect(second.items).toHaveLength(2);
+    expect(
+      new Set([...first.items, ...second.items].map((item) => item.id)).size
+    ).toBe(7);
+    expect(second.nextCursor).toBeNull();
+    expect((await call(`/${child!.id}`, "PATCH", "Edited reply")).status).toBe(
+      200
+    );
+    expect((await call(`/${child!.id}`, "DELETE")).status).toBe(200);
+    expect((await call("/root", "DELETE")).status).toBe(200);
+    expect((await call("/root", "PATCH", "Resurrect")).status).toBe(404);
+    const deleted = (await (await call()).json()) as typeof own;
+    expect(deleted.items.find((item) => item.id === "root")).toMatchObject({
+      body: "",
+      isDeleted: true,
+      authorEmail: null,
+      isOwner: false,
+      replyCount: 7,
+    });
+    expect(
+      ((await (await call("/root/replies")).json()) as typeof first).items
+    ).toHaveLength(5);
+    expect(
+      await db
+        .prepare("SELECT body FROM character_comments WHERE id = 'root'")
+        .first()
+    ).toEqual({ body: "[deleted]" });
   });
 });

@@ -15,6 +15,11 @@ export interface CharacterComment {
   id: string;
   body: string;
   createdAt: number;
+  updatedAt: number | null;
+  authorEmail: string | null;
+  isOwner: boolean;
+  isDeleted: boolean;
+  replyCount: number;
 }
 
 export interface CommunityPage<T> {
@@ -46,15 +51,33 @@ export async function loadCommunityPage<T>(
 
 export async function postCharacterComment(
   characterId: string,
-  body: string
+  body: string,
+  parentId?: string
 ): Promise<void> {
   const response = await fetch(
-    `/api/community/v1/characters/${encodeURIComponent(characterId)}/comments?game=GI`,
+    `/api/community/v1/characters/${encodeURIComponent(characterId)}/comments${parentId ? `/${encodeURIComponent(parentId)}/replies` : ""}?game=GI`,
     {
       method: "POST",
       credentials: "same-origin",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ body }),
+    }
+  );
+  if (!response.ok) throw new CommunityApiError(response.status);
+}
+
+export async function updateCharacterComment(
+  characterId: string,
+  id: string,
+  body: string | null
+): Promise<void> {
+  const response = await fetch(
+    `/api/community/v1/characters/${encodeURIComponent(characterId)}/comments/${encodeURIComponent(id)}?game=GI`,
+    {
+      method: body === null ? "DELETE" : "PATCH",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      ...(body === null ? {} : { body: JSON.stringify({ body }) }),
     }
   );
   if (!response.ok) throw new CommunityApiError(response.status);

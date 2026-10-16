@@ -555,6 +555,15 @@ export const i18nUiData = {
     },
   },
   community: {
+    reply: { en: "Reply", zh: "回复" },
+    replies: { en: "Replies ({0})", zh: "回复（{0}）" },
+    confirmDelete: { en: "Confirm deletion", zh: "确认删除" },
+    edited: { en: "Edited", zh: "已编辑" },
+    deleted: { en: "Comment deleted", zh: "评论已删除" },
+    updateFailed: {
+      en: "Couldn't update your comment. Please try again.",
+      zh: "评论更新失败，请重试。",
+    },
     discussion: { en: "Discussion", zh: "角色讨论" },
     loading: { en: "Loading posts…", zh: "正在加载…" },
     loadFailed: { en: "Couldn't load posts.", zh: "加载失败。" },

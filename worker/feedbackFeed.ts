@@ -1,5 +1,6 @@
 import { type AppEnv, isAuthFailure, requireUser } from "./auth";
 import { communityJson, communityPage, parseCommunityPage } from "./community";
+import { maskFeedbackEmail } from "./communityAuthor";
 
 type FeedbackRow = {
   id: string;
@@ -22,20 +23,6 @@ const SELECT_FEEDBACK = `SELECT f.id, f.rating, f.suggestion,
   (SELECT COUNT(*) FROM feedback_votes WHERE feedback_id = f.id) AS upvotes,
   EXISTS(SELECT 1 FROM feedback_votes WHERE feedback_id = f.id AND user_id = ?) AS hasUpvoted
   FROM feedback_submissions f`;
-
-// Always hide at least one local-part character, including short addresses.
-// Mask the domain label too, since it can itself identify a person or company.
-export function maskFeedbackEmail(email: string | null): string | null {
-  if (!email) return null;
-  const at = email.lastIndexOf("@");
-  if (at <= 0 || at === email.length - 1) return null;
-  const local = email.slice(0, at);
-  const domain = email.slice(at + 1);
-  const dot = domain.lastIndexOf(".");
-  const mask = (value: string) =>
-    value.length > 2 ? `${value[0]}***${value.at(-1)}` : "***";
-  return `${mask(local)}@${dot > 0 ? `${mask(domain.slice(0, dot))}${domain.slice(dot)}` : "***"}`;
-}
 
 function toFeedback(row: FeedbackRow) {
   const { email, ...post } = row;

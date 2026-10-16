@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { CharacterCommentThread } from "@/components/archive/CharacterCommentThread";
 import { CommunityFeed } from "@/components/shared/CommunityFeed";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -12,7 +13,7 @@ import {
 } from "@/providers/community/community";
 
 export function CharacterComments({ characterId }: { characterId: string }) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const session = useAppSession();
   const location = useLocation();
   const [body, setBody] = useState("");
@@ -90,16 +91,13 @@ export function CharacterComments({ characterId }: { characterId: string }) {
       <CommunityFeed<CharacterComment>
         path={`/api/community/v1/characters/${encodeURIComponent(characterId)}/comments`}
         revision={revision}
+        includeOwn={session.isAuthenticated}
         renderItem={(comment) => (
-          <>
-            <time
-              dateTime={new Date(comment.createdAt).toISOString()}
-              className="text-sm"
-            >
-              {new Date(comment.createdAt).toLocaleString(language)}
-            </time>
-            <p className="whitespace-pre-wrap">{comment.body}</p>
-          </>
+          <CharacterCommentThread
+            comment={comment}
+            characterId={characterId}
+            onSignIn={signIn}
+          />
         )}
       />
     </section>
