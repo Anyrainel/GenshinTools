@@ -277,6 +277,17 @@ function buildTotalDamageExpr(
   forceOnField?: boolean
 ): Expr {
   const partExprs: Expr[] = [];
+  // Overrides are per cast; the expression below uses rotation-wide hits.
+  const comboActivation =
+    activation &&
+    Object.fromEntries(
+      Object.entries(activation).map(([key, partMap]) => [
+        key,
+        Object.fromEntries(
+          Object.entries(partMap).map(([idx, hits]) => [idx, hits * comboCount])
+        ),
+      ])
+    );
 
   for (let idx = 0; idx < parts.length; idx++) {
     const part = parts[idx];
@@ -305,7 +316,7 @@ function buildTotalDamageExpr(
         h * comboCount,
         h * comboCount,
         idx,
-        activation,
+        comboActivation,
         baseVariants,
         bespokeBuffs
       );
@@ -343,7 +354,7 @@ function buildTotalDamageExpr(
         reactingHits * comboCount,
         h * comboCount,
         idx,
-        activation,
+        comboActivation,
         baseVariants,
         bespokeBuffs
       );
@@ -358,7 +369,7 @@ function buildTotalDamageExpr(
         nonReactingHits * comboCount,
         h * comboCount,
         idx,
-        activation,
+        comboActivation,
         baseVariants,
         bespokeBuffs
       );

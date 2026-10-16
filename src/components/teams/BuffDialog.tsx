@@ -63,6 +63,21 @@ type Props = {
   t: ReturnType<typeof useLanguage>["t"];
 };
 
+// Reaction, bespoke and repeated-line rows share one activation budget.
+function collectSourceParts(parts: DisplayPart[]) {
+  const grouped = new Map<
+    number,
+    { part: DisplayPart; partIndex: number; hits: number }
+  >();
+  for (const [idx, part] of parts.entries()) {
+    const partIndex = part.sourcePartIndex ?? idx;
+    const existing = grouped.get(partIndex);
+    if (existing) existing.hits += part.hits ?? 1;
+    else grouped.set(partIndex, { part, partIndex, hits: part.hits ?? 1 });
+  }
+  return Array.from(grouped.values());
+}
+
 // ─── Per-formula block (inside a character tab) ─────────────────────────────
 
 function FormulaBlock({
@@ -114,12 +129,10 @@ function FormulaBlock({
   // Filter parts where this buff applies
   const applicableParts = useMemo(() => {
     if (notApplicable) return [];
-    return parts
-      .map((p, idx) => ({ part: p, partIndex: p.sourcePartIndex ?? idx }))
-      .filter(({ partIndex }) => {
-        if (applicableIndices === undefined) return true;
-        return applicableIndices.includes(partIndex);
-      });
+    return collectSourceParts(parts).filter(({ partIndex }) => {
+      if (applicableIndices === undefined) return true;
+      return applicableIndices.includes(partIndex);
+    });
   }, [parts, applicableIndices, notApplicable]);
 
   if (applicableParts.length === 0) return null;
@@ -150,8 +163,7 @@ function FormulaBlock({
       </div>
 
       {/* Part rows */}
-      {applicableParts.map(({ part, partIndex }) => {
-        const hits = part.hits ?? 1;
+      {applicableParts.map(({ part, partIndex, hits }) => {
         const sliderMax =
           isCombo && comboCount != null ? hits * comboCount : hits;
         const effectiveMax =
@@ -298,10 +310,8 @@ export function BuffDialog({ buff, formulas, t }: Props) {
     for (const group of groupedByChar) {
       for (const f of group.formulas) {
         const indices = f.buffApplicability?.[bKey] ?? buff.activePartIndices;
-        for (let idx = 0; idx < f.parts.length; idx++) {
-          const pi = f.parts[idx].sourcePartIndex ?? idx;
+        for (const { partIndex: pi, hits } of collectSourceParts(f.parts)) {
           if (indices !== undefined && !indices.includes(pi)) continue;
-          const hits = f.parts[idx].hits ?? 1;
           const isCombo = f.comboKey != null;
           const sliderMax =
             isCombo && f.comboCount != null ? hits * f.comboCount : hits;

@@ -38,7 +38,6 @@ import {
 } from "./fieldState";
 import {
   buildUserOverrideInfos,
-  computeBlendedDamage,
   evaluateFormulaDamage,
   evaluateFormulaDisplay,
 } from "./formulaEval";
@@ -52,8 +51,6 @@ import {
   type StackLimitedBuffInfo,
 } from "./stackRank";
 import {
-  bespokeMaxStacks,
-  buildBespokeOverlay,
   CrossScalingBuff,
   createExtraStatBuffs,
   deduplicateBuffs,
@@ -384,28 +381,18 @@ export class TeamBuild {
       const effectiveReaction = line.reaction;
       const lineInfos = buffOverrides?.[lineIdx];
 
-      const result = this.getDamageResult(
+      if (!entry) throw new Error(`Unknown formula: ${line.formulaId}`);
+      const result = evaluateFormulaDamage(
+        entry,
         statsCharId,
-        line.formulaId,
+        this.teamStats,
         ctx,
         effectiveReaction,
         lineInfos,
-        line.forceOnField
+        line.forceOnField,
+        line.count
       );
-
-      // Adjust for bespokeBuff maxStacks across combo repetitions
-      let total = result.totalDamage * line.count;
-      for (const part of result.parts) {
-        if (part.bespokeInfo) {
-          const totalHits = part.hits * line.count;
-          const buffedHits = Math.min(part.bespokeInfo.maxStacks, totalHits);
-          const unbuffedHits = totalHits - buffedHits;
-          total -= part.damage * part.hits * line.count;
-          total +=
-            part.damage * buffedHits +
-            part.bespokeInfo.unbuffedDamage * unbuffedHits;
-        }
-      }
+      const total = result.totalDamage * line.count;
 
       return {
         perHit: result.totalDamage,
@@ -537,7 +524,12 @@ export class TeamBuild {
     const seenFormulas = new Set<string>();
     for (const line of activeLines) {
       if (line.formulaId.startsWith("rx-")) continue;
-      const fKey = `${line.charId}.${line.formulaId}`;
+      const fKey = JSON.stringify([
+        line.charId,
+        line.formulaId,
+        line.reaction,
+        line.forceOnField,
+      ]);
       if (seenFormulas.has(fKey)) continue;
       seenFormulas.add(fKey);
 
@@ -623,196 +615,41 @@ export class TeamBuild {
     for (const [formulaKey, formulaLines] of linesByFormula) {
       const { charId, formulaId } = formulaLines[0].line;
 
-      const firstLine = formulaLines[0].line;
-      const effectiveReaction = firstLine.reaction;
-
       const entry = this.catalog.formulaIndex.get(formulaId);
       if (!entry) continue;
-
-      const entryCharLevel = this.teamMeta.charLevels[charId] ?? 90;
-      const formulaHasOffField = entry.parts.some((p) =>
-        isPartOffField(p, firstLine.forceOnField)
-      );
-      const defaultOnFieldCharId = formulaHasOffField
-        ? this.teamStats.getDefaultOnFieldCharId(charId)
-        : charId;
-
-      const { parts } = evaluateFormulaDisplay(
-        entry,
-        charId,
-        this.teamStats,
-        ctx,
-        effectiveReaction,
-        firstLine.forceOnField
-      );
-
-      const totalComboCount = formulaLines.reduce(
+      const totalCount = formulaLines.reduce(
         (sum, fl) => sum + fl.line.count,
         0
       );
-      const hasLinePartialBuffs = formulaLines.some((fl) => {
-        const ov = buffOverrides?.[fl.lineIdx];
-        return ov && Object.keys(ov).length > 0;
-      });
-
-      if (hasLinePartialBuffs && entry) {
-        const buffAgg = new Map<string, Record<number, number>>();
-        for (const fl of formulaLines) {
-          const lineActivation = buffOverrides?.[fl.lineIdx];
-          if (!lineActivation) continue;
-          for (const [buffKey, partMap] of Object.entries(lineActivation)) {
-            let agg = buffAgg.get(buffKey);
-            if (!agg) {
-              agg = {};
-              buffAgg.set(buffKey, agg);
-            }
-            for (const [pidxStr, activated] of Object.entries(partMap)) {
-              const pidx = Number(pidxStr);
-              agg[pidx] =
-                (agg[pidx] ?? 0) + (activated as number) * fl.line.count;
-            }
-          }
-        }
-
-        const aggregatedActivation: BuffActivationMap = {};
-        for (const [buffKey, partAgg] of buffAgg) {
-          const perCastActivation: Record<number, number> = {};
-          for (const [pidxStr, totalActivated] of Object.entries(partAgg)) {
-            perCastActivation[Number(pidxStr)] =
-              totalActivated / totalComboCount;
-          }
-          aggregatedActivation[buffKey] = perCastActivation;
-        }
-
-        if (Object.keys(aggregatedActivation).length > 0) {
-          const blended = computeBlendedDamage(
-            entry.parts,
-            aggregatedActivation,
-            charId,
-            this.teamStats,
-            ctx
-          );
-
-          for (let i = 0; i < parts.length; i++) {
-            const eidx = parts[i].sourcePartIndex ?? i;
-            if (!blended.partDamages[eidx]) continue;
-
-            const zeroBuffKeys = new Set<string>();
-            if (eidx < entry.parts.length) {
-              const h = entry.parts[eidx].hits ?? 1;
-              for (const [bKey, partMap] of Object.entries(
-                aggregatedActivation
-              )) {
-                if ((partMap[eidx] ?? h) === 0) {
-                  zeroBuffKeys.add(bKey);
+      const parts: DisplayPart[] = [];
+      // Evaluate each line in its own reaction, field and activation context.
+      // Sparse overrides mean full activation on the omitted lines. Averaging
+      // overrides first loses that distinction and mixes different reactions.
+      for (const { lineIdx, line } of formulaLines) {
+        const evaluated = evaluateFormulaDisplay(
+          entry,
+          charId,
+          this.teamStats,
+          ctx,
+          line.reaction,
+          line.forceOnField,
+          buffOverrides?.[lineIdx],
+          line.count
+        );
+        for (const part of evaluated.parts) {
+          parts.push({
+            ...part,
+            hits: ((part.hits ?? 1) * line.count) / totalCount,
+            ...(part.partialBuffs
+              ? {
+                  partialBuffs: part.partialBuffs.map((info) => ({
+                    ...info,
+                    activatedHits: info.activatedHits * line.count,
+                    totalHits: info.totalHits * line.count,
+                  })),
                 }
-              }
-            }
-
-            if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
-              const {
-                formula,
-                offField,
-                bespokeBuffs: bBuffs,
-              } = entry.parts[eidx];
-              const baseVariant = offField
-                ? this.teamStats.getPostStats(
-                    charId,
-                    defaultOnFieldCharId,
-                    zeroBuffKeys
-                  )
-                : this.teamStats.getPostStats(charId, charId, zeroBuffKeys);
-              const displayStats = bBuffs?.length
-                ? baseVariant.merge(
-                    buildBespokeOverlay(bBuffs, baseVariant, [])
-                  )
-                : baseVariant;
-              const rebuilt = formula.displayFull(
-                displayStats,
-                entryCharLevel,
-                ctx
-              );
-              const blendedDmg = blended.partDamages[eidx].damage;
-              const unblendedDmg = rebuilt.damage;
-              parts[i] = {
-                ...rebuilt,
-                hits: parts[i].hits,
-                offField: parts[i].offField,
-                damage: blendedDmg,
-                ...(blendedDmg < unblendedDmg
-                  ? { maxDamage: unblendedDmg }
-                  : {}),
-                sourcePartIndex: eidx,
-              };
-            } else {
-              const blendedDmg = blended.partDamages[eidx].damage;
-              const unblendedDmg = parts[i].damage;
-              parts[i] = {
-                ...parts[i],
-                damage: blendedDmg,
-                ...(blendedDmg < unblendedDmg
-                  ? { maxDamage: unblendedDmg }
-                  : {}),
-                sourcePartIndex: eidx,
-              };
-            }
-          }
-        }
-
-        // Annotate parts with combo-wide partial buff info
-        for (const [buffKey, partAgg] of buffAgg) {
-          for (const [pidxStr, totalActivated] of Object.entries(partAgg)) {
-            const pidx = Number(pidxStr);
-            if (pidx >= parts.length) continue;
-            const partHits = entry.parts[pidx]?.hits ?? 1;
-            const totalHits = partHits * totalComboCount;
-            if (totalActivated < totalHits) {
-              if (!parts[pidx].partialBuffs) {
-                parts[pidx] = { ...parts[pidx], partialBuffs: [] };
-              }
-              parts[pidx].partialBuffs!.push({
-                buffKey,
-                activatedHits: totalActivated,
-                totalHits,
-              });
-              if (parts[pidx].sourcePartIndex === undefined) {
-                parts[pidx] = { ...parts[pidx], sourcePartIndex: pidx };
-              }
-            }
-          }
-        }
-      }
-
-      // Combo-scoped bespoke maxStack split
-      if (entry) {
-        for (let i = parts.length - 1; i >= 0; i--) {
-          const dp = parts[i];
-          const eidx = dp.sourcePartIndex;
-          if (eidx == null || eidx >= entry.parts.length) continue;
-          const { bespokeBuffs: bBuffs } = entry.parts[eidx];
-          const bMax = bespokeMaxStacks(bBuffs);
-          const partHits = entry.parts[eidx].hits ?? 1;
-          const comboTotalHits = partHits * totalComboCount;
-          if (bMax == null || bMax >= comboTotalHits) continue;
-          const buffedFrac = bMax / comboTotalHits;
-          const dpHits = dp.hits ?? 1;
-          const buffedHits = Math.round(dpHits * buffedFrac * 1000) / 1000;
-          const unbuffedHits = dpHits - buffedHits;
-          if (buffedHits > 0 && unbuffedHits > 0) {
-            const { formula, offField } = entry.parts[eidx];
-            const baseSelfStats = offField
-              ? this.teamStats.getPostStats(charId, defaultOnFieldCharId)
-              : this.teamStats.getPostStats(charId, charId);
-            const dpUnbuffed = formula.displayFull(
-              baseSelfStats,
-              entryCharLevel,
-              ctx
-            );
-            dpUnbuffed.hits = unbuffedHits;
-            dpUnbuffed.sourcePartIndex = eidx;
-            if (dp.offField) dpUnbuffed.offField = true;
-            parts.splice(i, 1, { ...dp, hits: buffedHits }, dpUnbuffed);
-          }
+              : {}),
+          });
         }
       }
 
@@ -1078,97 +915,17 @@ export class TeamBuild {
       if (Object.keys(allActivation).length > 0) {
         buffActivation = mergedActivation;
 
-        const blended = computeBlendedDamage(
-          entry.parts,
-          allActivation,
+        const activatedDisplay = evaluateFormulaDisplay(
+          entry,
           charId,
           this.teamStats,
           ctx,
           reactionOverride,
-          forceOnField
+          forceOnField,
+          allActivation
         );
-        totalDamage = blended.totalDamage;
-        // Rebuild display parts with 1st-hit stats: exclude only buffs
-        // with 0 activation (never applied), keep blended average damage.
-        for (let i = 0; i < parts.length; i++) {
-          const eidx = parts[i].sourcePartIndex ?? i;
-          if (!blended.partDamages[eidx]) continue;
-
-          const zeroBuffKeys = new Set<string>();
-          if (eidx < entry.parts.length) {
-            const h = entry.parts[eidx].hits ?? 1;
-            for (const [buffKey, partMap] of Object.entries(allActivation)) {
-              if ((partMap[eidx] ?? h) === 0) {
-                zeroBuffKeys.add(buffKey);
-              }
-            }
-          }
-
-          if (zeroBuffKeys.size > 0 && eidx < entry.parts.length) {
-            const part = entry.parts[eidx];
-            const { formula, bespokeBuffs } = part;
-            const baseVariant = part.statsCharId
-              ? this.teamStats.getPostStats(
-                  part.statsCharId,
-                  charId,
-                  zeroBuffKeys
-                )
-              : isPartOffField(part, forceOnField)
-                ? this.teamStats.getPostStats(
-                    charId,
-                    this.teamStats.getDefaultOnFieldCharId(charId),
-                    zeroBuffKeys
-                  )
-                : this.teamStats.getPostStats(charId, charId, zeroBuffKeys);
-            const displayStats = bespokeBuffs?.length
-              ? baseVariant.merge(
-                  buildBespokeOverlay(bespokeBuffs, baseVariant, [])
-                )
-              : baseVariant;
-            const rebuilt = formula.displayFull(
-              displayStats,
-              this.teamMeta.charLevels[part.statsCharId ?? charId] ?? 90,
-              ctx
-            );
-            const blendedDmg = blended.partDamages[eidx].damage;
-            const unblendedDmg = rebuilt.damage;
-            parts[i] = {
-              ...rebuilt,
-              hits: parts[i].hits,
-              offField: parts[i].offField,
-              damage: blendedDmg,
-              ...(blendedDmg < unblendedDmg ? { maxDamage: unblendedDmg } : {}),
-              sourcePartIndex: eidx,
-            };
-          } else {
-            const blendedDmg = blended.partDamages[eidx].damage;
-            const unblendedDmg = parts[i].damage;
-            parts[i] = {
-              ...parts[i],
-              damage: blendedDmg,
-              ...(blendedDmg < unblendedDmg ? { maxDamage: unblendedDmg } : {}),
-              sourcePartIndex: eidx,
-            };
-          }
-        }
-        // Add partialBuffs annotations from merged activation
-        for (const [bKey, partMap] of Object.entries(mergedActivation)) {
-          for (const [pidxStr, activated] of Object.entries(partMap)) {
-            const pidx = Number(pidxStr);
-            if (pidx >= parts.length) continue;
-            const h = entry.parts[pidx]?.hits ?? 1;
-            if (activated < h) {
-              if (!parts[pidx].partialBuffs) parts[pidx].partialBuffs = [];
-              parts[pidx].partialBuffs!.push({
-                buffKey: bKey,
-                activatedHits: activated,
-                totalHits: h,
-              });
-              if (parts[pidx].sourcePartIndex === undefined)
-                parts[pidx].sourcePartIndex = pidx;
-            }
-          }
-        }
+        parts = activatedDisplay.parts;
+        totalDamage = activatedDisplay.totalDamage;
       } else if (Object.keys(mergedActivation).length > 0) {
         buffActivation = mergedActivation;
       }

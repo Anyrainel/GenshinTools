@@ -62,6 +62,7 @@ type Props = {
 
 function PartTab({
   part,
+  sourceHits,
   partIndex,
   formulaKey,
   buffs,
@@ -71,6 +72,7 @@ function PartTab({
   comboKey,
 }: {
   part: DisplayPart;
+  sourceHits: number;
   partIndex: number;
   formulaKey: string;
   buffs: ResolvedBuff[];
@@ -82,7 +84,7 @@ function PartTab({
   const sourceName = useBuffSourceName();
   const filterLabel = useBuffFilterLabel();
   const receiverLabel = useBuffReceiverLabel();
-  const hits = part.hits ?? 1;
+  const hits = sourceHits;
   // Route to comboOverrides whenever comboKey is provided — the damage-calc
   // path always reads from comboOverrides (single mode uses comboId
   // "__single__" with comboCount=1). Gating on comboCount>1 leaves single-mode
@@ -386,6 +388,14 @@ export function PartBuffDialog({
             {parts[activeTab] && (
               <PartTab
                 part={parts[activeTab]}
+                sourceHits={parts.reduce(
+                  (sum, part, idx) =>
+                    (part.sourcePartIndex ?? idx) ===
+                    (parts[activeTab].sourcePartIndex ?? activeTab)
+                      ? sum + (part.hits ?? 1)
+                      : sum,
+                  0
+                )}
                 partIndex={parts[activeTab].sourcePartIndex ?? activeTab}
                 formulaKey={formulaKey}
                 buffs={buffs}
