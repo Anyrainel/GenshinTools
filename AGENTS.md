@@ -4,6 +4,22 @@
 
 React 19 + TypeScript 7 + Vite 8 app for Genshin Impact player tools, using Node 24 LTS. UI uses Tailwind CSS 4, shadcn/ui, radix-ui primitives, Vaul drawers, Lucide icons, and Sonner toasts. State is Zustand 5 with Immer and persist middleware. Cloudflare Workers use `worker/`, `dist/`, and Wrangler for deployment.
 
+## Related Repositories
+
+Use this map to select the repository before searching code. These checkouts are
+siblings under `F:/Codes/genshin/`; paths below are relative to GenshinTools.
+
+| Repository | Local path | Purpose and routing hints |
+| --- | --- | --- |
+| GenshinTools | `.` | Genshin Impact website: account imports, artifact scoring/triage, build filters, team damage/optimization, and game archive. |
+| HoyoData | `../HoyoData` | Shared Genshin Impact and Honkai: Star Rail data producer: datamine ingestion, normalization, reference exports, website catalogs/assets, and scanner mappings. Start here for upstream data/export pipeline changes; `genshintools` and `ggstarrail` targets refresh the respective websites. |
+| GOODScanner (product name: GGScanner) | `../GOODScanner` | Windows scanner/capture/management app for both games: OCR, packet capture, account JSON exports, and in-game artifact/relic management. The local checkout retains the GOODScanner name. |
+| GGStarRail | `../GGStarRail` | Honkai: Star Rail website: account imports, relic scoring/triage, build targets/filters, resource planning, tier lists, and game/achievement archive. Start here for Star Rail website behavior and UI. |
+
+For cross-repository work, read the target repository's `AGENTS.md` and relevant
+documentation before editing. Search the selected repository first; broaden only
+when the task crosses a producer/consumer boundary or ownership remains unclear.
+
 ## Common Commands
 
 - `npm run dev` — Vite dev server
