@@ -49,6 +49,8 @@ export const ArtifactCard = memo(
                 className="w-12 h-12 sm:w-14 sm:h-14 relative shrink-0"
               >
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={getAssetUrl(imgPath)}
                   alt={slot}
                   className="w-full h-full object-contain drop-shadow-md brightness-[1.15]"

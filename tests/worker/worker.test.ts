@@ -232,6 +232,10 @@ describe("Worker API routing", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toContain("text/html");
+    expect(response.headers.get("Cache-Control")).toBe(
+      "no-cache, must-revalidate"
+    );
+    expect(response.headers.get("CDN-Cache-Control")).toBe("no-store");
     expect(await response.text()).toContain('<div id="root"></div>');
   });
 
@@ -243,6 +247,10 @@ describe("Worker API routing", () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get("Location")).toBeNull();
+    expect(response.headers.get("Cache-Control")).toBe(
+      "no-cache, must-revalidate"
+    );
+    expect(response.headers.get("CDN-Cache-Control")).toBe("no-store");
     expect(await response.text()).toContain('<div id="root"></div>');
   });
 

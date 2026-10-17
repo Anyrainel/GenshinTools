@@ -25,6 +25,8 @@ export function CharAvatar({
 
   return (
     <img
+      loading="lazy"
+      decoding="async"
       src={src}
       alt={charId}
       className="rounded-full object-cover shrink-0"

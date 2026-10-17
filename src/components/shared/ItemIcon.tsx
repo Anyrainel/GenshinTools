@@ -258,6 +258,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           <div className="absolute inset-0 bg-rarity-5" />
           <div className="absolute top-[-10%] left-[-10%] w-[80%] h-[80%] z-10">
             <img
+              loading="lazy"
+              decoding="async"
               src={getAssetUrl(imagePath)}
               className="w-full h-full object-cover"
               alt={imagePath}
@@ -266,6 +268,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           </div>
           <div className="absolute bottom-[-10%] right-[-10%] w-[80%] h-[80%] z-20">
             <img
+              loading="lazy"
+              decoding="async"
               src={getAssetUrl(imagePath2)}
               className="w-full h-full object-cover"
               alt={imagePath2}
@@ -333,6 +337,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
         }}
       >
         <img
+          loading="lazy"
+          decoding="async"
           src={getAssetUrl(imagePath)}
           alt={alt ?? imagePath}
           className="w-full h-full object-cover"
@@ -393,6 +399,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
             }}
           >
             <img
+              loading="lazy"
+              decoding="async"
               src={getAssetUrl(elementBadge)}
               alt="element"
               style={{
@@ -410,6 +418,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
           <div className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center">
             <div className="relative bg-black/30 rounded-full backdrop-blur-xs">
               <img
+                loading="lazy"
+                decoding="async"
                 src={getAssetUrl(weaponTypeBadge)}
                 alt="weapon type"
                 className="w-5 h-5 object-contain filter brightness-125 contrast-150 drop-shadow-lg"
@@ -430,6 +440,8 @@ export const ItemIcon = forwardRef<HTMLDivElement, ItemIconProps>(
               style={{ width: badgeSize, height: badgeSize, padding: 1 }}
             >
               <img
+                loading="lazy"
+                decoding="async"
                 src={getAssetUrl(`element/${el}.webp`)}
                 className="w-full h-full object-contain"
                 alt={el}
