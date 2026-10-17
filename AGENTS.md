@@ -6,8 +6,8 @@ React 19 + TypeScript 7 + Vite 8 app for Genshin Impact player tools, using Node
 
 ## Related Repositories
 
-Use this map to select the repository before searching code. These checkouts are
-siblings under `F:/Codes/genshin/`; paths below are relative to GenshinTools.
+Use this map to select the repository before searching code. Related checkouts
+are siblings; paths below are relative to the GenshinTools repository root.
 
 | Repository | Local path | Purpose and routing hints |
 | --- | --- | --- |
