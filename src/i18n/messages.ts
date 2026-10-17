@@ -1666,7 +1666,6 @@ export const i18nUiData = {
     nodkrai: { en: "Nod-Krai", zh: "挪德卡莱" },
   },
   teamComp: {
-    analysis: { en: "Team Analysis", zh: "队伍分析" },
     tabAnalysis: { en: "Analysis", zh: "队伍分析" },
     tabLoadouts: { en: "Saved Loadouts", zh: "配装方案" },
     selectTeam: { en: "Select a team", zh: "选择队伍" },
@@ -2881,6 +2880,7 @@ export const i18nUiData = {
     viewFullHistory: { en: "View Full History", zh: "查看完整历史" },
   },
   calcLimitations: {
+    trigger: { en: "About", zh: "说明" },
     title: { en: "Calculation Limitations", zh: "计算限制" },
   },
   triage: {

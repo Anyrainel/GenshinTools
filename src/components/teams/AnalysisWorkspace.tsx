@@ -1,5 +1,6 @@
 import {
   ArrowLeft,
+  CircleHelp,
   Gem,
   Info,
   Sword,
@@ -1330,30 +1331,25 @@ export function AnalysisWorkspace({
         )}
       >
         {/* ── Page Header ── */}
-        <div className="flex flex-col items-start gap-1 px-0.5 py-1 sm:flex-row sm:items-center sm:justify-between sm:gap-6 lg:px-1">
-          <div className="flex min-w-0 max-w-full items-center gap-1.5">
-            <h2 className="min-w-0 truncate text-xl md:text-2xl font-black text-foreground tracking-tight">
-              {teamComp.name || t.ui("teamComp.analysis")}
-            </h2>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={() => setLimitOpen(true)}
-              aria-label={t.ui("calcLimitations.title")}
-              title={t.ui("calcLimitations.title")}
-              className="shrink-0 text-foreground/70"
-            >
-              <Info className="w-5 h-5" />
-            </Button>
-          </div>
+        <div className="flex w-full items-center justify-between gap-4 px-0.5 lg:px-1">
           <Button
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="shrink-0 px-2 -ml-2 sm:ml-0 text-foreground/70 hover:bg-accent"
+            className="shrink-0 px-2 -ml-2 text-foreground/70 hover:bg-accent"
           >
             <ArrowLeft className="w-4 h-4" />
             {t.ui("teamComp.switchTeam")}
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLimitOpen(true)}
+            title={t.ui("calcLimitations.title")}
+            className="shrink-0 px-2 -mr-2 text-foreground/70 hover:bg-accent"
+          >
+            {t.ui("calcLimitations.trigger")}
+            <CircleHelp className="w-4 h-4" />
           </Button>
         </div>
 
