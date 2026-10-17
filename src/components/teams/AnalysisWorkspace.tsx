@@ -1330,26 +1330,31 @@ export function AnalysisWorkspace({
         )}
       >
         {/* ── Page Header ── */}
-        <div className="flex items-center gap-2 px-0.5 lg:px-1">
+        <div className="flex flex-col items-start gap-1 px-0.5 py-1 sm:flex-row sm:items-center sm:justify-between sm:gap-6 lg:px-1">
+          <div className="flex min-w-0 max-w-full items-center gap-1.5">
+            <h2 className="min-w-0 truncate text-xl md:text-2xl font-black text-foreground tracking-tight">
+              {teamComp.name || t.ui("teamComp.analysis")}
+            </h2>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              onClick={() => setLimitOpen(true)}
+              aria-label={t.ui("calcLimitations.title")}
+              title={t.ui("calcLimitations.title")}
+              className="shrink-0 text-foreground/70"
+            >
+              <Info className="w-5 h-5" />
+            </Button>
+          </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="shrink-0 h-10 px-2 -ml-2 hover:bg-accent"
+            className="shrink-0 px-2 -ml-2 sm:ml-0 text-foreground/70 hover:bg-accent"
           >
-            <ArrowLeft className="w-4 h-4 mr-1" />
+            <ArrowLeft className="w-4 h-4" />
             {t.ui("teamComp.switchTeam")}
           </Button>
-          <h2 className="text-xl md:text-2xl font-black text-foreground tracking-tight truncate flex-1">
-            {teamComp.name || t.ui("teamComp.teamOptimization")}
-            <span
-              className="inline-block ml-1.5 align-baseline cursor-pointer"
-              onClick={() => setLimitOpen(true)}
-              title={t.ui("calcLimitations.title")}
-            >
-              <Info className="w-5 h-5 text-foreground/70" />
-            </span>
-          </h2>
         </div>
 
         {/* Card 1 — Team Roster (only rendered when gameStats are ready,
