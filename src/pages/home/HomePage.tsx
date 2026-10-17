@@ -26,7 +26,7 @@ export default function Home() {
       <div className="h-full w-full overflow-y-auto">
         <div className="container mx-auto px-8 pb-4 min-h-full flex flex-col gap-6 overflow-x-hidden">
           {/* Hero Section */}
-          <div className="text-center space-y-1 pb-10">
+          <div className="text-center space-y-1 pb-2">
             <div className="relative flex flex-col items-center justify-center pt-6">
               {/* Arch Graphic Background */}
               <div className="absolute top-6 w-80 h-10 opacity-80 pointer-events-none select-none z-0">
