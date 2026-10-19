@@ -1131,7 +1131,7 @@ class Xilonen extends CharacterBase {
     if (this.convertedSamples < 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, "P1", ["A1"]),
+          cbs(this, "P1", ["Nightsoul"]),
           {
             receiver: "selfOnField",
             filter: { abilities: ["normal", "plunge"] },

@@ -282,6 +282,21 @@ export function validateStatBuff(
 }
 
 export function validateOrigin(source: BuffSource): void {
+  if (
+    source.origin?.split("/").some((part) => /^(?:passive|A\d+)$/i.test(part))
+  ) {
+    throw new Error(
+      `BuffSource origin "${source.origin}" uses legacy provenance; use P1–P4 for passive talent origins (id: ${source.id})`
+    );
+  }
+  const invalidTrigger = source.triggers?.find((trigger) =>
+    trigger.split("/").some((part) => /^(?:passive|[APCR]\d+)$/i.test(part))
+  );
+  if (invalidTrigger !== undefined) {
+    throw new Error(
+      `BuffSource trigger "${invalidTrigger}" is provenance, not an activation condition; put kit provenance in origin and use actions/states in triggers (id: ${source.id})`
+    );
+  }
   if (source.type === "extra") return;
   if (source.type === "character" || source.type === "weapon") {
     if (!source.origin) {

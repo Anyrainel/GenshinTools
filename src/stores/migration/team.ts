@@ -656,7 +656,11 @@ export function mergeTeamStore<
   const activePresetId = parsed.data.activePresetId;
   const preset = getCachedTeamPreset(activePresetId);
   const deduped = dedupeTeamCompDeltasAgainstPreset(compDeltas, preset);
-  const nextConfigsByTeamId = compactTeamSetupConfigs(configsByTeamId);
+  // The unpublished v25 migration also canonicalizes labels on v25 saves made
+  // while testing this release; do not bump again for the same push.
+  const nextConfigsByTeamId = compactTeamSetupConfigs(
+    migrateCharacterBuffTriggerConfigs(configsByTeamId)
+  );
   for (const [fromId, toId] of Object.entries(deduped.idMap)) {
     if (fromId === toId) continue;
     const config = nextConfigsByTeamId[fromId];

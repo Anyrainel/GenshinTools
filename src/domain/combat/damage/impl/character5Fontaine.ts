@@ -1227,7 +1227,7 @@ class Wriothesley extends CharacterBase {
       // P4: Stellar-Conduct DMG +30%
       buffs.push(
         new StatBuff(
-          cbs(this, "P4", ["passive"]),
+          cbs(this, "P4", ["polestar-field"]),
           { receiver: "self", filter: { reactions: ["stellarConduct"] } },
           [{ key: "reactionDmg%", value: 0.3 }]
         )
@@ -1239,13 +1239,15 @@ class Wriothesley extends CharacterBase {
       if (this.constellation >= 4) {
         buffs.push(
           new StatBuff(
-            cbs(this, "C4", ["passive"]),
+            cbs(this, "C4", ["polestar-field"]),
             { receiver: "selfOnField" },
             [{ key: "atkSpd%", value: 0.2 }]
           ),
-          new StatBuff(cbs(this, "C4", ["passive"]), { receiver: "other" }, [
-            { key: "atkSpd%", value: 0.1 },
-          ])
+          new StatBuff(
+            cbs(this, "C4", ["polestar-field"]),
+            { receiver: "other" },
+            [{ key: "atkSpd%", value: 0.1 }]
+          )
         );
       }
       // C6: 「被寒烈的惩裁强化的斥逐拳与天辉·凌跃拳」 +10% CR, +80% CD. The

@@ -76,9 +76,8 @@ export function teamFromCloud(
   if (partition && partition.schemaVersion < 5) {
     configsByTeamId = migrateTeamAnalysisConfigs(configsByTeamId);
   }
-  if (partition && partition.schemaVersion < 7) {
-    configsByTeamId = migrateCharacterBuffTriggerConfigs(configsByTeamId);
-  }
+  // Canonicalize v7 snapshots created during this unpublished release too.
+  configsByTeamId = migrateCharacterBuffTriggerConfigs(configsByTeamId);
   const restored = {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],

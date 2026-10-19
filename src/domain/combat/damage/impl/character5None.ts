@@ -754,7 +754,7 @@ class TravelerDendro extends CharacterBase {
       ]),
       // P2: Verdant Luxury — Traveler's own EM boosts E DMG by 0.15% per EM point
       new ScalingBuff(
-        cbs(this, "P2", ["A4"]),
+        cbs(this, "P2", []),
         { receiver: "selfOnField", filter: { abilities: ["skill"] } },
         [],
         "em",
@@ -763,7 +763,7 @@ class TravelerDendro extends CharacterBase {
       ),
       // P2: Verdant Luxury — Traveler's own EM boosts Q DMG by 0.1% per EM point
       new ScalingBuff(
-        cbs(this, "P2", ["A4"]),
+        cbs(this, "P2", []),
         { receiver: "selfOnField", filter: { abilities: ["burst"] } },
         [],
         "em",
@@ -1223,7 +1223,7 @@ class TravelerCryo extends CharacterBase {
       // P3 星耀祝礼: +0.35% Stellar-Conduct/Stellar Swirl base DMG per 100 ATK,
       // cap +7%. Applies to the whole party's stellar reactions.
       new ScalingBuff(
-        cbs(this, "P3", ["passive"]),
+        cbs(this, "P3", []),
         {
           receiver: "team",
           filter: { reactions: ["stellarConduct", "stellarSwirl"] },

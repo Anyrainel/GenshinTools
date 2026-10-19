@@ -355,7 +355,7 @@ class Kachina extends CharacterBase {
       // "提升值相当于卡齐娜的防御力的20%" → ScalingBuff def→baseDmg 0.2
       // Applies to Turbo Twirly hits (skill DMG), works off-field → receiver "self"
       new ScalingBuff(
-        cbs(this, "P2", ["A2"]),
+        cbs(this, "P2", []),
         { receiver: "self", filter: { abilities: ["skill"] } },
         [],
         "def",

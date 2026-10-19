@@ -797,7 +797,7 @@ class Sandrone extends CharacterBase {
         : []),
       // P3: Per 100 ATK → +0.7% reactionBaseDmg% of 星超导/星扩散, cap 14%
       new ScalingBuff(
-        cbs(this, "P3", ["passive"]),
+        cbs(this, "P3", []),
         {
           receiver: "team",
           filter: { reactions: ["stellarConduct", "stellarSwirl"] },
@@ -1531,7 +1531,7 @@ class Vesna extends CharacterBase {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
       // P3: +0.7% Stellar Swirl base DMG per 100 ATK for the whole party, cap 14%.
       new ScalingBuff(
-        cbs(this, "P3", ["passive"]),
+        cbs(this, "P3", []),
         { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
         [],
         "atk",

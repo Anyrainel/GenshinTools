@@ -313,9 +313,9 @@ class Nefer extends CharacterBase {
   })();
 
   readonly buffs = [
-    // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom reactionBaseDmg%, cap 14%
+    // P3: Per EM → +0.0175% Lunar-Bloom reactionBaseDmg%, cap 14%
     new ScalingBuff(
-      cbs(this, "P3", ["passive"]),
+      cbs(this, "P3", []),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
@@ -572,7 +572,7 @@ class Flins extends CharacterBase {
   readonly buffs = [
     // P3: Per 100 ATK → +0.7% Lunar-Charged reactionBaseDmg%, cap 14%
     new ScalingBuff(
-      cbs(this, "P3", ["passive"]),
+      cbs(this, "P3", []),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       [],
       "atk",
@@ -584,7 +584,7 @@ class Flins extends CharacterBase {
     ...(this.teamMeta.countByFaction("Moonsign") >= 2
       ? [
           new StatBuff(
-            cbs(this, "P1", ["passive"]),
+            cbs(this, "P1", []),
             {
               receiver: "self",
               filter: { reactions: ["lunarCharged"] },
@@ -765,9 +765,9 @@ class Flins extends CharacterBase {
 @RegisterCharacter("lauma")
 class Lauma extends CharacterBase {
   readonly buffs = [
-    // P3 (combat passive): Per EM → +0.0175% Lunar-Bloom reactionBaseDmg%, cap 14%
+    // P3: Per EM → +0.0175% Lunar-Bloom reactionBaseDmg%, cap 14%
     new ScalingBuff(
-      cbs(this, "P3", ["passive"]),
+      cbs(this, "P3", []),
       { receiver: "team", filter: { reactions: ["lunarBloom"] } },
       [],
       "em",
@@ -807,7 +807,7 @@ class Lauma extends CharacterBase {
         ]),
     // P2: Per EM → Sanctuary (E skill) DMG +0.04%, cap 32%
     new ScalingBuff(
-      cbs(this, "P2", ["passive"]),
+      cbs(this, "P2", []),
       { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "em",
@@ -1000,7 +1000,7 @@ class Ineffa extends CharacterBase {
   readonly buffs = [
     // P3: Per 100 ATK → +0.7% Lunar-Charged reactionBaseDmg%, cap 14%
     new ScalingBuff(
-      cbs(this, "P3", ["passive"]),
+      cbs(this, "P3", []),
       { receiver: "team", filter: { reactions: ["lunarCharged"] } },
       [],
       "atk",
@@ -1169,7 +1169,7 @@ class Linnea extends CharacterBase {
   readonly buffs = [
     // P3 (Moonsign Benediction): Per 100 DEF → +0.7% Lunar-Crystallize reactionBaseDmg%, cap 14%
     new ScalingBuff(
-      cbs(this, "P3", ["passive"]),
+      cbs(this, "P3", []),
       { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
       [],
       "def",

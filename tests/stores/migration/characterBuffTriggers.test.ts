@@ -110,18 +110,74 @@ afterEach(() => {
 });
 
 describe("character activation identity migration", () => {
-  it("hydrates a pre-change v24 team with disabled and partial buff overrides", async () => {
-    window.localStorage.setItem(
-      "team-builder-storage",
-      JSON.stringify({
-        version: 24,
-        state: snapshot(),
-      })
-    );
-    await useTeamStore.persist.rehydrate();
-    expectMigrated(useTeamStore.getState().configsByTeamId["saved-team"]);
-    expect(useTeamStore.getState().teamComps[0].id).toBe("saved-team");
+  it.each([
+    ["yanfei", "P1", "A1", "charge"],
+    ["yun_jin", "P2", "A4,Q", "Q"],
+    ["kirara", "P2", "A4", ""],
+    ["zibai", "P3", "passive", ""],
+    ["yelan", "P2", "A4,Q", "Q"],
+    ["qiqi", "C2", "passive", "polestar-field,stellarSwirl"],
+    ["yumemizuki_mizuki", "P2", "A4,E", "E,teammate-elemental-hit"],
+    ["yumemizuki_mizuki", "C1", "passive", "E"],
+    ["yoimiya", "P1", "A1", "E,normal"],
+    ["yoimiya", "P2", "A4,Q", "Q"],
+    ["yae_miko", "P2", "A4", ""],
+    ["wriothesley", "P4", "passive", "polestar-field"],
+    ["wriothesley", "C4", "passive", "polestar-field"],
+    ["xilonen", "P1", "A1", "Nightsoul"],
+    ["nefer", "P3", "passive", ""],
+    ["flins", "P3", "passive", ""],
+    ["flins", "P1", "passive", ""],
+    ["lauma", "P3", "passive", ""],
+    ["lauma", "P2", "passive", ""],
+    ["ineffa", "P3", "passive", ""],
+    ["linnea", "P3", "passive", ""],
+    ["sandrone", "P3", "passive", ""],
+    ["vesna", "P3", "passive", ""],
+    ["traveler_cryo", "P3", "passive", ""],
+    ["traveler_dendro", "P2", "A4", ""],
+    ["kachina", "P2", "A2", ""],
+  ])("migrates provenance cleanup for %s %s", (id, origin, before, after) => {
+    for (const target of [
+      { receiver: "self" },
+      { receiver: "teamOnField" },
+    ] satisfies BuffTarget[]) {
+      const oldKey = buffKey(id, origin, before.split(","), target);
+      const currentKey = buffKey(
+        id,
+        origin,
+        after ? after.split(",") : [],
+        target
+      );
+      const migrated = migrateCharacterBuffActivationMap({
+        [oldKey]: { 0: 0.5 },
+      });
+      expect(migrated).toEqual({ [currentKey]: { 0: 0.5 } });
+      expect(migrateCharacterBuffActivationMap(migrated)).toEqual(migrated);
+      expect(
+        migrateCharacterBuffActivationMap({
+          [oldKey]: { 0: 0 },
+          [currentKey]: { 0: 0.75 },
+        })
+      ).toEqual({ [currentKey]: { 0: 0.75 } });
+    }
   });
+
+  it.each([24, 25])(
+    "hydrates a v%i team with legacy activation keys",
+    async (version) => {
+      window.localStorage.setItem(
+        "team-builder-storage",
+        JSON.stringify({
+          version,
+          state: snapshot(),
+        })
+      );
+      await useTeamStore.persist.rehydrate();
+      expectMigrated(useTeamStore.getState().configsByTeamId["saved-team"]);
+      expect(useTeamStore.getState().teamComps[0].id).toBe("saved-team");
+    }
+  );
 
   it("normalizes config imports and exports/restores versioned cloud snapshots", () => {
     useTeamStore.getState().replaceSourceState(snapshot());
@@ -133,6 +189,8 @@ describe("character activation identity migration", () => {
     };
     const restored = teamFromCloud([oldPartition]);
     expectMigrated(restored.configsByTeamId["saved-team"]);
+    const unpublished = teamFromCloud([{ ...oldPartition, schemaVersion: 7 }]);
+    expectMigrated(unpublished.configsByTeamId["saved-team"]);
     const exported = teamToCloud(restored);
     expect(exported[0].schemaVersion).toBe(7);
     expectMigrated(exported[0].payload.configsByTeamId["saved-team"]);

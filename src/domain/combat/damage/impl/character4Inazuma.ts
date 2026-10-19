@@ -13,7 +13,7 @@ class Kirara extends CharacterBase {
     // because C4's coordinated attack is only "considered Burst DMG" — it is not
     // Secret Art: Surprise Dispatch's own damage and must not receive the bonus.
     new ScalingBuff(
-      cbs(this, "P2", ["A4"]),
+      cbs(this, "P2", []),
       { receiver: "self", filter: { abilities: ["skill"] } },
       [],
       "hp",
@@ -69,7 +69,7 @@ class Kirara extends CharacterBase {
     };
     // P2: every 1000 Max HP → Secret Art: Surprise Dispatch DMG +0.3%
     const p2Burst = new ScalingBuff(
-      cbs(this, "P2", ["A4"]),
+      cbs(this, "P2", []),
       { receiver: "self", filter: { abilities: ["burst"] } },
       [],
       "hp",

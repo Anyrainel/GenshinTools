@@ -730,7 +730,7 @@ class Yanfei extends CharacterBase {
     const maxSeals = this.constellation >= 6 ? 4 : 3;
     const buffs: StatBuff[] = [
       // P1: Each consumed Scarlet Seal grants 5% Pyro DMG Bonus (assuming max seals used)
-      new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "selfOnField" }, [
+      new StatBuff(cbs(this, "P1", ["charge"]), { receiver: "selfOnField" }, [
         { key: "pyro%", value: 0.05 * maxSeals },
       ]),
     ];
@@ -1034,7 +1034,7 @@ class YunJin extends CharacterBase {
     for (const charId of Object.keys(this.teamMeta.elements)) {
       buffs.push(
         new ScalingBuff(
-          { ...cbs(this, "P2", ["A4", "Q"]), maxStacks: 30 },
+          { ...cbs(this, "P2", ["Q"]), maxStacks: 30 },
           { receiver: "team", charId, filter: { abilities: ["normal"] } },
           [],
           "def",

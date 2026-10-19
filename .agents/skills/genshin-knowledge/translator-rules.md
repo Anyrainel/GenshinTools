@@ -149,6 +149,7 @@ Apply U3 first: this receiver rule never converts `defIgnore%` into `defReductio
 ### U7. `BuffSource` Origin and Activation Labels
 
 - `origin` must be one of: `"A"`, `"E"`, `"Q"`, `"P1"`–`"P4"`, `"C0"`–`"C6"`, `"R1"`–`"R5"`. Multiple origins joined with `"/"` (e.g., `"P2/C2"`). No dashes or other separators.
+- **[BUG]** if `origin` or `triggers` uses legacy provenance `passive` or `A<number>` (including A1/A2/A4). Passive talent origins use `P1`–`P4`; triggers contain only actions or activation states, never provenance numbers such as P1/C2/R1. `buffSourceConventions.test.ts` guards implementation literals and `validateOrigin` enforces the field distinction.
 - `triggers` should use strings consistent with existing usage: `"E"` / `"Q"` for skill/burst activation, and kebab-case labels such as `"low-hp"` or `"elemental-reaction"` for other conditions. Put passive/constellation provenance in `origin`; a genuinely unconditional passive needs no trigger label.
 - For reaction conditions, label at the granularity the game text uses:
 

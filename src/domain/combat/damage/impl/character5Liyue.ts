@@ -31,7 +31,7 @@ class Zibai extends CharacterBase {
       // P3: Per 100 DEF → +0.7% Lunar-Crystallize Base DMG, cap 14%
       // "月结晶反应的基础伤害" → reactionBaseDmg% (separate zone from baseDmg%/倍率乘区)
       new ScalingBuff(
-        cbs(this, "P3", ["passive"]),
+        cbs(this, "P3", []),
         { receiver: "team", filter: { reactions: ["lunarCrystallize"] } },
         [],
         "def",
@@ -564,7 +564,7 @@ class Yelan extends CharacterBase {
         { key: "hp%", value: p1Bonus },
       ]),
       // P2: Q ramps DMG% for on-field, scales with talent level and option tier
-      new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "teamOnField" }, [
+      new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "teamOnField" }, [
         { key: "dmg%", value: dmgBonus },
       ]),
     ];
@@ -1595,9 +1595,11 @@ class Qiqi extends CharacterBase {
       if (this.radianceOn) {
         // C2 辉映·星烁: +50% ATK — additive with the base clause above
         buffs.push(
-          new StatBuff(cbs(this, "C2", ["passive"]), { receiver: "self" }, [
-            { key: "atk%", value: 0.5 },
-          ])
+          new StatBuff(
+            cbs(this, "C2", ["polestar-field", "stellarSwirl"]),
+            { receiver: "self" },
+            [{ key: "atk%", value: 0.5 }]
+          )
         );
       }
     }

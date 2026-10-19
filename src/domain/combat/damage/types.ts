@@ -58,6 +58,7 @@ export type BuffSource = {
   origin?: string;
   /** Activation labels; nonempty excludes the buff from idle stats.
    * Combat assumes these conditions are met rather than simulating the triggers.
+   * Use actions/states, never provenance such as passive, A1/A4, P1, C2, or R1.
    */
   triggers?: string[];
   /**

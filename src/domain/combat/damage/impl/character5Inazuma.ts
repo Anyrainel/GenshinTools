@@ -53,9 +53,11 @@ class YumemizukiMizuki extends CharacterBase {
         this.param("E", 6) / 100
       ),
       // P2: EM +100 when teammates hit with Pyro/Hydro/Cryo/Electro
-      new StatBuff(cbs(this, "P2", ["A4", "E"]), { receiver: "self" }, [
-        { key: "em", value: 100 },
-      ]),
+      new StatBuff(
+        cbs(this, "P2", ["E", "teammate-elemental-hit"]),
+        { receiver: "self" },
+        [{ key: "em", value: 100 }]
+      ),
       // P4: Dreamdrifter — party EM +10% of Mizuki's EM
       new ScalingBuff(
         cbs(this, "P4", ["E"]),
@@ -74,7 +76,7 @@ class YumemizukiMizuki extends CharacterBase {
     if (this.constellation >= 1) {
       buffs.push(
         new ScalingBuff(
-          cbs(this, "C1", ["passive"]),
+          cbs(this, "C1", ["E"]),
           { receiver: "team", filter: { reactions: ["swirl"] } },
           [],
           "em",
@@ -82,7 +84,7 @@ class YumemizukiMizuki extends CharacterBase {
           11.0
         ),
         new ScalingBuff(
-          cbs(this, "C1", ["passive"]),
+          cbs(this, "C1", ["E"]),
           { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
           [],
           "em",
@@ -1563,16 +1565,18 @@ class Yoimiya extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P1: During E, Pyro DMG +2% per Normal ATK hit (max 10 stacks = 20%)
-      new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "selfOnField" }, [
-        { key: "pyro%", value: 0.2 },
-      ]),
+      new StatBuff(
+        cbs(this, "P1", ["E", "normal"]),
+        { receiver: "selfOnField" },
+        [{ key: "pyro%", value: 0.2 }]
+      ),
     ];
 
     if (this.castQ === "yes") {
       // P2: Q explosion grants party (except Yoimiya) +20% ATK for 15s (10% base + 1% per P1 stack)
       // "队伍中所有其他角色" → other (no on-field restriction)
       buffs.push(
-        new StatBuff(cbs(this, "P2", ["A4", "Q"]), { receiver: "other" }, [
+        new StatBuff(cbs(this, "P2", ["Q"]), { receiver: "other" }, [
           { key: "atk%", value: 0.2 },
         ])
       );
@@ -1716,7 +1720,7 @@ class YaeMiko extends CharacterBase {
     // P2: Each point of EM → Sesshou Sakura DMG +0.15%
     // Sakura fires even when Yae is off-field → receiver: "self" (not selfOnField)
     new ScalingBuff(
-      cbs(this, "P2", ["A4"]),
+      cbs(this, "P2", []),
       { receiver: "self" },
       [],
       "em",
