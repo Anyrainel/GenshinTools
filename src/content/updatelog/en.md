@@ -3,6 +3,20 @@
 - P1: Better graduation celebration effects
 - TODO: Manage artifact stars with customizable options
 
+## 2026-10-19
+
+### features
+- GOODCapture / GOODScanner are now [GGScanner / GGScannerOCR](/download-scanner), respectively, with a fully redesigned interface, added Honkai: Star Rail support, and fixes for recent data and logic issues.
+- Added a minimum artifact level filter to team optimization.
+- Added an initial four-substat filter to Resources for choosing upgrade and crafting targets.
+- Added character discussions and replies, plus feedback visibility controls and upvotes.
+
+### fixes
+- Fixed scoring inconsistencies across builds, upgrade recommendations, and Resources, including incorrectly applied Healing Bonus circlet weights.
+- Fixed some character buffs appearing in stats before their conditions were met, and clarified buff sources and activation conditions.
+- Fixed restoring frozen loadouts and optimizing remaining characters, and preserved optimization results when editing main-stat filters.
+- Fixed browser back navigation and improved the team analysis layout.
+
 ## 2026-09-18
 
 ### features

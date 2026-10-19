@@ -38,7 +38,7 @@ Rules the parser and existing entries rely on:
 - `## roadmap` stays at the very top; leave it untouched unless the user asks to change it.
 - Newest dated entry comes **first**, immediately under roadmap (descending by date).
 - Each entry uses `### features` then `### fixes` (in that order). Omit a section that has no items; keep `### features` even when small.
-- Bullets are `- ` lines. One change per bullet. No nested bullets, no bold/markdown decoration inside bullets — plain sentences, matching the surrounding entries.
+- Bullets are `- ` lines. One change per bullet. No nested bullets or bold decoration; use plain sentences, matching the surrounding entries. Inline Markdown links are supported: `[label](/site-path)` for internal pages or `[label](https://example.com)` for external pages. Other Markdown and HTML are not rendered.
 - `en.md` and `zh.md` must stay structurally identical: same date, same sections, same number of bullets in the same order. They are two views of one entry, not independent files.
 
 ## Step 1 — Gather commits since the last published entry

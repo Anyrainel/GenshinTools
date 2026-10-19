@@ -1,5 +1,6 @@
 import { Megaphone } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { NewsText } from "@/components/shared/NewsText";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
@@ -553,7 +554,9 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
                         key={i}
                         className="text-sm text-foreground/80 leading-relaxed pl-3 relative before:content-['·'] before:absolute before:left-0 before:text-muted-foreground"
                       >
-                        {item}
+                        <NewsText onNavigate={() => setOpen(false)}>
+                          {item}
+                        </NewsText>
                       </li>
                     ))}
                   </ul>
@@ -594,7 +597,9 @@ export function WhatsNew({ children }: { children: React.ReactNode }) {
                               key={i}
                               className="text-sm text-foreground/80 leading-relaxed pl-3 relative before:content-['·'] before:absolute before:left-0 before:text-muted-foreground"
                             >
-                              {item}
+                              <NewsText onNavigate={() => setOpen(false)}>
+                                {item}
+                              </NewsText>
                             </li>
                           ))}
                         </ul>
