@@ -4,6 +4,7 @@ import {
   type TeamCompDelta,
 } from "@/domain/team/teamDeltas";
 import type { TeamSetupConfig } from "@/domain/team/types";
+import { migrateCharacterBuffTriggerConfigs } from "@/stores/migration/characterBuffTriggers";
 import { migrateReleasedTeamWeapons } from "@/stores/migration/releasedWeaponIds";
 import { migrateTeamAnalysisConfigs } from "@/stores/migration/teamAnalysis";
 import {
@@ -36,12 +37,14 @@ export type TeamRestorePatch = TeamCloudSnapshot;
 export function teamToCloud(
   snapshot: TeamCloudSnapshot
 ): CloudExportPartition<TeamCloudPayload>[] {
-  const configsByTeamId = compactTeamSetupConfigs(snapshot.configsByTeamId);
+  const configsByTeamId = compactTeamSetupConfigs(
+    migrateCharacterBuffTriggerConfigs(snapshot.configsByTeamId)
+  );
   return [
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 6,
+      schemaVersion: 7,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -72,6 +75,9 @@ export function teamFromCloud(
   }
   if (partition && partition.schemaVersion < 5) {
     configsByTeamId = migrateTeamAnalysisConfigs(configsByTeamId);
+  }
+  if (partition && partition.schemaVersion < 7) {
+    configsByTeamId = migrateCharacterBuffTriggerConfigs(configsByTeamId);
   }
   const restored = {
     activePresetId: current?.activePresetId ?? null,

@@ -434,7 +434,7 @@ describe("released 7.1 weapon ID persistence", () => {
       "new_bough",
       "weapon_catalyst",
     ]);
-    expect(teamToCloud(teamSnapshot())[0].schemaVersion).toBe(6);
+    expect(teamToCloud(teamSnapshot())[0].schemaVersion).toBe(7);
     expect(
       tiersToCloud({
         character: { ...tier, tierLists: {} },

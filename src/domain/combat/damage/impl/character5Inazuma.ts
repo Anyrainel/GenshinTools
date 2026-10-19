@@ -783,7 +783,7 @@ class AratakiItto extends CharacterBase {
       : []),
     // P1: Kesagiri ATK SPD (assume max +30%)
     new StatBuff(
-      cbs(this, "P1", []),
+      cbs(this, "P1", ["charge"]),
       { receiver: "selfOnField", filter: { abilities: ["charge"] } },
       [{ key: "atkSpd%", value: 0.3 }]
     ),

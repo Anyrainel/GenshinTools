@@ -632,7 +632,7 @@ class Xingqiu extends CharacterBase {
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
       // P2: Xingqiu gains a 20% Hydro DMG Bonus (permanent passive)
-      new StatBuff(cbs(this, "P2", ["passive"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
         { key: "hydro%", value: 0.2 },
       ]),
     ];

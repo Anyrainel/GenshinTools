@@ -595,7 +595,7 @@ class Flins extends CharacterBase {
       : []),
     // P2: EM = 8% ATK (cap 160). C4 enhances to 10% ATK (cap 220)
     new ScalingBuff(
-      cbs(this, "P2", ["passive"]),
+      cbs(this, "P2", []),
       { receiver: "self" },
       [],
       "atk",
@@ -1200,7 +1200,7 @@ class Linnea extends CharacterBase {
       return hasOtherMoonsign5Geo
         ? [
             new ScalingBuff(
-              cbs(this, "P2", ["passive"]),
+              cbs(this, "P2", []),
               { receiver: "teamOnField", factions: ["Moonsign" as Faction] },
               [],
               "def",
@@ -1210,7 +1210,7 @@ class Linnea extends CharacterBase {
           ]
         : [
             new ScalingBuff(
-              cbs(this, "P2", ["passive"]),
+              cbs(this, "P2", []),
               { receiver: "self" },
               [],
               "def",

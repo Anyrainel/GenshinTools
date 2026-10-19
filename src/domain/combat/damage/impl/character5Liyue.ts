@@ -40,7 +40,7 @@ class Zibai extends CharacterBase {
         0.14
       ),
       // P2: Other Geo → DEF +15% each; Other Hydro → EM +60 each
-      new StatBuff(cbs(this, "P2", ["A4"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
         { key: "def%", value: geoCount * 0.15 },
         { key: "em", value: hydroCount * 60 },
       ]),
@@ -560,7 +560,7 @@ class Yelan extends CharacterBase {
 
     const buffs: StatBuff[] = [
       // P1: +6%/12%/18%/30% Max HP based on unique element count
-      new StatBuff(cbs(this, "P1", ["A1"]), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P1", []), { receiver: "self" }, [
         { key: "hp%", value: p1Bonus },
       ]),
       // P2: Q ramps DMG% for on-field, scales with talent level and option tier
@@ -1448,9 +1448,11 @@ class Keqing extends CharacterBase {
     if (this.constellation >= 6) {
       // C6: 4 stacks × 6% = 24% Electro DMG
       buffs.push(
-        new StatBuff(cbs(this, "C6", []), { receiver: "selfOnField" }, [
-          { key: "electro%", value: 0.24 },
-        ])
+        new StatBuff(
+          cbs(this, "C6", ["normal", "charge", "E", "Q"]),
+          { receiver: "selfOnField" },
+          [{ key: "electro%", value: 0.24 }]
+        )
       );
     }
 

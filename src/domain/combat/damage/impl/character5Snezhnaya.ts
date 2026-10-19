@@ -527,7 +527,7 @@ class Arlecchino extends CharacterBase {
 
   readonly buffs = [
     // P3: In combat, unconditional Pyro DMG +40%
-    new StatBuff(cbs(this, "P3", []), { receiver: "self" }, [
+    new StatBuff(cbs(this, "P3", ["in-combat"]), { receiver: "self" }, [
       { key: "pyro%", value: 0.4 },
     ]),
     // C6: After E, Normal ATK and Q: CR +10%, CD +70% for 20s
@@ -813,7 +813,7 @@ class Sandrone extends CharacterBase {
     // P2 (ZH/U0b): EM = 8% ATK (cap 160) — no 辉映 gate
     buffs.push(
       new ScalingBuff(
-        cbs(this, "P2", ["passive"]),
+        cbs(this, "P2", []),
         { receiver: "self" },
         [],
         "atk",
@@ -1170,7 +1170,7 @@ class Odette extends CharacterBase {
         : []),
       // P1: Marvelous Splendor stacks -> Stellar Glimmer reaction DMG +15% per stack
       new StatBuff(
-        cbs(this, "P1", []),
+        cbs(this, "P1", ["E", "Q"]),
         {
           receiver: "team",
           filter: { reactions: ["stellarConduct", "stellarSwirl"] },
@@ -1218,7 +1218,7 @@ class Odette extends CharacterBase {
     // C2: Marvelous Splendor ATK buff (+7% per stack)
     if (this.constellation >= 2) {
       buffs.push(
-        new StatBuff(cbs(this, "C2", []), { receiver: "team" }, [
+        new StatBuff(cbs(this, "C2", ["E", "Q"]), { receiver: "team" }, [
           { key: "atk%", value: maxSplendorStacks * 0.07 },
         ])
       );
@@ -1261,7 +1261,7 @@ class Odette extends CharacterBase {
     if (this.constellation >= 6) {
       buffs.push(
         new StatBuff(
-          cbs(this, "C6", []),
+          cbs(this, "C6", ["E", "Q"]),
           {
             receiver: "team",
             filter: { reactions: ["stellarConduct", "stellarSwirl"] },
@@ -1555,16 +1555,20 @@ class Vesna extends CharacterBase {
       const p2Mult = this.constellation >= 4 ? 3 : 1;
       if (cryoAnemo > 0) {
         buffs.push(
-          new StatBuff(cbs(this, p2Origin, ["passive"]), { receiver: "self" }, [
-            { key: "atk%", value: cryoAnemo * 0.06 * p2Mult },
-          ])
+          new StatBuff(
+            cbs(this, p2Origin, ["stellarSwirl"]),
+            { receiver: "self" },
+            [{ key: "atk%", value: cryoAnemo * 0.06 * p2Mult }]
+          )
         );
       }
       if (otherElements > 0) {
         buffs.push(
-          new StatBuff(cbs(this, p2Origin, ["passive"]), { receiver: "self" }, [
-            { key: "em", value: otherElements * 25 * p2Mult },
-          ])
+          new StatBuff(
+            cbs(this, p2Origin, ["stellarSwirl"]),
+            { receiver: "self" },
+            [{ key: "em", value: otherElements * 25 * p2Mult }]
+          )
         );
       }
     }

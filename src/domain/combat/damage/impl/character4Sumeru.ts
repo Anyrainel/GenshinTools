@@ -13,9 +13,11 @@ class Sethos extends CharacterBase {
     // C2: Self Electro DMG +30% (2 stacks × 15%), no on-field restriction
     ...(this.constellation >= 2
       ? [
-          new StatBuff(cbs(this, "C2", []), { receiver: "self" }, [
-            { key: "electro%", value: 0.3 },
-          ]),
+          new StatBuff(
+            cbs(this, "C2", ["charge", "E", "Q"]),
+            { receiver: "self" },
+            [{ key: "electro%", value: 0.3 }]
+          ),
         ]
       : []),
     // C4: Team EM +80 on multi-hit

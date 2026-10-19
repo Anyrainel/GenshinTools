@@ -32,6 +32,7 @@ import type {
   TeamCompData,
   TeamSetupConfig,
 } from "@/domain/team/types";
+import { migrateCharacterBuffTriggerConfigs } from "./migration/characterBuffTriggers";
 import { mergeTeamStore, migrateTeamStore } from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 import { useTeamResultCacheStore } from "./useTeamResultCacheStore";
@@ -388,7 +389,7 @@ export const useTeamStore = create<TeamState>()(
           state.activePresetId = source.activePresetId;
           state.compDeltas = source.compDeltas;
           state.configsByTeamId = compactTeamSetupConfigs(
-            source.configsByTeamId
+            migrateCharacterBuffTriggerConfigs(source.configsByTeamId)
           );
           state.author = source.author;
           state.description = source.description;
@@ -465,7 +466,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 24,
+      version: 25,
       migrate: migrateTeamStore,
       partialize: (state) =>
         ({

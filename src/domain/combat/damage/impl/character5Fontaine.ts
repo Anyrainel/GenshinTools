@@ -1046,20 +1046,20 @@ class Neuvillette extends CharacterBase {
     const buffs: StatBuff[] = [];
     const stacks = this.p1Stacks;
 
+    // C2 inherits the same Past Draconic Glories activation as P1.
+    const p1Triggers: string[] = [
+      "vaporize",
+      "frozen",
+      "electroCharged",
+      "lunarCharged",
+      "bloom",
+      "lunarBloom",
+      "swirl",
+      "crystallize",
+      "lunarCrystallize",
+    ];
     if (stacks > 0) {
       const P1_BASEDMG = [0, 0.1, 0.25, 0.6] as const;
-      // All reaction triggers shown in buff label for UI display
-      const p1Triggers: string[] = [
-        "vaporize",
-        "frozen",
-        "electroCharged",
-        "lunarCharged",
-        "bloom",
-        "lunarBloom",
-        "swirl",
-        "crystallize",
-        "lunarCrystallize",
-      ];
       buffs.push(
         new StatBuff(
           cbs(this, "P1", p1Triggers),
@@ -1081,7 +1081,7 @@ class Neuvillette extends CharacterBase {
     if (stacks > 0 && this.constellation >= 2) {
       buffs.push(
         new StatBuff(
-          cbs(this, "C2", []),
+          cbs(this, "C2", p1Triggers),
           { receiver: "selfOnField", filter: { abilities: ["charge"] } },
           [{ key: "cd", value: stacks * 0.14 }]
         )
@@ -1554,7 +1554,7 @@ class Lyney extends CharacterBase {
     const pyroCount = Math.max(this.teamMeta.countByElement("Pyro") - 1, 0);
     const p2Bonus = Math.min(0.6 + pyroCount * 0.2, 1.0);
     buffs.push(
-      new StatBuff(cbs(this, "P2", []), { receiver: "self" }, [
+      new StatBuff(cbs(this, "P2", ["pyro-affected"]), { receiver: "self" }, [
         { key: "dmg%", value: p2Bonus },
       ])
     );

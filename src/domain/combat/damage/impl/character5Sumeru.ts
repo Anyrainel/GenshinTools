@@ -1008,10 +1008,11 @@ class Nilou extends CharacterBase {
         ])
       );
       // P2: Per 1000 HP above 30000 → Bloom DMG +9% (max 400%)
+      // Golden Chalice's Bounty requires completing E's third dance step.
       // Note: lunarBloom is not bloom, so should not be included.
       buffs.push(
         new ScalingBuff(
-          cbs(this, "P2", []),
+          cbs(this, "P2", ["E"]),
           {
             receiver: "team",
             filter: { reactions: ["bloom"] },

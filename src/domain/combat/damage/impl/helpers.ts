@@ -54,7 +54,7 @@ export const TRAVELER_RESONANCE_ENTRIES: StatEntry[] = [
 
 export function travelerP3Buff(self: CharacterBase): StatBuff {
   return new StatBuff(
-    cbs(self, "P3", ["passive"]),
+    cbs(self, "P3", []),
     { receiver: "self" },
     TRAVELER_RESONANCE_ENTRIES
   );

@@ -18,6 +18,7 @@ import {
   type LegacyPersistedTeam,
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
+import { migrateCharacterBuffTriggerConfigs } from "./characterBuffTriggers";
 import { migrateBundledPresetId } from "./presetIds";
 import { migrateReleasedTeamWeapons } from "./releasedWeaponIds";
 import {
@@ -610,6 +611,11 @@ export function migrateTeamStore(
     // Consolidated into the unpublished v23 migration from origin's v22.
     state.activePresetId = migrateBundledPresetId(state.activePresetId ?? null);
     state.configsByTeamId = migrateTeamAnalysisConfigs(
+      state.configsByTeamId ?? {}
+    );
+  }
+  if (version < 25) {
+    state.configsByTeamId = migrateCharacterBuffTriggerConfigs(
       state.configsByTeamId ?? {}
     );
   }

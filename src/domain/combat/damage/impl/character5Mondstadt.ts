@@ -643,10 +643,14 @@ class Diluc extends CharacterBase {
     if (this.constellation >= 2) {
       // C2: On taking DMG, ATK +10% and ATK SPD +5% × 3 stacks = +30% / +15%
       buffs.push(
-        new StatBuff(cbs(this, "C2", []), { receiver: "selfOnField" }, [
-          { key: "atk%", value: 0.3 },
-          { key: "atkSpd%", value: 0.15 },
-        ])
+        new StatBuff(
+          cbs(this, "C2", ["take-dmg"]),
+          { receiver: "selfOnField" },
+          [
+            { key: "atk%", value: 0.3 },
+            { key: "atkSpd%", value: 0.15 },
+          ]
+        )
       );
     }
     // C4: 2nd/3rd E cast in combo deals +40% DMG — applied via bespokeBuff on parts[1] and parts[2]
@@ -774,10 +778,10 @@ class Mona extends CharacterBase {
   readonly buffs = (() => {
     const isHexerei = this.teamMeta.countByFaction("Hexerei") >= 2;
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
-      // P2 (combat): 20% of ER as Hydro DMG% (Waterborne Destiny)
+      // P2: 20% of ER as Hydro DMG% (Waterborne Destiny)
       // Personal passive, always active — use "self" (no on-field restriction)
       new ScalingBuff(
-        cbs(this, "P2", ["passive"]),
+        cbs(this, "P2", []),
         { receiver: "self" },
         [],
         "er",
@@ -1313,9 +1317,11 @@ class Klee extends CharacterBase {
       // C1: After Chained Reactions proc, Klee's ATK +60% for 12s (assume active)
       ...(this.constellation >= 1
         ? [
-            new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
-              { key: "atk%", value: 0.6 },
-            ]),
+            new StatBuff(
+              cbs(this, "C1", ["normal", "charge", "plunge", "E", "Q"]),
+              { receiver: "selfOnField" },
+              [{ key: "atk%", value: 0.6 }]
+            ),
           ]
         : []),
       // C2: Enemies hit by mines: -23% DEF for 10s
@@ -1698,7 +1704,7 @@ class Varka extends CharacterBase {
       if (pairBonus > 0) {
         buffs.push(
           new StatBuff(
-            cbs(this, "P1", []),
+            cbs(this, "P1", ["E"]),
             {
               receiver: "selfOnField",
               filter: { abilities: ["normal", "charge", "skill"] },

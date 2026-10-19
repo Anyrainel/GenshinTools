@@ -372,7 +372,7 @@ class TravelerAnemo extends CharacterBase {
       // C2: Energy Recharge +16%
       ...(this.constellation >= 2
         ? [
-            new StatBuff(cbs(this, "C2", ["passive"]), { receiver: "self" }, [
+            new StatBuff(cbs(this, "C2", []), { receiver: "self" }, [
               { key: "er", value: 0.16 },
             ]),
           ]
@@ -1206,13 +1206,13 @@ class TravelerCryo extends CharacterBase {
       // P4 cross-resonance: all elements the Traveler has resonated with.
       // Unlike the other variants this sits on P4 (异邦的层冰), not P3.
       new StatBuff(
-        cbs(this, "P4", ["passive"]),
+        cbs(this, "P4", []),
         { receiver: "self" },
         TRAVELER_RESONANCE_ENTRIES
       ),
       // P2 通明的冽冰: EM +8% of ATK, capped at +160 EM
       new ScalingBuff(
-        cbs(this, "P2", ["passive"]),
+        cbs(this, "P2", []),
         { receiver: "self" },
         [],
         "atk",

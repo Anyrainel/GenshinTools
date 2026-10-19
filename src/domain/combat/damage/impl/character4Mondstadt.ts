@@ -347,9 +347,11 @@ class Razor extends CharacterBase {
       // C1: On elemental particle pickup → self DMG +10%
       ...(this.constellation >= 1
         ? [
-            new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
-              { key: "dmg%", value: 0.1 },
-            ]),
+            new StatBuff(
+              cbs(this, "C1", ["orb"]),
+              { receiver: "selfOnField" },
+              [{ key: "dmg%", value: 0.1 }]
+            ),
           ]
         : []),
       // C2: CRIT Rate +10% vs enemies <30% HP
@@ -871,11 +873,13 @@ class Rosaria extends CharacterBase {
     // C1: On CRIT hit → ATK SPD +10% (all attacks) and Normal Attack DMG +10%
     ...(this.constellation >= 1
       ? [
-          new StatBuff(cbs(this, "C1", []), { receiver: "selfOnField" }, [
-            { key: "atkSpd%", value: 0.1 },
-          ]),
           new StatBuff(
-            cbs(this, "C1", []),
+            cbs(this, "C1", ["crit-hit"]),
+            { receiver: "selfOnField" },
+            [{ key: "atkSpd%", value: 0.1 }]
+          ),
+          new StatBuff(
+            cbs(this, "C1", ["crit-hit"]),
             { receiver: "selfOnField", filter: { abilities: ["normal"] } },
             [{ key: "dmg%", value: 0.1 }]
           ),
@@ -1248,7 +1252,7 @@ class Kaeya extends CharacterBase {
     ...(this.constellation >= 1
       ? [
           new StatBuff(
-            cbs(this, "C1", []),
+            cbs(this, "C1", ["enemy-cryo"]),
             {
               receiver: "selfOnField",
               filter: { abilities: ["normal", "charge"] },
