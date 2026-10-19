@@ -354,6 +354,46 @@ describe("TeamStatSheet", () => {
   });
 
   describe("getIdleStats parity", () => {
+    it.each([false, true])(
+      "excludes Furina C2 from idle HP while retaining combat HP (double Hydro: %s)",
+      (doubleHydro) => {
+        const configs: TeamSlotConfig[] = [
+          {
+            charId: "furina",
+            charLevel: 90,
+            constellation: 2,
+            weaponId: "favonius_sword",
+            refinement: 1,
+            artifactSet: null,
+          },
+          { ...NATIONAL_TEAM[doubleHydro ? 2 : 1]!, artifactSet: null },
+        ];
+        const build = new TeamBuild(configs);
+        const sheets = emptySheets(...configs.map((c) => c.charId));
+        sheets.furina = new StatSheet([
+          { key: "hp", value: 4780 + 478 },
+          { key: "hp%", value: 0.163 + 0.041 },
+        ]);
+        const baseHp = build.charBuilds.furina.baseStatSheet.get(
+          "baseHp",
+          null
+        );
+        const expectedIdleHp =
+          baseHp * (1 + 0.204 + (doubleHydro ? 0.25 : 0)) + 4780 + 478;
+
+        for (const onFieldId of configs.map((c) => c.charId)) {
+          const combat = build.getTeamStats(sheets, onFieldId);
+          expect(combat.furina.get("hp", null)).toBeCloseTo(
+            expectedIdleHp + baseHp * 1.4,
+            6
+          );
+        }
+        const idle = build.teamStats.getIdleStats().furina;
+        expect(idle.onField.get("hp", null)).toBeCloseTo(expectedIdleHp, 6);
+        expect(idle.offField.get("hp", null)).toBeCloseTo(expectedIdleHp, 6);
+      }
+    );
+
     it("returns valid idle stat sheets via TeamBuild delegation", () => {
       const { teamBuild, statSheet } = buildTeamStatSheet(NATIONAL_TEAM);
       const charIds = NATIONAL_TEAM.map((c) => c.charId);

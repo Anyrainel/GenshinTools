@@ -146,10 +146,10 @@ These are enemy debuffs — they benefit all party members equally. Scoping to `
 
 Apply U3 first: this receiver rule never converts `defIgnore%` into `defReduction%`. DEF ignore uses the recipients and damage scope stated in the source; a team-wide DEF-ignore grant legitimately uses `receiver: "team"` (for example, Nicole C6). Sharing a receiver with an enemy debuff does not make their stat keys interchangeable.
 
-### U7. `BuffSource` Display Fields
+### U7. `BuffSource` Origin and Activation Labels
 
 - `origin` must be one of: `"A"`, `"E"`, `"Q"`, `"P1"`–`"P4"`, `"C0"`–`"C6"`, `"R1"`–`"R5"`. Multiple origins joined with `"/"` (e.g., `"P2/C2"`). No dashes or other separators.
-- `triggers` should use kebab-case strings consistent with existing usage (e.g., `"low-hp"`, `"elemental-reaction"`, `"burst"`). Always-active passives use `"A1"` / `"A4"`.
+- `triggers` should use strings consistent with existing usage: `"E"` / `"Q"` for skill/burst activation, and kebab-case labels such as `"low-hp"` or `"elemental-reaction"` for other conditions. Put passive/constellation provenance in `origin`; a genuinely unconditional passive needs no trigger label.
 - For reaction conditions, label at the granularity the game text uses:
 
   | Condition in game text | `triggers` label |
@@ -165,6 +165,10 @@ Apply U3 first: this receiver rule never converts `defIgnore%` into `defReductio
 
 Any stat modifier gated by combat text such as "after hitting", "after using E/Q", "after triggering a reaction", "while shielded", or similar activation conditions must be implemented as a `StatBuff` or scaling buff with accurate `triggers`, even when the calculator models the condition as always active for combat.
 
+- **[BUG]** if a combat-gated buff has absent/empty `source.triggers`, including passives and constellations whose effects require using E/Q or remaining in a skill/burst state. `origin: "C2"` or a fixed maximum stack count does not encode that activation condition.
+- `TeamStatSheet.getIdleStats()` excludes every buff with nonempty `source.triggers`. These labels affect idle calculation, not just display. Combat's peak/max-stack assumption must never turn a triggered effect into an unconditional idle bonus.
+- Example: Furina C2 may assume the full `hp%: 1.4` in combat, but must use `cbs(this, "C2", ["Q"])` because it requires burst-time Fanfare overflow. Review inherited activation conditions in the base talent as well as the constellation text.
+- When fixing a missing trigger, verify idle stats exclude the bonus in both field states while combat stats retain the modeled bonus; keep genuinely unconditional bonuses such as Hydro resonance in idle stats.
 - **[BUG]** if a conditional modifier is placed in provider `stats`. Direct `stats` are unconditional and are included in idle stats, so combat-gated effects would appear when they should not.
 - Use provider `stats` only for unconditional inherent stats that should appear in idle stats, such as character base stats, weapon main/substats, and unconditional 2pc-style stat bonuses.
 - Artifact 4pc bonuses should normally be represented through `buffs`; `ArtifactSetBase.stats` should stay empty unless a documented engine/design exception requires otherwise.
@@ -181,7 +185,7 @@ Only damage-affecting stats are modeled. When reviewing:
 
 The model targets **peak damage**, not average loop DPS. Verify each assumption is applied correctly:
 
-`cbs()` fields (`origin`, `triggers`) and other `BuffSource.triggers` are display-only — they don't gate runtime buff distribution, but must accurately reflect the activation condition. See U8: conditional stat modifiers must still be buffs, not provider `stats`, even when modeled as always active.
+`origin` identifies kit provenance; `triggers` labels activation conditions. Combat distribution does not simulate E/Q casts from these labels, but idle calculation excludes buffs with nonempty `triggers` (U8). Assuming an effect active or fully stacked in combat does not permit omitting its trigger labels.
 
 | Assumption type | Expected handling | Flag if wrong |
 |---|---|---|

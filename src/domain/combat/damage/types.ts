@@ -37,7 +37,7 @@ export type ReactionRequirement = {
 
 // ─── Buff System ───
 
-/** Display-only provenance. Does not affect calculation. */
+/** Buff provenance and metadata used by display, idle filtering, and stacking. */
 export type BuffSource = {
   type:
     | "character"
@@ -56,7 +56,9 @@ export type BuffSource = {
   internalKey?: string;
   /** Kit origin: C0–C6, A, E, Q, P1–P4, R1–R5 */
   origin?: string;
-  /** Trigger conditions: ["low-hp"], ["bloom"], ["shielded"], etc. */
+  /** Activation labels; nonempty excludes the buff from idle stats.
+   * Combat assumes these conditions are met rather than simulating the triggers.
+   */
   triggers?: string[];
   /**
    * Dedup key for effects that state "buffs of the same type will not stack".

@@ -824,7 +824,7 @@ class Furina extends CharacterBase {
       // C2: Fanfare overflow → HP% buff (0.35% per point, cap 140%)
       ...(this.constellation >= 2
         ? [
-            new StatBuff(cbs(this, "C2", []), { receiver: "self" }, [
+            new StatBuff(cbs(this, "C2", ["Q"]), { receiver: "self" }, [
               { key: "hp%", value: 1.4 },
             ]),
           ]
