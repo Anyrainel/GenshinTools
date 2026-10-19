@@ -1876,6 +1876,11 @@ export const i18nUiData = {
       en: "Optimization timed out",
       zh: "优化超时",
     },
+    minArtifactLevel: { en: "Min. Artifact Level", zh: "最低圣遗物等级" },
+    artifactLevelMax: { en: "Max", zh: "满级" },
+    artifactLevel12: { en: "Lv. 12", zh: "12级" },
+    artifactLevel4: { en: "Lv. 4", zh: "4级" },
+    artifactLevel0: { en: "Lv. 0", zh: "0级" },
     timeBudget: {
       en: "Budget",
       zh: "时限",

@@ -88,6 +88,7 @@ import {
 import { teamCompToArrays } from "@/domain/team/teamDeltas";
 import type {
   CharOptConfig,
+  OptimizerArtifactLevel,
   TeamComp,
   TeamDamageConfig,
   TeamSetupConfig,
@@ -694,6 +695,8 @@ export function AnalysisWorkspace({
   // Artifact inventory is provided by useTeamInventory — see teamInventory above
 
   const [timeBudgetSec, setTimeBudgetSec] = useState(30);
+  const [minArtifactLevel, setMinArtifactLevel] =
+    useState<OptimizerArtifactLevel>(0);
 
   // Ephemeral — not persisted to team store. Per-char preferred main stats
   // (sands/goblet/circlet) used to prefilter the optimizer's artifact pool.
@@ -854,6 +857,7 @@ export function AnalysisWorkspace({
       baseSheets: optBaseSheets,
       perChar,
       teamDeadlineMs: performance.now() + timeBudgetSec * 1000,
+      minArtifactLevel,
       ignoreArtifactSets: fullSetOptionalByChar,
       perCharExtraArtifacts: teamInventory.perCharExtraArtifacts,
       perCharExcludedArtifactIds,
@@ -1643,6 +1647,8 @@ export function AnalysisWorkspace({
               handleOptimize={handleOptimize}
               timeBudgetSec={timeBudgetSec}
               onTimeBudgetChange={setTimeBudgetSec}
+              minArtifactLevel={minArtifactLevel}
+              onMinArtifactLevelChange={setMinArtifactLevel}
               optimizedArtifactsByChar={optimizedArtifactsByChar}
               optimizedDisplayResult={optimizedDisplayResult}
               minErRaw={minErRaw}

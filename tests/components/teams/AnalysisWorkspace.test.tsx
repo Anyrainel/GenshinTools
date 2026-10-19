@@ -375,10 +375,14 @@ it("keeps the result while editing all three main-stat preferences and applies t
     expect(
       optimization.card.mock.lastCall![0].preferredMainStats.hu_tao
     ).toEqual({ sands: "atk%", goblet: "atk%", circlet: "cd" });
+    expect(optimization.card.mock.lastCall![0].minArtifactLevel).toBe(0);
+    act(() => optimization.card.mock.lastCall![0].onMinArtifactLevelChange(12));
+    expect(optimization.reset).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "Run optimizer" }));
     expect(optimization.start).toHaveBeenCalledTimes(1);
     const options = optimization.start.mock
       .lastCall![0] as TeamOptimizerOptions;
+    expect(options.minArtifactLevel).toBe(12);
     expect(options.perCharExcludedArtifactIds?.hu_tao).toEqual([
       "sands-hp%",
       "goblet-pyro%",

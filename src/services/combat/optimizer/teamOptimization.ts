@@ -549,7 +549,7 @@ export async function* runTeamOptimization(
   const {
     teamBuild,
     carryCharId,
-    inventory,
+    inventory: rawInventory,
     calcContext,
     baseSheets,
     perChar,
@@ -559,13 +559,19 @@ export async function* runTeamOptimization(
     perCharExtraArtifacts,
     perCharExcludedArtifactIds,
     useLagrangianAlloc,
+    minArtifactLevel = 0,
   } = opts;
   const { combo } = opts;
   const { buffOverrides } = combo;
 
+  const meetsMinLevel = (artifact: ArtifactData): boolean =>
+    artifact.level >=
+    (minArtifactLevel === "max" ? artifact.rarity * 4 : minArtifactLevel);
+  const inventory = rawInventory.filter(meetsMinLevel);
+
   /** Get the inventory for a specific character, merging per-char extras and filtering per-char exclusions. */
   const getCharInventory = (charId: string): ArtifactData[] => {
-    const extras = perCharExtraArtifacts?.[charId];
+    const extras = perCharExtraArtifacts?.[charId]?.filter(meetsMinLevel);
     let pool = extras?.length ? [...inventory, ...extras] : inventory;
     const excluded = perCharExcludedArtifactIds?.[charId];
     if (excluded?.length) {

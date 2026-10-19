@@ -16,7 +16,11 @@ import {
   characterStatsResource,
   weaponStatsResource,
 } from "@/domain/reference/stats";
-import type { CharOptConfig, TeamOptimizerOptions } from "@/domain/team/types";
+import type {
+  CharOptConfig,
+  OptimizerArtifactLevel,
+  TeamOptimizerOptions,
+} from "@/domain/team/types";
 import {
   buildHeuristicBaseSheets,
   runTeamOptimization,
@@ -78,6 +82,79 @@ function getAssignedIds(
     .map((s) => charArts[s]?.id)
     .filter((id): id is string => !!id);
 }
+
+describe("minimum artifact level", () => {
+  it.each<OptimizerArtifactLevel | undefined>([undefined, 0, 4, 12, "max"])(
+    "respects %s for search, support fill and per-character extras",
+    async (minArtifactLevel) => {
+      const tb = makeTeamBuild();
+      const level = minArtifactLevel === "max" ? 20 : (minArtifactLevel ?? 0);
+      const inventory = allSlots.map((slot) => ({ ...makeArt(slot), level }));
+      const extras = allSlots.map((slot) => ({
+        ...makeArt(slot),
+        rarity: 4 as const,
+        level: minArtifactLevel === "max" ? 16 : level,
+      }));
+      const belowMinimum =
+        level > 0
+          ? allSlots.map((slot) => ({
+              ...makeArt(slot, undefined, undefined, { cd: 80, cr: 20 }),
+              level: level - 1,
+            }))
+          : [];
+      const results = await drain(
+        runTeamOptimization({
+          teamBuild: tb,
+          carryCharId: "hu_tao",
+          combo: singleFormulaCombo("hu_tao", getFirstFormulaId(tb, "hu_tao")),
+          inventory: [...inventory, ...belowMinimum],
+          perCharExtraArtifacts: { xingqiu: [...extras, ...belowMinimum] },
+          minArtifactLevel,
+          calcContext: CTX,
+          baseSheets: { hu_tao: new StatSheet([]), xingqiu: new StatSheet([]) },
+          perChar: {
+            hu_tao: { minEr: 0, minCr: 0, buildMatch: makeBuildMatch() },
+            xingqiu: { minEr: 0, minCr: 0, buildMatch: makeBuildMatch() },
+          },
+        })
+      );
+      const final = results[results.length - 1];
+      expect(final.done).toBe(true);
+      if (!final.done) return;
+      expect(final.bestDamage).toBeGreaterThan(0);
+      expect(
+        getAssignedIds(final.bestArtifactsByChar, "hu_tao").sort()
+      ).toEqual(inventory.map((art) => art.id).sort());
+      expect(
+        getAssignedIds(final.bestArtifactsByChar, "xingqiu").sort()
+      ).toEqual(extras.map((art) => art.id).sort());
+    }
+  );
+
+  it("reports an empty pool without reintroducing artifacts below the minimum", async () => {
+    const tb = makeTeamBuild();
+    const results = await drain(
+      runTeamOptimization({
+        teamBuild: tb,
+        carryCharId: "hu_tao",
+        combo: singleFormulaCombo("hu_tao", getFirstFormulaId(tb, "hu_tao")),
+        inventory: allSlots.map((slot) => ({ ...makeArt(slot), level: 4 })),
+        minArtifactLevel: 12,
+        calcContext: CTX,
+        baseSheets: { hu_tao: new StatSheet([]), xingqiu: new StatSheet([]) },
+        perChar: { hu_tao: { minEr: 0, minCr: 0 } },
+      })
+    );
+    const final = results[results.length - 1];
+    expect(final.done).toBe(true);
+    if (!final.done) return;
+    expect(final.failReasons.hu_tao).toEqual({
+      kind: "empty-pool",
+      emptySlots: allSlots,
+    });
+    expect(getAssignedIds(final.bestArtifactsByChar, "hu_tao")).toEqual([]);
+  });
+});
 
 describe("perCharExcludedArtifactIds", () => {
   it("uses per-character exclusions when building heuristic base sheets", () => {

@@ -96,6 +96,8 @@ export interface CharOptConfig {
   artifactSet?: ArtifactSetConfig | null;
 }
 
+export type OptimizerArtifactLevel = "max" | 12 | 4 | 0;
+
 export interface TeamOptimizerOptions {
   teamBuild: TeamBuild;
   carryCharId: string;
@@ -108,6 +110,8 @@ export interface TeamOptimizerOptions {
   perCharDeadlineMs?: number;
   teamDeadlineMs?: number;
   maxArtsPerSlot?: number;
+  /** Minimum candidate level; "max" uses each artifact's rarity-specific cap. */
+  minArtifactLevel?: OptimizerArtifactLevel;
   /** Extra artifacts available only to specific characters (e.g. same-char frozen reuse) */
   perCharExtraArtifacts?: Record<string, ArtifactData[]>;
   /** Artifact IDs to exclude from the pool per character (e.g. tier-aware exclusion) */

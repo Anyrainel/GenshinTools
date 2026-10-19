@@ -108,6 +108,8 @@ function defaultProps(overrides: Partial<CardProps> = {}): CardProps {
     handleOptimize: vi.fn(),
     timeBudgetSec: 30,
     onTimeBudgetChange: vi.fn(),
+    minArtifactLevel: 0,
+    onMinArtifactLevelChange: vi.fn(),
     optimizedArtifactsByChar: {},
     optimizedDisplayResult: null,
     minErRaw: 100,

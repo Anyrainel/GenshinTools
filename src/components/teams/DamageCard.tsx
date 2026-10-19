@@ -64,6 +64,7 @@ import { fmtDamage } from "@/domain/team/displayFormatter";
 import { toStatSheets } from "@/domain/team/teamConfigUtils";
 import type {
   OptFailReason,
+  OptimizerArtifactLevel,
   TeamComp,
   TeamOptimizationProgress,
   TeamOptimizationResult,
@@ -1206,6 +1207,8 @@ interface DamageCardProps {
   handleOptimize: () => void;
   timeBudgetSec: number;
   onTimeBudgetChange: (sec: number) => void;
+  minArtifactLevel: OptimizerArtifactLevel;
+  onMinArtifactLevelChange: (level: OptimizerArtifactLevel) => void;
   optimizedArtifactsByChar: Record<string, Record<string, ArtifactData>>;
   optimizedDisplayResult: DisplayResult | null | undefined;
   minErRaw: number;
@@ -1564,6 +1567,8 @@ export function DamageCard({
   handleOptimize,
   timeBudgetSec,
   onTimeBudgetChange,
+  minArtifactLevel,
+  onMinArtifactLevelChange,
   optimizedArtifactsByChar,
   optimizedDisplayResult,
   minErRaw,
@@ -1907,6 +1912,41 @@ export function DamageCard({
             <div className={CONTROLS_CLS}>
               <EnemyFields {...ctxProps} />
               {hasStellarConduct && <StellarDirectCoeffFields {...ctxProps} />}
+              <div className="flex items-center gap-0.5 md:gap-1">
+                <span className={LABEL_CLS}>
+                  {t.ui("teamComp.minArtifactLevel")}
+                </span>
+                <Select
+                  value={String(minArtifactLevel)}
+                  onValueChange={(value) =>
+                    onMinArtifactLevelChange(
+                      value === "max" ? "max" : (Number(value) as 0 | 4 | 12)
+                    )
+                  }
+                  disabled={isComputing}
+                >
+                  <SelectTrigger
+                    aria-label={t.ui("teamComp.minArtifactLevel")}
+                    className="font-bold border-foreground/20 bg-background text-xs h-6 w-[72px] px-1 py-0 md:text-sm md:h-7 md:w-[84px] md:px-1.5"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="max">
+                      {t.ui("teamComp.artifactLevelMax")}
+                    </SelectItem>
+                    <SelectItem value="12">
+                      {t.ui("teamComp.artifactLevel12")}
+                    </SelectItem>
+                    <SelectItem value="4">
+                      {t.ui("teamComp.artifactLevel4")}
+                    </SelectItem>
+                    <SelectItem value="0">
+                      {t.ui("teamComp.artifactLevel0")}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="flex items-center gap-0.5 md:gap-1">
                 <span className={LABEL_CLS}>{t.ui("teamComp.timeBudget")}</span>
                 <Select
