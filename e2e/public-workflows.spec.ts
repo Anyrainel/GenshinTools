@@ -75,7 +75,7 @@ async function dismissInitialBuildPrompt(page: Page) {
     .click();
 }
 
-test("build-card weapons stay anchored to the right with placeholders and responsive caps", async ({
+test("@visual build-card weapons stay anchored to the right with placeholders and responsive caps", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -164,7 +164,7 @@ test("build-card weapons stay anchored to the right with placeholders and respon
     await checkRightAnchor(width, "zh", "placeholder");
 });
 
-test("long build-card names wrap before the right-hand weapon on phones", async ({
+test("@visual long build-card names wrap before the right-hand weapon on phones", async ({
   page,
 }, testInfo) => {
   await page.setViewportSize({ width: 1280, height: 800 });
@@ -194,7 +194,7 @@ test("long build-card names wrap before the right-hand weapon on phones", async 
   });
 });
 
-test("production chunks and nine themes render across responsive routes", async ({
+test("@visual production chunks and nine themes render across responsive routes", async ({
   page,
 }, testInfo) => {
   const errors = bundleErrors(page);
@@ -247,6 +247,24 @@ test("production chunks and nine themes render across responsive routes", async 
   expect(errors).toEqual([]);
 });
 
+test("production routes load without bundle errors", async ({ page }) => {
+  const errors = bundleErrors(page);
+  for (const route of [
+    "/",
+    "/account-data/characters",
+    "/account-data/inventory",
+    "/artifact-filter/configure",
+    "/team-comp/analysis",
+    "/archive/characters",
+  ]) {
+    expect((await page.goto(route))?.status()).toBe(200);
+    if (route === "/account-data/characters")
+      await dismissInitialBuildPrompt(page);
+    await expect(page.getByRole("main").first()).toBeVisible();
+  }
+  expect(errors).toEqual([]);
+});
+
 test("GOOD scanner upload reaches converted account and survives reload", async ({
   page,
 }) => {
@@ -258,7 +276,7 @@ test("GOOD scanner upload reaches converted account and survives reload", async 
     .first()
     .click();
   const dialog = page.getByRole("dialog", {
-    name: "Import Account Data",
+    name: "Import Game Account Data",
     exact: true,
   });
   await dialog
@@ -314,7 +332,7 @@ test("GOOD scanner upload reaches converted account and survives reload", async 
   await page.getByRole("button", { name: "More", exact: true }).click();
   await page.getByRole("menuitem", { name: "Import", exact: true }).click();
   await page
-    .getByRole("dialog", { name: "Import Account Data", exact: true })
+    .getByRole("dialog", { name: "Import Game Account Data", exact: true })
     .locator('input[type="file"]')
     .setInputFiles({
       name: "owned-replacement.good.json",
@@ -362,7 +380,7 @@ test("GOOD scanner upload reaches converted account and survives reload", async 
       ),
     });
   await expect(
-    page.getByRole("dialog", { name: "Import Account Data", exact: true })
+    page.getByRole("dialog", { name: "Import Game Account Data", exact: true })
   ).toBeHidden();
   await expect
     .poll(async () =>

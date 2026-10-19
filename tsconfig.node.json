@@ -27,6 +27,7 @@
     "vitest.config.ts",
     "vitest.worker.config.ts",
     "playwright.config.ts",
-    "playwright.public.config.ts"
+    "playwright.public.config.ts",
+    "playwright.visual.config.ts"
   ]
 }

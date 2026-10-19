@@ -7,7 +7,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   outputDir: "test-results/e2e/account",
-  testIgnore: ["public-workflows.spec.ts", "tour.spec.ts"],
+  testMatch: "account-backup.spec.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -15,7 +15,8 @@ export default defineConfig({
   reporter: "html",
   use: {
     baseURL: "http://localhost:5174",
-    trace: "on-first-retry",
+    trace: "retain-on-failure",
+    screenshot: "only-on-failure",
   },
 
   projects: [

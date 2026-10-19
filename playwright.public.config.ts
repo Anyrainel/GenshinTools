@@ -10,6 +10,7 @@ export default defineConfig({
     "analysis-layout.spec.ts",
   ],
   fullyParallel: true,
+  grepInvert: /@visual/,
   workers: 2,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,

@@ -2,8 +2,20 @@ name: Browser validation
 
 on:
   pull_request:
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**/*.md"
+      # Markdown under src is bundled application content, not documentation.
+      - "src/**/*.md"
   push:
     branches: [main]
+    paths:
+      - "**"
+      - "!docs/**"
+      - "!**/*.md"
+      - "src/**/*.md"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,5 +35,21 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npx playwright install --with-deps chromium
+        id: browser-install
       - run: npm run test:e2e:public
       - run: npm run test:e2e:account
+        if: ${{ !cancelled() && steps.browser-install.outcome == 'success' }}
+      - run: npm run test:e2e:visual
+        if: ${{ !cancelled() && github.event_name == 'workflow_dispatch' && steps.browser-install.outcome == 'success' }}
+      - name: Upload browser failure evidence
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: browser-failure-evidence
+          path: |
+            test-results/e2e-public/
+            test-results/e2e/account/
+            test-results/e2e-visual/
+            playwright-report/
+          if-no-files-found: ignore
+          retention-days: 14

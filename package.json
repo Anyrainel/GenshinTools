@@ -38,6 +38,7 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "test:e2e:public": "playwright test -c playwright.public.config.ts",
+    "test:e2e:visual": "playwright test -c playwright.visual.config.ts",
     "test:e2e:account": "playwright test e2e/account-backup.spec.ts --project=desktop",
     "test:e2e:ui": "playwright test --ui",
     "prepare": "husky",

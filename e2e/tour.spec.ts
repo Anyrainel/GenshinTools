@@ -38,7 +38,9 @@ async function fitsViewport(
 }
 
 for (const [name, route] of tours) {
-  test(`${name} help fits the viewport and completes`, async ({ page }) => {
+  test(`@visual ${name} help fits the viewport and completes`, async ({
+    page,
+  }) => {
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
     await page.addInitScript(() => {

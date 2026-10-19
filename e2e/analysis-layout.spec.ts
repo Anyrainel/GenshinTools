@@ -1,7 +1,7 @@
 import path from "node:path";
 import { expect, test } from "@playwright/test";
 
-test("reserved inventory and its picker remain usable in a narrow loadout view", async ({
+test("@visual reserved inventory and its picker remain usable in a narrow loadout view", async ({
   page,
 }, testInfo) => {
   await page.addInitScript(() => {
@@ -25,7 +25,7 @@ test("reserved inventory and its picker remain usable in a narrow loadout view",
     .first()
     .click();
   const importer = page.getByRole("dialog", {
-    name: "Import Account Data",
+    name: "Import Game Account Data",
     exact: true,
   });
   await importer
@@ -81,7 +81,7 @@ test("reserved inventory and its picker remain usable in a narrow loadout view",
   }
 });
 
-test("phone analysis modes occupy distinct rows above the active calculation", async ({
+test("@visual phone analysis modes occupy distinct rows above the active calculation", async ({
   page,
 }, testInfo) => {
   test.setTimeout(90_000);
@@ -208,7 +208,7 @@ test("phone analysis modes occupy distinct rows above the active calculation", a
       }
       if (mode === "Investment") {
         const pickers = calculation.getByRole("button", {
-          name: "5★ comparison weapon",
+          name: "Wish 5★ comparison weapon",
           exact: true,
         });
         await expect(pickers).toHaveCount(2);
