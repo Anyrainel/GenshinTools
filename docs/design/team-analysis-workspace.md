@@ -78,7 +78,7 @@ Status: implementation specification, updated 2026-10-12. Source: decisions and 
 - One saved loadout per team for now; multiple/pinned loadouts are out of scope.
 - A saved loadout is an artifact allocation snapshot, not a frozen roster. Roster edits (including C/R, weapon and character edits) stay available. Do not disable them because a saved allocation exists.
 - Existing saved artifact IDs must survive. Editing a roster does not silently rewrite/remove its saved loadout or release its reservations. If incompatible with the edited roster, show that status and explicit update/remove/apply actions.
-- Other teams' optimization respects reserved artifacts and existing explicit reuse policy. Optimizing the owning team can use its own saved artifacts in the candidate pool to build a replacement allocation; they are not forced as immutable current equipment.
+- Optimization respects frozen artifact allocations and the existing explicit cross-team reuse policy. Within the owning team, frozen characters keep their saved equipment and their pieces are excluded from the shared candidate pool. Partial freezes offer "Optimize remaining"; fully frozen teams must unfreeze before optimizing. This restores the pre-workspace behavior after the 2026-10-11 regression; saving a loadout must not silently release its optimization constraints.
 - Saving replaces that team's one allocation through the existing conflict-resolution pattern. Never equate reserved status with in-game locked status.
 - Correct/delete stale comments encountered in touched code, including the false weapon-refinement-hidden comment.
 

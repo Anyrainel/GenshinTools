@@ -1,8 +1,11 @@
 import "@/providers/reference/statLoaders";
 import userEvent from "@testing-library/user-event";
-import { useState } from "react";
+import { type ComponentProps, useState } from "react";
 import { AnalysisWorkspace } from "@/components/teams/AnalysisWorkspace";
+import type { DamageCard } from "@/components/teams/DamageCard";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { AccountData, ArtifactData } from "@/domain/models";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -10,13 +13,35 @@ import {
 import type { AnalysisMode } from "@/domain/team/analysisTypes";
 import { buildTeamSlotConfigs } from "@/domain/team/teamConfigUtils";
 import { teamCompInputToComp } from "@/domain/team/teamDeltas";
-import type { TeamSetupConfig } from "@/domain/team/types";
-import { render, screen } from "../../utils/render";
+import type {
+  TeamOptimizationProgress,
+  TeamOptimizationResult,
+  TeamOptimizerOptions,
+  TeamSetupConfig,
+} from "@/domain/team/types";
+import { useFreezeStore } from "@/stores/useFreezeStore";
+import { act, render, screen } from "../../utils/render";
 import "@/domain/combat/damage/index";
 
 const mounts = vi.hoisted(() => ({ roster: vi.fn(), skills: vi.fn() }));
+const optimization = vi.hoisted(() => ({
+  account: null as AccountData | null,
+  result: null as TeamOptimizationResult | null,
+  progress: null as TeamOptimizationProgress | null,
+  start: vi.fn(),
+  stop: vi.fn(),
+  reset: vi.fn(),
+  card: vi.fn(),
+}));
 vi.mock("@/hooks/useActiveAccount", () => ({
-  useActiveAccountData: () => null,
+  useActiveAccountData: () => optimization.account,
+}));
+vi.mock("@/hooks/useAsyncOptimizer", () => ({
+  useAsyncOptimizer: () => ({
+    ...optimization,
+    isComputing: false,
+    error: null,
+  }),
 }));
 vi.mock("@/components/teams/TeamRosterCard", async () => {
   const React = await import("react");
@@ -57,7 +82,14 @@ vi.mock("@/components/teams/FormulaSelectorCard", async () => {
   };
 });
 vi.mock("@/components/teams/DamageCard", () => ({
-  DamageCard: () => null,
+  DamageCard: (props: ComponentProps<typeof DamageCard>) => {
+    optimization.card(props);
+    return (
+      <button type="button" onClick={props.handleOptimize}>
+        Run optimizer
+      </button>
+    );
+  },
 }));
 vi.mock("@/components/teams/ErCalcCard", () => ({
   ErCalcCard: () => null,
@@ -160,4 +192,124 @@ it("keeps exactly the same roster and skill panel mounted through all five calcu
   }
   expect(mounts.roster).toHaveBeenCalledTimes(1);
   expect(mounts.skills).toHaveBeenCalledTimes(1);
+});
+
+it("keeps one frozen character fixed while optimizing the other three, then releases it on unfreeze", async () => {
+  const user = userEvent.setup();
+  const frozen: ArtifactData = {
+    id: "frozen-flower",
+    setKey: "crimson_witch_of_flames",
+    slotKey: "flower",
+    mainStatKey: "hp",
+    rarity: 5,
+    level: 20,
+    lock: false,
+    substats: { cr: 7 },
+  };
+  const free: ArtifactData = { ...frozen, id: "free-flower" };
+  optimization.account = {
+    characters: [],
+    extraArtifacts: [frozen, free],
+    extraWeapons: [],
+  };
+  const four = teamCompInputToComp({
+    id: "freeze-regression",
+    name: "Freeze regression",
+    characters: ["hu_tao", "xingqiu", "zhongli", "kaedehara_kazuha"],
+    weapons: ["staff_of_homa", null, null, null],
+    artifacts: [null, null, null, null],
+    reactions: [],
+  });
+  const oldFreeze = useFreezeStore.getState().frozenTeams;
+  useFreezeStore.setState({
+    frozenTeams: {
+      [four.id]: {
+        frozenCharIds: ["hu_tao"],
+        artifactsByChar: {
+          hu_tao: {
+            flower: frozen,
+            plume: null,
+            sands: null,
+            goblet: null,
+            circlet: null,
+          },
+        },
+      },
+    },
+  });
+  const view = render(
+    <AnalysisWorkspace
+      teamComp={four}
+      setupConfig={setup}
+      onBack={vi.fn()}
+      mode="artifacts"
+      onModeChange={vi.fn()}
+    />
+  );
+  try {
+    await user.click(screen.getByRole("button", { name: "Run optimizer" }));
+    const options = optimization.start.mock
+      .lastCall![0] as TeamOptimizerOptions;
+    expect(Object.keys(options.perChar)).toEqual([
+      "xingqiu",
+      "zhongli",
+      "kaedehara_kazuha",
+    ]);
+    expect(options.inventory.map((art) => art.id)).toEqual([free.id]);
+    expect(options.baseSheets.hu_tao).toEqual(
+      StatSheet.fromArtifacts([frozen])
+    );
+
+    // Stale results and in-flight progress must never overwrite frozen equipment.
+    optimization.result = {
+      done: true,
+      bestDamage: 0,
+      bestArtifactsByChar: { hu_tao: { flower: free } },
+    } as unknown as TeamOptimizationResult;
+    view.rerender(
+      <AnalysisWorkspace
+        teamComp={four}
+        setupConfig={setup}
+        onBack={vi.fn()}
+        mode="artifacts"
+        onModeChange={vi.fn()}
+      />
+    );
+    expect(
+      optimization.card.mock.lastCall![0].optimizedArtifactsByChar.hu_tao.flower
+        .id
+    ).toBe(frozen.id);
+    optimization.result = null;
+    optimization.progress = {
+      passResults: [
+        { charId: "hu_tao", bestDamage: 1, bestArtifacts: { flower: free } },
+      ],
+    } as unknown as typeof optimization.progress;
+    view.rerender(
+      <AnalysisWorkspace
+        teamComp={four}
+        setupConfig={setup}
+        onBack={vi.fn()}
+        mode="artifacts"
+        onModeChange={vi.fn()}
+      />
+    );
+    expect(
+      optimization.card.mock.lastCall![0].optimizedArtifactsByChar.hu_tao.flower
+        .id
+    ).toBe(frozen.id);
+
+    act(() => useFreezeStore.setState({ frozenTeams: {} }));
+    await user.click(screen.getByRole("button", { name: "Run optimizer" }));
+    const released = optimization.start.mock
+      .lastCall![0] as TeamOptimizerOptions;
+    expect(Object.keys(released.perChar)).toHaveLength(4);
+    expect(released.inventory.map((art) => art.id)).toContain(frozen.id);
+  } finally {
+    view.unmount();
+    optimization.account = null;
+    optimization.result = null;
+    optimization.progress = null;
+    useFreezeStore.setState({ frozenTeams: oldFreeze });
+  }
 });

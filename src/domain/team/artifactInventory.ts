@@ -11,7 +11,7 @@ export interface ReservedArtifactTeam {
 export interface TeamInventory {
   /** All artifacts from the account (equipped + inventory), unfiltered */
   allArtifacts: ArtifactData[];
-  /** Artifacts available for optimization; owning team's saved pieces included. */
+  /** Artifacts available for optimization, excluding frozen allocations. */
   availableArtifacts: ArtifactData[];
   /** All frozen artifact IDs across ALL teams */
   frozenArtifactIds: Set<string>;
@@ -63,9 +63,9 @@ export function computeTeamInventory(
   const teamCharIdSet = new Set(
     teamCharacters.filter((id): id is string => id != null)
   );
+  const ownFrozenCharIds = new Set(frozenTeams[teamId]?.frozenCharIds ?? []);
 
-  // Reserve other teams' saved allocations and standalone reservations.
-  // The owning team can optimize its saved pieces into a replacement allocation.
+  // Reserve all frozen allocations, including the current team's fixed gear.
   const frozenArtifactIds = new Set<string>(standaloneFrozenIds);
   // Per-character extras: frozen artifacts from OTHER teams for characters in this team
   const perCharExtraArtifacts: Record<string, ArtifactData[]> = {};
@@ -82,17 +82,18 @@ export function computeTeamInventory(
       const charArtifacts: ArtifactData[] = [];
       for (const art of Object.values(arts)) {
         if (art) {
-          if (tid !== teamId) frozenArtifactIds.add((art as ArtifactData).id);
+          frozenArtifactIds.add((art as ArtifactData).id);
           charArtifacts.push(art as ArtifactData);
         }
       }
 
       // Same-char reuse: collect extras for characters in THIS team
-      // from OTHER teams only; own saved pieces belong to the shared pool.
+      // from OTHER teams only; own frozen characters stay fixed.
       if (
         reuseMode !== "none" &&
         tid !== teamId &&
         teamCharIdSet.has(cid) &&
+        !ownFrozenCharIds.has(cid) &&
         charArtifacts.length > 0
       ) {
         const existing = perCharExtraArtifacts[cid];

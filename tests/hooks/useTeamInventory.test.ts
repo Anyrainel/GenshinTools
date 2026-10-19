@@ -143,7 +143,7 @@ describe("useTeamInventory", () => {
     ).toEqual(["dup-a", "dup-b"]);
   });
 
-  it("includes owning-team saved artifacts in its replacement pool", () => {
+  it("excludes owning-team frozen artifacts while optimizing the rest", () => {
     act(() => {
       useTeamStore
         .getState()
@@ -159,9 +159,8 @@ describe("useTeamInventory", () => {
     const { result } = renderHook(() => useTeamInventory("team1"));
     // All artifacts still in allArtifacts
     expect(result.current.allArtifacts).toHaveLength(5);
-    // The owning team can replace its saved allocation using these pieces.
-    expect(result.current.availableArtifacts).toHaveLength(5);
-    expect(result.current.frozenArtifactIds).toEqual(new Set());
+    expect(result.current.availableArtifacts).toHaveLength(3);
+    expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "eq2"]));
   });
 
   it("excludes frozen artifacts from OTHER teams too", () => {
@@ -203,9 +202,9 @@ describe("useTeamInventory", () => {
         );
     });
     const { result } = renderHook(() => useTeamInventory("team1"));
-    // Own eq1 stays available; the other team's inv1 remains reserved.
-    expect(result.current.frozenArtifactIds).toEqual(new Set(["inv1"]));
-    expect(result.current.availableArtifacts).toHaveLength(4);
+    // Both the current team's and the other team's frozen pieces stay reserved.
+    expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "inv1"]));
+    expect(result.current.availableArtifacts).toHaveLength(3);
   });
 
   it("updates when freeze state changes", () => {
@@ -226,7 +225,7 @@ describe("useTeamInventory", () => {
           makeArtifactsByChar("hu_tao", ["eq1", "eq2"])
         );
     });
-    expect(result.current.availableArtifacts).toHaveLength(5);
+    expect(result.current.availableArtifacts).toHaveLength(3);
 
     act(() => {
       useFreezeStore.getState().unfreezeTeam("team1");
@@ -315,8 +314,7 @@ describe("useTeamInventory", () => {
       expect(result.current.availableArtifacts).toHaveLength(3);
     });
 
-    it("keeps owning-team saved artifacts available regardless of reuse setting", () => {
-      // Own allocations do not require a cross-team reuse permission.
+    it("keeps owning-team frozen artifacts excluded with same-character reuse", () => {
       act(() => {
         useTeamStore
           .getState()
@@ -330,8 +328,8 @@ describe("useTeamInventory", () => {
           );
       });
       const { result } = renderHook(() => useTeamInventory("team1"));
-      expect(result.current.frozenArtifactIds).toEqual(new Set());
-      expect(result.current.availableArtifacts).toHaveLength(5);
+      expect(result.current.frozenArtifactIds).toEqual(new Set(["eq1", "eq2"]));
+      expect(result.current.availableArtifacts).toHaveLength(3);
       expect(result.current.perCharExtraArtifacts).toEqual({});
     });
 

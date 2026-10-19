@@ -739,8 +739,8 @@ export function AnalysisWorkspace({
     for (let ci = 0; ci < characters.length; ci++) {
       const cid = characters[ci];
       if (!cid) continue;
-      // Only explicit cross-team force reuse holds equipment fixed.
-      if (forceReusedCharIds.has(cid)) continue;
+      // Frozen and force-reused characters keep their equipment fixed.
+      if (frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid)) continue;
       const bm = optimizerBuildMatchByChar[cid];
       const goalArtSet = getGoalArtifactSet(cid);
       const cs = charConfigs[cid];
@@ -900,7 +900,8 @@ export function AnalysisWorkspace({
     }
 
     // Layer 2: Non-locked chars — optimizer results, restored artifacts, or intermediate results
-    const isLocked = (cid: string) => forceReusedCharIds.has(cid);
+    const isLocked = (cid: string) =>
+      frozenCharIdSet.has(cid) || forceReusedCharIds.has(cid);
 
     if (teamResult?.done) {
       for (const [charId, arts] of Object.entries(
@@ -947,6 +948,7 @@ export function AnalysisWorkspace({
     restoredArtifacts,
     teamInventory.forceReuseChars,
     forceReusedCharIds,
+    frozenCharIdSet,
   ]);
 
   const optArtifactSheets = useMemo(

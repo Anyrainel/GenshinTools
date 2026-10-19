@@ -1633,6 +1633,12 @@ export function DamageCard({
   const [resultsTab, setResultsTab] = useSessionState<
     "current" | "optimize" | "generate"
   >("resultsTab", "current");
+  const hasFrozenChars = characters.some(
+    (cid) => cid && frozenCharIds?.has(cid)
+  );
+  const isFullyFrozen =
+    hasFrozenChars &&
+    characters.every((cid) => !cid || frozenCharIds?.has(cid));
   const [critMode, setCritMode] = useSessionState<CritMode>(
     "critMode",
     "expected"
@@ -1922,9 +1928,15 @@ export function DamageCard({
               <span>
                 <ActionButton
                   onClick={handleOptimize}
-                  disabled={isComputing || !hasActiveFormula}
+                  disabled={isComputing || !hasActiveFormula || isFullyFrozen}
                   computing={isComputing}
-                  labelIdle={t.ui("teamComp.tabOptimize")}
+                  labelIdle={
+                    isFullyFrozen
+                      ? t.ui("teamComp.allFrozen")
+                      : hasFrozenChars
+                        ? t.ui("teamComp.optimizeRest")
+                        : t.ui("teamComp.tabOptimize")
+                  }
                   labelBusy={t.ui("teamComp.optimizing")}
                 />
               </span>

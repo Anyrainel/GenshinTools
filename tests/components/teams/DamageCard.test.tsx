@@ -224,14 +224,14 @@ describe("DamageCard", () => {
     expect(screen.getByText("Remove loadout")).toBeInTheDocument();
   });
 
-  it("permits another optimization while the team has a saved loadout", async () => {
+  it("optimizes remaining characters when one character is frozen", async () => {
     const user = userEvent.setup({ delay: null });
     const handleOptimize = vi.fn();
     render(
       <TestCard
         {...defaultProps({
           isFrozen: true,
-          frozenCharIds: new Set(["hu_tao", "xingqiu"]),
+          frozenCharIds: new Set(["hu_tao"]),
           handleOptimize,
           comboLines: [{ charId: "hu_tao", formulaId: "charged", count: 1 }],
           resolvedFormula: { charId: "hu_tao", formulaId: "charged" },
@@ -240,10 +240,30 @@ describe("DamageCard", () => {
     );
     const optimizeBtns = screen.getAllByText("Optimize");
     await user.click(optimizeBtns[0]);
-    const run = screen.getByRole("button", { name: "Optimize" });
+    const run = screen.getByRole("button", { name: "Optimize remaining" });
     expect(run).not.toBeDisabled();
     await user.click(run);
     expect(handleOptimize).toHaveBeenCalledTimes(1);
+  });
+
+  it("disables optimization when every occupied slot is frozen", async () => {
+    const user = userEvent.setup({ delay: null });
+    const handleOptimize = vi.fn();
+    render(
+      <TestCard
+        {...defaultProps({
+          isFrozen: true,
+          frozenCharIds: new Set(["hu_tao", "xingqiu"]),
+          handleOptimize,
+          resolvedFormula: { charId: "hu_tao", formulaId: "charged" },
+        })}
+      />
+    );
+    await user.click(screen.getByText("Optimize"));
+    const run = screen.getByRole("button", { name: "All frozen" });
+    expect(run).toBeDisabled();
+    await user.click(run);
+    expect(handleOptimize).not.toHaveBeenCalled();
   });
 
   it("shows inventory warning when account has characters but no extra artifacts", async () => {

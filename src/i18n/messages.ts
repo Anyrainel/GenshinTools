@@ -1936,6 +1936,8 @@ export const i18nUiData = {
       en: "Equipped in account",
       zh: "账号已装备的",
     },
+    optimizeRest: { en: "Optimize remaining", zh: "优化其余" },
+    allFrozen: { en: "All frozen", zh: "全部已冻结" },
     tabOptimize: {
       en: "Optimize",
       zh: "优化",
