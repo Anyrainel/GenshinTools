@@ -5,6 +5,7 @@ import { AnalysisWorkspace } from "@/components/teams/AnalysisWorkspace";
 import type { DamageCard } from "@/components/teams/DamageCard";
 import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { MainStat, MainStatSlot } from "@/domain/enums";
 import type { AccountData, ArtifactData } from "@/domain/models";
 import {
   characterStatsResource,
@@ -311,5 +312,96 @@ it("keeps one frozen character fixed while optimizing the other three, then rele
     optimization.result = null;
     optimization.progress = null;
     useFreezeStore.setState({ frozenTeams: oldFreeze });
+  }
+});
+
+it("keeps the result while editing all three main-stat preferences and applies them together on the next run", async () => {
+  const user = userEvent.setup();
+  const variants: [MainStatSlot, MainStat, MainStat][] = [
+    ["sands", "atk%", "hp%"],
+    ["goblet", "atk%", "pyro%"],
+    ["circlet", "cd", "cr"],
+  ];
+  const inventory = variants.flatMap(([slotKey, wanted, other]) =>
+    [wanted, other].map(
+      (mainStatKey): ArtifactData => ({
+        id: `${slotKey}-${mainStatKey}`,
+        setKey: "crimson_witch_of_flames",
+        slotKey,
+        mainStatKey,
+        rarity: 5,
+        level: 20,
+        lock: false,
+        substats: {},
+      })
+    )
+  );
+  optimization.account = {
+    characters: [],
+    extraArtifacts: inventory,
+    extraWeapons: [],
+  };
+  const result = {
+    done: true,
+    bestDamage: 1,
+    bestArtifactsByChar: { hu_tao: {} },
+  } as unknown as TeamOptimizationResult;
+  optimization.result = result;
+  const view = render(
+    <AnalysisWorkspace
+      teamComp={team}
+      setupConfig={setup}
+      onBack={vi.fn()}
+      mode="artifacts"
+      onModeChange={vi.fn()}
+    />
+  );
+  optimization.reset.mockClear();
+  optimization.start.mockClear();
+  try {
+    for (const [slot, stat] of variants) {
+      act(() =>
+        optimization.card.mock.lastCall![0].onPreferredMainStatsChange(
+          "hu_tao",
+          slot,
+          stat
+        )
+      );
+      expect(optimization.reset).not.toHaveBeenCalled();
+      expect(optimization.start).not.toHaveBeenCalled();
+      expect(optimization.card.mock.lastCall![0].teamResult).toBe(result);
+      expect(optimization.card.mock.lastCall![0].hasOptResult).toBe(true);
+    }
+    expect(
+      optimization.card.mock.lastCall![0].preferredMainStats.hu_tao
+    ).toEqual({ sands: "atk%", goblet: "atk%", circlet: "cd" });
+    await user.click(screen.getByRole("button", { name: "Run optimizer" }));
+    expect(optimization.start).toHaveBeenCalledTimes(1);
+    const options = optimization.start.mock
+      .lastCall![0] as TeamOptimizerOptions;
+    expect(options.perCharExcludedArtifactIds?.hu_tao).toEqual([
+      "sands-hp%",
+      "goblet-pyro%",
+      "circlet-cr",
+    ]);
+
+    // Actual combat input changes must still clear incompatible results.
+    view.rerender(
+      <AnalysisWorkspace
+        teamComp={team}
+        setupConfig={{
+          ...setup,
+          damage: { ...setup.damage, calcContext: { enemyLevel: 120 } },
+        }}
+        onBack={vi.fn()}
+        mode="artifacts"
+        onModeChange={vi.fn()}
+      />
+    );
+    expect(optimization.reset).toHaveBeenCalledTimes(1);
+  } finally {
+    view.unmount();
+    optimization.account = null;
+    optimization.result = null;
   }
 });

@@ -1109,7 +1109,8 @@ export function AnalysisWorkspace({
     });
   };
 
-  // Freeze a character's equipped artifacts from the current tab
+  // Main-stat preferences filter the next optimizer run; changing them does
+  // not invalidate the displayed allocation or unmount its settings popover.
   const calculationInputKey = JSON.stringify({
     configs,
     damageConfig,
@@ -1120,7 +1121,6 @@ export function AnalysisWorkspace({
     displayCombo,
     buffOverrides,
     accountData,
-    preferredMainStats,
     inventory: teamInventory.availableArtifacts,
     extras: teamInventory.perCharExtraArtifacts,
   });

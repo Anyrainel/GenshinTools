@@ -1,5 +1,5 @@
 import userEvent from "@testing-library/user-event";
-import type { ComponentProps } from "react";
+import { type ComponentProps, useState } from "react";
 import { StatSheetPanel } from "@/components/teams/StatSheetPanel";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { DisplayResult } from "@/domain/combat/damage/types";
@@ -110,6 +110,43 @@ function defaultProps(overrides: Partial<PanelProps> = {}): PanelProps {
 }
 
 describe("StatSheetPanel", () => {
+  it("keeps the main-stat settings open while changing all three slots", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    function EditablePanel() {
+      const [prefs, setPrefs] = useState<PanelProps["preferredMainStats"]>({});
+      return (
+        <TestPanel
+          {...defaultProps({
+            preferredMainStats: prefs,
+            onPreferredMainStatsChange: (charId, slot, stat) => {
+              onChange(charId, slot, stat);
+              setPrefs((previous) => ({
+                ...previous,
+                [charId]: { ...previous?.[charId], [slot]: stat ?? undefined },
+              }));
+            },
+          })}
+        />
+      );
+    }
+    render(<EditablePanel />);
+    await user.click(
+      screen.getAllByRole("button", { name: "Main Stat Filter" })[0]
+    );
+    for (const [index, label] of ["ATK%", "ATK%", "CRIT DMG"].entries()) {
+      await user.click(screen.getAllByRole("combobox")[index]);
+      await user.click(screen.getByRole("option", { name: label }));
+      expect(screen.getAllByRole("combobox")).toHaveLength(3);
+      expect(screen.getAllByRole("combobox")[index]).toHaveTextContent(label);
+    }
+    expect(onChange.mock.calls).toEqual([
+      ["hu_tao", "sands", "atk%"],
+      ["hu_tao", "goblet", "atk%"],
+      ["hu_tao", "circlet", "cd"],
+    ]);
+  });
+
   it("renders character avatars for filled slots", () => {
     render(<TestPanel {...defaultProps()} />);
     const imgs = screen.getAllByRole("img");
