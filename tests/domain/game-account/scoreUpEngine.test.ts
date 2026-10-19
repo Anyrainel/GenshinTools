@@ -344,6 +344,82 @@ const dpsScores = {
 
 const dpsTier: TierAssignment = { dps: { tier: "S", position: 0 } };
 
+describe("healer circlet recommendations", () => {
+  it.each([0, 16, 20])(
+    "does not invent healing main-stat credit for a crit-only build (level %s)",
+    (level) => {
+      const equipped = Object.fromEntries(
+        allSlots.map((slot) => [
+          slot,
+          artifact(slot, `current-${slot}`, 20, {}),
+        ])
+      ) as Record<Slot, ArtifactData>;
+      const healing: ArtifactData = {
+        ...artifact("circlet", "healing-circlet", level, {
+          cr: 7.8,
+          cd: 15.6,
+          atk: 14,
+          def: 19,
+        }),
+        mainStatKey: "heal%",
+      };
+      const account: AccountData = {
+        characters: [
+          {
+            key: "barbara",
+            level: 90,
+            constellation: 0,
+            talent: { auto: 1, skill: 1, burst: 1 },
+            artifacts: equipped,
+          },
+        ],
+        extraArtifacts: [healing],
+        extraWeapons: [],
+      };
+      for (const acceptHealing of [false, true]) {
+        const build: Build = {
+          ...scoreUpBuild,
+          characterId: "barbara",
+          circletWeights: [
+            { stat: "cr", weight: 100 },
+            { stat: "cd", weight: 100 },
+            ...(acceptHealing ? [{ stat: "heal%" as const, weight: 100 }] : []),
+          ],
+        };
+        const score = scoreWithBuilds(account.characters[0], [build], {
+          flatAtk: 100,
+          flatHp: 100,
+          flatDef: 100,
+        })!;
+        const result = generateAllScoreActions(
+          account,
+          { barbara: score },
+          { barbara: { tier: "S", position: 0 } }
+        );
+        const recommendation = result.perCharacter.barbara;
+        expect(
+          recommendation.allocation?.context?.config.targetMainStatWeights.circlet.has(
+            "heal%"
+          )
+        ).toBe(acceptHealing);
+        expect(
+          recommendation.actions.some(
+            (action) => action.sourceArtifactId === healing.id
+          )
+        ).toBe(acceptHealing);
+        if (!acceptHealing) {
+          expect(recommendation.allocatedBuild?.artifacts.circlet.id).toBe(
+            equipped.circlet.id
+          );
+          expect(
+            recommendation.currentScore! * score.normalized.normalizer
+          ).toBeCloseTo(score.normalized.normalizedScore, 8);
+        }
+      }
+    }
+  );
+});
+
 function makeDpsAccount(
   equipped: Record<Slot, ArtifactData>,
   extraArtifacts: ArtifactData[]

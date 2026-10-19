@@ -10,7 +10,6 @@ import type {
   WeightedMainStat,
 } from "@/domain/models";
 import { artifactIdToHalfSetId } from "@/domain/reference/catalog";
-import { charInfo } from "@/generated/catalog/characterInfo";
 import { MAIN_STAT_CD_EQUIV_5STAR } from "./constants";
 import {
   computeIdealScore as computeIdealScoreShared,
@@ -394,13 +393,12 @@ export function getTargetMainStatsForSlot(
  * Each accepted main stat carries an effective weight percent matching
  * the build's per-slot main-stat weight,
  * scaled by any autotune cdEquiv override, with 100 for fallback paths and
- * DPS-expanded cr/cd. Healers also accept a healing circlet at weight 100.
+ * DPS-expanded cr/cd. No character-specific main stats are added.
  */
 export function getTargetMainStatWeightsForSlot(
   slot: Slot,
   build: Build,
-  equippedForSlot?: ArtifactData | null,
-  characterKey?: string
+  equippedForSlot?: ArtifactData | null
 ): Map<MainStat, number> {
   if (slot === "flower") return new Map([["hp" as MainStat, 100]]);
   if (slot === "plume") return new Map([["atk" as MainStat, 100]]);
@@ -417,14 +415,6 @@ export function getTargetMainStatWeightsForSlot(
           MAIN_STAT_CD_EQUIV_5STAR;
         result.set(stat, (matched?.weight ?? 100) * cdEquivScale);
       }
-      if (
-        slot === "circlet" &&
-        characterKey != null &&
-        charInfo[characterKey]?.healerC != null &&
-        !result.has("heal%")
-      ) {
-        result.set("heal%", 100);
-      }
       return result;
     }
   }
@@ -432,30 +422,13 @@ export function getTargetMainStatWeightsForSlot(
     equippedForSlot &&
     (weights[equippedForSlot.mainStatKey as SubStat] ?? 0) > 0
   ) {
-    const result = new Map<MainStat, number>([
-      [equippedForSlot.mainStatKey, 100],
-    ]);
-    if (
-      slot === "circlet" &&
-      characterKey != null &&
-      charInfo[characterKey]?.healerC != null
-    ) {
-      result.set("heal%", 100);
-    }
-    return result;
+    return new Map<MainStat, number>([[equippedForSlot.mainStatKey, 100]]);
   }
   const fallback = new Map<MainStat, number>();
   for (const [stat, w] of Object.entries(weights)) {
     if (w > 40 && !NON_MAIN_SUBSTATS.has(stat)) {
       fallback.set(stat as MainStat, 100);
     }
-  }
-  if (
-    slot === "circlet" &&
-    characterKey != null &&
-    charInfo[characterKey]?.healerC != null
-  ) {
-    fallback.set("heal%", fallback.get("heal%") ?? 100);
   }
   return fallback;
 }
@@ -650,8 +623,7 @@ function computeIdealScoreForBuild(
 function computeNormalizedScore(
   artifacts: Partial<Record<Slot, ArtifactData>>,
   buildMatch: BuildMatchResult,
-  substatRawScore: number,
-  characterKey?: string
+  substatRawScore: number
 ): NormalizedScoreInfo {
   const slotMainStatScores = Object.fromEntries(
     allSlots.map((s) => [s, 0])
@@ -667,8 +639,7 @@ function computeNormalizedScore(
     const mainStatWeights = getTargetMainStatWeightsForSlot(
       slot,
       build,
-      artifact,
-      characterKey
+      artifact
     );
     const weightedScore =
       scoreSlotWithMainStatWeights(
@@ -719,15 +690,13 @@ export function scoreWithBuilds(
     getTargetMainStatWeightsForSlot(
       "circlet",
       buildMatch.build,
-      char.artifacts.circlet,
-      char.key
+      char.artifacts.circlet
     )
   );
   const normalized = computeNormalizedScore(
     char.artifacts,
     buildMatch,
-    substatScore.subScore,
-    char.key
+    substatScore.subScore
   );
   return { substatScore, buildMatch, normalized };
 }

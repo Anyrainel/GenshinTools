@@ -458,12 +458,7 @@ describe("display and recommendation scoring agree", () => {
       const targetMainStatWeights = Object.fromEntries(
         allSlots.map((slot) => [
           slot,
-          getTargetMainStatWeightsForSlot(
-            slot,
-            build,
-            char.artifacts[slot],
-            char.key
-          ),
+          getTargetMainStatWeightsForSlot(slot, build, char.artifacts[slot]),
         ])
       ) as Record<Slot, Map<MainStat, number>>;
       const crBudget = { totalNonArtifactCr: nonArtifactCr } as CrBudgetResult;
@@ -501,30 +496,37 @@ describe("display and recommendation scoring agree", () => {
     }
   );
 
-  it("accepts the healer's healing circlet in both scoring paths", () => {
-    const build = makeBuild({
-      characterId: "barbara",
-      circletWeights: [{ stat: "hp%", weight: 100 }],
-    });
-    const circlet = artifact("circlet", "heal%", {}, { level: 4 });
-    const char: CharacterData = {
-      key: "barbara",
-      level: 90,
-      constellation: 0,
-      talent: { auto: 1, skill: 1, burst: 1 },
-      artifacts: { circlet },
-    };
-    const score = scoreWithBuilds(char, [build], GLOBAL_CONFIG)!;
-    const weights = getTargetMainStatWeightsForSlot(
-      "circlet",
-      build,
-      circlet,
-      char.key
-    );
-    expect(weights.get("heal%")).toBe(100);
-    expect(score.normalized.slotMainStatScores.circlet).toBeCloseTo(
-      scoreMainStat("heal%", 5, 4),
-      8
-    );
-  });
+  it.each([false, true])(
+    "only credits a healer's healing circlet when configured (configured=%s)",
+    (configured) => {
+      const build = makeBuild({
+        characterId: "barbara",
+        circletWeights: configured
+          ? [{ stat: "heal%", weight: 75 }]
+          : [
+              { stat: "cr", weight: 100 },
+              { stat: "cd", weight: 100 },
+            ],
+      });
+      const circlet = artifact("circlet", "heal%", {}, { level: 4 });
+      const char: CharacterData = {
+        key: "barbara",
+        level: 90,
+        constellation: 0,
+        talent: { auto: 1, skill: 1, burst: 1 },
+        artifacts: { circlet },
+      };
+      const score = scoreWithBuilds(char, [build], GLOBAL_CONFIG)!;
+      const weights = getTargetMainStatWeightsForSlot(
+        "circlet",
+        build,
+        circlet
+      );
+      expect(weights.get("heal%")).toBe(configured ? 75 : undefined);
+      expect(score.normalized.slotMainStatScores.circlet).toBeCloseTo(
+        configured ? scoreMainStat("heal%", 5, 4) * 0.75 : 0,
+        8
+      );
+    }
+  );
 });
