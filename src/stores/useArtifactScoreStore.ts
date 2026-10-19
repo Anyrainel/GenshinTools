@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import type { GlobalStatWeights } from "@/domain/models";
 import {
   type ArtifactScoreGlobalConfig,
   migrateArtifactScorePersisted,
 } from "./migration/artifactScore";
-import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "./schemas";
 import { invalidateScores } from "./useAccountScoreCacheStore";
 
 interface ArtifactScoreState {

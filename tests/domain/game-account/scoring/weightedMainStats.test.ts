@@ -135,15 +135,13 @@ describe("getTargetMainStatWeightsForSlot", () => {
     expect(circlet.get("cd")).toBe(100);
   });
 
-  it("equipped main stat with positive substat weight falls back to weight 100", () => {
+  it("empty main-stat preferences never infer credit from substat weights", () => {
     const build = makeBuild({ sandsWeights: [] });
-    const equipped = artifact("sands", "em");
-    const sands = getTargetMainStatWeightsForSlot("sands", build, equipped);
-    expect(sands.size).toBe(1);
-    expect(sands.get("em")).toBe(100);
+    const sands = getTargetMainStatWeightsForSlot("sands", build);
+    expect(sands.size).toBe(0);
   });
 
-  it("weight>40 substat fallback assigns 100 each and excludes flat hp/atk/def", () => {
+  it("does not promote high-weight substats to unconfigured main stats", () => {
     const build = makeBuild({
       circletWeights: [],
       substats: [
@@ -156,12 +154,7 @@ describe("getTargetMainStatWeightsForSlot", () => {
       ],
     });
     const circlet = getTargetMainStatWeightsForSlot("circlet", build);
-    expect(circlet.size).toBe(5);
-    for (const stat of ["cr", "cd", "atk%", "hp%", "def%"] as const) {
-      expect(circlet.get(stat)).toBe(100);
-    }
-    // Regression: flat stats inherit weight from their % counterpart
-    // (atk=80, hp=60, def=50 here) and used to leak into the fallback.
+    expect(circlet.size).toBe(0);
     const keys = [...circlet.keys()] as string[];
     expect(keys).not.toContain("atk");
     expect(keys).not.toContain("hp");
@@ -169,10 +162,7 @@ describe("getTargetMainStatWeightsForSlot", () => {
     expect(keys).not.toContain("er");
   });
 
-  it("weight>40 fallback keeps em — a valid main stat, unlike flat hp/atk/def", () => {
-    // Regression: em used to be dropped because isFlatStat (a display-format
-    // predicate) counts em as flat, leaving EM-weighted builds with no
-    // per-slot main weights an empty target set.
+  it("allows an EM-substat build to leave its circlet main stat unvalued", () => {
     const build = makeBuild({
       circletWeights: [],
       substats: [
@@ -181,12 +171,12 @@ describe("getTargetMainStatWeightsForSlot", () => {
       ],
     });
     const circlet = getTargetMainStatWeightsForSlot("circlet", build);
-    expect(circlet.get("em")).toBe(100);
-    expect(circlet.size).toBe(1);
+    expect(circlet.get("em")).toBeUndefined();
+    expect(circlet.size).toBe(0);
 
     const legacy = getTargetMainStatsForSlot("circlet", build);
-    expect(legacy.has("em")).toBe(true);
-    expect(legacy.size).toBe(1);
+    expect(legacy.has("em")).toBe(false);
+    expect(legacy.size).toBe(0);
   });
 });
 
@@ -458,7 +448,7 @@ describe("display and recommendation scoring agree", () => {
       const targetMainStatWeights = Object.fromEntries(
         allSlots.map((slot) => [
           slot,
-          getTargetMainStatWeightsForSlot(slot, build, char.artifacts[slot]),
+          getTargetMainStatWeightsForSlot(slot, build),
         ])
       ) as Record<Slot, Map<MainStat, number>>;
       const crBudget = { totalNonArtifactCr: nonArtifactCr } as CrBudgetResult;
@@ -517,11 +507,7 @@ describe("display and recommendation scoring agree", () => {
         artifacts: { circlet },
       };
       const score = scoreWithBuilds(char, [build], GLOBAL_CONFIG)!;
-      const weights = getTargetMainStatWeightsForSlot(
-        "circlet",
-        build,
-        circlet
-      );
+      const weights = getTargetMainStatWeightsForSlot("circlet", build);
       expect(weights.get("heal%")).toBe(configured ? 75 : undefined);
       expect(score.normalized.slotMainStatScores.circlet).toBeCloseTo(
         configured ? scoreMainStat("heal%", 5, 4) * 0.75 : 0,

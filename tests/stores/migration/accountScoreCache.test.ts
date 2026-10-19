@@ -39,6 +39,6 @@ describe("migrateAccountScoreCacheStore", () => {
       staleScoreCharIdsByProfileId: { "0": ["odette"] },
     };
 
-    expect(migrateAccountScoreCacheStore(current, 4)).toBe(current);
+    expect(migrateAccountScoreCacheStore(current, 5)).toBe(current);
   });
 });

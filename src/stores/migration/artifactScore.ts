@@ -1,8 +1,6 @@
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import type { GlobalStatWeights } from "@/domain/models";
-import {
-  DEFAULT_GLOBAL_STAT_WEIGHTS,
-  PersistedArtifactScoreStoreSchema,
-} from "@/stores/schemas";
+import { PersistedArtifactScoreStoreSchema } from "@/stores/schemas";
 
 export type ArtifactScoreGlobalConfig = { global: GlobalStatWeights };
 

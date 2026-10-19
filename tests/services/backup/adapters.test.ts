@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import { getDefaultBuildPresetId } from "@/domain/build/buildPresetRegistry";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
 import type { ArtifactData, Build, WeaponData } from "@/domain/models";
@@ -28,7 +29,6 @@ import {
   createEnvelope,
   verifyEnvelopePayload,
 } from "@/services/backup/payload";
-import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
 describe("account cloud adapter", () => {
   it("partitions profiles, game data, artifacts, and disposable weapons", () => {

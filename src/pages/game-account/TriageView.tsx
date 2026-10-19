@@ -31,6 +31,7 @@ import type {
 } from "@/domain/game-account/triage/types";
 import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { buildTriageInstructions } from "@/providers/scanner/companion/instructions";
+import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
 import {
   selectEnabledBuildGroups,
   selectResolvedBuildGroups,
@@ -67,6 +68,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const accountData = activeAccount?.data ?? null;
   const buildGroups = useBuildsStore(selectEnabledBuildGroups);
   const allBuildGroups = useBuildsStore(selectResolvedBuildGroups);
+  const globalConfig = useArtifactScoreStore((s) => s.config.global);
 
   const tabContentRef = useRef<TriageTabContentHandle | null>(null);
 
@@ -139,13 +141,15 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
       accountData,
       deferredBuildGroups,
       deferredSettings,
-      deferredAllBuildGroups
+      deferredAllBuildGroups,
+      globalConfig
     );
   }, [
     accountData,
     deferredBuildGroups,
     deferredSettings,
     deferredAllBuildGroups,
+    globalConfig,
   ]);
 
   const hasSP = useCallback(

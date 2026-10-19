@@ -25,13 +25,19 @@ import {
   calculateStatScore,
   type StatWeightMap,
   scaleFlatWeights,
-  scoreMainStat,
+  scoreMainStatWithWeights,
 } from "../build/artifact/scoring/artifactScore";
 import {
   getSubstatAvgRoll,
   getSubstatMaxRoll,
 } from "../build/artifact/scoring/utils";
-import type { BuildEvaluation, EvalBuild, SetGroup } from "./buildEvaluation";
+import {
+  type BuildEvaluation,
+  type EvalBuild,
+  getEvalMainStats,
+  getEvalMainStatWeights,
+  type SetGroup,
+} from "./buildEvaluation";
 
 // Public types
 
@@ -153,7 +159,11 @@ export function suggestionCacheKey(
 ): string {
   const locked = s.kind === "levelup" ? "" : [...s.lockedSubs].sort().join("+");
   const artId = s.sourceArtifact?.id ?? "";
-  return `${globalConfigHash}|${s.kind}|${s.buildKey}|${s.slot}|${s.mainStat}|${locked}|${s.baselineScore.toFixed(6)}|${artId}`;
+  const scoring = JSON.stringify([
+    s.evalBuild.weights,
+    [...getEvalMainStatWeights(s.slot, s.evalBuild)],
+  ]);
+  return `${globalConfigHash}|${scoring}|${s.kind}|${s.buildKey}|${s.slot}|${s.mainStat}|${locked}|${s.baselineScore.toFixed(6)}|${artId}`;
 }
 
 /** Short deterministic hash of the global stat weights. */
@@ -171,11 +181,16 @@ export function computeSuggestionPUpgrade(
   globalConfig: GlobalStatWeights
 ): number {
   const weights = scaleFlatWeights(suggestion.evalBuild.weights, globalConfig);
+  const mainWeights = getEvalMainStatWeights(
+    suggestion.slot,
+    suggestion.evalBuild
+  );
   if (suggestion.kind === "levelup" && suggestion.sourceArtifact) {
     return pUpgradeForLevelup(
       suggestion.sourceArtifact,
       suggestion.baselineScore,
-      weights
+      weights,
+      mainWeights
     );
   }
   if (suggestion.kind === "reroll" && suggestion.sourceArtifact) {
@@ -184,7 +199,8 @@ export function computeSuggestionPUpgrade(
         suggestion.sourceArtifact,
         suggestion.lockedSubs,
         suggestion.baselineScore,
-        weights
+        weights,
+        mainWeights
       );
     }
   }
@@ -192,7 +208,8 @@ export function computeSuggestionPUpgrade(
     suggestion.lockedSubs,
     suggestion.mainStat,
     suggestion.baselineScore,
-    weights
+    weights,
+    mainWeights
   );
 }
 
@@ -255,13 +272,23 @@ const DRAW_WEIGHTS: Record<SubStat, number> = {
 };
 
 /** Top-K weighted substats the build cares about, for candidate enumeration. */
-function topDesirableSubs(evalBuild: EvalBuild, k: number): SubStat[] {
+function topDesirableSubs(weights: StatWeightMap, k: number): SubStat[] {
   const entries: { stat: SubStat; weight: number }[] = [];
   for (const stat of SUBSTAT_POOL) {
-    const w = evalBuild.weights[stat] ?? 0;
+    const w = weights[stat] ?? 0;
     if (w > 0) entries.push({ stat, weight: w });
   }
   entries.sort((a, b) => b.weight - a.weight || a.stat.localeCompare(b.stat));
+  // A one-stat build still has valid resource actions. The other locked stat
+  // is merely a filler; never manufacture scoring weight for it.
+  if (entries.length === 1) {
+    // Enumerate all fillers: excluding different substats changes craft draw
+    // probabilities, even when those fillers themselves receive zero credit.
+    return [
+      entries[0].stat,
+      ...SUBSTAT_POOL.filter((stat) => stat !== entries[0].stat),
+    ];
+  }
   return entries.slice(0, k).map((e) => e.stat);
 }
 
@@ -334,6 +361,7 @@ function expectedCraftScore(
   lockedSubs: SubStat[],
   mainStat: MainStat,
   weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>,
   rarity = 5
 ): number {
   const needed = TOTAL_SUB_SLOTS - lockedSubs.length;
@@ -355,10 +383,11 @@ function expectedCraftScore(
   }
 
   // Main stat contribution (same as calculateMaxSlotSubScore consumers)
-  const mainContribution =
-    mainStat === "hp" || mainStat === "atk"
-      ? 0
-      : scoreMainStat(mainStat, rarity);
+  const mainContribution = scoreMainStatWithWeights(
+    mainStat,
+    rarity,
+    mainStatWeights
+  );
 
   return expected + mainContribution;
 }
@@ -527,13 +556,17 @@ function pUpgradeForCandidate(
   lockedSubs: SubStat[],
   mainStat: MainStat,
   baselineScore: number,
-  weights: StatWeightMap
+  weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>
 ): number {
   const pool = makeDrawPool(mainStat, lockedSubs);
   if (pool.stats.length < 2) return 0;
 
-  const mainContribution =
-    mainStat === "hp" || mainStat === "atk" ? 0 : scoreMainStat(mainStat, 5);
+  const mainContribution = scoreMainStatWithWeights(
+    mainStat,
+    5,
+    mainStatWeights
+  );
   const threshold = baselineScore - mainContribution;
 
   // Per-sub max-roll score (coef in the convolution above). 0 = junk.
@@ -617,7 +650,8 @@ function isValidInitialValue(
 function expectedRerollScore(
   art: ArtifactData,
   lockedSubs: [SubStat, SubStat],
-  weights: StatWeightMap
+  weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>
 ): number {
   const allSubs = Object.keys(art.substats ?? {}) as SubStat[];
   const upgradeCount = (art.totalRolls ?? 8) - 4;
@@ -642,10 +676,11 @@ function expectedRerollScore(
     score += avgRollScore(s, weights, expectedUpgrades);
   }
 
-  const mainContribution =
-    art.mainStatKey === "hp" || art.mainStatKey === "atk"
-      ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity);
+  const mainContribution = scoreMainStatWithWeights(
+    art.mainStatKey,
+    art.rarity,
+    mainStatWeights
+  );
 
   return score + mainContribution;
 }
@@ -665,17 +700,19 @@ function pUpgradeForReroll(
   art: ArtifactData,
   lockedSubs: [SubStat, SubStat],
   baselineScore: number,
-  weights: StatWeightMap
+  weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>
 ): number {
   const allSubs = Object.keys(art.substats ?? {}) as SubStat[];
   const n = allSubs.length;
   const upgradeCount = (art.totalRolls ?? 8) - 4;
   const R = Math.max(0, upgradeCount - 2);
 
-  const mainContribution =
-    art.mainStatKey === "hp" || art.mainStatKey === "atk"
-      ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity);
+  const mainContribution = scoreMainStatWithWeights(
+    art.mainStatKey,
+    art.rarity,
+    mainStatWeights
+  );
 
   // Fixed score from known initial values; unknown/corrupted initials are random
   let fixedScore = 0;
@@ -803,7 +840,8 @@ function remainingUpgradeRolls(level: number): number {
  */
 function expectedLevelupScore(
   art: ArtifactData,
-  weights: StatWeightMap
+  weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>
 ): number {
   // Current substat score
   let currentSubScore = 0;
@@ -867,10 +905,11 @@ function expectedLevelupScore(
 
   const expectedGain = extraFromNewSub + upgradeRolls * perRollExpected;
 
-  const mainContribution =
-    art.mainStatKey === "hp" || art.mainStatKey === "atk"
-      ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity);
+  const mainContribution = scoreMainStatWithWeights(
+    art.mainStatKey,
+    art.rarity,
+    mainStatWeights
+  );
 
   return currentSubScore + expectedGain + mainContribution;
 }
@@ -884,7 +923,8 @@ function expectedLevelupScore(
 function pUpgradeForLevelup(
   art: ArtifactData,
   baselineScore: number,
-  weights: StatWeightMap
+  weights: StatWeightMap,
+  mainStatWeights: ReadonlyMap<string, number>
 ): number {
   const subs = Object.keys(art.substats ?? {}) as SubStat[];
   const unact = art.unactivatedSubstats;
@@ -892,7 +932,7 @@ function pUpgradeForLevelup(
 
   if (subs.length < 4 && !hasKnown4th) {
     // Unknown 4th sub — fall back to heuristic estimate
-    const expected = expectedLevelupScore(art, weights);
+    const expected = expectedLevelupScore(art, weights, mainStatWeights);
     return expected > baselineScore ? 0.6 : 0.3;
   }
 
@@ -920,17 +960,19 @@ function pUpgradeForLevelup(
 
   if (upgradeRolls <= 0) {
     // Only the 4th sub addition, no further rolls
-    const mainContribution =
-      art.mainStatKey === "hp" || art.mainStatKey === "atk"
-        ? 0
-        : scoreMainStat(art.mainStatKey, art.rarity);
+    const mainContribution = scoreMainStatWithWeights(
+      art.mainStatKey,
+      art.rarity,
+      mainStatWeights
+    );
     return currentSubScore + mainContribution > baselineScore ? 1 : 0;
   }
 
-  const mainContribution =
-    art.mainStatKey === "hp" || art.mainStatKey === "atk"
-      ? 0
-      : scoreMainStat(art.mainStatKey, art.rarity);
+  const mainContribution = scoreMainStatWithWeights(
+    art.mainStatKey,
+    art.rarity,
+    mainStatWeights
+  );
 
   // Threshold for the upgrade rolls alone
   const threshold = baselineScore - currentSubScore - mainContribution;
@@ -1040,7 +1082,7 @@ function suggestionsForBuild(
 ): ResourceSuggestion[] {
   const { evalBuild, slots } = evaluation;
   const weights = scaleFlatWeights(evalBuild.weights, globalConfig);
-  const desirableSubs = topDesirableSubs(evalBuild, CANDIDATE_POOL_SIZE);
+  const desirableSubs = topDesirableSubs(weights, CANDIDATE_POOL_SIZE);
   if (desirableSubs.length < 2) return [];
 
   const candidates: ResourceSuggestion[] = [];
@@ -1048,13 +1090,14 @@ function suggestionsForBuild(
   // For each slot, generate craft + reroll candidates
   for (const slot of allSlots) {
     const slotEval = slots[slot];
+    const mainStatWeights = getEvalMainStatWeights(slot, evalBuild);
     const baselineScore = slotEval.score;
 
     // --- Craft candidates: only keep the single best-gain combo per slot.
     // If the user spends an elixir, they'll pick the most worthy stat combo,
     // so showing multiple craft variants for the same slot is noise.
     let bestCraft: ResourceSuggestion | null = null;
-    const mains = getCandidateMainStats(slot, evalBuild);
+    const mains = getEvalMainStats(slot, evalBuild);
     for (const mainStat of mains) {
       const mainKey: string = mainStat;
       const subPairs = pairs(desirableSubs).filter(
@@ -1062,7 +1105,12 @@ function suggestionsForBuild(
       );
 
       for (const [s1, s2] of subPairs) {
-        const expected = expectedCraftScore([s1, s2], mainStat, weights);
+        const expected = expectedCraftScore(
+          [s1, s2],
+          mainStat,
+          weights,
+          mainStatWeights
+        );
         const gain = expected - baselineScore;
         if (bestCraft == null || gain > bestCraft.expectedScoreGain) {
           bestCraft = {
@@ -1121,7 +1169,12 @@ function suggestionsForBuild(
 
       if (Object.keys(art.substats ?? {}).length !== 4) continue;
 
-      const expected = expectedRerollScore(art, lockedSubs, weights);
+      const expected = expectedRerollScore(
+        art,
+        lockedSubs,
+        weights,
+        mainStatWeights
+      );
       const gain = expected - baselineScore;
       candidates.push({
         kind: "reroll",
@@ -1154,7 +1207,7 @@ function suggestionsForBuild(
       const displaySubs = getLevelupDisplaySubs(art, weights);
       if (!displaySubs) continue;
 
-      const expected = expectedLevelupScore(art, weights);
+      const expected = expectedLevelupScore(art, weights, mainStatWeights);
       const gain = expected - baselineScore;
 
       candidates.push({
@@ -1182,13 +1235,6 @@ function suggestionsForBuild(
   // results cached in `usePUpgradeCacheStore`.
   candidates.sort((a, b) => b.expectedScoreGain - a.expectedScoreGain);
   return candidates.slice(0, TOP_K_PER_BUILD);
-}
-
-function getCandidateMainStats(slot: Slot, evalBuild: EvalBuild): MainStat[] {
-  if (slot === "flower") return ["hp"];
-  if (slot === "plume") return ["atk"];
-  const rec = evalBuild.mainStats[slot as "sands" | "goblet" | "circlet"];
-  return rec && rec.length > 0 ? [...rec] : [];
 }
 
 function getBuildSetIds(evalBuild: EvalBuild): Set<string> | null {

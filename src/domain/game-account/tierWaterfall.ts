@@ -183,8 +183,7 @@ export function* runTierWaterfallSteps(
       for (const slot of allSlots) {
         targetMainStatWeights[slot] = getTargetMainStatWeightsForSlot(
           slot,
-          buildMatch.build,
-          char.artifacts[slot] ?? undefined
+          buildMatch.build
         );
       }
 

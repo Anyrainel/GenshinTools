@@ -1,4 +1,5 @@
 import type { CloudExportPartition } from "@/domain/backup/types";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import {
   type BuildDelta,
   disableBuildsForCharacters,
@@ -8,7 +9,6 @@ import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
 import type { ComputeOptions } from "@/domain/models";
 import { migrateBundledPresetId } from "@/stores/migration/presetIds";
 import { migrateReleasedCharacterWeapons } from "@/stores/migration/releasedWeaponIds";
-import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 
 export type ArtifactScoreCloudConfig = Record<string, unknown> & {
   global: Record<string, number>;

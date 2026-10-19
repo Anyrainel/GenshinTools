@@ -439,7 +439,7 @@ describe("collectEvalBuilds", () => {
       expect(result[0].weights.def).toBe(100);
     });
 
-    it("does not overwrite flat stat if already higher", () => {
+    it("derives raw flat weights from percent weights before global conversion", () => {
       const build = createBuild({
         substats: [
           { stat: "atk%", weight: 50 },
@@ -448,7 +448,7 @@ describe("collectEvalBuilds", () => {
       });
       const groups = [createBuildGroup("char1", [build])];
       const result = collectEvalBuilds(groups, false);
-      expect(result[0].weights.atk).toBe(80);
+      expect(result[0].weights.atk).toBe(50);
     });
   });
 
@@ -497,7 +497,7 @@ describe("collectEvalBuilds", () => {
       expect(atkFlat).toBeUndefined();
     });
 
-    it("shows flat stat when it exceeds % counterpart", () => {
+    it("does not display an independent flat weight override", () => {
       const build = createBuild({
         substats: [
           { stat: "atk%", weight: 50 },
@@ -507,7 +507,7 @@ describe("collectEvalBuilds", () => {
       const groups = [createBuildGroup("char1", [build])];
       const result = collectEvalBuilds(groups, false);
       const atkFlat = result[0].sortedSubstats.find((s) => s.stat === "atk");
-      expect(atkFlat).toBeDefined();
+      expect(atkFlat).toBeUndefined();
     });
   });
 

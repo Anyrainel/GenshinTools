@@ -1,13 +1,20 @@
 import { TRIAGE_SUPPORT_ARTIFACT_SETS } from "@/config/gameConstants";
 import {
   type StatWeightMap,
+  scaleFlatWeights,
   scoreSlot,
 } from "@/domain/build/artifact/scoring/artifactScore";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import { getSubstatAvgRoll } from "@/domain/build/artifact/scoring/utils";
 import type { SubStat } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
 import { getAllSubstats } from "@/domain/game-account/artifactProjection";
-import type { AccountData, ArtifactData, Build } from "@/domain/models";
+import type {
+  AccountData,
+  ArtifactData,
+  Build,
+  GlobalStatWeights,
+} from "@/domain/models";
 import { runConcentrationValueRules } from "./concentrationValue";
 import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./constants";
 import { countDemand, makeEmbryoKey } from "./demandCounting";
@@ -49,7 +56,8 @@ export function runTriage(
   accountData: AccountData,
   buildGroups: { characterId: string; builds: Build[] }[],
   settings: TriageSettings,
-  allBuildGroups = buildGroups
+  allBuildGroups = buildGroups,
+  globalConfig: GlobalStatWeights = DEFAULT_GLOBAL_STAT_WEIGHTS
 ): {
   decisions: TriageDecision[];
   flexPatterns: FlexPattern[];
@@ -218,7 +226,10 @@ export function runTriage(
       );
       const scopedScore = scoreTriageSlot(
         artifact,
-        statWeightsByEmbryoKey.get(embryoKey) ?? {}
+        scaleFlatWeights(
+          statWeightsByEmbryoKey.get(embryoKey) ?? {},
+          globalConfig
+        )
       );
 
       const embryoMatch: EmbryoMatch = {

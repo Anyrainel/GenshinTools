@@ -6,10 +6,10 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { scoreNormalized } from "@/domain/build/artifact/scoring/scorer";
+import { scoreWithBuilds } from "@/domain/build/artifact/scoring/artifactScore";
 import { computeIdealScore } from "@/domain/build/artifact/scoring/utils";
-import type { SubStat } from "@/domain/enums";
-import type { Build } from "@/domain/models";
+import type { Slot, SubStat } from "@/domain/enums";
+import type { ArtifactData, Build } from "@/domain/models";
 import { averageWeights } from "@/services/builds/auto-tune/autoTune";
 
 /** Helper: create a minimal Build for scoring tests. */
@@ -116,51 +116,69 @@ describe("averageWeights", () => {
   });
 });
 
-describe("scoreNormalized", () => {
+describe("scoreWithBuilds", () => {
   it("should score empty artifacts as 0", () => {
     const build = makeBuild();
-    const result = scoreNormalized({}, build);
-    expect(result.totalScore).toBe(0);
-    expect(result.equippedCount).toBe(0);
+    const result = scoreWithBuilds(
+      {
+        key: "test",
+        level: 90,
+        constellation: 0,
+        talent: { auto: 1, skill: 1, burst: 1 },
+        artifacts: {},
+      },
+      [build],
+      { flatAtk: 30, flatHp: 30, flatDef: 30 }
+    )!;
+    expect(result.normalized.normalizedScore).toBe(0);
+    expect(result.substatScore.isComplete).toBe(false);
   });
 
   it("should penalize wrong main stats", () => {
     const build = makeBuild();
 
-    const correct = scoreNormalized(
-      {
-        sands: {
-          id: "test-correct",
-          setKey: "test",
-          rarity: 5,
-          mainStatKey: "atk%",
-          substats: {},
-          slotKey: "sands",
-          level: 20,
-          lock: false,
+    const score = (artifacts: Partial<Record<Slot, ArtifactData>>) =>
+      scoreWithBuilds(
+        {
+          key: "test",
+          level: 90,
+          constellation: 0,
+          talent: { auto: 1, skill: 1, burst: 1 },
+          artifacts,
         },
+        [build],
+        { flatAtk: 30, flatHp: 30, flatDef: 30 }
+      )!;
+    const correct = score({
+      sands: {
+        id: "test-correct",
+        setKey: "test",
+        rarity: 5,
+        mainStatKey: "atk%",
+        substats: {},
+        slotKey: "sands",
+        level: 20,
+        lock: false,
       },
-      build
-    );
+    });
 
-    const wrong = scoreNormalized(
-      {
-        sands: {
-          id: "test-wrong",
-          setKey: "test",
-          rarity: 5,
-          mainStatKey: "def%",
-          substats: {},
-          slotKey: "sands",
-          level: 20,
-          lock: false,
-        },
+    const wrong = score({
+      sands: {
+        id: "test-wrong",
+        setKey: "test",
+        rarity: 5,
+        mainStatKey: "def%",
+        substats: {},
+        slotKey: "sands",
+        level: 20,
+        lock: false,
       },
-      build
-    );
+    });
 
-    expect(correct.totalScore).toBeGreaterThan(wrong.totalScore);
-    expect(correct.mainStatMatches).toBe(1);
-    expect(wrong.mainStatMatches).toBe(0);
+    expect(correct.normalized.normalizedScore).toBeGreaterThan(
+      wrong.normalized.normalizedScore
+    );
+    expect(correct.buildMatch.mainStatMatches).toBe(1);
+    expect(wrong.buildMatch.mainStatMatches).toBe(0);
   });
 });

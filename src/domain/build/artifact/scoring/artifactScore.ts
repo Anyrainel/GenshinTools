@@ -7,7 +7,6 @@ import type {
   Build,
   CharacterData,
   GlobalStatWeights,
-  WeightedMainStat,
 } from "@/domain/models";
 import { artifactIdToHalfSetId } from "@/domain/reference/catalog";
 import { MAIN_STAT_CD_EQUIV_5STAR } from "./constants";
@@ -39,13 +38,6 @@ const SUB_STATS: SubStat[] = [
   "def",
 ];
 
-/**
- * Substat keys that can never be a sands/goblet/circlet main stat. Note this
- * is NOT isFlatStat: that display-format predicate also counts em, which is
- * a legitimate main stat for all three slots.
- */
-const NON_MAIN_SUBSTATS: ReadonlySet<string> = new Set(["hp", "atk", "def"]);
-
 /** Per-stat breakdown for UI (value and weighted sub-score only; main score not exposed). */
 export interface StatScoreBreakdown {
   subValue: number;
@@ -71,15 +63,22 @@ export type MainStatMismatch = {
 
 export type StatWeightMap = Partial<Record<SubStat, number>>;
 
-/** Scale flat stat weights (hp, atk, def) by their globalConfig effectiveness. */
+/** Derive flat-stat weights from their percentage counterparts exactly once.
+ * Omitted config produces unscaled weights for grouping; scoring supplies global config.
+ */
 export function scaleFlatWeights(
   weights: StatWeightMap,
-  globalConfig: GlobalStatWeights
+  globalConfig?: GlobalStatWeights
 ): StatWeightMap {
   const out = { ...weights };
-  if (out.hp != null) out.hp *= globalConfig.flatHp / 100;
-  if (out.atk != null) out.atk *= globalConfig.flatAtk / 100;
-  if (out.def != null) out.def *= globalConfig.flatDef / 100;
+  for (const [flat, pct, config] of [
+    ["hp", "hp%", "flatHp"],
+    ["atk", "atk%", "flatAtk"],
+    ["def", "def%", "flatDef"],
+  ] as const) {
+    if (out[flat] != null || out[pct] != null)
+      out[flat] = (out[pct] ?? 0) * ((globalConfig?.[config] ?? 100) / 100);
+  }
   return out;
 }
 
@@ -351,40 +350,14 @@ export function buildToWeightMap(
   for (const { stat, weight } of build.substats ?? []) {
     map[stat] = weight;
   }
-  // Flat stats: if explicitly set in the build, honor that weight directly.
-  // Otherwise, inherit from the % counterpart scaled by globalConfig
-  // effectiveness (punishment factor).
-  const flatHp = (globalConfig?.flatHp ?? 100) / 100;
-  const flatAtk = (globalConfig?.flatAtk ?? 100) / 100;
-  const flatDef = (globalConfig?.flatDef ?? 100) / 100;
-  if (map.hp == null && map["hp%"] != null) map.hp = map["hp%"] * flatHp;
-  if (map.atk == null && map["atk%"] != null) map.atk = map["atk%"] * flatAtk;
-  if (map.def == null && map["def%"] != null) map.def = map["def%"] * flatDef;
-  return map;
+  return scaleFlatWeights(map, globalConfig);
 }
 
 export function getTargetMainStatsForSlot(
   slot: Slot,
-  build: Build,
-  equippedForSlot?: ArtifactData | null
+  build: Build
 ): Set<MainStat> {
-  if (slot === "flower") return new Set(["hp"]);
-  if (slot === "plume") return new Set(["atk"]);
-  const weights = buildToWeightMap(build);
-  if (mainStatSlots.includes(slot as MainStatSlot)) {
-    const recommended = getEffectiveMainStats(slot as MainStatSlot, build);
-    if (recommended?.length > 0) return new Set(recommended);
-  }
-  if (
-    equippedForSlot &&
-    (weights[equippedForSlot.mainStatKey as SubStat] ?? 0) > 0
-  )
-    return new Set([equippedForSlot.mainStatKey]);
-  const fallback = new Set<MainStat>();
-  for (const [stat, w] of Object.entries(weights)) {
-    if (w > 40 && !NON_MAIN_SUBSTATS.has(stat)) fallback.add(stat as MainStat);
-  }
-  return fallback.size > 0 ? fallback : new Set();
+  return new Set(getTargetMainStatWeightsForSlot(slot, build).keys());
 }
 
 /**
@@ -392,45 +365,35 @@ export function getTargetMainStatsForSlot(
  *
  * Each accepted main stat carries an effective weight percent matching
  * the build's per-slot main-stat weight,
- * scaled by any autotune cdEquiv override, with 100 for fallback paths and
- * DPS-expanded cr/cd. No character-specific main stats are added.
+ * scaled by any autotune cdEquiv override. DPS-expanded CR/CD inherits the
+ * configured counterpart's weight and cdEquiv. Empty slots receive no credit.
  */
 export function getTargetMainStatWeightsForSlot(
   slot: Slot,
-  build: Build,
-  equippedForSlot?: ArtifactData | null
+  build: Build
 ): Map<MainStat, number> {
   if (slot === "flower") return new Map([["hp" as MainStat, 100]]);
   if (slot === "plume") return new Map([["atk" as MainStat, 100]]);
-  const weights = buildToWeightMap(build);
   if (mainStatSlots.includes(slot as MainStatSlot)) {
     const recommended = getEffectiveMainStats(slot as MainStatSlot, build);
     if (recommended?.length > 0) {
       const listed = build[SLOT_TO_WEIGHTS_KEY[slot as MainStatSlot]];
       const result = new Map<MainStat, number>();
       for (const stat of recommended) {
-        const matched = listed.find((w) => w.stat === stat);
+        const matched =
+          listed.find((w) => w.stat === stat) ??
+          (slot === "circlet" && (stat === "cr" || stat === "cd")
+            ? listed.find((w) => w.stat === (stat === "cr" ? "cd" : "cr"))
+            : undefined);
         const cdEquivScale =
           (matched?.cdEquiv ?? MAIN_STAT_CD_EQUIV_5STAR) /
           MAIN_STAT_CD_EQUIV_5STAR;
-        result.set(stat, (matched?.weight ?? 100) * cdEquivScale);
+        result.set(stat, (matched?.weight ?? 0) * cdEquivScale);
       }
       return result;
     }
   }
-  if (
-    equippedForSlot &&
-    (weights[equippedForSlot.mainStatKey as SubStat] ?? 0) > 0
-  ) {
-    return new Map<MainStat, number>([[equippedForSlot.mainStatKey, 100]]);
-  }
-  const fallback = new Map<MainStat, number>();
-  for (const [stat, w] of Object.entries(weights)) {
-    if (w > 40 && !NON_MAIN_SUBSTATS.has(stat)) {
-      fallback.set(stat as MainStat, 100);
-    }
-  }
-  return fallback;
+  return new Map();
 }
 
 export function scoreSlot(
@@ -488,16 +451,29 @@ export function scoreSlotWithMainStatWeights(
 ): number {
   const score = scoreSlot(artifact, weights);
 
-  const mainStat = artifact.mainStatKey;
-  if (mainStat === "hp" || mainStat === "atk") return score;
-
-  const weight = mainStatWeights.get(mainStat) ?? 0;
-  if (weight <= 0) return score;
-
   return (
     score +
-    scoreMainStat(mainStat, artifact.rarity, artifact.level) * (weight / 100)
+    scoreMainStatWithWeights(
+      artifact.mainStatKey,
+      artifact.rarity,
+      mainStatWeights,
+      artifact.level
+    )
   );
+}
+
+/** Main-stat contribution shared by current gear, projections and probability models. */
+export function scoreMainStatWithWeights(
+  mainStat: MainStat,
+  rarity: number,
+  weights: ReadonlyMap<string, number>,
+  level?: number
+): number {
+  if (mainStat === "hp" || mainStat === "atk") return 0;
+  const weight = weights.get(mainStat) ?? 0;
+  return weight > 0
+    ? (scoreMainStat(mainStat, rarity, level) * weight) / 100
+    : 0;
 }
 
 export function scoreAllSlots(
@@ -606,13 +582,13 @@ function computeIdealScoreForBuild(
   for (const stat of SUB_STATS) {
     fullWeights[stat] = weights[stat] ?? 0;
   }
-  const bestWeight = (ws: WeightedMainStat[]) =>
-    ws.length > 0 ? Math.max(...ws.map((w) => w.weight)) : 100;
+  const bestWeight = (slot: MainStatSlot) =>
+    Math.max(0, ...getTargetMainStatWeightsForSlot(slot, build).values());
   return computeIdealScoreShared(
     fullWeights,
-    bestWeight(build.sandsWeights),
-    bestWeight(build.gobletWeights),
-    bestWeight(build.circletWeights)
+    bestWeight("sands"),
+    bestWeight("goblet"),
+    bestWeight("circlet")
   ).idealScore;
 }
 
@@ -636,11 +612,7 @@ function computeNormalizedScore(
     const artifact = artifacts[slot];
     if (!artifact) continue;
 
-    const mainStatWeights = getTargetMainStatWeightsForSlot(
-      slot,
-      build,
-      artifact
-    );
+    const mainStatWeights = getTargetMainStatWeightsForSlot(slot, build);
     const weightedScore =
       scoreSlotWithMainStatWeights(
         artifact,
@@ -687,11 +659,7 @@ export function scoreWithBuilds(
     char,
     buildMatch.statWeights,
     resolvedNonArtifactCr,
-    getTargetMainStatWeightsForSlot(
-      "circlet",
-      buildMatch.build,
-      char.artifacts.circlet
-    )
+    getTargetMainStatWeightsForSlot("circlet", buildMatch.build)
   );
   const normalized = computeNormalizedScore(
     char.artifacts,

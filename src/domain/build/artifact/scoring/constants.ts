@@ -5,6 +5,13 @@ import {
 } from "@/config/gameConstants";
 import { isFlatStat } from "@/domain/build/statUtils";
 import type { SubStat } from "@/domain/enums";
+import type { GlobalStatWeights } from "@/domain/models";
+
+export const DEFAULT_GLOBAL_STAT_WEIGHTS: GlobalStatWeights = {
+  flatAtk: 30,
+  flatHp: 30,
+  flatDef: 30,
+};
 
 // ─── Scoring constants ───
 /** CD-equivalent of one average roll = avg(cd tiers) in display form */

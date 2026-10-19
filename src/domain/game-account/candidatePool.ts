@@ -229,11 +229,7 @@ export function buildCandidatePool(
   for (const slot of allSlots) {
     const candidates: CandidateArtifact[] = [];
     const equipped = char.artifacts[slot];
-    const targetMainStats = getTargetMainStatsForSlot(
-      slot,
-      buildMatch.build,
-      equipped ?? undefined
-    );
+    const targetMainStats = getTargetMainStatsForSlot(slot, buildMatch.build);
 
     // 1. Current artifact → projected to max level
     if (equipped) {

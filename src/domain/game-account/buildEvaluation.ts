@@ -1,3 +1,4 @@
+import { statPools } from "@/config/gameConstants";
 import type { MainStat, Slot, SubStat } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
 import type {
@@ -14,10 +15,12 @@ import {
 import {
   buildToWeightMap,
   calculateMaxSlotSubScore,
+  getTargetMainStatsForSlot,
+  getTargetMainStatWeightsForSlot,
   type StatWeightMap,
   scaleFlatWeights,
-  scoreMainStat,
-  scoreSlot,
+  scoreMainStatWithWeights,
+  scoreSlotWithMainStatWeights,
 } from "../build/artifact/scoring/artifactScore";
 
 export type ScalingStat = "atk" | "hp" | "def" | "em";
@@ -108,7 +111,7 @@ const scalingMainStats: Record<string, ScalingStat> = {
 /** Infer primary scaling stat from a build's sands preferences + substats. */
 export function getScalingStat(build: Build): ScalingStat {
   // Check sands for a scaling-indicative main stat (priority: hp > def > em > atk)
-  for (const { stat } of build.sandsWeights) {
+  for (const stat of getTargetMainStatsForSlot("sands", build)) {
     if (stat in scalingMainStats) return scalingMainStats[stat];
   }
   // ER-only or empty sands: infer from substat weights
@@ -184,11 +187,11 @@ function mergeInto(existing: EvalBuild, build: Build, characterId: string) {
     if (!existing.mainStats.sands.includes(stat))
       existing.mainStats.sands.push(stat);
   }
-  for (const { stat } of build.gobletWeights) {
+  for (const stat of getTargetMainStatsForSlot("goblet", build)) {
     if (!existing.mainStats.goblet.includes(stat))
       existing.mainStats.goblet.push(stat);
   }
-  for (const { stat } of build.circletWeights) {
+  for (const stat of getTargetMainStatsForSlot("circlet", build)) {
     if (!existing.mainStats.circlet.includes(stat))
       existing.mainStats.circlet.push(stat);
   }
@@ -216,9 +219,9 @@ function newEvalBuild(
     characterIds: [characterId],
     weights: buildToWeightMap(build),
     mainStats: {
-      sands: build.sandsWeights.map((w) => w.stat),
-      goblet: build.gobletWeights.map((w) => w.stat),
-      circlet: build.circletWeights.map((w) => w.stat),
+      sands: [...getTargetMainStatsForSlot("sands", build)],
+      goblet: [...getTargetMainStatsForSlot("goblet", build)],
+      circlet: [...getTargetMainStatsForSlot("circlet", build)],
     },
     sortedSubstats: [], // filled after collection
     scalingStat: scaling,
@@ -311,24 +314,11 @@ export function collectEvalBuilds(
     }
   }
 
-  // Expand flat stat weights from their % counterparts.
-  // e.g. if hp% = 100, flat hp should also be 100. The global-config punishment
-  // factor is applied separately by scaleFlatWeights at the calculateStatScore
-  // call site.
   const flatPairs: [string, string][] = [
     ["atk%", "atk"],
     ["hp%", "hp"],
     ["def%", "def"],
   ];
-  for (const eb of map.values()) {
-    for (const [pctStat, flatStat] of flatPairs) {
-      const pctW = eb.weights[pctStat as SubStat] ?? 0;
-      const flatW = eb.weights[flatStat as SubStat] ?? 0;
-      if (pctW > 0 && flatW < pctW) {
-        eb.weights[flatStat as SubStat] = pctW;
-      }
-    }
-  }
 
   // Set of flat stat keys that can be derived from % counterparts
   const flatStatKeys = new Set(flatPairs.map(([, flat]) => flat));
@@ -390,6 +380,30 @@ function matchesMainStat(
   return recommended.includes(artifact.mainStatKey);
 }
 
+/** Per-main credit follows the merged builds' configured maximum, like substats. */
+export function getEvalMainStatWeights(
+  slot: Slot,
+  evalBuild: EvalBuild
+): Map<MainStat, number> {
+  const result = new Map<MainStat, number>();
+  for (const build of evalBuild.builds) {
+    for (const [stat, weight] of getTargetMainStatWeightsForSlot(slot, build)) {
+      result.set(stat, Math.max(result.get(stat) ?? 0, weight));
+    }
+  }
+  return result;
+}
+
+/** An empty preference permits every main stat, each with zero main-stat credit. */
+export function getEvalMainStats(
+  slot: Slot,
+  evalBuild: EvalBuild
+): readonly MainStat[] {
+  if (slot === "flower" || slot === "plume") return statPools[slot];
+  const recommended = evalBuild.mainStats[slot];
+  return recommended.length > 0 ? recommended : statPools[slot];
+}
+
 function findBestArtifact(
   candidates: ArtifactData[],
   slot: Slot,
@@ -399,6 +413,7 @@ function findBestArtifact(
 ): { artifact: ArtifactData; score: number } | null {
   let best: { artifact: ArtifactData; score: number } | null = null;
   const weights = scaleFlatWeights(evalBuild.weights, globalConfig);
+  const mainStatWeights = getEvalMainStatWeights(slot, evalBuild);
 
   const setFilter = requireSets
     ? typeof requireSets === "string"
@@ -412,7 +427,7 @@ function findBestArtifact(
     if (setFilter && !setFilter.has(art.setKey)) continue;
     if (!matchesMainStat(art, slot, evalBuild)) continue;
 
-    const score = scoreSlot(art, weights);
+    const score = scoreSlotWithMainStatWeights(art, weights, mainStatWeights);
     if (!best || score > best.score) {
       best = { artifact: art, score };
     }
@@ -449,25 +464,14 @@ function buildSlotEval(
   slot: Slot,
   candidate: { artifact: ArtifactData; score: number } | null,
   evalBuild: EvalBuild,
-  isFlex: boolean
+  isFlex: boolean,
+  globalConfig: GlobalStatWeights
 ): SlotEvaluation {
   const rarity = candidate?.artifact.rarity ?? 5;
-  const mainStat = candidate?.artifact.mainStatKey ?? "hp";
-  const subMax = calculateMaxSlotSubScore(mainStat, evalBuild.weights, rarity);
-
-  const isVariableMainStat =
-    slot === "sands" || slot === "goblet" || slot === "circlet";
-  const idealMainStat = getIdealMainStat(slot, evalBuild);
-  const mainStatMax = isVariableMainStat
-    ? scoreMainStat(idealMainStat, rarity)
-    : 0;
-  const mainStatActual =
-    isVariableMainStat && candidate ? scoreMainStat(mainStat, rarity) : 0;
-
   return {
     artifact: candidate?.artifact ?? null,
-    score: (candidate?.score ?? 0) + mainStatActual,
-    maxScore: subMax + mainStatMax,
+    score: candidate?.score ?? 0,
+    maxScore: getMaxSlotScore(slot, evalBuild, globalConfig, rarity),
     isFlexSlot: isFlex,
   };
 }
@@ -476,19 +480,15 @@ function buildSlotEval(
 function buildEvalResult(
   evalBuild: EvalBuild,
   bestSlots: Record<Slot, SlotEvaluation>,
-  bestTotalScore: number
+  bestTotalScore: number,
+  globalConfig: GlobalStatWeights
 ): BuildEvaluation {
   let adjustedMaxScore = 0;
   for (const slot of allSlots) {
     if (bestSlots[slot].artifact) {
       adjustedMaxScore += bestSlots[slot].maxScore;
     } else {
-      const idealMainStat = getIdealMainStat(slot, evalBuild);
-      const isVariableMainStat =
-        slot === "sands" || slot === "goblet" || slot === "circlet";
-      adjustedMaxScore +=
-        calculateMaxSlotSubScore(idealMainStat, evalBuild.weights, 5) +
-        (isVariableMainStat ? scoreMainStat(idealMainStat, 5) : 0);
+      adjustedMaxScore += getMaxSlotScore(slot, evalBuild, globalConfig, 5);
     }
   }
 
@@ -555,7 +555,13 @@ function evaluateBuild(
         ? (anySet[slot] ?? onSet[slot])
         : (onSet[slot] ?? null);
 
-      arrangement[slot] = buildSlotEval(slot, candidate, evalBuild, isFlex);
+      arrangement[slot] = buildSlotEval(
+        slot,
+        candidate,
+        evalBuild,
+        isFlex,
+        globalConfig
+      );
       totalScore += arrangement[slot].score;
     }
 
@@ -565,7 +571,7 @@ function evaluateBuild(
     }
   }
 
-  return buildEvalResult(evalBuild, bestSlots, bestTotalScore);
+  return buildEvalResult(evalBuild, bestSlots, bestTotalScore, globalConfig);
 }
 
 /**
@@ -670,7 +676,8 @@ function evaluateBuild2p2(
               slot,
               candidate,
               evalBuild,
-              isFlex
+              isFlex,
+              globalConfig
             );
             totalScore += arrangement[slot].score;
           }
@@ -684,17 +691,24 @@ function evaluateBuild2p2(
     }
   }
 
-  return buildEvalResult(evalBuild, bestSlots, bestTotalScore);
+  return buildEvalResult(evalBuild, bestSlots, bestTotalScore, globalConfig);
 }
 
-function getIdealMainStat(slot: Slot, evalBuild: EvalBuild): MainStat {
-  if (slot === "flower") return "hp";
-  if (slot === "plume") return "atk";
-
-  const recommended =
-    evalBuild.mainStats[slot as "sands" | "goblet" | "circlet"];
-  if (recommended && recommended.length > 0) return recommended[0];
-  return slot === "circlet" ? "cr" : "atk%";
+function getMaxSlotScore(
+  slot: Slot,
+  evalBuild: EvalBuild,
+  globalConfig: GlobalStatWeights,
+  rarity: number
+): number {
+  const weights = scaleFlatWeights(evalBuild.weights, globalConfig);
+  const mains = getEvalMainStatWeights(slot, evalBuild);
+  return Math.max(
+    0,
+    ...getEvalMainStats(slot, evalBuild).map((mainStatKey) => {
+      const main = scoreMainStatWithWeights(mainStatKey, rarity, mains);
+      return main + calculateMaxSlotSubScore(mainStatKey, weights, rarity);
+    })
+  );
 }
 
 // 4b. Build selection by account constellation

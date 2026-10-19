@@ -4,6 +4,7 @@ import {
 } from "@/contexts/backup/manualBackupController";
 import { buildLocalBackupPartitions } from "@/contexts/backup/storeAdapters";
 import { readDownloadedPartitions } from "@/contexts/backup/syncClient";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import type { BuildDelta } from "@/domain/build/buildDeltas";
 import { DEFAULT_COMPUTE_OPTIONS } from "@/domain/build/computeFilters";
 import type {
@@ -21,7 +22,6 @@ import {
   BackupApiClient,
   type BackupHeadResponse,
 } from "@/providers/backup/apiClient";
-import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/stores/schemas";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";

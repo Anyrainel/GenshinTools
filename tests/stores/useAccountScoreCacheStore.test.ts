@@ -44,30 +44,36 @@ describe("useAccountScoreCacheStore persistence", () => {
     ).toEqual({});
   });
 
-  it("discards v3 scores with old main-stat and CR semantics for every profile", async () => {
-    const oldScore = createArtifactScoreResult({
-      normalized: { normalizedScore: 195 },
-    });
-    window.localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        version: 3,
-        state: {
-          scoresByProfileId: {
-            "0": { hu_tao: oldScore, barbara: null },
-            "800000001": { xiangling: oldScore },
+  it.each([3, 4])(
+    "discards v%s scores with old scoring semantics for every profile",
+    async (version) => {
+      const oldScore = createArtifactScoreResult({
+        normalized: { normalizedScore: 195 },
+      });
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({
+          version,
+          state: {
+            scoresByProfileId: {
+              "0": { hu_tao: oldScore, barbara: null },
+              "800000001": { xiangling: oldScore },
+            },
+            staleScoreCharIdsByProfileId: {
+              "0": [],
+              "800000001": ["xiangling"],
+            },
           },
-          staleScoreCharIdsByProfileId: { "0": [], "800000001": ["xiangling"] },
-        },
-      })
-    );
-    await useAccountScoreCacheStore.persist.rehydrate();
-    expect(useAccountScoreCacheStore.getState().getScores(0)).toEqual({});
-    expect(useAccountScoreCacheStore.getState().getScores(800000001)).toEqual(
-      {}
-    );
-    expect(JSON.parse(window.localStorage.getItem(STORAGE_KEY)!).version).toBe(
-      4
-    );
-  });
+        })
+      );
+      await useAccountScoreCacheStore.persist.rehydrate();
+      expect(useAccountScoreCacheStore.getState().getScores(0)).toEqual({});
+      expect(useAccountScoreCacheStore.getState().getScores(800000001)).toEqual(
+        {}
+      );
+      expect(
+        JSON.parse(window.localStorage.getItem(STORAGE_KEY)!).version
+      ).toBe(5);
+    }
+  );
 });
