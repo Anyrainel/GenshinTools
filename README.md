@@ -24,7 +24,7 @@
 
 ## Start Here
 
-- **Import account data** with GOOD JSON, GOODScanner / GOODCapture, Enka UID, or HoYoLAB / Miyoushe.
+- **Import account data** with GOOD JSON, GGScannerOCR / GGScanner, Enka UID, or HoYoLAB / Miyoushe.
 - **Set character priorities** in Tier List so account recommendations know which builds matter most.
 - **Review character builds** in Account Data when you want scores, build gaps, and upgrade suggestions.
 - **Optimize a team** in Team DMG when you want the best artifact assignment from your inventory.
@@ -83,7 +83,7 @@ Browse bundled game data without opening another reference site.
 
 ## Import And Data Notes
 
-- Full inventory workflows depend on GOOD-format exports or companion tools such as GOODScanner / GOODCapture.
+- Full inventory workflows depend on GOOD-format exports or companion tools such as GGScannerOCR / GGScanner.
 - Enka UID import is limited to public showcase characters and their equipment.
 - HoYoLAB / Miyoushe import requires a user-provided cookie.
 - App data is primarily stored in the browser. Optional account sign-in enables Cloud Backup for supported saved app data.

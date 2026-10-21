@@ -16,7 +16,7 @@ The sequence is:
    weapon, artifact, enemy, achievement, boss, and capture-cache data.
 2. Refresh HoYoWiki catalogs and artwork, plus artifact half sets.
 3. Regenerate character metadata, including constellation talent bonuses.
-4. Regenerate Enka stat IDs from the capture cache and GOODScanner mappings from
+4. Regenerate Enka stat IDs from the capture cache and GGScanner mappings from
    the exported game JSON and the new character metadata.
 5. Check mapping coverage, character catalog coverage, website assets,
    scheduled boss artwork, and positive finite character/weapon/artifact stats.

@@ -27,7 +27,7 @@ and mobile widths:
 
 `tests/fixtures/goodscanner-v3.json` is a manually curated representative fixture,
 not a claimed scanner-emitted byte snapshot. Its envelope and optional fields
-were checked read-only against GOODScanner's
+were checked read-only against GGScanner's
 `genshin/src/scanner/common/models.rs` (`GoodExport`, `GoodArtifact`,
 `GoodSubStat`) and `genshin/src/capture/player_data.rs`. Both producers use
 `format: GOOD`, version 3 and `source: yas-GOODScanner`; optional absent sections

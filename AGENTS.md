@@ -13,7 +13,7 @@ are siblings; paths below are relative to the GenshinTools repository root.
 | --- | --- | --- |
 | GenshinTools | `.` | Genshin Impact website: account imports, artifact scoring/triage, build filters, team damage/optimization, and game archive. |
 | HoyoData | `../HoyoData` | Shared Genshin Impact and Honkai: Star Rail data producer: datamine ingestion, normalization, reference exports, website catalogs/assets, and scanner mappings. Start here for upstream data/export pipeline changes; `genshintools` and `ggstarrail` targets refresh the respective websites. |
-| GOODScanner (product name: GGScanner) | `../GOODScanner` | Windows scanner/capture/management app for both games: OCR, packet capture, account JSON exports, and in-game artifact/relic management. The local checkout retains the GOODScanner name. |
+| GGScanner | `../GGScanner` | Windows scanner/capture/management app for both games: OCR, packet capture, account JSON exports, and in-game artifact/relic management. |
 | GGStarRail | `../GGStarRail` | Honkai: Star Rail website: account imports, relic scoring/triage, build targets/filters, resource planning, tier lists, and game/achievement archive. Start here for Star Rail website behavior and UI. |
 
 For cross-repository work, read the target repository's `AGENTS.md` and relevant
@@ -30,7 +30,7 @@ when the task crosses a producer/consumer boundary or ownership remains unclear.
 - `npm run depcheck` — dependency boundary rules via dependency-cruiser
 - `npm run test` / `npm run test:watch` / `npm run test:coverage` — Vitest
 - `npm run regtest` — artifact generator golden-file regression test
-- `npm run data:refresh` — delegates to HoyoData's `genshintools` target for all released source data, website catalogs/assets, character metadata, Enka stat IDs, GOODScanner mappings, and coverage checks. HoyoData must be beside this checkout, or pass `-- --hoyodata-root <path>`. `-- --cached-sources` exports cached raw data and rebuilds with cached website catalogs/artwork; beta scraping and damage/energy implementation work remain separate.
+- `npm run data:refresh` — delegates to HoyoData's `genshintools` target for all released source data, website catalogs/assets, character metadata, Enka stat IDs, GGScanner mappings, and coverage checks. HoyoData must be beside this checkout, or pass `-- --hoyodata-root <path>`. `-- --cached-sources` exports cached raw data and rebuilds with cached website catalogs/artwork; beta scraping and damage/energy implementation work remain separate.
 
 ## Production Deployment
 

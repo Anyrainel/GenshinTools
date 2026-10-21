@@ -24,7 +24,7 @@
 
 ## 从这里开始
 
-- **导入账号数据**：支持 GOOD JSON、GOODScanner / GOODCapture、Enka UID，或 HoYoLAB / 米游社。
+- **导入账号数据**：支持 GOOD JSON、GGScannerOCR / GGScanner、Enka UID，或 HoYoLAB / 米游社。
 - **设置角色优先级**：在榜单里排好角色优先级，让账号推荐知道哪些配装更重要。
 - **查看角色配装**：在账号数据里查看评分、配装缺口和提分建议。
 - **优化一个队伍**：在队伍伤害里从你的仓库中寻找更高伤害的圣遗物分配。
@@ -83,7 +83,7 @@
 
 ## 导入与数据说明
 
-- 完整仓库流程依赖 GOOD 格式导出，或 GOODScanner / GOODCapture 等配套工具。
+- 完整仓库流程依赖 GOOD 格式导出，或 GGScannerOCR / GGScanner 等配套工具。
 - Enka UID 导入只包含公开展柜角色及其装备。
 - HoYoLAB / 米游社导入需要用户自行提供 Cookie。
 - 应用数据主要保存在浏览器本地；可选账号登录会为受支持的应用数据启用云端备份。
