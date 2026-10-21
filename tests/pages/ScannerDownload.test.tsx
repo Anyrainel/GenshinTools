@@ -15,7 +15,7 @@ describe("Scanner download page", () => {
     ).toHaveAttribute(
       "href",
       expect.stringContaining(
-        "/GOODScanner/releases/latest/download/GOODCapture.exe"
+        "/GGScanner/releases/latest/download/GGScanner.exe"
       )
     );
     expect(
@@ -23,7 +23,7 @@ describe("Scanner download page", () => {
     ).toHaveAttribute(
       "href",
       expect.stringContaining(
-        "/GOODScanner/releases/latest/download/GOODScanner.exe"
+        "/GGScanner/releases/latest/download/GGScannerOCR.exe"
       )
     );
     for (const [name, path] of [
