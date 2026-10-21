@@ -3,7 +3,7 @@
 - P1: Better graduation celebration effects
 - TODO: Manage artifact stars with customizable options
 
-## 2026-10-19
+## 2026-10-21
 
 ### features
 - GOODCapture / GOODScanner are now [GGScanner / GGScannerOCR](/download-scanner), respectively, with a fully redesigned interface, added Honkai: Star Rail support, and fixes for recent data and logic issues.

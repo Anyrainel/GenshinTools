@@ -3,7 +3,7 @@
 - P1：更好看的毕业特效
 - 待办：支持自定义选项的圣遗物星标管理
 
-## 2026-10-19
+## 2026-10-21
 
 ### features
 - GOODCapture / GOODScanner 分别更名为 [GGScanner / GGScannerOCR](/download-scanner)，全面更新界面，新增《崩坏：星穹铁道》支持，并修复近期的数据与逻辑问题。
