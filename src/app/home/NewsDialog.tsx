@@ -1,6 +1,7 @@
 import { Megaphone } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { NewsText } from "@/components/shared/NewsText";
 import {
   newsMap,
   openWhatsNew,
@@ -92,7 +93,7 @@ export default function NewsDialog({
                       key={i}
                       className="text-sm text-foreground/80 leading-relaxed pl-3 relative before:content-['·'] before:absolute before:left-0 before:text-muted-foreground"
                     >
-                      {item}
+                      <NewsText onNavigate={handleClose}>{item}</NewsText>
                     </li>
                   ))}
                 </ul>
