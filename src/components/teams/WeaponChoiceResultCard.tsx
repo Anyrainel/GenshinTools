@@ -26,6 +26,7 @@ import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import type { useLanguage } from "@/contexts/LanguageContext";
 import type { WeaponChoiceProgress } from "@/domain/combat/analyzer/weaponChoice";
 import { DEFAULT_CALC_CONTEXT } from "@/domain/combat/damage/constants";
+import { getOptionDef } from "@/domain/combat/damage/core/registry";
 import type { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
 import type { CalcContext } from "@/domain/combat/damage/types";
 import type { SubStat } from "@/domain/enums";
@@ -99,6 +100,24 @@ function getArtifactAssignmentKey(
   if (!artifactSet) return "none";
   if (artifactSet.type === "4pc") return artifactSet.setId;
   return [...artifactSet.halfSetIds].sort().join("+");
+}
+
+function ChoiceCombatOptions({
+  options,
+  t,
+}: {
+  options?: Record<string, string>;
+  t: WeaponChoiceResultCardProps["t"];
+}) {
+  return Object.entries(options ?? {}).map(([entityId, value]) => {
+    const definition = getOptionDef(entityId);
+    const choice = definition?.choices.find((entry) => entry.value === value);
+    return definition && choice ? (
+      <div key={entityId} className="text-xs">
+        {t.resolveLabel(definition.label)}: {t.resolveLabel(choice.label)}
+      </div>
+    ) : null;
+  });
 }
 
 const MIN_ASSIGNMENT_IMPROVEMENT_PERCENT = 0.05;
@@ -289,6 +308,9 @@ function WeaponDetailContent({
       </div>
 
       {/* Total damage */}
+      {entry.type === "artifact" && (
+        <ChoiceCombatOptions options={entry.combatOptions} t={t} />
+      )}
       <div className="flex justify-between border-t border-border pt-1.5">
         <span className="text-muted-foreground">
           {t.ui("teamComp.totalDamage")}
@@ -591,6 +613,7 @@ function ArtifactAssignmentCard({
   artifacts,
   result,
   onTeamCompChange,
+  onSetupConfigChange,
   setChoiceResult,
   t,
 }: {
@@ -600,6 +623,7 @@ function ArtifactAssignmentCard({
   artifacts: (ArtifactSetConfig | null)[];
   result: WeaponChoiceResult;
   onTeamCompChange: (comp: TeamComp) => void;
+  onSetupConfigChange: WeaponChoiceResultCardProps["onSetupConfigChange"];
   setChoiceResult: (
     mode: "weapon" | "artifact",
     result: WeaponChoiceResult | null
@@ -638,11 +662,17 @@ function ArtifactAssignmentCard({
         artifactSet: nextArtifacts[index] ?? null,
       })),
     });
+    if (suggestion.combatOptions)
+      onSetupConfigChange((config) => ({
+        ...config,
+        combatOptions: { ...config.combatOptions, ...suggestion.combatOptions },
+      }));
     setChoiceResult("artifact", nextResult);
   }, [
     artifacts,
     characters,
     onTeamCompChange,
+    onSetupConfigChange,
     result,
     setChoiceResult,
     suggestion,
@@ -681,6 +711,7 @@ function ArtifactAssignmentCard({
         </Button>
       </div>
       <div className="flex flex-wrap justify-center gap-2 p-3 md:gap-6">
+        <ChoiceCombatOptions options={suggestion.combatOptions} t={t} />
         {suggestion.assignments.map(({ charId, artifactSet }) => {
           const label = artifactSet
             ? getArtifactSetLabel(artifactSet, t)
@@ -803,6 +834,11 @@ export function WeaponChoiceResultCard({
       ),
     };
     onTeamCompChange(next);
+    if (entry.type === "artifact" && entry.combatOptions)
+      onSetupConfigChange((config) => ({
+        ...config,
+        combatOptions: { ...config.combatOptions, ...entry.combatOptions },
+      }));
     if (entry.type !== "artifact")
       onSetupConfigChange((config) => ({
         ...config,
@@ -1047,6 +1083,7 @@ export function WeaponChoiceResultCard({
               artifacts={artifacts}
               result={result}
               onTeamCompChange={onTeamCompChange}
+              onSetupConfigChange={onSetupConfigChange}
               setChoiceResult={setChoiceResult}
               t={t}
             />

@@ -10,6 +10,7 @@ import {
 } from "@/domain/reference/stats";
 import type {
   ArtifactAssignmentSuggestion,
+  ChoiceRanking,
   WeaponChoiceCharConfig,
 } from "@/domain/team/types";
 
@@ -61,6 +62,84 @@ function toWeaponChoiceCharConfigs(
 }
 
 describe("runWeaponChoice artifact mode", () => {
+  async function comparePetra(
+    configs: TeamSlotConfig[],
+    opts: Record<string, string> = {}
+  ) {
+    const gen = runWeaponChoice({
+      mode: "artifact",
+      baseConfigs: configs,
+      charConfigs: toWeaponChoiceCharConfigs(configs),
+      combo: singleFormulaCombo("lisa", "lisa-hold"),
+      calcContext: CTX,
+      weaponStats: weaponStatsResource.peek()!,
+      opts,
+    });
+    let rankings: Record<string, ChoiceRanking[]> = {};
+    let suggestion: ArtifactAssignmentSuggestion | null | undefined;
+    for await (const result of gen) {
+      rankings = result.perCharacter;
+      suggestion = result.artifactAssignmentSuggestion;
+    }
+    return { rankings, suggestion };
+  }
+
+  const petraConfigs: TeamSlotConfig[] = [
+    {
+      charId: "lisa",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "skyward_atlas",
+      refinement: 1,
+      artifactSet: null,
+    },
+    {
+      charId: "amber",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "favonius_warbow",
+      refinement: 1,
+      artifactSet: null,
+    },
+    {
+      charId: "zhongli",
+      charLevel: 90,
+      constellation: 0,
+      weaponId: "favonius_lance",
+      refinement: 1,
+      artifactSet: { type: "4pc", setId: "archaic_petra" },
+    },
+  ];
+  const isPetra = (entry: ChoiceRanking) =>
+    entry.type === "artifact" &&
+    entry.artifactSet.type === "4pc" &&
+    entry.artifactSet.setId === "archaic_petra";
+
+  it("chooses one feasible Petra element for the objective and retains it in recommendations", async () => {
+    // Pyro is a valid selection, but the Electro objective benefits from Electro.
+    const { rankings, suggestion } = await comparePetra(petraConfigs, {
+      archaic_petra: "Pyro",
+    });
+    const petra = rankings.zhongli.filter(isPetra);
+    expect(petra).toHaveLength(1);
+    expect(petra[0]).toMatchObject({
+      combatOptions: { archaic_petra: "Electro" },
+    });
+    expect(suggestion?.combatOptions).toEqual({ archaic_petra: "Electro" });
+    expect(suggestion!.bestDamage).toBeGreaterThan(suggestion!.currentDamage);
+  }, 60000);
+
+  it("cannot recommend an active Petra buff for a team without Geo", async () => {
+    const configs = petraConfigs.slice(0, 2);
+    const { rankings } = await comparePetra(configs, {
+      archaic_petra: "Electro",
+    });
+    expect(rankings.amber.filter(isPetra)).toHaveLength(1);
+    expect(rankings.amber.find(isPetra)).toMatchObject({
+      combatOptions: { archaic_petra: "none" },
+    });
+  }, 60000);
+
   it("detects a better reassignment when the current artifact allocation is suboptimal", async () => {
     const teamBuild = new TeamBuild(SUBOPTIMAL_ARTIFACT_CONFIGS);
     const formulaId = Object.keys(

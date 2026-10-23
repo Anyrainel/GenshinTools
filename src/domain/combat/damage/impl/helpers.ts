@@ -71,7 +71,7 @@ const REACTION_TO_AURA_ELEMENTS: Record<Element, readonly Element[]> = {
   Hydro: ["Pyro", "Electro", "Cryo", "Dendro"],
   Electro: ["Pyro", "Hydro", "Cryo", "Dendro"],
   Cryo: ["Pyro", "Hydro", "Electro"],
-  Dendro: ["Pyro", "Hydro", "Electro", "Cryo"],
+  Dendro: ["Pyro", "Hydro", "Electro"],
   Anemo: ["Pyro", "Hydro", "Electro", "Cryo"],
   Geo: ["Pyro", "Hydro", "Electro", "Cryo"],
 };

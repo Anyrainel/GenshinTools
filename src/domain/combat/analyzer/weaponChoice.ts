@@ -30,12 +30,14 @@ import type {
   WeaponRanking,
 } from "@/domain/team/types";
 import { deriveSetKeysFromConfigs } from "../../team/teamConfigUtils";
+import { getArchaicPetraElements } from "../damage/artifactConditions";
 import {
   compileComboTeamDamage,
   fillVarsFromSheet,
 } from "../damage/core/formulaCompiler";
 import type { StatSheet } from "../damage/core/statSheet";
 import { TeamBuild } from "../damage/core/teamBuild";
+import type { TeamMeta } from "../damage/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { getCompatibleOwnedWeaponChoices } from "./weaponChoiceCandidates";
@@ -345,6 +347,19 @@ function evaluateComboDamage(
   return compiled.evaluate(vars);
 }
 
+function getPetraComparisonOptions(
+  teamMeta: TeamMeta,
+  opts: Record<string, string>,
+  wearerIds: string[]
+): Record<string, string>[] {
+  const elements = new Set(
+    wearerIds.flatMap((charId) => getArchaicPetraElements(teamMeta, charId))
+  );
+  return elements.size
+    ? [...elements].map((element) => ({ ...opts, archaic_petra: element }))
+    : [{ ...opts, archaic_petra: "none" }];
+}
+
 // ─── Per-character computation ───
 
 /**
@@ -423,125 +438,140 @@ async function computeForChar(
           : { ...c, artifactSet: candidate.artifactSet }
     );
 
-    const candidateTeamBuild = new TeamBuild(
-      candidateConfigs,
-      opts,
-      enemyAura,
-      extraBuffs
-    );
-
-    const candidateSetKeysByChar =
-      candidate.type === "artifact"
-        ? {
-            ...setKeysByChar,
-            ...deriveSetKeysFromConfigs([
-              { charId: targetCharId, artifactSet: candidate.artifactSet },
-            ]),
-          }
-        : setKeysByChar;
-
-    const weaponResult = await runGeneratorToCompletion(
-      candidateTeamBuild,
-      targetCharId,
-      combo,
-      calcContext,
-      perChar,
-      candidateSetKeysByChar,
-      (progress) =>
-        onProgress(progressBase + progress, progressLabel, totalProgressSteps)
-    );
-
-    if (!weaponResult) {
-      if (candidateIndex === initialCandidateCount - 1) {
-        const twoPieceCandidates = buildTwoPieceArtifactChoiceCandidates(
-          collectGeneratedSubstatKeys(rankings)
-        );
-        candidateQueue.push(...twoPieceCandidates);
-        totalProgressSteps = candidateQueue.length + 1;
-        onProgress(progressBase + 1, undefined, totalProgressSteps);
-      }
-      continue;
-    }
-
-    const combinedSheets: Record<string, StatSheet> = {
-      ...supporterSheets,
-    };
-    if (weaponResult.sheetsByChar[targetCharId]) {
-      combinedSheets[targetCharId] = weaponResult.sheetsByChar[targetCharId];
-    }
-
-    const damage = evaluateComboDamage(
-      candidateTeamBuild,
-      combo,
-      combinedSheets,
-      calcContext
-    );
-
-    // Extract artifact build summary for the target character
-    const arts = weaponResult.artifactsByChar[targetCharId];
-    let mainStats:
-      | { sands: MainStat; goblet: MainStat; circlet: MainStat }
-      | undefined;
-    let substatRolls: Partial<Record<SubStat, number>> | undefined;
-    let artifactSetIds: string[] | undefined;
-
-    if (arts) {
-      mainStats = {
-        sands: arts.sands?.mainStatKey ?? ("atk%" as MainStat),
-        goblet: arts.goblet?.mainStatKey ?? ("atk%" as MainStat),
-        circlet: arts.circlet?.mainStatKey ?? ("cr" as MainStat),
-      };
-      // Convert display-format substats to roll counts
-      const rarity = arts.flower?.rarity ?? 5;
-      const rv = getRollValues(
-        calcContext.rollMultiplier,
-        (rarity === 4 ? 4 : 5) as 4 | 5
+    const optionVariants =
+      candidate.type === "artifact" &&
+      candidate.artifactSet.type === "4pc" &&
+      candidate.artifactSet.setId === "archaic_petra"
+        ? getPetraComparisonOptions(rosterTeamBuild.teamMeta, opts, [
+            targetCharId,
+          ])
+        : [opts];
+    let bestRanking: ChoiceRanking | undefined;
+    for (const [optionIndex, candidateOpts] of optionVariants.entries()) {
+      const candidateTeamBuild = new TeamBuild(
+        candidateConfigs,
+        candidateOpts,
+        enemyAura,
+        extraBuffs
       );
-      const agg: Partial<Record<SubStat, number>> = {};
-      for (const slot of allSlots) {
-        const subs = arts[slot]?.substats;
-        if (!subs) continue;
-        for (const [stat, displayVal] of Object.entries(subs)) {
-          if (!displayVal) continue;
-          const rollVal = rv[stat as SubStat];
-          const rolls = rollVal > 0 ? displayVal / rollVal : 0;
-          agg[stat as SubStat] =
-            (agg[stat as SubStat] ?? 0) + Math.round(rolls * 10) / 10;
-        }
-      }
-      substatRolls = agg;
-      // Collect unique artifact set IDs
-      const setIds = new Set<string>();
-      for (const slot of allSlots) {
-        const sk = arts[slot]?.setKey;
-        if (sk && sk !== "generated") setIds.add(sk);
-      }
-      if (setIds.size > 0) artifactSetIds = [...setIds];
-    }
 
-    if (candidate.type === "weapon") {
-      rankings.push({
-        type: "weapon",
-        weaponId: candidate.weaponId,
-        refinement: candidate.refinement,
-        damage,
-        percentOfBest: 0, // normalized after all choices
-        mainStats,
-        substatRolls,
-        artifactSetIds,
-      });
-    } else {
-      rankings.push({
-        type: "artifact",
-        artifactSet: candidate.artifactSet,
-        artifactSetIds:
-          artifactSetIds ?? getArtifactSetIds(candidate.artifactSet),
-        damage,
-        percentOfBest: 0, // normalized after all choices
-        mainStats,
-        substatRolls,
-      });
+      const candidateSetKeysByChar =
+        candidate.type === "artifact"
+          ? {
+              ...setKeysByChar,
+              ...deriveSetKeysFromConfigs([
+                { charId: targetCharId, artifactSet: candidate.artifactSet },
+              ]),
+            }
+          : setKeysByChar;
+
+      const weaponResult = await runGeneratorToCompletion(
+        candidateTeamBuild,
+        targetCharId,
+        combo,
+        calcContext,
+        perChar,
+        candidateSetKeysByChar,
+        (progress) =>
+          onProgress(
+            progressBase + (optionIndex + progress) / optionVariants.length,
+            progressLabel,
+            totalProgressSteps
+          )
+      );
+
+      if (!weaponResult) {
+        continue;
+      }
+
+      const combinedSheets: Record<string, StatSheet> = {
+        ...supporterSheets,
+      };
+      if (weaponResult.sheetsByChar[targetCharId]) {
+        combinedSheets[targetCharId] = weaponResult.sheetsByChar[targetCharId];
+      }
+
+      const damage = evaluateComboDamage(
+        candidateTeamBuild,
+        combo,
+        combinedSheets,
+        calcContext
+      );
+
+      // Extract artifact build summary for the target character
+      const arts = weaponResult.artifactsByChar[targetCharId];
+      let mainStats:
+        | { sands: MainStat; goblet: MainStat; circlet: MainStat }
+        | undefined;
+      let substatRolls: Partial<Record<SubStat, number>> | undefined;
+      let artifactSetIds: string[] | undefined;
+
+      if (arts) {
+        mainStats = {
+          sands: arts.sands?.mainStatKey ?? ("atk%" as MainStat),
+          goblet: arts.goblet?.mainStatKey ?? ("atk%" as MainStat),
+          circlet: arts.circlet?.mainStatKey ?? ("cr" as MainStat),
+        };
+        // Convert display-format substats to roll counts
+        const rarity = arts.flower?.rarity ?? 5;
+        const rv = getRollValues(
+          calcContext.rollMultiplier,
+          (rarity === 4 ? 4 : 5) as 4 | 5
+        );
+        const agg: Partial<Record<SubStat, number>> = {};
+        for (const slot of allSlots) {
+          const subs = arts[slot]?.substats;
+          if (!subs) continue;
+          for (const [stat, displayVal] of Object.entries(subs)) {
+            if (!displayVal) continue;
+            const rollVal = rv[stat as SubStat];
+            const rolls = rollVal > 0 ? displayVal / rollVal : 0;
+            agg[stat as SubStat] =
+              (agg[stat as SubStat] ?? 0) + Math.round(rolls * 10) / 10;
+          }
+        }
+        substatRolls = agg;
+        // Collect unique artifact set IDs
+        const setIds = new Set<string>();
+        for (const slot of allSlots) {
+          const sk = arts[slot]?.setKey;
+          if (sk && sk !== "generated") setIds.add(sk);
+        }
+        if (setIds.size > 0) artifactSetIds = [...setIds];
+      }
+
+      let ranking: ChoiceRanking;
+      if (candidate.type === "weapon") {
+        ranking = {
+          type: "weapon",
+          weaponId: candidate.weaponId,
+          refinement: candidate.refinement,
+          damage,
+          percentOfBest: 0, // normalized after all choices
+          mainStats,
+          substatRolls,
+          artifactSetIds,
+        };
+      } else {
+        ranking = {
+          type: "artifact",
+          artifactSet: candidate.artifactSet,
+          artifactSetIds:
+            artifactSetIds ?? getArtifactSetIds(candidate.artifactSet),
+          damage,
+          percentOfBest: 0, // normalized after all choices
+          mainStats,
+          substatRolls,
+          ...(candidate.artifactSet.type === "4pc" &&
+          candidate.artifactSet.setId === "archaic_petra"
+            ? { combatOptions: { archaic_petra: candidateOpts.archaic_petra } }
+            : {}),
+        };
+      }
+      if (!bestRanking || ranking.damage > bestRanking.damage)
+        bestRanking = ranking;
     }
+    if (bestRanking) rankings.push(bestRanking);
 
     if (candidateIndex === initialCandidateCount - 1) {
       const twoPieceCandidates = buildTwoPieceArtifactChoiceCandidates(
@@ -679,13 +709,14 @@ async function evaluateArtifactAssignment(
   opts: Record<string, string>,
   enemyAura: Element | undefined,
   extraBuffs: ExtraBuff[],
-  perChar: Record<string, { minEr: number; minCr: number }>
-): Promise<number | null> {
+  perChar: Record<string, { minEr: number; minCr: number }>,
+  optimizePetra = false
+): Promise<{ damage: number; combatOptions?: Record<string, string> } | null> {
   const candidateConfigs = configs.map((config, index) => ({
     ...config,
     artifactSet: assignment[index] ?? null,
   }));
-  const teamBuild = new TeamBuild(
+  const rosterTeamBuild = new TeamBuild(
     candidateConfigs,
     opts,
     enemyAura,
@@ -700,24 +731,60 @@ async function evaluateArtifactAssignment(
   const carryCharId = candidateConfigs[0]?.charId;
   if (!carryCharId) return null;
 
-  const result = await runGeneratorToCompletion(
-    teamBuild,
-    carryCharId,
-    combo,
-    calcContext,
-    perChar,
-    setKeysByChar
-  );
-  if (!result) return null;
+  const optionVariants =
+    optimizePetra &&
+    candidateConfigs.some(
+      (config) =>
+        config.artifactSet?.type === "4pc" &&
+        config.artifactSet.setId === "archaic_petra"
+    )
+      ? getPetraComparisonOptions(
+          rosterTeamBuild.teamMeta,
+          opts,
+          candidateConfigs
+            .filter(
+              (config) =>
+                config.artifactSet?.type === "4pc" &&
+                config.artifactSet.setId === "archaic_petra"
+            )
+            .map((config) => config.charId)
+        )
+      : [opts];
+  let best: { damage: number; combatOptions?: Record<string, string> } | null =
+    null;
+  for (const candidateOpts of optionVariants) {
+    const teamBuild =
+      candidateOpts === opts
+        ? rosterTeamBuild
+        : new TeamBuild(candidateConfigs, candidateOpts, enemyAura, extraBuffs);
+    const result = await runGeneratorToCompletion(
+      teamBuild,
+      carryCharId,
+      combo,
+      calcContext,
+      perChar,
+      setKeysByChar
+    );
+    if (!result) continue;
 
-  const sheets: Record<string, StatSheet> = {};
-  for (const config of candidateConfigs) {
-    const sheet = result.sheetsByChar[config.charId];
-    if (sheet) sheets[config.charId] = sheet;
+    const sheets: Record<string, StatSheet> = {};
+    for (const config of candidateConfigs) {
+      const sheet = result.sheetsByChar[config.charId];
+      if (sheet) sheets[config.charId] = sheet;
+    }
+    if (Object.keys(sheets).length === 0) continue;
+
+    const damage = evaluateComboDamage(teamBuild, combo, sheets, calcContext);
+    if (!best || damage > best.damage) {
+      best = {
+        damage,
+        ...(candidateOpts !== opts
+          ? { combatOptions: { archaic_petra: candidateOpts.archaic_petra } }
+          : {}),
+      };
+    }
   }
-  if (Object.keys(sheets).length === 0) return null;
-
-  return evaluateComboDamage(teamBuild, combo, sheets, calcContext);
+  return best;
 }
 
 async function computeArtifactAssignmentSuggestion(
@@ -732,7 +799,7 @@ async function computeArtifactAssignmentSuggestion(
   if (configs.length < 2) return null;
 
   const currentAssignment = configs.map((config) => config.artifactSet ?? null);
-  const currentDamage = await evaluateArtifactAssignment(
+  const current = await evaluateArtifactAssignment(
     configs,
     currentAssignment,
     combo,
@@ -742,12 +809,14 @@ async function computeArtifactAssignmentSuggestion(
     extraBuffs,
     perChar
   );
-  if (currentDamage == null) return null;
+  if (current == null) return null;
 
+  const currentDamage = current.damage;
   let bestDamage = currentDamage;
   let bestAssignment = currentAssignment;
+  let bestCombatOptions: Record<string, string> | undefined;
   for (const assignment of buildUniqueArtifactAssignments(currentAssignment)) {
-    const damage = await evaluateArtifactAssignment(
+    const evaluated = await evaluateArtifactAssignment(
       configs,
       assignment,
       combo,
@@ -755,17 +824,20 @@ async function computeArtifactAssignmentSuggestion(
       opts,
       enemyAura,
       extraBuffs,
-      perChar
+      perChar,
+      true
     );
-    if (damage != null && damage > bestDamage) {
-      bestDamage = damage;
+    if (evaluated != null && evaluated.damage > bestDamage) {
+      bestDamage = evaluated.damage;
       bestAssignment = assignment;
+      bestCombatOptions = evaluated.combatOptions;
     }
   }
 
   return {
     currentDamage,
     bestDamage,
+    ...(bestCombatOptions ? { combatOptions: bestCombatOptions } : {}),
     percentImprovement:
       currentDamage > 0
         ? ((bestDamage - currentDamage) / currentDamage) * 100

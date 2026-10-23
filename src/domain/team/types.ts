@@ -146,6 +146,8 @@ export interface ArtifactRanking extends ChoiceRankingBase {
   type: "artifact";
   artifactSet: ArtifactSetConfig;
   artifactSetIds: string[];
+  /** Activation choices used to evaluate this recommendation. */
+  combatOptions?: OptionMap;
 }
 
 export type ChoiceRanking = WeaponRanking | ArtifactRanking;
@@ -154,6 +156,7 @@ export interface ArtifactAssignmentSuggestion {
   currentDamage: number;
   bestDamage: number;
   percentImprovement: number;
+  combatOptions?: OptionMap;
   assignments: {
     charId: string;
     artifactSet: ArtifactSetConfig | null;

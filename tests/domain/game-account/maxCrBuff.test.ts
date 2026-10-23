@@ -287,7 +287,7 @@ describe("getCrBudget", () => {
     expect(result.totalNonArtifactCr).toBeCloseTo(-0.95, 6);
   });
 
-  it("uses peak Ascendant Gleam CR for Night of the Sky's Unveiling", () => {
+  it("uses the team-independent Ascendant Gleam and Lunar reaction ceiling for Night of the Sky's Unveiling", () => {
     const char: CharacterData = {
       key: "zibai",
       constellation: 0,

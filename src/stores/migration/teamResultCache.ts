@@ -68,5 +68,11 @@ export function migrateTeamResultCacheStore(
     // free C6 instead of the roster constellation. Recompute results.
     state.resultsByTeamId = {};
   }
+  if (version < 9) {
+    // v8 damage/rankings assumed impossible reaction-triggered artifact buffs
+    // and simultaneous Petra element bonuses. Recompute under the corrected
+    // feasibility checks and single-element selection; old results cannot be migrated.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

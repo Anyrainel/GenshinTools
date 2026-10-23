@@ -46,6 +46,8 @@ const STATIC_ARTIFACT_SET_CR_BUDGET: Record<string, number> = {
   blizzard_strayer: 0.4,
   disenchantment_in_deep_shadow: 0.16,
   marechaussee_hunter: 0.36,
+  // Team-independent ceiling: assumes Ascendant Gleam and a possible Lunar
+  // reaction. Combat checks the actual team before granting this CR buff.
   night_of_the_skys_unveiling: 0.3,
   resolution_of_sojourner: 0.3,
 };

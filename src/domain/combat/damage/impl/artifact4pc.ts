@@ -1,7 +1,11 @@
 import type { ElementalOrPhysical } from "@/domain/enums";
 import { elements as ALL_ELEMENTS, type Element } from "@/domain/enums";
 import type { StatEntry } from "@/domain/models";
-import { PHEC_ELEMENTS } from "../constants";
+import {
+  canTriggerArtifactReaction,
+  getArchaicPetraElements,
+} from "../artifactConditions";
+import { LUNAR_REACTIONS, PHEC_ELEMENTS } from "../constants";
 import { ArtifactSetBase } from "../core/implModel";
 import {
   createCharacter,
@@ -228,42 +232,70 @@ class Thundersoother4pc extends ArtifactSetBase {
     : [];
 }
 
-@RegisterArtifactSet("archaic_petra")
+const archaicPetraOption = {
+  label: { zh: "磐岩增伤元素", en: "Petra buff element" },
+  choices: [
+    ...PHEC_ELEMENTS.map((element) => ({
+      value: element,
+      label: {
+        zh: {
+          Pyro: "火",
+          Hydro: "水",
+          Electro: "雷",
+          Cryo: "冰",
+          Geo: "岩",
+          Anemo: "风",
+          Dendro: "草",
+        }[element],
+        en: element,
+      },
+      when: (tm: TeamMeta) => getArchaicPetraElements(tm).includes(element),
+    })),
+    { value: "none", label: { zh: "无", en: "None" } },
+  ],
+} satisfies OptionDef;
+
+@RegisterArtifactSet("archaic_petra", archaicPetraOption)
 class ArchaicPetra4pc extends ArtifactSetBase {
   // 2pc: Geo DMG +15% (via halfSetId)
   // 4pc: Picking up Crystallize shard → team gets 35% DMG bonus for that element.
-  // Only Pyro/Hydro/Electro/Cryo produce shards. Buff applied to all team elements
-  // that are also crystallize-eligible.
+  // Only one shard element is active at a time. Lunar-Crystallize activates Hydro.
   readonly halfSetId = "geo%-15";
   readonly stats: StatEntry[] = [];
   readonly buffs: StatBuff[];
 
-  constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
-    super(artifactSetId, charId, teamMeta);
-    const elements = new Set(Object.values(teamMeta.elements));
-    const presentElements = PHEC_ELEMENTS.filter((el) => elements.has(el));
-    this.buffs =
-      presentElements.length > 0
-        ? [
-            new StatBuff(
-              {
-                type: "artifactSet",
-                id: this.artifactSetId,
-                triggers: ["crystallize"],
-                noStackId: this.artifactSetId,
+  constructor(
+    artifactSetId: string,
+    charId: string,
+    teamMeta: TeamMeta,
+    combatOpts: OptionMap = {}
+  ) {
+    super(artifactSetId, charId, teamMeta, combatOpts);
+    const available = getArchaicPetraElements(teamMeta, charId);
+    const selected = available.find((element) => element === this.option);
+    this.buffs = selected
+      ? [
+          new StatBuff(
+            {
+              type: "artifactSet",
+              id: this.artifactSetId,
+              triggers: [
+                selected === "Hydro" && teamMeta.hasReaction("lunarCrystallize")
+                  ? "lunarCrystallize"
+                  : "crystallize",
+              ],
+              noStackId: this.artifactSetId,
+            },
+            {
+              receiver: "team",
+              filter: {
+                elements: [selected],
               },
-              {
-                receiver: "team",
-                filter: {
-                  elements: [
-                    ...presentElements,
-                  ].sort() as ElementalOrPhysical[],
-                },
-              },
-              [{ key: "dmg%", value: 0.35 }]
-            ),
-          ]
-        : [];
+            },
+            [{ key: "dmg%", value: 0.35 }]
+          ),
+        ]
+      : [];
   }
 }
 
@@ -371,18 +403,20 @@ class Instructor4pc extends ArtifactSetBase {
   // 4pc: Triggering reaction → team EM +120
   readonly halfSetId = "em-80";
   readonly stats: StatEntry[] = [];
-  readonly buffs = [
-    new StatBuff(
-      {
-        type: "artifactSet",
-        id: this.artifactSetId,
-        triggers: ["on-reaction"],
-        noStackId: this.artifactSetId,
-      },
-      { receiver: "team" },
-      [{ key: "em", value: 120 }]
-    ),
-  ];
+  readonly buffs = canTriggerArtifactReaction(this.teamMeta, this.charId)
+    ? [
+        new StatBuff(
+          {
+            type: "artifactSet",
+            id: this.artifactSetId,
+            triggers: ["on-reaction"],
+            noStackId: this.artifactSetId,
+          },
+          { receiver: "team" },
+          [{ key: "em", value: 120 }]
+        ),
+      ]
+    : [];
 }
 
 @RegisterArtifactSet("viridescent_venerer")
@@ -395,7 +429,11 @@ class ViridescentVenerer4pc extends ArtifactSetBase {
 
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
-    const teamElements = new Set(Object.values(teamMeta.elements));
+    const teamElements = new Set(
+      teamMeta.enemyAura
+        ? [teamMeta.enemyAura]
+        : Object.values(teamMeta.elements)
+    );
     const elements: Element[] = PHEC_ELEMENTS.filter((el) =>
       teamElements.has(el)
     );
@@ -696,6 +734,10 @@ class GildedDreams4pc extends ArtifactSetBase {
 
   constructor(artifactSetId: string, charId: string, teamMeta: TeamMeta) {
     super(artifactSetId, charId, teamMeta);
+    if (!canTriggerArtifactReaction(teamMeta, charId)) {
+      this.buffs = [];
+      return;
+    }
     const selfElement = teamMeta.elements[charId];
     const teammates = teamMeta.characters.filter((c) => c !== charId);
     let sameCount = 0;
@@ -1171,7 +1213,10 @@ class NightOfTheSkysUnveiling4pc extends ArtifactSetBase {
         [{ key: "reactionDmg%", value: otherGleaming ? 0.2 : 0.1 }]
       ),
     ];
-    if (moonLevel > 0) {
+    if (
+      moonLevel > 0 &&
+      LUNAR_REACTIONS.some((reaction) => teamMeta.hasReaction(reaction))
+    ) {
       this.buffs.push(
         new StatBuff(
           {

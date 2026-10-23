@@ -62,7 +62,7 @@ describe("migrateTeamResultCacheStore", () => {
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(
       JSON.parse(window.localStorage.getItem("team-result-cache")!).version
-    ).toBe(8);
+    ).toBe(9);
     window.localStorage.removeItem("team-result-cache");
   });
 
@@ -96,12 +96,55 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      8
+      9
     );
     localStorage.removeItem("team-result-cache");
   });
 
-  it("preserves current v8 results", () => {
+  it("invalidates v8 impossible reaction buffs and Petra rankings through hydration", async () => {
+    localStorage.setItem(
+      "team-result-cache",
+      JSON.stringify({
+        version: 8,
+        state: {
+          resultsByTeamId: {
+            "no-geo": {
+              artifactChoiceResult: {
+                mode: "artifact",
+                timestamp: 1,
+                perCharacter: {
+                  durin: [
+                    {
+                      type: "artifact",
+                      artifactSet: { type: "4pc", setId: "archaic_petra" },
+                      artifactSetIds: ["archaic_petra"],
+                      damage: 135000,
+                      percentOfBest: 100,
+                    },
+                  ],
+                },
+              },
+              artifactChoiceInputKey: "same-inputs",
+              weaponChoiceResult: { timestamp: 1, perCharacter: {} },
+              investmentResult: {
+                timestamp: 1,
+                bestAtTier: [],
+                nodesByJin: [],
+              },
+            },
+          },
+        },
+      })
+    );
+    await useTeamResultCacheStore.persist.rehydrate();
+    expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
+    expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
+      9
+    );
+    localStorage.removeItem("team-result-cache");
+  });
+
+  it("preserves current v9 results", () => {
     const resultsByTeamId = {
       "team-1": {
         weaponChoiceResult: { mode: "weapon", timestamp: 1, perCharacter: {} },
@@ -109,7 +152,7 @@ describe("migrateTeamResultCacheStore", () => {
       },
     };
     expect(
-      migrateTeamResultCacheStore({ resultsByTeamId }, 8).resultsByTeamId
+      migrateTeamResultCacheStore({ resultsByTeamId }, 9).resultsByTeamId
     ).toBe(resultsByTeamId);
   });
 
@@ -135,7 +178,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      8
+      9
     );
     localStorage.removeItem("team-result-cache");
   });
@@ -144,7 +187,7 @@ describe("migrateTeamResultCacheStore", () => {
     localStorage.setItem(
       "team-result-cache",
       JSON.stringify({
-        version: 8,
+        version: 9,
         state: {
           resultsByTeamId: {
             team: {
