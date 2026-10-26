@@ -393,7 +393,7 @@ export function runTriage(
 
   // Prime, and optionally solid, are hard keeps. Build allocation deliberately
   // ignores special-rule tags, so anything selected here consumes the normal
-  // demand+margin target. Unselected special-rule matches are promoted later.
+  // reserve target. Unselected special-rule matches are promoted later.
   const alwaysLockSolidArtifacts =
     settings.backupAmountMode === "custom" && settings.alwaysLockSolidArtifacts;
   for (const edge of rankedEdges) {
@@ -420,7 +420,7 @@ export function runTriage(
     if (edge.tier !== "solid" && edge.tier !== "filler") continue;
 
     const demand = demandCounts.get(edge.embryoKey)?.demand ?? 0;
-    const capacity = demand + settings.qualityMargin;
+    const capacity = Math.min(demand * 3, demand + settings.qualityMargin);
     const used = usedCapacity.get(edge.embryoKey) ?? 0;
     if (used >= capacity) continue;
 

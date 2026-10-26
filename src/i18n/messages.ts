@@ -3046,8 +3046,8 @@ export const i18nUiData = {
       zh: "需求余量 10 · 过渡上限 4 · 套装部位保留 3",
     },
     qualityMargin: {
-      en: "Demand margin (extra keep above demand)",
-      zh: "需求余量数（满足需求后多留几个备用）",
+      en: "Demand margin (extra keep, total target up to 3× demand)",
+      zh: "需求余量数（额外备用数量，总目标不超过需求的3倍）",
     },
     alwaysLockSolidArtifacts: {
       en: "Always lock solid artifacts",
@@ -3204,8 +3204,8 @@ export const i18nUiData = {
         zh: "花/羽 ≤ 6%  ·  沙/杯/头 ≤ 2%（宽松模式：10% / 4%）— 默认锁定，供过于求时淘汰。",
       },
       tierFiller: {
-        en: "Flower / Plume ≤ 15%  ·  Others ≤ 10%  (relaxed mode: 25% / 20%) — May fill the demand-plus-margin target, up to the filler cap.",
-        zh: "花/羽 ≤ 15%  ·  沙/杯/头 ≤ 10%（宽松模式：25% / 20%）— 可填补需求与余量目标，但受过渡装上限限制。",
+        en: "Flower / Plume ≤ 15%  ·  Others ≤ 10%  (relaxed mode: 25% / 20%) — May fill the reserve target, up to the filler cap.",
+        zh: "花/羽 ≤ 15%  ·  沙/杯/头 ≤ 10%（宽松模式：25% / 20%）— 可填补保留目标，但受过渡装上限限制。",
       },
       tierFodder: {
         en: "Everything else — Always fodder.",
@@ -3224,8 +3224,8 @@ export const i18nUiData = {
         zh: "此外还有套装部位最低保留，确保每个套装都能凑齐。",
       },
       backupAmountDetail: {
-        en: "Demand margin inflates each build target regardless of quality tier. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 2 / 3; extra is 10 / 4 / 3.",
-        zh: "需求余量会直接扩大每个配装目标，不区分品质档位；过渡装可参与填补，但受独立上限限制。分配时忽略特殊标签：凡按配装质量入选的圣遗物都会占用目标；分配完成后，再额外锁定其余符合充能、双暴与散件规则的圣遗物。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 2 / 3，额外为 10 / 4 / 3。",
+        en: "Each demand group's reserve target is the lower of 3× demand and demand + margin. Prime artifacts and custom always-lock-solid keeps consume the target but can exceed it. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 2 / 3; extra is 10 / 4 / 3.",
+        zh: "每类需求的保留目标取「需求的3倍」与「需求＋余量」中的较小值。极品装和自定义设置中始终锁定的精良装会占用目标，但仍可超出目标保留；过渡装可参与填补，但受独立上限限制。分配时忽略特殊标签：凡按配装质量入选的圣遗物都会占用目标；分配完成后，再额外锁定其余符合充能、双暴与散件规则的圣遗物。套装部位保底仅在最终数量仍不足时补齐。标准为 5 / 2 / 3，额外为 10 / 4 / 3。",
       },
       spTitle: { en: "Exceptions", zh: "例外规则" },
       spOverride: {

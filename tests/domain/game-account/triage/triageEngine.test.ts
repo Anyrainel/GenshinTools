@@ -891,6 +891,64 @@ describe("runTriage", () => {
 
   // qualityMargin: over-supply caps non-premium locks
 
+  it.each([
+    [1, 0, 1],
+    [1, 5, 3],
+    [2, 5, 6],
+    [3, 5, 8],
+    [5, 5, 10],
+    [1, 10, 3],
+  ])(
+    "reserve target: demand=%i, margin=%i keeps %i solid artifacts",
+    (demand, qualityMargin, expected) => {
+      const characters = Array.from({ length: demand }, (_, i) => ({
+        key: `char_${i}`,
+      }));
+      const artifacts = Array.from({ length: 12 }, () =>
+        makeArt({ substats: { cr: 1, cd: 1, hp: 1, def: 1 }, level: 0 })
+      );
+      const { decisions } = runTriage(
+        makeAccount(characters, artifacts),
+        characters.map(({ key }) => ({
+          characterId: key,
+          builds: [makeBuild()],
+        })),
+        {
+          ...SETTINGS,
+          qualityMargin,
+          setSlotKeep: 0,
+          fillerKeep: 0,
+          doubleCritLockEnabled: false,
+        }
+      );
+      expect(decisions.filter((d) => d.label === "lock")).toHaveLength(
+        expected
+      );
+      expect(
+        decisions.filter((d) => d.decidingResult?.ruleId === "solidTierKeep")
+      ).toHaveLength(expected);
+    }
+  );
+
+  it("prime artifacts can exceed the reserve target", () => {
+    const { decisions } = runTriage(
+      makeAccount(
+        [{ key: "char_a" }],
+        Array.from({ length: 7 }, () => makeArt({ level: 0 }))
+      ),
+      [{ characterId: "char_a", builds: [makeBuild()] }],
+      {
+        ...SETTINGS,
+        qualityMargin: 5,
+        setSlotKeep: 0,
+        doubleCritLockEnabled: false,
+      }
+    );
+    expect(
+      decisions.filter((d) => d.decidingResult?.ruleId === "primeTierKeep")
+    ).toHaveLength(7);
+  });
+
   it("qualityMargin: caps solid-tier locks in over-supply", () => {
     // Use circlet/heal% with a single custom pattern to test margin capping
     // in isolation (no curated patterns exist for heal%, so zero overlap).
@@ -1040,7 +1098,7 @@ describe("runTriage", () => {
     ).toBe(true);
     expect(locked1).toHaveLength(2); // 1P + 1Q
 
-    // margin=5: solid cap = max(1+5-1,0) = 5 → 1 prime + 5 solid = 6 locked
+    // margin=5: target = min(3×1, 1+5) = 3 → 1 prime + 2 solid
     const account5 = makeAccount(
       [{ key: "char_a" }],
       [premiumArt, ...solidArts].map((a) => ({ ...a, id: `m5_${a.id}` }))
@@ -1058,7 +1116,7 @@ describe("runTriage", () => {
       }
     );
     const locked5 = r5.decisions.filter((d) => d.label === "lock");
-    expect(locked5).toHaveLength(6); // 1 prime + 5 solid
+    expect(locked5).toHaveLength(3); // 1 prime + 2 solid
   });
 
   it("alwaysLockSolidArtifacts: locks surplus solid artifacts", () => {
@@ -1149,7 +1207,7 @@ describe("runTriage", () => {
       decisions.filter(
         (d) => d.decidingResult?.ruleId === "fillerShortfallKeep"
       )
-    ).toHaveLength(3);
+    ).toHaveLength(2);
   });
 
   it("loose mode preserves artifacts locked by strict mode", () => {
