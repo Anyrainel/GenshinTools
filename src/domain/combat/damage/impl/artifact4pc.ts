@@ -1537,7 +1537,6 @@ class GlacierAndSnowfield4pc extends ArtifactSetBase {
       {
         type: "artifactSet",
         id: this.artifactSetId,
-        triggers: ["on-reaction"],
       },
       // 超导 only — the 7.0 text never mentions 星超导, and sets that do cover it
       // (Disenchantment in Deep Shadow, Thundering Fury) enumerate it separately.
@@ -1548,13 +1547,12 @@ class GlacierAndSnowfield4pc extends ArtifactSetBase {
       {
         type: "artifactSet",
         id: this.artifactSetId,
-        triggers: ["on-reaction"],
       },
       { receiver: "self", filter: { reactions: ["melt"] } },
       [{ key: "reactionDmg%", value: 0.15 }]
     ),
     new StatBuff(
-      { type: "artifactSet", id: this.artifactSetId, triggers: ["burst"] },
+      { type: "artifactSet", id: this.artifactSetId, triggers: ["Q"] },
       { receiver: "self" },
       [{ key: "cryo%", value: 0.3 }]
     ),

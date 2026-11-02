@@ -54,14 +54,18 @@ export function buildsToCloud(
     {
       namespace: "builds",
       partitionKey: "all",
-      schemaVersion: 3,
+      schemaVersion: 4,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultBuildsSnapshot(snapshot),
       payload: {
         ...(activePresetId !== undefined ? { activePresetId } : {}),
         deltas: snapshot.deltas,
         ...(Object.keys(snapshot.characterWeapons).length
-          ? { characterWeapons: snapshot.characterWeapons }
+          ? {
+              characterWeapons: migrateReleasedCharacterWeapons(
+                snapshot.characterWeapons
+              ),
+            }
           : {}),
         computeOptions: snapshot.computeOptions,
         artifactScore: snapshot.artifactScore,

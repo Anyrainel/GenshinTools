@@ -73,7 +73,7 @@ describe("cloud sync client multi-device flows", () => {
       updatedAt: 100,
     };
     const sourcePartitions = buildsToCloud(snapshot);
-    expect(sourcePartitions[0].schemaVersion).toBe(3);
+    expect(sourcePartitions[0].schemaVersion).toBe(4);
 
     await runCloudSyncOnce({
       apiClient: remote,

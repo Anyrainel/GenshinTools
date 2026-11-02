@@ -202,6 +202,7 @@ function accountToCloudPartitions(
   account: AccountState,
   snapshot: AccountCloudSnapshot
 ): CloudExportPartition[] {
+  account = { ...account, data: migrateReleasedAccountWeapons(account.data) };
   const { weaponByLocalId, weapons, weaponEquippedCharacterByLocalId } =
     collectWeapons(account.data);
   const { artifacts, artifactEquippedCharacterByLocalId } = collectArtifacts(
@@ -294,7 +295,7 @@ function cloudPartition<TPayload>(
   return {
     namespace,
     partitionKey: encodePathSegment(partitionKey),
-    schemaVersion: 2,
+    schemaVersion: namespace === "profile.game" ? 3 : 2,
     conflictPolicy: "profile-import-wins",
     payload,
   };

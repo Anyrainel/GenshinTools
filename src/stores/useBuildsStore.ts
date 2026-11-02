@@ -47,6 +47,7 @@ import {
 } from "./buildImportExport";
 import { migrateBuild } from "./migration/buildLegacy";
 import { migrateBuildsStore } from "./migration/builds";
+import { migrateReleasedCharacterWeapons } from "./migration/releasedWeaponIds";
 
 export type BuildsSourceState = {
   activePresetId: string | null;
@@ -701,7 +702,9 @@ export const useBuildsStore = create<BuildsState>()(
           if (weaponIds.length === 0) {
             delete state.characterWeapons[characterId];
           } else {
-            state.characterWeapons[characterId] = weaponIds.slice(0, 5);
+            state.characterWeapons[characterId] = [
+              ...new Set(weaponIds.map(resolveReleasedWeaponId)),
+            ].slice(0, 5);
           }
           refreshDerivedBuildState(state);
           touchBuildsState(state);
@@ -726,7 +729,9 @@ export const useBuildsStore = create<BuildsState>()(
             source.activePresetId
           );
           state.deltas = source.deltas;
-          state.characterWeapons = source.characterWeapons;
+          state.characterWeapons = migrateReleasedCharacterWeapons(
+            source.characterWeapons
+          );
           state.computeOptions = source.computeOptions;
           state.author = source.author;
           state.description = source.description;

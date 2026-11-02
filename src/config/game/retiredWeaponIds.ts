@@ -1,6 +1,6 @@
-// Released 7.1 IDs for retired four-star beta placeholders. weapon_catalyst
-// is deliberately absent: that ID is currently a different future weapon.
+// Canonical IDs for weapons previously saved under temporary beta placeholders.
 export const retiredWeaponIds: Readonly<Record<string, string>> = {
   weapon_sword: "new_bough",
   weapon_bow: "breezeborne_refrain",
+  weapon_catalyst: "starsealed_edict",
 };

@@ -88,7 +88,7 @@ describe("team picker calculator readiness", () => {
       expect(characterFilter?.({ id: "vesna" })).toBe(true);
       // The selected Xingqiu takes swords. Catalyst availability is tested below
       // with a compatible wearer, so type filtering still applies here.
-      expect(weaponFilter?.(weaponsById.weapon_catalyst)).toBe(false);
+      expect(weaponFilter?.(weaponsById.starsealed_edict)).toBe(false);
       expect(weaponFilter?.(weaponsById.beyond_the_chrysalis)).toBe(true);
       expect(weaponFilter?.(weaponsById.prized_isshin_blade)).toBe(true);
     }
@@ -116,7 +116,7 @@ describe("team picker calculator readiness", () => {
         (picker) => picker.type === "weapon"
       )?.filter;
       expect(weaponFilter).toBeDefined();
-      expect(weaponFilter?.(weaponsById.weapon_catalyst)).toBe(true);
+      expect(weaponFilter?.(weaponsById.starsealed_edict)).toBe(true);
     }
   );
 });

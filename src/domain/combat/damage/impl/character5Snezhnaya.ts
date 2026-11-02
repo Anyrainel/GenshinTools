@@ -74,7 +74,7 @@ class Mitya extends CharacterBase {
     if (this.constellation >= 1) {
       buffs.push(
         new StatBuff(cbs(this, "C1", ["E"]), { receiver: "teamOnField" }, [
-          { key: "cd", value: 0.5 },
+          { key: "cd", value: 0.4 },
         ])
       );
     }
@@ -83,14 +83,14 @@ class Mitya extends CharacterBase {
         new StatBuff(
           cbs(this, "C2", ["E"]),
           { receiver: "team", filter: { elements: ["Cryo", "Electro"] } },
-          [{ key: "resReduction%", value: 0.25 }]
+          [{ key: "resReduction%", value: 0.2 }]
         )
       );
       buffs.push(
         new StatBuff(
           cbs(this, "C2", ["E"]),
           { receiver: this.stable ? "team" : "teamOnField" },
-          [{ key: "em", value: this.stable ? 100 : 200 }]
+          [{ key: "em", value: this.stable ? 123 : 234 }]
         )
       );
     }
@@ -151,6 +151,16 @@ class Mitya extends CharacterBase {
       reaction: "none",
     };
     const stellarSkill: DamageTag = { ...skill, reaction: "stellarConduct" };
+    // C6: only the steady Core's own damage deals 115% of original damage.
+    // Keep this in the base-damage zone, separate from the party's Elevation.
+    const coreBuffs =
+      this.stable && this.constellation >= 6
+        ? [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+              { key: "baseDmg%", value: 0.15 },
+            ]),
+          ]
+        : [];
     return {
       "mitya-normal": {
         label: { zh: "普通攻击三段", en: "Normal Attack (N3)" },
@@ -207,6 +217,7 @@ class Mitya extends CharacterBase {
           {
             formula: new DirectFormula(this.param("E", 3), skill),
             offField: true,
+            bespokeBuffs: coreBuffs,
           },
         ],
       },
@@ -221,6 +232,7 @@ class Mitya extends CharacterBase {
               "em"
             ),
             offField: true,
+            bespokeBuffs: coreBuffs,
           },
         ],
       },
@@ -235,6 +247,7 @@ class Mitya extends CharacterBase {
               "em"
             ),
             offField: true,
+            bespokeBuffs: coreBuffs,
           },
         ],
       },
@@ -256,8 +269,9 @@ class Mitya extends CharacterBase {
         minC: 4,
         parts: [
           {
-            formula: new StellarDirectFormula(4, stellarSkill, "em"),
+            formula: new StellarDirectFormula(3, stellarSkill, "em"),
             offField: this.stable,
+            bespokeBuffs: coreBuffs,
           },
         ],
       },

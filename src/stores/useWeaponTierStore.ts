@@ -6,7 +6,7 @@ import {
 
 export const useWeaponTierStore = createTierStore({
   storageKey: "weapon-tierlist-storage",
-  version: 3,
+  version: 4,
   migrate: migrateWeaponTierStore,
   normalizeAssignments: migrateReleasedWeaponRecord,
 });

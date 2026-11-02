@@ -192,7 +192,7 @@ describe("runWeaponChoice beta weapons", () => {
         charId: "lisa",
         charLevel: 90,
         constellation: 0,
-        weaponId: "weapon_catalyst",
+        weaponId: "starsealed_edict",
         refinement: 1,
         artifactSet: null,
       },
@@ -205,7 +205,7 @@ describe("runWeaponChoice beta weapons", () => {
       charConfigs: toWeaponChoiceCharConfigs(configs),
       combo: singleFormulaCombo("lisa", formulaId),
       calcContext: CTX,
-      weaponStats: { weapon_catalyst: stats.weapon_catalyst },
+      weaponStats: { starsealed_edict: stats.starsealed_edict },
       opts: {},
     });
     let completed = false;
@@ -218,7 +218,7 @@ describe("runWeaponChoice beta weapons", () => {
         rankings.map((choice) =>
           choice.type === "weapon" ? choice.weaponId : null
         )
-      ).toEqual(["weapon_catalyst", "weapon_catalyst"]);
+      ).toEqual(["starsealed_edict", "starsealed_edict"]);
       expect(
         rankings
           .map((choice) =>

@@ -8,7 +8,7 @@ export const i18nBetaData = {
   },
   weapons: {
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
-    "weapon_catalyst": { en: "Weapon: Catalyst", zh: "武器-法器" },
+    "starsealed_edict": { en: "Starsealed Edict", zh: "秘星典谕" },
   },
   artifacts: {
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },

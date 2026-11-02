@@ -125,7 +125,8 @@ export function migrateBuildsStore(
     state.updatedAt = Date.now();
   }
 
-  if (version < 9) {
+  // v10 still saved Starsealed Edict as weapon_catalyst in preferences.
+  if (version < 11) {
     state.characterWeapons = migrateReleasedCharacterWeapons(
       state.characterWeapons ?? {}
     );

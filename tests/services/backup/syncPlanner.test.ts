@@ -152,15 +152,15 @@ describe("cloud sync planner", () => {
     const plan = planCloudSync({
       localPartitions: [],
       localMeta: [],
-      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 4)],
+      remoteHeads: [remote("builds", "all", "rev-1", "hash-cloud", 1, 5)],
     });
 
     expect(plan.unsupported).toHaveLength(1);
     expect(plan.unsupported[0]).toMatchObject({
       action: "unsupported",
       reason: "newer-cloud-schema",
-      remoteSchemaVersion: 4,
-      supportedSchemaVersion: 3,
+      remoteSchemaVersion: 5,
+      supportedSchemaVersion: 4,
     });
   });
 

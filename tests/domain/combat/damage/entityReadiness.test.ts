@@ -215,7 +215,7 @@ describe("released and beta calculator entity readiness", () => {
     "compiles a beta team at C%i in %s mode with matching displayed damage",
     (constellation, mode) => {
       const configs = [
-        { ...config("mitya", "weapon_catalyst"), constellation },
+        { ...config("mitya", "starsealed_edict"), constellation },
         { ...config("valeriy", "prized_isshin_blade"), constellation },
         config("qiqi", "sacrificial_sword"),
       ];

@@ -192,7 +192,7 @@ describe("character activation identity migration", () => {
     const unpublished = teamFromCloud([{ ...oldPartition, schemaVersion: 7 }]);
     expectMigrated(unpublished.configsByTeamId["saved-team"]);
     const exported = teamToCloud(restored);
-    expect(exported[0].schemaVersion).toBe(7);
+    expect(exported[0].schemaVersion).toBe(8);
     expectMigrated(exported[0].payload.configsByTeamId["saved-team"]);
     expect(teamFromCloud(exported)).toEqual(restored);
   });

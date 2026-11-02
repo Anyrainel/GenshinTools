@@ -230,7 +230,7 @@ describe("cloud source adapters", () => {
     expect(partition).toMatchObject({
       namespace: "builds",
       partitionKey: "all",
-      schemaVersion: 3,
+      schemaVersion: 4,
       conflictPolicy: "explicit-choice",
     });
     expect(partition.payload).not.toHaveProperty("validationErrors");
@@ -353,7 +353,7 @@ describe("cloud source adapters", () => {
     expect(partitions[0]).toMatchObject({
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 7,
+      schemaVersion: 8,
     });
     expect(partitions[0].payload).not.toHaveProperty("resultsByTeamId");
     expect(teamFromCloud(partitions)).toEqual({

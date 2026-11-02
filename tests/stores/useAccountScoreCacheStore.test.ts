@@ -44,7 +44,7 @@ describe("useAccountScoreCacheStore persistence", () => {
     ).toEqual({});
   });
 
-  it.each([3, 4])(
+  it.each([3, 4, 5])(
     "discards v%s scores with old scoring semantics for every profile",
     async (version) => {
       const oldScore = createArtifactScoreResult({
@@ -73,7 +73,7 @@ describe("useAccountScoreCacheStore persistence", () => {
       );
       expect(
         JSON.parse(window.localStorage.getItem(STORAGE_KEY)!).version
-      ).toBe(5);
+      ).toBe(6);
     }
   );
 });

@@ -72,13 +72,26 @@ export function tiersToCloud(
     {
       namespace: "tiers",
       partitionKey: "all",
-      schemaVersion: 2,
+      schemaVersion: 3,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTiersSnapshot(snapshot),
       payload: {
         updatedAt: getTiersUpdatedAt(snapshot),
         character: characterTierPayload(snapshot.character),
-        weapon: genericTierPayload(snapshot.weapon),
+        weapon: genericTierPayload({
+          ...snapshot.weapon,
+          tierLists: Object.fromEntries(
+            Object.entries(snapshot.weapon.tierLists).map(([id, list]) => [
+              id,
+              {
+                ...list,
+                tierAssignments: migrateReleasedWeaponRecord(
+                  list.tierAssignments
+                ),
+              },
+            ])
+          ),
+        }),
         artifact: genericTierPayload(snapshot.artifact),
       },
     },
@@ -100,7 +113,7 @@ export function tiersFromCloud(partitions: CloudExportPartition[]) {
   const current = partition?.payload as TiersCloudPayload | undefined;
   const weaponPayload = current?.weapon;
   const migratedWeaponPayload =
-    weaponPayload && partition && partition.schemaVersion < 2
+    weaponPayload && partition && partition.schemaVersion < 3
       ? {
           ...weaponPayload,
           lists: weaponPayload.lists.map((list) => ({

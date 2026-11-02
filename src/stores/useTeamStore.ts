@@ -33,6 +33,7 @@ import type {
   TeamSetupConfig,
 } from "@/domain/team/types";
 import { migrateCharacterBuffTriggerConfigs } from "./migration/characterBuffTriggers";
+import { migrateReleasedTeamWeapons } from "./migration/releasedWeaponIds";
 import { mergeTeamStore, migrateTeamStore } from "./migration/team";
 import { charSortKey, encodeTeamId } from "./teamCompCodec";
 import { useTeamResultCacheStore } from "./useTeamResultCacheStore";
@@ -369,7 +370,9 @@ export const useTeamStore = create<TeamState>()(
         set({ author, description, updatedAt: Date.now() }),
 
       importTeams: (data) => {
-        const imported = createTeamPersistenceFromImportedData(data);
+        const imported = migrateReleasedTeamWeapons(
+          createTeamPersistenceFromImportedData(data)
+        );
         set((state) => {
           state.activePresetId = null;
           state.compDeltas = imported.compDeltas;
@@ -385,6 +388,7 @@ export const useTeamStore = create<TeamState>()(
       },
 
       replaceSourceState: (source) => {
+        source = migrateReleasedTeamWeapons(source);
         set((state) => {
           state.activePresetId = source.activePresetId;
           state.compDeltas = source.compDeltas;
@@ -466,7 +470,7 @@ export const useTeamStore = create<TeamState>()(
     })),
     {
       name: "team-builder-storage",
-      version: 25,
+      version: 26,
       migrate: migrateTeamStore,
       partialize: (state) =>
         ({

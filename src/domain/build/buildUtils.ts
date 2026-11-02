@@ -6,10 +6,11 @@ import type {
   BuildPayloadV5,
   ComputeOptions,
 } from "../models";
+import { resolveReleasedWeaponId } from "./weaponIds";
 
 // Constants
 
-export const BUILD_DATA_VERSION = 10;
+export const BUILD_DATA_VERSION = 11;
 
 // Helpers
 
@@ -186,7 +187,9 @@ export const createBuildExportPayloadV5 = (
 
     // Weapon export remains same
     if (group.weapons && group.weapons.length > 0) {
-      payload.characterWeapons[group.characterId] = group.weapons;
+      payload.characterWeapons[group.characterId] = [
+        ...new Set(group.weapons.map(resolveReleasedWeaponId)),
+      ];
     }
   }
 

@@ -8,6 +8,7 @@ import type {
 } from "@/domain/game-account/types";
 import type { AccountData } from "@/domain/models";
 import { migrateAccountStore } from "./migration/account";
+import { migrateReleasedAccountWeapons } from "./migration/releasedWeaponIds";
 import { PersistedAccountStoreSchema } from "./schemas";
 import { useAccountScoreCacheStore } from "./useAccountScoreCacheStore";
 import { useAchievementStore } from "./useAchievementStore";
@@ -44,7 +45,7 @@ export const useAccountStore = create<AccountStore>()(
           const updated: AccountState = {
             id,
             name: payload.name ?? existing?.name ?? `Account ${id}`,
-            data: payload.data,
+            data: migrateReleasedAccountWeapons(payload.data),
             lastUpdate: payload.lastUpdate ?? Date.now(),
           };
 
@@ -106,7 +107,7 @@ export const useAccountStore = create<AccountStore>()(
     }),
     {
       name: "genshin-account-storage",
-      version: 7,
+      version: 8,
       migrate: migrateAccountStore,
       partialize: (state) => ({
         accounts: state.accounts,

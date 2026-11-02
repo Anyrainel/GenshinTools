@@ -5,8 +5,8 @@ import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
-@RegisterWeapon("weapon_catalyst")
-class WeaponCatalyst extends WeaponBase {
+@RegisterWeapon("starsealed_edict")
+class StarsealedEdict extends WeaponBase {
   get buffs() {
     const buffs = [
       new StatBuff(wbs(this), { receiver: "self" }, [
@@ -16,7 +16,7 @@ class WeaponCatalyst extends WeaponBase {
         { key: "em", value: r(this.refinement, [48, 60, 72, 84, 96]) },
       ]),
     ];
-    // Peak model: maintain three Formula Dissociation stacks within the 20s
+    // Peak model: maintain three Law of Combustion stacks within the 20s
     // skill buff. Reactions from any teammate qualify, including the wearer.
     const canReact = Object.keys(REACTION_ELEMENT_REQUIREMENTS).some(
       (reaction) =>
@@ -35,7 +35,7 @@ class WeaponCatalyst extends WeaponBase {
     if (this.teamMeta.hasReaction("stellarConduct")) {
       buffs.push(
         new StatBuff(
-          wbs(this, ["E", "stellarConduct"]),
+          wbs(this, ["E", "elemental-reaction"]),
           { receiver: "self", filter: { reactions: ["stellarConduct"] } },
           [
             {

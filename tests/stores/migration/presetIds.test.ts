@@ -51,7 +51,7 @@ describe("persisted bundled preset identities", () => {
     expect(payload.builds.FeFiQU8).toBeDefined();
     expect(
       JSON.parse(localStorage.getItem("artifact-filter-builds")!).version
-    ).toBe(10);
+    ).toBe(11);
   });
 
   it.each([22, 23])(

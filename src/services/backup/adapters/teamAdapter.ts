@@ -37,6 +37,7 @@ export type TeamRestorePatch = TeamCloudSnapshot;
 export function teamToCloud(
   snapshot: TeamCloudSnapshot
 ): CloudExportPartition<TeamCloudPayload>[] {
+  snapshot = migrateReleasedTeamWeapons(snapshot);
   const configsByTeamId = compactTeamSetupConfigs(
     migrateCharacterBuffTriggerConfigs(snapshot.configsByTeamId)
   );
@@ -44,7 +45,7 @@ export function teamToCloud(
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 7,
+      schemaVersion: 8,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -88,7 +89,7 @@ export function teamFromCloud(
       getMetadataUpdatedAt(partition) ?? current?.updatedAt ?? Date.now(),
   };
   const migrated =
-    partition && partition.schemaVersion < 4
+    partition && partition.schemaVersion < 8
       ? migrateReleasedTeamWeapons(restored)
       : restored;
   const parsed = PersistedTeamStoreSchema.parse(migrated);

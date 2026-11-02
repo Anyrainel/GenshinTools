@@ -155,7 +155,7 @@ export function migrateAccountStore(
   version: number
 ): PersistedAccountStore {
   const state = migrateAccountShape(persistedState, version);
-  if (version < 7) {
+  if (version < 8) {
     for (const account of Object.values(state.accounts)) {
       if (account.data)
         account.data = migrateReleasedAccountWeapons(account.data);

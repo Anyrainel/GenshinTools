@@ -604,7 +604,8 @@ export function migrateTeamStore(
     );
   }
 
-  if (version < 22) {
+  // v25 still used weapon_catalyst in slots, options and buff identities.
+  if (version < 26) {
     Object.assign(state, migrateReleasedTeamWeapons(state));
   }
   if (version < 23) {
