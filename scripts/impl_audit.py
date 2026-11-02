@@ -15,10 +15,10 @@ from ts_reader import load_ts_data
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "src"
-DATA = SRC / "data"
+DATA = SRC / "generated" / "catalog"
 IMPL_DIR = SRC / "domain/combat/damage/impl"
 
-GAME_DIR = DATA / "game"
+GAME_DIR = DATA
 CHAR_EN_PATHS = [
     GAME_DIR / "character_4_en.json",
     GAME_DIR / "character_5_en.json",
@@ -133,10 +133,10 @@ _EXTRACTED_DATACache: dict[str, Any] | None = None
 _CHAR_STATS_CACHE: dict[str, Any] | None = None
 _WEAPON_STATS_CACHE: dict[str, Any] | None = None
 
-CHAR_STATS_PATH = DATA / "game" / "character_stats.json"
-CHAR_BETA_STATS_PATH = DATA / "game" / "character_beta_stats.json.gz"
-WEAPON_STATS_PATH = DATA / "game" / "weapon_stats.json"
-WEAPON_BETA_STATS_PATH = DATA / "game" / "weapon_beta_stats.json.gz"
+CHAR_STATS_PATH = GAME_DIR / "character_stats.json"
+CHAR_BETA_STATS_PATH = GAME_DIR / "character_beta_stats.json.gz"
+WEAPON_STATS_PATH = GAME_DIR / "weapon_stats.json"
+WEAPON_BETA_STATS_PATH = GAME_DIR / "weapon_beta_stats.json.gz"
 
 
 def get_extracted_data() -> dict[str, Any]:
@@ -961,7 +961,7 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
             print(f"  {meta.get('rarity')}★")
             print("═" * 80)
 
-            game_dir = DATA / "game"
+            game_dir = GAME_DIR
             art_effects: dict[str, dict[str, str]] = {"en": {}, "zh": {}}
             for lang in ("en", "zh"):
                 if zh_only and lang == "en":
