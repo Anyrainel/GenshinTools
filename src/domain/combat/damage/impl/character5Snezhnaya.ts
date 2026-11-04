@@ -40,6 +40,12 @@ class Mitya extends CharacterBase {
   private readonly stable =
     resolveOption(mityaOption, this.option) === "stable";
   private readonly prismCap = this.constellation >= 1 ? 5 : 4;
+  // At C0, Q supplies only three Beacons. Without Stellar-Conduct generation,
+  // their ten-second lifetime cannot bridge Q's fifteen-second cooldown.
+  private readonly carriedPrisms =
+    this.constellation === 0 && !this.teamMeta.hasReaction("stellarConduct")
+      ? 3
+      : this.prismCap;
 
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
@@ -67,7 +73,7 @@ class Mitya extends CharacterBase {
     if (this.stable) {
       buffs.push(
         new StatBuff(cbs(this, "P1", ["E"]), { receiver: "team" }, [
-          { key: "em", value: 30 * this.prismCap },
+          { key: "em", value: 30 * this.carriedPrisms },
         ])
       );
     }
@@ -108,7 +114,7 @@ class Mitya extends CharacterBase {
 
   protected override get comboDescriptor(): ComboTemplate {
     // Collapse starter: Q supplies three Prisms and E supplies one at C1.
-    // Stable mode uses the option's full-Prism assumption for its single
+    // Stable mode uses the attainable carried-Prism count for its single
     // device replacement explosion. Recasting E consumes the carried Prisms
     // while a device exists, satisfying C4's device-presence condition.
     // Reaction-generated Prisms and C6 random refunds
@@ -223,7 +229,7 @@ class Mitya extends CharacterBase {
       },
       "mitya-prism-surge": {
         label: { zh: "稳态炉心·溢出信标", en: "Prism Surge" },
-        when: this.stable,
+        when: this.stable && this.carriedPrisms >= this.prismCap,
         parts: [
           {
             formula: new StellarDirectFormula(
@@ -237,12 +243,12 @@ class Mitya extends CharacterBase {
         ],
       },
       "mitya-prism-shatter": {
-        label: { zh: "稳态炉心·满信标引爆", en: "Full Prism Shatter" },
+        label: { zh: "稳态炉心·信标引爆", en: "Core Beacon Detonation" },
         when: this.stable,
         parts: [
           {
             formula: new StellarDirectFormula(
-              this.param("E", 5) * this.prismCap,
+              this.param("E", 5) * this.carriedPrisms,
               stellarSkill,
               "em"
             ),

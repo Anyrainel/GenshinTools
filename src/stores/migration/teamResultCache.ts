@@ -72,7 +72,8 @@ export function migrateTeamResultCacheStore(
     // v8 damage/rankings assumed impossible reaction-triggered artifact buffs
     // and simultaneous Petra element bonuses. Recompute under the corrected
     // feasibility checks and single-element selection. The 7.2 weapon ID,
-    // kit changes and released talent-row shifts also invalidate v8 rankings;
+    // kit changes, released talent-row shifts and beacon/Radiance feasibility
+    // corrections also invalidate v8 rankings;
     // old results cannot be migrated. Reuse this unpublished version bump.
     state.resultsByTeamId = {};
   }

@@ -5,6 +5,7 @@ import {
 } from "@/domain/team/teamDeltas";
 import type { TeamSetupConfig } from "@/domain/team/types";
 import { migrateCharacterBuffTriggerConfigs } from "@/stores/migration/characterBuffTriggers";
+import { migrateLegacyMityaBeaconConfigs } from "@/stores/migration/mityaBeacons";
 import { migrateReleasedTeamWeapons } from "@/stores/migration/releasedWeaponIds";
 import { migrateTeamAnalysisConfigs } from "@/stores/migration/teamAnalysis";
 import {
@@ -82,6 +83,9 @@ export function teamFromCloud(
   configsByTeamId = migrateValeriySupportConfigs(
     migrateCharacterBuffTriggerConfigs(configsByTeamId)
   );
+  if (partition && partition.schemaVersion < 8) {
+    configsByTeamId = migrateLegacyMityaBeaconConfigs(configsByTeamId);
+  }
   const restored = {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],

@@ -19,6 +19,7 @@ import {
 } from "@/stores/migration/teamLegacy";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
 import { migrateCharacterBuffTriggerConfigs } from "./characterBuffTriggers";
+import { migrateLegacyMityaBeaconConfigs } from "./mityaBeacons";
 import { migrateBundledPresetId } from "./presetIds";
 import { migrateReleasedTeamWeapons } from "./releasedWeaponIds";
 import {
@@ -608,6 +609,9 @@ export function migrateTeamStore(
   // v25 still used weapon_catalyst in slots, options and buff identities.
   if (version < 26) {
     Object.assign(state, migrateReleasedTeamWeapons(state));
+    state.configsByTeamId = migrateLegacyMityaBeaconConfigs(
+      state.configsByTeamId ?? {}
+    );
   }
   if (version < 23) {
     // Consolidated into the unpublished v23 migration from origin's v22.
