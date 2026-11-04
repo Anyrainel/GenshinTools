@@ -3,6 +3,8 @@
 
 export const i18nGameData = {
   "characters": {
+    "valeriy": { "en": "Valeriy", "zh": "瓦列里" },
+    "mitya": { "en": "Mitya", "zh": "米提亚" },
     "vodyanitsa": { "en": "Vodyanitsa", "zh": "沃雅妮莎" },
     "vesna": { "en": "Vesna", "zh": "薇斯纳" },
     "traveler_cryo": { "en": "Traveler (Cryo)", "zh": "旅行者(冰)" },
@@ -203,6 +205,7 @@ export const i18nGameData = {
     "blizzard_strayer": { "en": "Blizzard Strayer", "zh": "冰风迷途的勇士" }
   },
   "weapons": {
+    "starsealed_edict": { "en": "Starsealed Edict", "zh": "秘星典谕" },
     "breezeborne_refrain": { "en": "Breezeborne Refrain", "zh": "柔风游弦" },
     "winters_heavy_heart": { "en": "Winter's Heavy Heart", "zh": "凝雪沉心" },
     "silver_light": { "en": "Silver Light", "zh": "银釭" },

@@ -176,7 +176,7 @@ class Mitya extends CharacterBase {
         label: { zh: "下落·高", en: "High Plunge" },
         parts: [
           {
-            formula: new DirectFormula(this.param("A", 7), {
+            formula: new DirectFormula(this.param("A", 8), {
               element: "Electro",
               ability: "plunge",
               reaction: "none",
@@ -187,7 +187,7 @@ class Mitya extends CharacterBase {
       "mitya-prism-detonation": {
         label: { zh: "递变聚爆·首击", en: "Detonation First Hit" },
         when: !this.stable,
-        parts: [{ formula: new DirectFormula(this.param("A", 8), charge) }],
+        parts: [{ formula: new DirectFormula(this.param("A", 9), charge) }],
       },
       "mitya-prism-consume": {
         label: { zh: "递变聚爆·每枚信标", en: "Detonation Per Prism" },
@@ -195,7 +195,7 @@ class Mitya extends CharacterBase {
         parts: [
           {
             formula: new StellarDirectFormula(
-              this.param("A", 9),
+              this.param("A", 10),
               { ...charge, reaction: "stellarConduct" },
               "em"
             ),

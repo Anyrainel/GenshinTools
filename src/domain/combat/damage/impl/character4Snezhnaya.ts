@@ -78,7 +78,7 @@ class Valeriy extends CharacterBase {
         [],
         "atk",
         "baseDmg",
-        this.param("A", this.radianceOn ? 7 : 6) +
+        this.param("A", this.radianceOn ? 8 : 7) +
           this.charge * (this.radianceOn ? 0.009 : 0.003)
       ),
     ];
@@ -175,7 +175,7 @@ class Valeriy extends CharacterBase {
         label: { zh: "下落·高", en: "High Plunge" },
         parts: [
           {
-            formula: new DirectFormula(this.param("A", 10), {
+            formula: new DirectFormula(this.param("A", 13), {
               element: "Physical",
               ability: "plunge",
               reaction: "none",

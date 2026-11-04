@@ -11,6 +11,7 @@ import {
   migrateLegacyFormulaUnitConfigs,
   migrateLegacySkirkFormulaUnitConfigs,
 } from "@/stores/migration/teamFormulaUnits";
+import { migrateValeriySupportConfigs } from "@/stores/migration/valeriySupport";
 import { PersistedTeamStoreSchema } from "@/stores/schemas";
 
 export type TeamCloudSnapshot = {
@@ -78,7 +79,9 @@ export function teamFromCloud(
     configsByTeamId = migrateTeamAnalysisConfigs(configsByTeamId);
   }
   // Canonicalize v7 snapshots created during this unpublished release too.
-  configsByTeamId = migrateCharacterBuffTriggerConfigs(configsByTeamId);
+  configsByTeamId = migrateValeriySupportConfigs(
+    migrateCharacterBuffTriggerConfigs(configsByTeamId)
+  );
   const restored = {
     activePresetId: current?.activePresetId ?? null,
     compDeltas: current?.compDeltas ?? [],

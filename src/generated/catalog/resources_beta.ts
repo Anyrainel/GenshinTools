@@ -7,12 +7,9 @@ import type {
 } from "../../domain/models";
 
 export const betaCharacters: CharacterResource[] = [
-  {"id":"mitya","rarity":5,"imagePath":"/character/mitya.webp"},
-  {"id":"valeriy","rarity":4,"imagePath":"/character/valeriy.webp"},
 ];
 export const betaWeapons: WeaponResource[] = [
   {"id":"prized_isshin_blade","rarity":4,"imagePath":"/weapon/prized_isshin_blade.webp"},
-  {"id":"starsealed_edict","rarity":5,"imagePath":"/weapon/starsealed_edict.webp"},
 ];
 export const betaArtifacts: ArtifactSetResource[] = [
   {"id":"glacier_and_snowfield","rarity":5,"imagePaths":{"flower":"/artifact/glacier_and_snowfield.webp","plume":"/artifact/glacier_and_snowfield2.webp","sands":"/artifact/glacier_and_snowfield3.webp","goblet":"/artifact/glacier_and_snowfield4.webp","circlet":"/artifact/glacier_and_snowfield5.webp"}},

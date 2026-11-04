@@ -3959,6 +3959,108 @@
     ],
     "glossary": null
   },
+  "mitya": {
+    "id": "10000136",
+    "name": "Mitya",
+    "skills": [
+      {
+        "name": "A. Chain Reaction",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Normal Attack</span><br>Performs a maximum of 3 attacks that deal <span style=\"color: #FFACFFFF;\">Electro DMG</span>.<br><br><span style=\"color: #FFD780FF;\">Charged Attack</span><br>Consumes a certain amount of Stamina to deal <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> to the area in front after a short casting time.<br>Mitya will instead perform the special Charged Attack <span style=\"color: #FFD780FF;\">Gradient Detonation</span>, which consumes no Stamina, if a <span style=\"color: #FFD780FF;\">Detection Core: Overload</span> created by Mitya himself is currently on the field and he has at least 1 <span style=\"color: #FFD780FF;\">Gradient Beacon</span>: Deals 1 instance of <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> to the area in front and continuously consumes <span style=\"color: #FFD780FF;\">Gradient Beacons</span> while held. Each <span style=\"color: #FFD780FF;\">Gradient Beacon</span> consumed deals 1 instance of <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> to the area in front that is considered Stellar-Conduct reaction DMG.<br><br><span style=\"color: #FFD780FF;\">Plunging Attack</span><br>Plunges from mid-air to strike the ground below, damaging opponents along the path and dealing <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> upon impact.",
+        "details": [
+          {"label": "1-Hit DMG", "template": "{param1:F1P}"},
+          {"label": "2-Hit DMG", "template": "{param2:F1P}"},
+          {"label": "3-Hit DMG", "template": "{param3:F1P}"},
+          {"label": "Charged Attack DMG", "template": "{param4:F1P}"},
+          {"label": "Charged Attack Stamina Cost", "template": "{param5:F1}"},
+          {"label": "Plunge DMG", "template": "{param6:F1P}"},
+          {"label": "Low/High Plunge DMG", "template": "{param7:F1P}/{param8:F1P}"},
+          {"label": "Gradient Detonation DMG", "template": "{param9:F1P}"},
+          {"label": "Gradient Detonation Stellar-Conduct DMG", "template": "{param10:F1P} Elemental Mastery"}
+        ]
+      },
+      {
+        "name": "E. Principle: Variable Detection",
+        "descHtml": "Conducts a theoretically relatively safe experiment at a theoretically relatively safe yield, dealing <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> and creating a <span style=\"color: #FFD780FF;\">Detection Core</span> in different ways depending on whether the Skill is tapped or held.<br><br>Tapping the Elemental Skill <span style=\"color: #FFD780FF;\">Principle: Variable Detection</span> again within 6s after using it changes the <span style=\"color: #FFD780FF;\">Detection Core</span>'s state. The Detection Core's state can be changed in this way every 1.5s.",
+        "details": [
+          {"label": "Tap Skill DMG", "template": "{param1:F1P}"},
+          {"label": "Hold Skill DMG", "template": "{param2:F1P}"},
+          {"label": "Steady State Core DMG", "template": "{param3:F1P}"},
+          {"label": "Steady State Core Gradient Beacon Consumption DMG", "template": "{param4:F1P} Elemental Mastery"},
+          {"label": "Steady State Core Detonation DMG", "template": "{param5:F1P} Elemental Mastery/Beacon"},
+          {"label": "Detection Core Duration", "template": "{param6:F1}s"},
+          {"label": "CD", "template": "{param7:F1}s"}
+        ]
+      },
+      {
+        "name": "Q. Analysis: Gradient Theory",
+        "descHtml": "Let the elements burst forth like inspiration itself! Deals <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> and creates 3 <span style=\"color: #FFD780FF;\">Gradient Beacons</span>.",
+        "details": [
+          {"label": "Skill DMG", "template": "{param1:F1P} ATK+{param2:F1P} Elemental Mastery"},
+          {"label": "Gradient Beacons Generated", "template": "{param3:F1}"},
+          {"label": "CD", "template": "{param4:F1}s"},
+          {"label": "Energy Cost", "template": "{param5:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "Baseline Stress Test",
+        "descHtml": "The <span style=\"color: #FFD780FF;\">Detection Core</span> created by the Elemental Skill <span style=\"color: #FFD780FF;\">Principle: Variable Detection</span> is enhanced. Depending on the state of the <span style=\"color: #FFD780FF;\">Detection Core</span> created:<br>·Steady State: All nearby party members gain 30 Elemental Mastery for each <span style=\"color: #FFD780FF;\">Gradient Beacon</span> Mitya has;<br>·Overloaded: After nearby party members trigger Stellar-Conduct reactions, instead obtain 1 <span style=\"color: #FFD780FF;\">Gradient Beacon</span> every 1.5s for 6s."
+      },
+      {
+        "name": "Explosive Reagent: Safe Limits Exceeded",
+        "descHtml": "The duration of <span style=\"color: #FFD780FF;\">Gradient Beacons</span> is increased to 10s. Additionally, Mitya's CRIT Rate increases by 5% for 15s after creating a <span style=\"color: #FFD780FF;\">Gradient Beacon</span>. This effect can stack up to 4 times."
+      },
+      {
+        "name": "Stellar Jubilee: Top-Secret Protocol",
+        "descHtml": "When party members trigger Superconduct, it will be changed to Stellar-Conduct. Stellar-Conduct reactions will no longer create <span style=\"color: #FFD780FF;\">Starlight Prisms</span>, and will instead create 1 <span style=\"color: #FFD780FF;\">Gradient Beacon</span> nearby every 1.5s for 3s. These Beacons can be carried by Mitya and transform the area around them into an even larger <span style=\"color: #FFD780FF;\">Polestar Field</span>. Triggering another Stellar-Conduct reaction will refresh the duration of the aforementioned effects.<br>Additionally, the Base Stellar-Conduct DMG dealt by all nearby party members will be increased based on Mitya's Elemental Mastery: Every point of Elemental Mastery he has increases Base Stellar-Conduct DMG by 0.028%. The maximum Base DMG increase that can be gained this way is 14%. While within a <span style=\"color: #FFD780FF;\">Polestar Field</span>, Mitya will also enter the <span style=\"color: #FFD780FF;\">Radiance: Stellar-Conduct</span> state."
+      },
+      {
+        "name": "Energy Catalysis",
+        "descHtml": "When destructible rocks are nearby, <span style=\"color: #FFD780FF;\">Detection Core: Steady State</span> can quickly clear them.<br>Additionally, when Mitya is in the party, creating <span style=\"color: #FFD780FF;\">Prime Ice Construct: Basic Heat Source</span> does not consume Kresnik Energy."
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. The Observer Seeking What Is Missing",
+        "descHtml": "The maximum number of <span style=\"color: #FFD780FF;\">Gradient Beacons</span> Mitya can carry is increased to 5. Using the Elemental Skill <span style=\"color: #FFD780FF;\">Principle: Variable Detection</span> additionally creates 1 <span style=\"color: #FFD780FF;\">Gradient Beacon</span>.<br>While the <span style=\"color: #FFD780FF;\">Detection Core</span> is present, your own active character's CRIT DMG is increased by 40%.<br>Additionally, Mitya regenerates 10 Elemental Energy when a <span style=\"color: #FFD780FF;\">Gradient Beacon</span> is created. This effect can be triggered once every 8s."
+      },
+      {
+        "name": "2. The Matter That Slumbers Beyond Inertness",
+        "descHtml": "While the <span style=\"color: #FFD780FF;\">Detection Core</span> is present, all opponents within the <span style=\"color: #FFD780FF;\">Polestar Field</span> have their <span style=\"color: #99FFFFFF;\">Cryo RES</span> and <span style=\"color: #FFACFFFF;\">Electro RES</span> decreased by 20%.<br>Additionally, if the <span style=\"color: #FFD780FF;\">Detection Core</span> created is:<br>·Steady State: All nearby party members gain 123 Elemental Mastery;<br>·Overloaded: Your own active character gains 234 Elemental Mastery."
+      },
+      {
+        "name": "3. The Knotted String of Invariant Topology",
+        "descHtml": "Increases the Level of the Elemental Skill <span style=\"color: #FFD780FF;\">Principle: Variable Detection</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "4. The Isotopes Born of Decay",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Detection Cores</span> created by Mitya himself deals 1 instance of <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> equal to 300% of Mitya's Elemental Mastery to nearby opponents for every 5 <span style=\"color: #FFD780FF;\">Gradient Beacons</span> consumed while it is on the field. This DMG is considered Stellar-Conduct reaction DMG."
+      },
+      {
+        "name": "5. The Periodic Law That Orders All",
+        "descHtml": "Increases the Level of Normal Attack: <span style=\"color: #FFD780FF;\">Chain Reaction</span> by 3.<br>Maximum upgrade level is 15."
+      },
+      {
+        "name": "6. Elemental Transition at the Gate of Reason",
+        "descHtml": "<span style=\"color: #FFD780FF;\">Detection Core</span> is enhanced. If the <span style=\"color: #FFD780FF;\">Detection Core</span>:<br> · Is in the Steady State: <span style=\"color: #FFD780FF;\">Detection Core</span> deals 115% of its original DMG.<br>· Is Overloaded: There is a 34% chance to create 1 new <span style=\"color: #FFD780FF;\">Gradient Beacon</span> whenever Mitya consumes a <span style=\"color: #FFD780FF;\">Gradient Beacon</span> with the <span style=\"color: #FFD780FF;\">Detection Core</span>.<br>Additionally, Stellar-Conduct reaction DMG dealt by all nearby party members is <span style=\"color: #FFD780FF;\">Elevated</span> by 20%."
+      }
+    ],
+    "glossary": [
+      {
+        "name": "Elevated",
+        "descHtml": "Special DMG Boost effect. It is calculated independently of other DMG Boost effects."
+      },
+      {
+        "name": "Gradient Beacon | Gradient Beacons",
+        "descHtml": "When Mitya is in the party and a Stellar-Conduct reaction is triggered, a <span style=\"color: #FFD780FF;\">Gradient Beacon</span> that lasts for 6s will be created instead of a <span style=\"color: #FFD780FF;\">Starlight Prism</span>. Mitya can consume <span style=\"color: #FFD780FF;\">Gradient Beacons</span> to trigger various effects.<br><span style=\"color: #FFD780FF;\">Gradient Beacons</span> follow the active character and transform a larger nearby area into a <span style=\"color: #FFD780FF;\">Polestar Field</span> when a <span style=\"color: #FFD780FF;\">Gradient Beacon</span> is created. Mitya can have multiple <span style=\"color: #FFD780FF;\">Gradient Beacons</span>, with an initial maximum of 4. Creating a <span style=\"color: #FFD780FF;\">Gradient Beacon</span> will reset the duration of all <span style=\"color: #FFD780FF;\">Gradient Beacons</span>."
+      },
+      {
+        "name": "Detection Core: Overload | Detection Core | Detection Core: Steady State | Detection Cores",
+        "descHtml": "An energy device Mitya creates after using his Elemental Skill. Tapping it creates a Core in <span style=\"color: #FFD780FF;\">Steady State</span>, while holding it creates an <span style=\"color: #FFD780FF;\">Overloaded</span> core.<br><br><span style=\"color: #FFD780FF;\">Detection Core: Steady State</span><br>·Continuously follows nearby opponents and intermittently deals <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span>;<br>·When Mitya has reached the maximum number of <span style=\"color: #FFD780FF;\">Gradient Beacons</span> he can have, the device will consume any newly generated <span style=\"color: #FFD780FF;\">Gradient Beacon</span> and deal <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> that is considered Stellar-Conduct reaction DMG;<br>·When its duration ends or another <span style=\"color: #FFD780FF;\">Detection Core</span> is created, the device will consume all <span style=\"color: #FFD780FF;\">Gradient Beacons</span> Mitya has and deal <span style=\"color: #FFACFFFF;\">AoE Electro DMG</span> that is considered Stellar-Conduct reaction DMG based on the number consumed.<br><br><span style=\"color: #FFD780FF;\">Detection Core: Overloaded</span><br>·While this device is present and Mitya has at least 1 <span style=\"color: #FFD780FF;\">Gradient Beacon</span>, he can perform the special Charged Attack <span style=\"color: #FFD780FF;\">Gradient Detonation</span> without consuming Stamina."
+      }
+    ]
+  },
   "mona": {
     "id": "10000041",
     "name": "Mona",
@@ -6706,7 +6808,7 @@
       },
       {
         "name": "Sword Essence",
-        "descHtml": "The energy required to use the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span>while in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode.<br>Vesna can accumulate Sword Essence in the following ways:<br>· By performing a Normal Attack, Charged Attack, or Plunging attack while in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, or by unleashing <span style=\"color: #FFD780FF;\">Windborne Sword: Transpose</span> from the Constellation <span style=\"color: #FFD780FF;\">Unwavering Ardor</span>; <br>· By using the Elemental Skill <span style=\"color: #FFD780FF;\">The Art of Victory</span>; or<br>· By using the Elemental Burst <span style=\"color: #FFD780FF;\">For the Tsaritsa!</span>"
+        "descHtml": "The energy required to use the special Elemental Skill <span style=\"color: #FFD780FF;\">Windborne Sword</span> while in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode.<br>Vesna can accumulate Sword Essence in the following ways:<br>· By performing a Normal Attack, Charged Attack, or Plunging attack while in the <span style=\"color: #FFD780FF;\">Armed for Action</span> mode, or by unleashing <span style=\"color: #FFD780FF;\">Windborne Sword: Transpose</span> from the Constellation <span style=\"color: #FFD780FF;\">Unwavering Ardor</span>; <br>· By using the Elemental Skill <span style=\"color: #FFD780FF;\">The Art of Victory</span>; or<br>· By using the Elemental Burst <span style=\"color: #FFD780FF;\">For the Tsaritsa!</span>"
       },
       {
         "name": "Windborne Sword",
@@ -6813,7 +6915,7 @@
       },
       {
         "name": "Lead Vocal",
-        "descHtml": "When the party's currently active character deals <span style=\"color: #80C0FFFF;\">Hydro DMG</span> or <span style=\"color: #99FFFFFF;\">Cryo DMG</span> with a Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, or Elemental Burst, 1 stack of \"Lead Vocal\" is consumed. This in turn increases the DMG dealt. However, if a Wandering Vortex is present on the field or during the 5s following a Wandering Vortex explosion, this effect will only trigger when the character deals Stellar Swirl reaction DMG.<br>Every 1000 Max HP Vodyanitsa has in excess of 40000 will increase the Stellar Swirl reaction DMG from the above effect by 260, as well as <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> dealt by 140. Stellar Swirl reaction DMG dealt can be increased by a maximum of 6500 while <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> can be increased by a maximum of 3500 in this way."
+        "descHtml": "When the party's currently active character deals <span style=\"color: #80C0FFFF;\">Hydro DMG</span> or <span style=\"color: #99FFFFFF;\">Cryo DMG</span> with a Normal Attack, Charged Attack, Plunging Attack, Elemental Skill, or Elemental Burst, 1 stack of \"Lead Vocal\" is consumed. This in turn increases the DMG dealt. However, if a Wandering Vortex is present on the field or during the 5s following a Wandering Vortex explosion, this effect will only trigger when the character deals Stellar Swirl reaction DMG.<br>Every 1000 Max HP Vodyanitsa has in excess of 40000 will increase the Stellar Swirl reaction DMG from the above effect by 260, as well as increase <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> dealt by 140. Stellar Swirl reaction DMG dealt can be increased by a maximum of 6500, while <span style=\"color: #80C0FFFF;\">Hydro DMG</span> and <span style=\"color: #99FFFFFF;\">Cryo DMG</span> can be increased by a maximum of 3500 in this way."
       },
       {
         "name": "Chorus",

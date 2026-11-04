@@ -48,6 +48,7 @@ export const charInfo: Record<string, CharacterInfo> = {
   shikanoin_heizou: { energy: 40, c3Talent: "E", c5Talent: "Q" },
   sucrose: { energy: 80, c3Talent: "E", c5Talent: "Q", faction: "Hexerei" },
   thoma: { energy: 80, shielderC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
+  valeriy: { energy: 60, shielderC: 0, supStat: ["atk%"], c3Talent: "A", c5Talent: "E" },
   xiangling: { energy: 80, c3Talent: "Q", c5Talent: "E" },
   xingqiu: { energy: 80, healerC: 0, supStat: ["hp%"], c3Talent: "Q", c5Talent: "E" },
   xinyan: { energy: 60, shielderC: 0, supStat: ["def%"], c3Talent: "E", c5Talent: "Q" },
@@ -103,6 +104,7 @@ export const charInfo: Record<string, CharacterInfo> = {
   manekina_hydro: { energy: 60, c3Talent: "Q", c5Talent: "E" },
   manekina_pyro: { energy: 60, c3Talent: "Q", c5Talent: "E" },
   mavuika: { energy: 0, c3Talent: "Q", c5Talent: "E", faction: "Nightsoul" },
+  mitya: { energy: 60, c3Talent: "E", c5Talent: "A" },
   mona: { energy: 60, c3Talent: "Q", c5Talent: "E", faction: "Hexerei" },
   mualani: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Nightsoul" },
   nahida: { energy: 50, c3Talent: "E", c5Talent: "Q" },
@@ -144,6 +146,4 @@ export const charInfo: Record<string, CharacterInfo> = {
   yumemizuki_mizuki: { energy: 60, healerC: 0, supStat: ["em"], c3Talent: "E", c5Talent: "Q" },
   zhongli: { energy: 40, healerC: 6, shielderC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
   zibai: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Moonsign" },
-  mitya: { energy: 60, c3Talent: "E", c5Talent: "A" },
-  valeriy: { energy: 60, shielderC: 0, supStat: ["atk%"], c3Talent: "A", c5Talent: "E" },
 };

@@ -1806,6 +1806,70 @@
           "name": "Guardian Blade of Drifting Snow"
         }
       ]
+    },
+    {
+      "id": 10131,
+      "variants": [
+        {
+          "tiers": [1, 2, 3],
+          "id": 1013041,
+          "name": "Wavebinder: Normal"
+        },
+        {
+          "tiers": [4],
+          "id": 1013051,
+          "name": "Wavebinder: Valiant Charge"
+        },
+        {
+          "tiers": [5, 6],
+          "id": 1013061,
+          "name": "Wavebinder: Stormfang"
+        }
+      ],
+      "advantage": [
+        {
+          "tiers": [1, 2, 3, 4, 5, 6],
+          "text": "Stellar Glimmer characters | Electro characters"
+        }
+      ],
+      "bullets": [
+        {
+          "tiers": [1, 2, 3],
+          "title": "Courage Against the Cold",
+          "short": "During battle, this Nemesis will drink hot beverages to build up Courage. If it is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color> while drinking, its Courage accumulation rate will be reduced. Dealing <color=#FFD780FF>Electro DMG</color> to it will also reduce its Courage. <color=#FFD780FF>Electro DMG considered to be DMG from the corresponding Stellar Glimmer Reaction</color> will reduce Courage by a significantly greater amount.",
+          "detail": "At intervals, this Nemesis will take out a flask and drink deeply to build up Courage. If it is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color> while drinking, it will gain Courage at a reduced rate. Dealing <color=#FFD780FF>Electro DMG</color> to it will also reduce its Courage. <color=#FFD780FF>Electro DMG considered to be DMG from the corresponding Stellar Glimmer Reaction</color> will reduce Courage by a significantly greater amount."
+        },
+        {
+          "tiers": [4],
+          "title": "Courage Against the Cold",
+          "short": "When the battle begins, this Nemesis will drink hot beverages to build up Courage. If it is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color> while drinking, its Courage accumulation rate will be reduced. Dealing <color=#FFD780FF>Electro DMG</color> to it will also reduce its Courage. <color=#FFD780FF>Electro DMG considered to be DMG from the corresponding Stellar Glimmer Reaction</color> will reduce Courage by a significantly greater amount.",
+          "detail": "When the battle begins, this Nemesis will take out a flask and drink deeply to build up Courage. If it is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color> while drinking, it will gain Courage at a reduced rate. Dealing <color=#FFD780FF>Electro DMG</color> to it will also reduce its Courage. <color=#FFD780FF>Electro DMG considered to be DMG from the corresponding Stellar Glimmer Reaction</color> will reduce Courage by a significantly greater amount."
+        },
+        {
+          "tiers": [1, 2, 3, 4],
+          "title": "Valiant State",
+          "short": "Once the Nemesis's Courage is full, it will enter the Valiant state. While in this state, Courage will be continuously consumed, its attacks will become more ferocious, and its <color=#FFD780FF>Elemental RES and Physical RES will be greatly increased</color>. It will exit this state once its Courage is depleted.",
+          "detail": "Once the Nemesis's Courage is full, it will enter the Valiant state, causing its attacks to become more ferocious and <color=#FFD780FF>greatly increasing all Elemental RES and Physical RES</color>. While in this state, its Courage will be continuously consumed, and it will exit the state once its Courage is depleted."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Courage Against the Cold: Hearty Draught",
+          "short": "Due to the effects of the Ley Line disturbance, this Nemesis will periodically drink hot beverages to build up large amounts of Courage. If it is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color> while drinking, its Courage accumulation rate will be reduced. Dealing <color=#FFD780FF>Electro DMG</color> to it will also reduce its Courage. <color=#FFD780FF>Electro DMG considered to be DMG from the corresponding Stellar Glimmer Reaction</color> will reduce Courage by a significantly greater amount.",
+          "detail": "Due to the effects of the Ley Line disturbance, this Nemesis will periodically take out a flask and drink deeply, gaining a large amount of Courage in the process. If it is affected by <color=#FFD780FF>Radiance: Stellar Glimmer</color> while drinking, it will gain Courage at a reduced rate. Dealing <color=#FFD780FF>Electro DMG</color> to it will also reduce its Courage. <color=#FFD780FF>Electro DMG considered to be DMG from the corresponding Stellar Glimmer Reaction</color> will reduce Courage by a significantly greater amount."
+        },
+        {
+          "tiers": [5, 6],
+          "title": "Valiant Assault",
+          "short": "Due to the effects of the Ley Line disturbance, once the Nemesis's Courage is full, they will enter the Valiant Assault state. While in this state, Courage will be continuously consumed, and their attacks will become more ferocious. They will also <color=#FFD780FF>generate a shield, greatly increase all RES except Electro RES, and slightly increase Electro RES</color>. They will exit this state and suffer massive backlash DMG once their Courage is depleted.",
+          "detail": "Due to the effects of the Ley Line disturbance, once the Nemesis's Courage is full, they will enter the Valiant Assault state. While in this state, their attacks will become more ferocious. They will also <color=#FFD780FF>generate a shield and greatly increase all Elemental and Physical RES other than Electro RES, which will receive a small increase.</color>. While Valiant Assault is active, the Nemesis's Courage will be continuously consumed. <color=#FFD780FF>Electro DMG will also drain more Courage than usual</color>. It will exit this state and suffer massive backlash DMG once its Courage is depleted. The more DMG its shield absorbs during Valiant Assault, the greater the backlash DMG it will suffer when the state ends. <color=#FFD780FF>Stellar Glimmer reaction DMG</color> will increase the backlash DMG taken when the Shield is broken."
+        }
+      ],
+      "describe_names": [
+        {
+          "id": 51346,
+          "name": "Wavebinder"
+        }
+      ]
     }
   ],
   "schedules": [
@@ -1856,6 +1920,10 @@
     {
       "id": 5269012,
       "name": "Luminous Battlefront"
+    },
+    {
+      "id": 5269013,
+      "name": "Battle Amid the Great Waves"
     }
   ]
 }

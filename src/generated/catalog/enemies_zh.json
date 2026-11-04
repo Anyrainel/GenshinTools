@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "anime_game_data",
-    "total_enemies": 2171,
+    "total_enemies": 2260,
     "lang_note": "Names/titles from TextMap. Affix/comment from MonsterAffixExcelConfigData (CHS in AGD).",
     "sources_included": [
       "world_monster",
@@ -1175,6 +1175,29 @@
         }
       ]
     },
+    "20010810": {
+      "id": 20010810,
+      "name": "冰史莱姆",
+      "title": "冰史莱姆",
+      "affixes": [
+        {
+          "id": 2003,
+          "affix": "寒气免疫",
+          "comment": "免疫冰冻和寒元素的减速效果",
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        },
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "20010881": {
       "id": 20010881,
       "affixes": [
@@ -1361,6 +1384,29 @@
           "comment": "免疫冰冻和寒元素的减速效果",
           "ability_names": [
             "MonsterAffix_IceAllResist"
+          ]
+        }
+      ]
+    },
+    "20010908": {
+      "id": 20010908,
+      "name": "大型冰史莱姆",
+      "title": "大型冰史莱姆",
+      "affixes": [
+        {
+          "id": 2003,
+          "affix": "寒气免疫",
+          "comment": "免疫冰冻和寒元素的减速效果",
+          "ability_names": [
+            "MonsterAffix_IceAllResist"
+          ]
+        },
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
           ]
         }
       ]
@@ -3825,6 +3871,21 @@
         }
       ]
     },
+    "20060494": {
+      "id": 20060494,
+      "name": "冰飘浮灵",
+      "title": "冰飘浮灵",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "20060501": {
       "id": 20060501,
       "name": "雷飘浮灵",
@@ -4313,6 +4374,47 @@
     "20081304": {
       "id": 20081304,
       "title": "历经百战的十六倍曼陀草"
+    },
+    "20090101": {
+      "id": 20090101,
+      "name": "冰结镜映体",
+      "title": "冰结镜映体",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "20090102": {
+      "id": 20090102,
+      "affixes": [
+        {
+          "id": 200901,
+          "affix": "冰霜精灵-WQ-市政厅",
+          "comment": "冰霜精灵-WQ-市政厅",
+          "ability_names": [
+            "Monster_Crystalian_CalamityCrystal_SZT"
+          ]
+        }
+      ]
+    },
+    "20090103": {
+      "id": 20090103,
+      "affixes": [
+        {
+          "id": 200902,
+          "affix": "冰霜精灵-WQ-镜宫",
+          "comment": "冰霜精灵-WQ-镜宫",
+          "ability_names": [
+            "Monster_Crystalian_CalamityCrystal_CrystalPalace"
+          ]
+        }
+      ]
     },
     "21010101": {
       "id": 21010101,
@@ -11119,6 +11221,52 @@
         }
       ]
     },
+    "23070204": {
+      "id": 23070204,
+      "name": "愚人众特辖队·线列兵",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070205": {
+      "id": 23070205,
+      "name": "愚人众特辖队·线列兵",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "23070208": {
       "id": 23070208,
       "name": "愚人众特辖队·线列兵",
@@ -11305,6 +11453,52 @@
     },
     "23070221": {
       "id": 23070221,
+      "name": "愚人众特辖队·狙击手",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070222": {
+      "id": 23070222,
+      "name": "愚人众特辖队·狙击手",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070223": {
+      "id": 23070223,
       "name": "愚人众特辖队·狙击手",
       "title": "特辖队",
       "affixes": [
@@ -11865,6 +12059,29 @@
         }
       ]
     },
+    "23070260": {
+      "id": 23070260,
+      "name": "愚人众特辖队·线列兵",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "23070300": {
       "id": 23070300,
       "name": "巡陆艇·强侦斥候型",
@@ -12259,6 +12476,77 @@
         }
       ]
     },
+    "23070392": {
+      "id": 23070392,
+      "name": "巡陆艇·尖端全能斥候型",
+      "title": "巡陆艇",
+      "affixes": [
+        {
+          "id": 30802,
+          "affix": "铁皮机器-非磁动力",
+          "comment": "铁皮机器-非磁动力",
+          "ability_names": [
+            "Monster_Fatuimecha_EnergyType_Steam"
+          ]
+        },
+        {
+          "id": 30805,
+          "affix": "铁皮机器-磁单极",
+          "comment": "铁皮机器-磁单极",
+          "ability_names": [
+            "Monster_Fatuimecha_Kuuvahki_SingleMagnet"
+          ]
+        },
+        {
+          "id": 30818,
+          "affix": "TPS-铁皮机器-通用标记",
+          "comment": "TPS-铁皮机器-通用标记",
+          "ability_names": [
+            "Monster_Fatuimecha_CommonConfig_ForTPS"
+          ]
+        },
+        {
+          "id": 30819,
+          "affix": "TPS-铁皮机器-精英2",
+          "comment": "TPS-铁皮机器-精英2",
+          "ability_names": [
+            "Monster_Fatuimecha_CoreC_MoveC_AttackD_AttackC_AttackB_Water_ForTPS"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
     "23070400": {
       "id": 23070400,
       "name": "愚人众先遣队·水铳士",
@@ -12293,6 +12581,37 @@
           "comment": "TPS-通用词缀-影域特效1",
           "ability_names": [
             "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        }
+      ]
+    },
+    "23070402": {
+      "id": 23070402,
+      "name": "愚人众先遣队·水铳士",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5733,
+          "affix": "7.2 水步枪作为机枪塔驾驶员",
+          "comment": "水步枪作为机枪塔驾驶员",
+          "ability_names": [
+            "MonsterAffix_TPS_MachineGun_Controller"
           ]
         }
       ]
@@ -12409,6 +12728,116 @@
     },
     "23070511": {
       "id": 23070511,
+      "name": "愚人众特辖队·冰雹重炮手",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070512": {
+      "id": 23070512,
+      "name": "愚人众特辖队·冰雹重炮手",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30813,
+          "affix": "铁皮集群-坦克3",
+          "comment": "铁皮集群-坦克3",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank3"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23070513": {
+      "id": 23070513,
       "name": "愚人众特辖队·冰雹重炮手",
       "title": "特辖队",
       "affixes": [
@@ -13144,6 +13573,69 @@
         }
       ]
     },
+    "23072105": {
+      "id": 23072105,
+      "name": "愚人众特辖队·支援兵",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30814,
+          "affix": "铁皮集群-坦克4",
+          "comment": "铁皮集群-坦克4",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Tank4"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5736,
+          "affix": "7.2 愚人众强制拿武器补丁",
+          "comment": "愚人众强制拿武器补丁",
+          "ability_names": [
+            "Monster_Human_Equip_Force_SheathWeapon_Alertness"
+          ]
+        }
+      ]
+    },
     "23072190": {
       "id": 23072190,
       "name": "愚人众特辖队·支援兵",
@@ -13512,6 +14004,187 @@
           "comment": "铁皮集群-辅助",
           "ability_names": [
             "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        }
+      ]
+    },
+    "23077110": {
+      "id": 23077110,
+      "name": "愚人众特辖队·疗愈师",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23077111": {
+      "id": 23077111,
+      "name": "愚人众特辖队·疗愈师",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "23077115": {
+      "id": 23077115,
+      "name": "愚人众特辖队·疗愈师",
+      "title": "特辖队",
+      "affixes": [
+        {
+          "id": 30701,
+          "affix": "愚人众特辖队-无磁",
+          "comment": "愚人众特辖队-无磁",
+          "ability_names": [
+            "Monster_Oprichnik_NoKuuvahki"
+          ]
+        },
+        {
+          "id": 30816,
+          "affix": "铁皮集群-辅助",
+          "comment": "铁皮集群-辅助",
+          "ability_names": [
+            "Monster_Fatuimecha_SquadAI_Support"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5734,
+          "affix": "7.2 WQ辅助兵大光效",
+          "comment": "WQ辅助兵大光效",
+          "ability_names": [
+            "MonsterAffix_TPS_PulseSignaler_Level_BuffGlow"
+          ]
+        },
+        {
+          "id": 5739,
+          "affix": "7.2 WQ无限盾 辅助兵",
+          "comment": "无限盾 辅助兵",
+          "ability_names": [
+            "MonsterAffix_TPS_WQ_InfiniteShield_PulseSignaler"
           ]
         }
       ]
@@ -16145,6 +16818,21 @@
         }
       ]
     },
+    "24020306": {
+      "id": 24020306,
+      "name": "遗迹防卫者",
+      "title": "遗迹防卫者",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "24020381": {
       "id": 24020381,
       "affixes": [
@@ -16205,6 +16893,21 @@
           "comment": "强化版本拟生机关",
           "ability_names": [
             "MonsterAffix_Enigma_Summoned_Enhanced"
+          ]
+        }
+      ]
+    },
+    "24020404": {
+      "id": 24020404,
+      "name": "遗迹侦察者",
+      "title": "遗迹侦察者",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
           ]
         }
       ]
@@ -20796,6 +21499,26 @@
         }
       ]
     },
+    "25080103": {
+      "id": 25080103,
+      "name": "野伏·阵刀番",
+      "title": "野伏·阵刀番"
+    },
+    "25080104": {
+      "id": 25080104,
+      "name": "野伏·阵刀番",
+      "title": "野伏·阵刀番",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "25080181": {
       "id": 25080181,
       "affixes": [
@@ -20842,6 +21565,26 @@
         }
       ]
     },
+    "25080204": {
+      "id": 25080204,
+      "name": "野伏·火付番",
+      "title": "野伏·火付番"
+    },
+    "25080205": {
+      "id": 25080205,
+      "name": "野伏·火付番",
+      "title": "野伏·火付番",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "25080281": {
       "id": 25080281,
       "affixes": [
@@ -20882,6 +21625,11 @@
           ]
         }
       ]
+    },
+    "25080303": {
+      "id": 25080303,
+      "name": "野伏·机巧番",
+      "title": "野伏·机巧番"
     },
     "25080381": {
       "id": 25080381,
@@ -20952,6 +21700,21 @@
           "comment": "GV标记、霸体、等其他定制逻辑",
           "ability_names": [
             "Activity_V7_1_MvM3_MonsterTag"
+          ]
+        }
+      ]
+    },
+    "25080394": {
+      "id": 25080394,
+      "name": "野伏·机巧番",
+      "title": "野伏·机巧番",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
           ]
         }
       ]
@@ -21300,6 +22063,11 @@
           ]
         }
       ]
+    },
+    "25100204": {
+      "id": 25100204,
+      "name": "海乱鬼·炎威",
+      "title": "海乱鬼·炎威"
     },
     "25100281": {
       "id": 25100281,
@@ -21730,6 +22498,148 @@
           "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
           "ability_names": [
             "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25130103": {
+      "id": 25130103,
+      "name": "持戟羽骑士",
+      "title": "灵翼飞旋的风仙",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        },
+        {
+          "id": 5719,
+          "affix": "7.2 风仙队长怪词缀-指挥",
+          "comment": "风仙队长词缀-根据周边士兵数量决定是否释放指挥技能",
+          "ability_names": [
+            "Monster_Vila_Order_CommandManager"
+          ]
+        },
+        {
+          "id": 5720,
+          "affix": "7.2 风仙队长怪词缀-射击指令",
+          "comment": "风仙队长词缀-处理射击指令逻辑",
+          "ability_names": [
+            "Monster_Vila_Order_Shoot"
+          ]
+        },
+        {
+          "id": 5721,
+          "affix": "7.2 风仙队长怪词缀-近战指令",
+          "comment": "风仙队长词缀-处理近战指令逻辑",
+          "ability_names": [
+            "Monster_Vila_Order_Melee"
+          ]
+        },
+        {
+          "id": 5722,
+          "affix": "7.2 风仙队长怪词缀-射击强化",
+          "comment": "风仙队长词缀-强化射击技能",
+          "ability_names": [
+            "Monster_Vila_Glaive_LeaderShootAttack"
+          ]
+        }
+      ]
+    },
+    "25130104": {
+      "id": 25130104,
+      "name": "持戟羽骑士",
+      "title": "灵翼飞旋的风仙",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5719,
+          "affix": "7.2 风仙队长怪词缀-指挥",
+          "comment": "风仙队长词缀-根据周边士兵数量决定是否释放指挥技能",
+          "ability_names": [
+            "Monster_Vila_Order_CommandManager"
+          ]
+        },
+        {
+          "id": 5720,
+          "affix": "7.2 风仙队长怪词缀-射击指令",
+          "comment": "风仙队长词缀-处理射击指令逻辑",
+          "ability_names": [
+            "Monster_Vila_Order_Shoot"
+          ]
+        },
+        {
+          "id": 5721,
+          "affix": "7.2 风仙队长怪词缀-近战指令",
+          "comment": "风仙队长词缀-处理近战指令逻辑",
+          "ability_names": [
+            "Monster_Vila_Order_Melee"
+          ]
+        },
+        {
+          "id": 5722,
+          "affix": "7.2 风仙队长怪词缀-射击强化",
+          "comment": "风仙队长词缀-强化射击技能",
+          "ability_names": [
+            "Monster_Vila_Glaive_LeaderShootAttack"
+          ]
+        },
+        {
+          "id": 5727,
+          "affix": "7.2 风仙通用词缀-关闭移动和闪避",
+          "comment": "风仙通用词缀-关闭移动和闪避",
+          "ability_names": [
+            "Monster_Vila_BanMovement"
           ]
         }
       ]
@@ -22172,6 +23082,68 @@
           "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
           "ability_names": [
             "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25131006": {
+      "id": 25131006,
+      "name": "兽怪投掷者",
+      "title": "兽怪暴徒",
+      "affixes": [
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
+    "25131007": {
+      "id": 25131007,
+      "name": "兽怪投掷者",
+      "title": "兽怪暴徒",
+      "affixes": [
+        {
+          "id": 55311,
+          "affix": "兽灵-元素词缀-草",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_GrassType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
           ]
         }
       ]
@@ -23266,6 +24238,45 @@
         }
       ]
     },
+    "25131404": {
+      "id": 25131404,
+      "name": "兽怪捷掠者",
+      "title": "兽怪暴徒",
+      "affixes": [
+        {
+          "id": 55300,
+          "affix": "兽灵-单手利器",
+          "comment": "用于对攻击Type和特效配置进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_SharpType"
+          ]
+        },
+        {
+          "id": 55313,
+          "affix": "兽灵-元素词缀-火",
+          "comment": "用于对元素技能进行区分",
+          "ability_names": [
+            "Monster_Volkodlak_FireType"
+          ]
+        },
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        }
+      ]
+    },
     "25131411": {
       "id": 25131411,
       "affixes": [
@@ -23992,6 +25003,131 @@
         }
       ]
     },
+    "25132703": {
+      "id": 25132703,
+      "name": "长耳强袭者",
+      "title": "兽怪暴徒",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25132704": {
+      "id": 25132704,
+      "name": "长耳强袭者",
+      "title": "兽怪暴徒",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25132705": {
+      "id": 25132705,
+      "name": "长耳强袭者",
+      "title": "兽怪暴徒",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5726,
+          "affix": "7.2 木屋守卫战 兔子入窗逻辑",
+          "comment": "让兔子能够用跳踢进入窗子",
+          "ability_names": [
+            "Monster_Volkodlak_Arctichare_NormalAttack02_Entry"
+          ]
+        }
+      ]
+    },
     "25132791": {
       "id": 25132791,
       "affixes": [
@@ -24175,6 +25311,120 @@
         }
       ]
     },
+    "25132901": {
+      "id": 25132901,
+      "name": "百战兽众·狮獒护卫",
+      "title": "百战兽众·狮獒护卫",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "25132902": {
+      "id": 25132902,
+      "name": "百战兽众·狮獒护卫",
+      "title": "百战兽众·狮獒护卫",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25133001": {
+      "id": 25133001,
+      "name": "百战兽众·长耳强袭者",
+      "title": "百战兽众·长耳强袭者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "25133002": {
+      "id": 25133002,
+      "name": "百战兽众·长耳强袭者",
+      "title": "百战兽众·长耳强袭者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25133101": {
+      "id": 25133101,
+      "name": "百战兽众·渠道联络人",
+      "title": "百战兽众·渠道联络人",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "25133102": {
+      "id": 25133102,
+      "name": "百战兽众·渠道联络人",
+      "title": "百战兽众·渠道联络人",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
     "25133601": {
       "id": 25133601,
       "name": "牙兽狂徒",
@@ -24344,6 +25594,100 @@
         }
       ]
     },
+    "25133703": {
+      "id": 25133703,
+      "name": "嗥狼追猎者",
+      "title": "气魄千钧的迷兽",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25133704": {
+      "id": 25133704,
+      "name": "嗥狼追猎者",
+      "title": "气魄千钧的迷兽",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30105,
+          "affix": "TPS-通用词缀-受击保护4.5",
+          "comment": "TPS-通用词缀-受击保护4.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv2"
+          ]
+        },
+        {
+          "id": 30106,
+          "affix": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "comment": "TPS-通用词缀-受击叠加限制0.2幅度",
+          "ability_names": [
+            "MonsterAbility_TPSAffix_Normal_Hit_Layer_Additive_0_2"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "25133801": {
       "id": 25133801,
       "name": "历经百战的嵌合兽怪箭士",
@@ -24419,6 +25763,137 @@
         }
       ]
     },
+    "25134601": {
+      "id": 25134601,
+      "name": "浪涛锚定者",
+      "title": "浪涛锚定者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25134602": {
+      "id": 25134602,
+      "name": "浪涛锚定者",
+      "title": "浪涛锚定者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5717,
+          "affix": "7.2-挑战-鲸鱼-深境词缀",
+          "comment": "7.2-挑战-鲸鱼-深境词缀",
+          "ability_names": [
+            "Monster_Volkodlak_Whale_ChallengeMark_01"
+          ]
+        }
+      ]
+    },
+    "25134604": {
+      "id": 25134604,
+      "name": "浪涛锚定者",
+      "title": "浪涛锚定者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25134605": {
+      "id": 25134605,
+      "name": "浪涛锚定者",
+      "title": "浪涛锚定者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5717,
+          "affix": "7.2-挑战-鲸鱼-深境词缀",
+          "comment": "7.2-挑战-鲸鱼-深境词缀",
+          "ability_names": [
+            "Monster_Volkodlak_Whale_ChallengeMark_01"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25134606": {
+      "id": 25134606,
+      "name": "浪涛锚定者",
+      "title": "浪涛锚定者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5717,
+          "affix": "7.2-挑战-鲸鱼-深境词缀",
+          "comment": "7.2-挑战-鲸鱼-深境词缀",
+          "ability_names": [
+            "Monster_Volkodlak_Whale_ChallengeMark_01"
+          ]
+        },
+        {
+          "id": 5599,
+          "affix": "地脉挑战怪物成就屏蔽判定gv",
+          "comment": "地脉挑战怪物成就屏蔽判定gv",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        },
+        {
+          "id": 5731,
+          "affix": "地脉n5以上难度标记",
+          "comment": "地脉n5以上难度标记",
+          "ability_names": [
+            "MonsterAffix_LeyLineChallenge_HighLevelMark"
+          ]
+        }
+      ]
+    },
     "25135001": {
       "id": 25135001,
       "name": "凝冰秘法师",
@@ -24482,6 +25957,37 @@
     },
     "25135004": {
       "id": 25135004,
+      "name": "凝冰秘法师",
+      "title": "凝冰而造的雪精",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25135005": {
+      "id": 25135005,
       "name": "凝冰秘法师",
       "title": "凝冰而造的雪精",
       "affixes": [
@@ -24661,6 +26167,37 @@
           "comment": "通用的特效表现",
           "ability_names": [
             "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25135107": {
+      "id": 25135107,
+      "name": "凝冰戍卫",
+      "title": "凝冰而造的雪精",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30102,
+          "affix": "【废弃】TPS-通用词缀-影域特效2",
+          "comment": "【废弃】TPS-通用词缀-影域特效2",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
           ]
         }
       ]
@@ -25059,6 +26596,215 @@
         }
       ]
     },
+    "25137101": {
+      "id": 25137101,
+      "name": "历经百战的厄生古树种",
+      "title": "历经百战的厄生古树种",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "25137102": {
+      "id": 25137102,
+      "name": "历经百战的厄生古树种",
+      "title": "历经百战的厄生古树种",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5729,
+          "affix": "7.2 灾厄树灵Ban大招",
+          "comment": "7.2 灾厄树灵Ban大招",
+          "ability_names": [
+            "MonsterAffix_Leshy_Mature_Disaster_Ban_Ultimate"
+          ]
+        },
+        {
+          "id": 5737,
+          "affix": "7.2 WQ灾厄树灵 特做逻辑",
+          "comment": "灾厄树灵永续强化",
+          "ability_names": [
+            "MonsterAffix_Leshy_Mature_Disaster_7_2_WQ_Phase_Logic"
+          ]
+        },
+        {
+          "id": 5738,
+          "affix": "7.2 TPS岩元素盾受岩攻击扣除岩盾翻倍",
+          "comment": "岩元素盾受岩攻击扣除岩盾翻倍",
+          "ability_names": [
+            "MonsterAffix_TPS_RockShield_DeductAmount"
+          ]
+        }
+      ]
+    },
+    "25137103": {
+      "id": 25137103,
+      "name": "历经百战的厄生古树种",
+      "title": "历经百战的厄生古树种",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5738,
+          "affix": "7.2 TPS岩元素盾受岩攻击扣除岩盾翻倍",
+          "comment": "岩元素盾受岩攻击扣除岩盾翻倍",
+          "ability_names": [
+            "MonsterAffix_TPS_RockShield_DeductAmount"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25137104": {
+      "id": 25137104,
+      "name": "历经百战的厄生古树种",
+      "title": "历经百战的厄生古树种",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5729,
+          "affix": "7.2 灾厄树灵Ban大招",
+          "comment": "7.2 灾厄树灵Ban大招",
+          "ability_names": [
+            "MonsterAffix_Leshy_Mature_Disaster_Ban_Ultimate"
+          ]
+        },
+        {
+          "id": 5738,
+          "affix": "7.2 TPS岩元素盾受岩攻击扣除岩盾翻倍",
+          "comment": "岩元素盾受岩攻击扣除岩盾翻倍",
+          "ability_names": [
+            "MonsterAffix_TPS_RockShield_DeductAmount"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5740,
+          "affix": "7.2 木屋守卫战 岩盾特判标识",
+          "comment": "差分灾厄树灵岩盾含量",
+          "ability_names": [
+            "MonsterAffix_Leshy_Mature_Disaster_WQ_TowerDefense"
+          ]
+        }
+      ]
+    },
+    "25137105": {
+      "id": 25137105,
+      "name": "历经百战的厄生古树种",
+      "title": "历经百战的厄生古树种",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5730,
+          "affix": "7.2 灾厄树灵爬塔词缀",
+          "comment": "7.2 灾厄树灵爬塔词缀",
+          "ability_names": [
+            "MonsterAffix_Leshy_Mature_Disaster_Is_Elite"
+          ]
+        }
+      ]
+    },
+    "25137106": {
+      "id": 25137106,
+      "name": "历经百战的厄生古树种",
+      "title": "历经百战的厄生古树种",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "25137201": {
+      "id": 25137201,
+      "name": "「永恒蔓生的幻景」",
+      "title": "「永恒蔓生的幻景」",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5738,
+          "affix": "7.2 TPS岩元素盾受岩攻击扣除岩盾翻倍",
+          "comment": "岩元素盾受岩攻击扣除岩盾翻倍",
+          "ability_names": [
+            "MonsterAffix_TPS_RockShield_DeductAmount"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
     "25138001": {
       "id": 25138001,
       "name": "幼嫩的分节树",
@@ -25156,6 +26902,61 @@
           "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
           "ability_names": [
             "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "25138004": {
+      "id": 25138004,
+      "name": "幼嫩的分节树",
+      "title": "生于灵野的树妖",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 30101,
+          "affix": "TPS-通用词缀-影域特效1",
+          "comment": "TPS-通用词缀-影域特效1",
+          "ability_names": [
+            "MonsterAbility_TPS_Common_Thegrey_Corrupt_01"
+          ]
+        },
+        {
+          "id": 30104,
+          "affix": "TPS-通用词缀-受击保护3.5",
+          "comment": "TPS-通用词缀-受击保护3.5",
+          "ability_names": [
+            "MonsterAbility_Soldier_HitHandler_Protection_Lv1"
+          ]
+        },
+        {
+          "id": 30110,
+          "affix": "TPS-怪通用逻辑标记",
+          "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
+          "ability_names": [
+            "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        },
+        {
+          "id": 5728,
+          "affix": "7.2 灾厄树灵召唤物岩盾",
+          "comment": "让灾厄树灵召唤出的小树灵持有岩盾",
+          "ability_names": [
+            "MonsterAffix_Leshy_Normal_RockShield"
+          ]
+        },
+        {
+          "id": 5738,
+          "affix": "7.2 TPS岩元素盾受岩攻击扣除岩盾翻倍",
+          "comment": "岩元素盾受岩攻击扣除岩盾翻倍",
+          "ability_names": [
+            "MonsterAffix_TPS_RockShield_DeductAmount"
           ]
         }
       ]
@@ -25316,6 +27117,97 @@
           "comment": "地脉挑战怪物成就屏蔽判定gv",
           "ability_names": [
             "MonsterAffix_LeyLineChallenge_GeneralAchievementCheck"
+          ]
+        }
+      ]
+    },
+    "25139101": {
+      "id": 25139101,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
+          ]
+        }
+      ]
+    },
+    "25139102": {
+      "id": 25139102,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
+          ]
+        }
+      ]
+    },
+    "25139103": {
+      "id": 25139103,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
+          ]
+        }
+      ]
+    },
+    "25139104": {
+      "id": 25139104,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
+          ]
+        }
+      ]
+    },
+    "25139105": {
+      "id": 25139105,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
+          ]
+        }
+      ]
+    },
+    "25139106": {
+      "id": 25139106,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
+          ]
+        }
+      ]
+    },
+    "25139107": {
+      "id": 25139107,
+      "affixes": [
+        {
+          "id": 51392,
+          "affix": "矮灵-吸盘切割机词缀",
+          "comment": "矮灵-吸盘切割机词缀",
+          "ability_names": [
+            "Monster_Karzelek_GripCutMachine"
           ]
         }
       ]
@@ -28834,6 +30726,21 @@
       "name": "冰霜骗骗花",
       "title": "冰霜骗骗花"
     },
+    "26010106": {
+      "id": 26010106,
+      "name": "冰霜骗骗花",
+      "title": "冰霜骗骗花",
+      "affixes": [
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "26010111": {
       "id": 26010111,
       "name": "冰霜骗骗花",
@@ -29012,6 +30919,29 @@
           "comment": "急冻树雪山活动",
           "ability_names": [
             "MonsterAffix_Regisvine_Ice_Activity"
+          ]
+        }
+      ]
+    },
+    "26020103": {
+      "id": 26020103,
+      "name": "急冻树",
+      "title": "急冻树",
+      "affixes": [
+        {
+          "id": 5711,
+          "affix": "7.2 派遣战斗攻血词缀-急冻树",
+          "comment": "活动怪定制攻血属性",
+          "ability_names": [
+            "Monsteraffix_Properties_ActivityTeyvatDispatch_Regisvine_Ice"
+          ]
+        },
+        {
+          "id": 5715,
+          "affix": "7.2 派遣战斗 多层血条阶段监听",
+          "comment": "根据剩余血条层数达成不同奖牌watcher",
+          "ability_names": [
+            "MonsterAffix_MultiHpStageDetect_ActivityTeyvatDispatch"
           ]
         }
       ]
@@ -29695,6 +31625,29 @@
       "id": 26050602,
       "name": "深海龙蜥·原种",
       "title": "深海龙蜥·原种"
+    },
+    "26050603": {
+      "id": 26050603,
+      "name": "深海龙蜥·原种",
+      "title": "深海龙蜥·原种",
+      "affixes": [
+        {
+          "id": 5712,
+          "affix": "7.2 派遣战斗攻血词缀-深海龙蜥",
+          "comment": "活动怪定制攻血属性",
+          "ability_names": [
+            "Monsteraffix_Properties_ActivityTeyvatDispatch_Drake_DeepSea_Water"
+          ]
+        },
+        {
+          "id": 5715,
+          "affix": "7.2 派遣战斗 多层血条阶段监听",
+          "comment": "根据剩余血条层数达成不同奖牌watcher",
+          "ability_names": [
+            "MonsterAffix_MultiHpStageDetect_ActivityTeyvatDispatch"
+          ]
+        }
+      ]
     },
     "26050681": {
       "id": 26050681,
@@ -30593,6 +32546,29 @@
       "id": 26110101,
       "name": "翠翎恐蕈",
       "title": "翠翎恐蕈"
+    },
+    "26110103": {
+      "id": 26110103,
+      "name": "翠翎恐蕈",
+      "title": "翠翎恐蕈",
+      "affixes": [
+        {
+          "id": 5713,
+          "affix": "7.2 派遣战斗攻血词缀-翠翎恐蕈",
+          "comment": "活动怪定制攻血属性",
+          "ability_names": [
+            "Monsteraffix_Properties_ActivityTeyvatDispatch_Fungus_Raptor"
+          ]
+        },
+        {
+          "id": 5715,
+          "affix": "7.2 派遣战斗 多层血条阶段监听",
+          "comment": "根据剩余血条层数达成不同奖牌watcher",
+          "ability_names": [
+            "MonsterAffix_MultiHpStageDetect_ActivityTeyvatDispatch"
+          ]
+        }
+      ]
     },
     "26110181": {
       "id": 26110181,
@@ -32281,6 +34257,29 @@
         }
       ]
     },
+    "26230305": {
+      "id": 26230305,
+      "name": "金焰绒翼龙暴君",
+      "title": "金焰绒翼龙暴君",
+      "affixes": [
+        {
+          "id": 5714,
+          "affix": "7.2 派遣战斗攻血词缀-翼手龙挑战",
+          "comment": "活动怪定制攻血属性",
+          "ability_names": [
+            "Monsteraffix_Properties_ActivityTeyvatDispatch_Natsaurus_Flamingo_Primo"
+          ]
+        },
+        {
+          "id": 5715,
+          "affix": "7.2 派遣战斗 多层血条阶段监听",
+          "comment": "根据剩余血条层数达成不同奖牌watcher",
+          "ability_names": [
+            "MonsterAffix_MultiHpStageDetect_ActivityTeyvatDispatch"
+          ]
+        }
+      ]
+    },
     "26240101": {
       "id": 26240101,
       "name": "幼暝视龙",
@@ -33204,6 +35203,37 @@
         }
       ]
     },
+    "26310202": {
+      "id": 26310202,
+      "name": "嵌合梭地兽",
+      "title": "残体合成造兽",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        },
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
     "26310301": {
       "id": 26310301,
       "name": "嵌合翼象兽",
@@ -33340,6 +35370,37 @@
           "comment": "TPS-怪通用逻辑标记GV_Entity_In_TheGrey",
           "ability_names": [
             "MonsterAffix_TPS_Register_TheGrey"
+          ]
+        }
+      ]
+    },
+    "26310403": {
+      "id": 26310403,
+      "name": "嵌合角熊",
+      "title": "人造的树野之灵",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 2102,
+          "affix": "妖精教学触发标记",
+          "comment": "妖精教学触发标记",
+          "ability_names": [
+            "MonsterAffix_StarModeTriggerTutorial"
+          ]
+        },
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
           ]
         }
       ]
@@ -33578,6 +35639,82 @@
           "comment": "7.0穿山鹰爬塔词缀",
           "ability_names": [
             "Monster_Chimera_OwlPangolin_02_TowerMark"
+          ]
+        }
+      ]
+    },
+    "26310701": {
+      "id": 26310701,
+      "name": "嵌合鳄蹄兽",
+      "title": "残体合成造兽",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "26310702": {
+      "id": 26310702,
+      "name": "嵌合鳄蹄兽",
+      "title": "残体合成造兽",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
+          ]
+        }
+      ]
+    },
+    "26310801": {
+      "id": 26310801,
+      "name": "嵌合蝎尾怪",
+      "title": "鸟身蝎尾的裂壳者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        }
+      ]
+    },
+    "26310802": {
+      "id": 26310802,
+      "name": "嵌合蝎尾怪",
+      "title": "鸟身蝎尾的裂壳者",
+      "affixes": [
+        {
+          "id": 55316,
+          "affix": "妖精-受三降影响特效",
+          "comment": "通用的特效表现",
+          "ability_names": [
+            "Monster_Fae_StarModeHandler"
+          ]
+        },
+        {
+          "id": 5724,
+          "affix": "7.2 圣土化怪物死亡效果替换",
+          "comment": "圣土化怪物死亡效果替换总控",
+          "ability_names": [
+            "MonsterAffix_SLT_DiePatternSwitch"
           ]
         }
       ]
@@ -33866,6 +36003,24 @@
           ]
         }
       ]
+    },
+    "28021801": {
+      "id": 28021801,
+      "affixes": [
+        {
+          "id": 2101,
+          "affix": "地方传奇标记",
+          "comment": "地方传奇标记",
+          "ability_names": [
+            "MonsterAffix_LocalLegendTag"
+          ]
+        }
+      ]
+    },
+    "28021802": {
+      "id": 28021802,
+      "name": "历经百战的太古硬猬兽",
+      "title": "历经百战的太古硬猬兽"
     },
     "28022102": {
       "id": 28022102,
@@ -36588,6 +38743,16 @@
       "name": "水丘丘萨满",
       "title": "水丘丘萨满"
     },
+    "84103012": {
+      "id": 84103012,
+      "name": "水丘丘萨满",
+      "title": "水丘丘萨满"
+    },
+    "84104022": {
+      "id": 84104022,
+      "name": "丘丘水行游侠",
+      "title": "丘丘水行游侠"
+    },
     "84201011": {
       "id": 84201011,
       "name": "火深渊法师",
@@ -36602,6 +38767,11 @@
           ]
         }
       ]
+    },
+    "84201012": {
+      "id": 84201012,
+      "name": "火深渊法师",
+      "title": "火之咏者"
     },
     "84201021": {
       "id": 84201021,
@@ -36673,6 +38843,16 @@
       "name": "嗜雷·兽境猎犬",
       "title": "兽境猎犬"
     },
+    "84213011": {
+      "id": 84213011,
+      "name": "荒野幽徒",
+      "title": "狂猎之影"
+    },
+    "84213101": {
+      "id": 84213101,
+      "name": "荒野狂狩士",
+      "title": "狂猎之影"
+    },
     "84301011": {
       "id": 84301011,
       "name": "愚人众先遣队·冰铳重卫士",
@@ -36707,6 +38887,11 @@
       "id": 84301062,
       "name": "愚人众先遣队·火铳游击兵",
       "title": "先遣队·火铳游击兵"
+    },
+    "84307112": {
+      "id": 84307112,
+      "name": "愚人众特辖队·线列军",
+      "title": "特辖队"
     },
     "84307911": {
       "id": 84307911,
@@ -36747,6 +38932,11 @@
       "id": 84403011,
       "name": "遗迹龙兽·空巡",
       "title": "遗迹龙兽·空巡"
+    },
+    "84409012": {
+      "id": 84409012,
+      "name": "秘源机兵·寻捕械",
+      "title": "秘源机兵·寻捕械"
     },
     "84501021": {
       "id": 84501021,
@@ -36833,13 +39023,28 @@
       "name": "冰霜骗骗花",
       "title": "冰霜骗骗花"
     },
+    "84601012": {
+      "id": 84601012,
+      "name": "冰霜骗骗花",
+      "title": "冰霜骗骗花"
+    },
     "84601021": {
       "id": 84601021,
       "name": "炽热骗骗花",
       "title": "炽热骗骗花"
     },
+    "84601022": {
+      "id": 84601022,
+      "name": "炽热骗骗花",
+      "title": "炽热骗骗花"
+    },
     "84601031": {
       "id": 84601031,
+      "name": "电气骗骗花",
+      "title": "电气骗骗花"
+    },
+    "84601032": {
+      "id": 84601032,
       "name": "电气骗骗花",
       "title": "电气骗骗花"
     },

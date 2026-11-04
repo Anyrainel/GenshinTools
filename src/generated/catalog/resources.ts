@@ -11,6 +11,8 @@ import type {
 } from '../../domain/models';
 
 export const characters: CharacterResource[] = [
+  {"id": "valeriy", "rarity": 4, "imagePath": "/character/valeriy.webp"},
+  {"id": "mitya", "rarity": 5, "imagePath": "/character/mitya.webp"},
   {"id": "vodyanitsa", "rarity": 5, "imagePath": "/character/vodyanitsa.webp"},
   {"id": "vesna", "rarity": 5, "imagePath": "/character/vesna.webp"},
   {"id": "traveler_cryo", "rarity": 5, "imagePath": "/character/traveler.webp"},
@@ -258,6 +260,7 @@ export const artifactHalfSets: ArtifactHalfSet[] = [
 ];
 
 export const weapons: WeaponResource[] = [
+  {"id": "starsealed_edict", "rarity": 5, "imagePath": "/weapon/starsealed_edict.webp"},
   {"id": "breezeborne_refrain", "rarity": 4, "imagePath": "/weapon/breezeborne_refrain.webp"},
   {"id": "winters_heavy_heart", "rarity": 4, "imagePath": "/weapon/winters_heavy_heart.webp"},
   {"id": "silver_light", "rarity": 4, "imagePath": "/weapon/silver_light.webp"},

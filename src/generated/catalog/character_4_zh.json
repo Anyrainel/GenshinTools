@@ -3865,6 +3865,113 @@
     ],
     "glossary": null
   },
+  "valeriy": {
+    "id": "10000137",
+    "name": "瓦列里",
+    "skills": [
+      {
+        "name": "A. 近卫战法·盾剑攻斥",
+        "descHtml": "<span style=\"color: #FFD780FF;\">普通攻击</span><br>进行至多三段的连续剑击。<br><br><span style=\"color: #FFD780FF;\">重击</span><br>消耗一定体力，向前方跃起，并砸击地面，对附近的敌人造成物理伤害。<br>瓦列里拥有至少40点<span style=\"color: #FFD780FF;\">冲击势能</span>时，将消耗所有<span style=\"color: #FFD780FF;\">冲击势能</span>，改为进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>。<br><br><span style=\"color: #FFD780FF;\">下落攻击</span><br>从空中下坠冲击地面，攻击下落路径上的敌人，并在落地时造成范围伤害。",
+        "details": [
+          {"label": "一段伤害", "template": "{param1:F1P}"},
+          {"label": "二段伤害", "template": "{param2:F1P}"},
+          {"label": "三段伤害", "template": "{param3:F1P}"},
+          {"label": "重击伤害", "template": "{param4:F1P}"},
+          {"label": "臼炮直射·抵近轰击伤害", "template": "{param5:F1P}"},
+          {"label": "重击体力消耗", "template": "{param6:F1}点"},
+          {"label": "雷元素伤害增加", "template": "{param7:F2P}攻击力"},
+          {"label": "星超导反应伤害增加", "template": "{param8:F2P}攻击力"},
+          {"label": "攻斥指令层数", "template": "{param9:I}层"},
+          {"label": "攻斥指令持续时间", "template": "{param10:F1}秒"},
+          {"label": "下坠期间伤害", "template": "{param11:F1P}"},
+          {"label": "低空/高空坠地冲击伤害", "template": "{param12:F1P}/{param13:F1P}"}
+        ]
+      },
+      {
+        "name": "E. 攻势防御·堡垒骤进",
+        "descHtml": "举盾并向前冲刺，造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>，获得40点<span style=\"color: #FFD780FF;\">冲击势能</span>，并展开蓄雷护盾。<br>蓄雷护盾的伤害吸收量受益于瓦列里的攻击力，对<span style=\"color: #FFACFFFF;\">雷元素伤害</span>有250%的吸收效果。",
+        "details": [
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "护盾吸收量", "template": "{param2:F1P}攻击力+{param3:I}"},
+          {"label": "护盾持续时间", "template": "{param4:F1}秒"},
+          {"label": "冷却时间", "template": "{param5:F1}秒"}
+        ]
+      },
+      {
+        "name": "Q. 火力焦点·雷霰急袭",
+        "descHtml": "对附近的敌人造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>，并向高空发射<span style=\"color: #FFD780FF;\">雷霰重弹</span>。<span style=\"color: #FFD780FF;\">雷霰重弹</span>会分散成大量弹幕坠向地面，对附近的敌人造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>。",
+        "details": [
+          {"label": "技能伤害", "template": "{param1:F1P}"},
+          {"label": "雷霰重弹伤害", "template": "{param2:F1P}"},
+          {"label": "持续时间", "template": "{param3:F1}秒"},
+          {"label": "冷却时间", "template": "{param4:F1}秒"},
+          {"label": "元素能量", "template": "{param5:I}"}
+        ]
+      }
+    ],
+    "passives": [
+      {
+        "name": "与徐进弹幕为伴",
+        "descHtml": "元素爆发<span style=\"color: #FFD780FF;\">火力焦点·雷霰急袭</span>中的<span style=\"color: #FFD780FF;\">雷霰重弹</span>下坠期间，队伍中附近的当前场上其他角色的元素类型为<span style=\"color: #FFACFFFF;\">雷元素</span>的攻击命中敌人时，瓦列里将获得5点<span style=\"color: #FFD780FF;\">冲击势能</span>。每次施放元素爆发后，至多通过这种方式获得80点<span style=\"color: #FFD780FF;\">冲击势能</span>。"
+      },
+      {
+        "name": "向防线缺口突击",
+        "descHtml": "<span style=\"color: #FFD780FF;\">攻斥指令</span>获得强化：依据进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>时消耗的<span style=\"color: #FFD780FF;\">冲击势能</span>，每消耗一点<span style=\"color: #FFD780FF;\">冲击势能</span>，都会使<span style=\"color: #FFD780FF;\">攻斥指令</span>的伤害加成效果进一步提升。若瓦列里：<br>·处于<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态：每点消耗的<span style=\"color: #FFD780FF;\">冲击势能</span>都会使<span style=\"color: #FFD780FF;\">攻斥指令</span>的伤害加成效果提升，提升值相当于瓦列里攻击力的0.9%；<br>·不处于<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态：每点消耗的<span style=\"color: #FFD780FF;\">冲击势能</span>都会使<span style=\"color: #FFD780FF;\">攻斥指令</span>的伤害加成效果提升，提升值相当于瓦列里攻击力的0.3%。"
+      },
+      {
+        "name": "极寒应变惯性",
+        "descHtml": "处于<span style=\"color: #FFD780FF;\">极星辉域</span>中时，瓦列里将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态。"
+      },
+      {
+        "name": "冰原行动情报",
+        "descHtml": "在至冬（挪德卡莱除外）执行时长为20小时的探索派遣任务时，获得的奖励增加25%。"
+      }
+    ],
+    "constellations": [
+      {
+        "name": "1. 持续压制的时序",
+        "descHtml": "进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>后，会为瓦列里恢复6点元素能量。依据进行特殊重击时消耗的<span style=\"color: #FFD780FF;\">冲击势能</span>，超过40点的部分，每消耗10点，都会使瓦列里额外恢复1.5点元素能量。每次进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>，至多通过这种方式为瓦列里恢复15点元素能量。该效果每15秒至多触发一次。<br>此外，每次进入战斗状态时，瓦列里首次施放元素战技<span style=\"color: #FFD780FF;\">攻势防御·堡垒骤进</span>时，还会额外获得相当于原本150%的<span style=\"color: #FFD780FF;\">冲击势能</span>。"
+      },
+      {
+        "name": "2. 伴随冲阵的队型",
+        "descHtml": "施放元素战技<span style=\"color: #FFD780FF;\">攻势防御·堡垒骤进</span>后的18秒内，队伍中附近的所有角色的元素精通提升100点。<br>此外，处于蓄雷护盾庇护下时，若瓦列里的<span style=\"color: #FFD780FF;\">冲击势能</span>已达到上限，触发获取<span style=\"color: #FFD780FF;\">冲击势能</span>的效果时，将转为提升蓄雷护盾的伤害吸收量，每1点溢出的<span style=\"color: #FFD780FF;\">冲击势能</span>都会使蓄雷护盾的伤害吸收量提升瓦列里攻击力的8%，至多通过这种方式转化20点溢出的<span style=\"color: #FFD780FF;\">冲击势能</span>。"
+      },
+      {
+        "name": "3. 白刃对决的戒备",
+        "descHtml": "普通攻击<span style=\"color: #FFD780FF;\">近卫战法·盾剑攻斥</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "4. 不惧折损的韧性",
+        "descHtml": "<span style=\"color: #FFD780FF;\">冲击势能</span>的上限提升30点，且获取效率提升30%。<br>此外，突破天赋<span style=\"color: #FFD780FF;\">与徐进弹幕为伴</span>的效果获得强化：每次施放元素爆发后，至多可以通过该天赋获得104点<span style=\"color: #FFD780FF;\">冲击势能</span>。需要解锁突破天赋<span style=\"color: #FFD780FF;\">与徐进弹幕为伴</span>。"
+      },
+      {
+        "name": "5. 分割歼灭的专意",
+        "descHtml": "元素战技<span style=\"color: #FFD780FF;\">攻势防御·堡垒骤进</span>的技能等级提高3级。<br>至多提升至15级。"
+      },
+      {
+        "name": "6. 穿透敌阵的威能",
+        "descHtml": "特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>与元素爆发<span style=\"color: #FFD780FF;\">火力焦点·雷霰急袭</span>中的<span style=\"color: #FFD780FF;\">雷霰重弹</span>获得强化：造成的伤害提升100%，并且在命中敌人后的7秒内，使其受到的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>的暴击率提升10%；若受到的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>为星超导反应伤害，则该伤害的暴击伤害也会提升40%。"
+      }
+    ],
+    "glossary": [
+      {
+        "name": "极星辉域",
+        "descHtml": "触发星超导反应时，附近的区域会短暂变化为<span style=\"color: #FFD780FF;\">极星辉域</span>；处于极星辉域中时，特定角色将会进入<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，使其不同技能分别获得对应的强化效果。"
+      },
+      {
+        "name": "臼炮直射·抵近轰击",
+        "descHtml": "瓦列里的特殊重击。拥有至少40点<span style=\"color: #FFD780FF;\">冲击势能</span>时进行重击，会消耗所有<span style=\"color: #FFD780FF;\">冲击势能</span>，改为进行该特殊重击，对前方造成<span style=\"color: #FFACFFFF;\">雷元素范围伤害</span>，并获得15层<span style=\"color: #FFD780FF;\">攻斥指令</span>。<br>再次施放特殊重击时，<span style=\"color: #FFD780FF;\">攻斥指令</span>的层数将会刷新。<br>施放元素战技<span style=\"color: #FFD780FF;\">攻势防御·堡垒骤进</span>或元素爆发<span style=\"color: #FFD780FF;\">火力焦点·雷霰急袭</span>后的0.8秒内，若瓦列里拥有至少40点<span style=\"color: #FFD780FF;\">冲击势能</span>，则瓦列里进行的下一次普通攻击将会转为进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>。"
+      },
+      {
+        "name": "攻斥指令",
+        "descHtml": "瓦列里进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>后，会获得的特殊效果。依据瓦列里是否处于<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态，提升不同类型的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>。若瓦列里：<br>·处于<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态：队伍中附近的当前场上角色的普通攻击、重击、下落攻击、元素战技或元素爆发对敌人造成视为星超导反应伤害的<span style=\"color: #FFACFFFF;\">雷元素伤害</span>时，将消耗一层<span style=\"color: #FFD780FF;\">攻斥指令</span>，提升造成的伤害，提升值基于瓦列里的攻击力；<br>·不处于<span style=\"color: #FFD780FF;\">辉映·星超导</span>状态：队伍中附近的当前场上角色的普通攻击、重击、下落攻击、元素战技或元素爆发对敌人造成<span style=\"color: #FFACFFFF;\">雷元素伤害</span>时，将消耗一层<span style=\"color: #FFD780FF;\">攻斥指令</span>，提升造成的伤害，提升值基于瓦列里的攻击力。<br>一次<span style=\"color: #FFACFFFF;\">雷元素伤害</span>同时命中多名敌人时，会依据命中敌人的数量消耗<span style=\"color: #FFD780FF;\">攻斥指令</span>的层数。"
+      },
+      {
+        "name": "冲击势能",
+        "descHtml": "瓦列里用于强化战斗的特殊能量，初始上限为100点。拥有至少40点<span style=\"color: #FFD780FF;\">冲击势能</span>时，可以进行特殊重击<span style=\"color: #FFD780FF;\">臼炮直射·抵近轰击</span>。<br>瓦列里可以通过以下方式获取<span style=\"color: #FFD780FF;\">冲击势能</span>：<br>·施放元素战技<span style=\"color: #FFD780FF;\">攻势防御·堡垒骤进</span>时；<br>·解锁突破天赋「与徐进弹幕为伴」后，元素爆发<span style=\"color: #FFD780FF;\">火力焦点·雷霰急袭</span>持续期间，队伍中附近的当前场上角色的元素类型为<span style=\"color: #FFACFFFF;\">雷元素</span>的攻击命中敌人时。"
+      }
+    ]
+  },
   "xiangling": {
     "id": "10000023",
     "name": "香菱",

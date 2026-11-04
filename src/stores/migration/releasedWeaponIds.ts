@@ -4,6 +4,7 @@ import type { AccountData, TierAssignment } from "@/domain/models";
 import type { TeamCompDelta } from "@/domain/team/teamDeltas";
 import type { TeamComp, TeamSetupConfig } from "@/domain/team/types";
 import { migrateGenericTierStore } from "./tier";
+import { migrateValeriySupportConfig } from "./valeriySupport";
 
 // Before 7.1, these released four-star weapons used temporary beta IDs in
 // weapon keys, team slots, combat-option keys, analyzer alternatives and tiers.
@@ -48,6 +49,7 @@ export function migrateReleasedWeaponComp(comp: TeamComp): TeamComp {
 export function migrateReleasedWeaponSetup(
   config: TeamSetupConfig
 ): TeamSetupConfig {
+  config = migrateValeriySupportConfig(config);
   return {
     ...config,
     combatOptions: migrateReleasedWeaponRecord(config.combatOptions ?? {}),

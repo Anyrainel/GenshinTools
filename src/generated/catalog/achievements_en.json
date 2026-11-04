@@ -4990,6 +4990,78 @@
       "desc": "Complete \"Secret Tsarist Assignment: Part I.\"",
       "name": "Winter Night's Letter"
     },
+    "81733": {
+      "desc": "Record tales of times gone by from eastern Snezhnaya in your Field Notes.",
+      "name": "Las Palabras Andantes"
+    },
+    "81734": {
+      "desc": "Record the full story of the events in Novokitezhgrad in your Field Notes.",
+      "name": "A Crack Rings Through the Kristall"
+    },
+    "81735": {
+      "desc": "Destroy a rock surrounding a Kristall deposit for the first time.",
+      "name": "Gold Miner"
+    },
+    "81736": {
+      "desc": "Destroy a truly staggering number of rocks surrounding Kristall deposits.",
+      "name": "Putting Holes in the Planet"
+    },
+    "81738": {
+      "desc": "Hurl a Prime Ice Construct: Pickaxe to smash a distant rock.",
+      "name": "Mjollnir?"
+    },
+    "81739": {
+      "desc": "Take control of a Rapid-Fire Autocannon for the first time.",
+      "name": "Who Needs a Magic Wand...?"
+    },
+    "81740": {
+      "desc": "Defeat the two corrupted guardians of Old Kitezhgrad.",
+      "name": "Two Heroes of the Old City"
+    },
+    "81741": {
+      "desc": "Perhaps the way everything was reshaped had a prototype all along...",
+      "name": "A Faded Shadow in the Ice"
+    },
+    "81742": {
+      "desc": "Make your way through downtown Novokitezhgrad at breakneck speed.",
+      "name": "The Legendary Commute"
+    },
+    "81743": {
+      "desc": "Sell every consignment item unearthed during your excavations...",
+      "name": "Tales of Pearls Beneath the Dust"
+    },
+    "81744": {
+      "desc": "Discover and illuminate every secret message left behind by the ancient fae.",
+      "name": "No Secrets Left in Shadow"
+    },
+    "81745": {
+      "desc": "Reach Novokitezhgrad, the metropolis of fae and Kristall.",
+      "name": "Where Kristall Runs Like Water"
+    },
+    "81746": {
+      "desc": "Restore the underground water supply beneath Novokitezhgrad.",
+      "name": "So the Waters Were Healed Unto This Day"
+    },
+    "81747": {
+      "desc": "Escape the Shadow Realm aboard a minecart.",
+      "name": "Virtua Cop...?"
+    },
+    "81749": {
+      "desc": "Purge the Blightkristall from both rifts across the icefield.",
+      "name": "As Calamity Melts Away Like Black Snow"
+    },
+    "81753": {
+      "desc": "Reach the depths beneath the fallen bones of the great beast, within the wing-shaped peaks.",
+      "name": "The Hall Where Death Is Mirrored"
+    },
+    "81755": {
+      "desc": "Complete \"Secret Tsarist Assignment: Part II.\"",
+      "name": "The Envoy Has Arrived"
+    },
+    "81756": {
+      "desc": "Help the crystal tree grow in a place where sunlight never reaches.",
+      "name": "When the Iron Tree Blooms"
+    },
     "82001": {
       "desc": "Hit a falcon mid-flight with your bow.",
       "name": "Nothing Special, Just Practice"
@@ -6187,6 +6259,10 @@
       "desc": "Break Guardian Blade of Drifting Snow's \"Ice Coffin\" using only Pyro attacks.",
       "name": "\"Passion Ablaze\""
     },
+    "82313": {
+      "desc": "Defeat the Wavebinder while it is in its Valiant state...",
+      "name": "While the Drink Is Still Warm..."
+    },
     "84000": {
       "desc": "Complete the Mondstadt Archon Quests.",
       "name": "The End of the Beginning"
@@ -7235,6 +7311,42 @@
       "desc": "Complete \"A Rekviem for the Underworld.\"",
       "name": "A Rekviem for the Underworld"
     },
+    "84407": {
+      "desc": "Investigate the disturbances caused by the Nail of Retribution",
+      "name": "Dies Irae"
+    },
+    "84408": {
+      "desc": "Obtain the necessary information from the \"Variable-Response Query Terminal.\"",
+      "name": "The Reason for Being Here"
+    },
+    "84409": {
+      "desc": "Complete the \"Hour of Ruin.\"",
+      "name": "Hour of Ruin"
+    },
+    "84410": {
+      "desc": "Complete the \"Trial of Usurpation\" on the subject of \"Freedom.\"",
+      "name": "The Breeze That Blows Toward Freedom"
+    },
+    "84411": {
+      "desc": "Complete the \"Trial of Usurpation\" on the subject of \"Eternity.\"",
+      "name": "The Will That Sustains Eternity"
+    },
+    "84412": {
+      "desc": "Complete the \"Trial of Usurpation\" on the subject of \"Wisdom.\"",
+      "name": "\"Wisdom\" Has No Answer"
+    },
+    "84413": {
+      "desc": "Complete the \"Trial of Usurpation\" on the subject of \"War.\"",
+      "name": "A Treasure Forged by Victory"
+    },
+    "84414": {
+      "desc": "Complete the \"Trial of Usurpation\" on the subject of \"Love.\"",
+      "name": "A Curse Not Born of Love"
+    },
+    "84415": {
+      "desc": "Complete \"A Yesterday Sent From Beyond.\"",
+      "name": "A Yesterday Sent From Beyond"
+    },
     "84501": {
       "desc": "Successfully conduct cultural exchange with the hilichurls in \"Language Exchange.\"",
       "name": "...Odomu?"
@@ -7817,7 +7929,7 @@
     },
     "86066": {
       "desc": [
-        57,
+        60,
         9
       ],
       "name": "Ace of Survival"
@@ -7848,7 +7960,7 @@
     },
     "86074": {
       "desc": [
-        58,
+        61,
         20
       ],
       "name": "Aiming While Sliding is Pure Fantasy"
@@ -7904,6 +8016,141 @@
     "86087": {
       "desc": "Defeat a Chimeric Winged Lion in Co-Op Mode.",
       "name": "Endless Vitality"
+    },
+    "86092": {
+      "desc": "Light up the maps of Novokitezhgrad and Wingspan Peak in Snezhnaya.",
+      "name": "Continental Explorer: Snow Blanketed Nation (II)"
+    },
+    "86093": {
+      "desc": "Unlock all Teleport Waypoints in Novokitezhgrad and Wingspan Peak within the Snezhnaya region.",
+      "name": "Across the Icebound Snowscape (II)"
+    },
+    "86094": {
+      "desc": "Unlock all the Shrines of Depths in the following areas in Snezhnaya: Novokitezhgrad and Wingspan Peak.",
+      "name": "Sanctuary Pilgrim: Snow Blanketed Nation (II)"
+    },
+    "86095": {
+      "desc": "Unlock all Shadow Realm treasure vaults in Novokitezhgrad and Wingspan Peak in the Snezhnaya region.",
+      "name": "Bounty of the Shadow Realm: Snow Blanketed Nation (II)"
+    },
+    "86096": {
+      "desc": [
+        57,
+        4
+      ],
+      "name": "The Tundra Will Guide You Home (II)"
+    },
+    "86097": {
+      "desc": [
+        57,
+        9
+      ],
+      "name": "The Tundra Will Guide You Home (II)"
+    },
+    "86098": {
+      "desc": [
+        57,
+        18
+      ],
+      "name": "The Tundra Will Guide You Home (II)"
+    },
+    "86099": {
+      "desc": [
+        58,
+        45
+      ],
+      "name": "Glacial Treasure Hunter (II)"
+    },
+    "86100": {
+      "desc": [
+        58,
+        90
+      ],
+      "name": "Glacial Treasure Hunter (II)"
+    },
+    "86101": {
+      "desc": [
+        58,
+        180
+      ],
+      "name": "Glacial Treasure Hunter (II)"
+    },
+    "86102": {
+      "desc": [
+        59,
+        3
+      ],
+      "name": "Chillwinter Adventurer (II)"
+    },
+    "86103": {
+      "desc": [
+        59,
+        7
+      ],
+      "name": "Chillwinter Adventurer (II)"
+    },
+    "86104": {
+      "desc": [
+        59,
+        14
+      ],
+      "name": "Chillwinter Adventurer (II)"
+    },
+    "86105": {
+      "desc": "Witness the end of Grand Duke Alvis of the Domovoy and his daughter Thrud.",
+      "name": "We Shall Not Rise Again, Nor See Each Other"
+    },
+    "86106": {
+      "desc": "Reach maximum Construction Level at the \"Meeting Point: Teplo Oasis.\"",
+      "name": "The Kantharos Runs Deep"
+    },
+    "86107": {
+      "desc": "Reach maximum Construction Level at the \"Meeting Point: Royal Railway Transport Bureau.\"",
+      "name": "Echoes in Black"
+    },
+    "86108": {
+      "desc": "Obtain the shotgun \"Sosruko's Flame.\"",
+      "name": "Sosruko Here!"
+    },
+    "86109": {
+      "desc": "Obtain the shotgun \"Apsat's Mountain Hunt.\"",
+      "name": "Might I Suggest This One?"
+    },
+    "86110": {
+      "desc": "Obtain at least 1 Edge of Survival Medal in each of \"Hammer and Anvil,\" \"Harbor Under Heavy Guard,\" and \"The Calamity-Torn Old City\" in \"Edge of Survival.\"",
+      "name": "Urban Combat Specialist"
+    },
+    "86111": {
+      "desc": "Install 4 accessories on \"Sosruko's Flame.\"",
+      "name": "Kurdalagon's Breath"
+    },
+    "86112": {
+      "desc": "Install 4 accessories on \"Apsat's Mountain Hunt.\"",
+      "name": "Super Shotgun"
+    },
+    "86113": {
+      "desc": "Fire 10 consecutive shots within 15 seconds using \"Sosruko's Flame.\"",
+      "name": "Rip and Tear, Until It Is Done"
+    },
+    "86114": {
+      "desc": "Hit an enemy over 30 meters away using a Heavy Slug from \"Apsat's Mountain Hunt.\"",
+      "name": "Though He Was No Giant..."
+    },
+    "86115": {
+      "desc": "Ya-ho. Ya-ho. Ya-ho. Ya-ho...",
+      "name": "The Pied Piper"
+    },
+    "86116": {
+      "desc": "Take whatever you desire, so long as you can pay the price...",
+      "name": "Mimir's Well"
+    },
+    "86117": {
+      "desc": "Claim the final victory in a game of rock-paper-scissors.",
+      "name": "The King of Roshambo"
+    },
+    "86118": {
+      "desc": "Return to each person what rightfully belongs to them.",
+      "name": "What Was Found, Returned"
     }
   },
   "categories": {
@@ -7975,9 +8222,11 @@
     "68": "Unfettered Crescent",
     "69": "Snezhnaya: Sacred city of ice and pale star (I)",
     "7": "Marksmanship",
-    "70": "Land of Surging Shadows",
+    "70": "Land of Surging Shadows (I)",
     "71": "Mortal Travails: Series VII",
     "72": "Meetings in Outrealm: Series VII",
+    "73": "Snezhnaya: Sacred City of Ice and Pale Star (II)",
+    "74": "Land of Surging Shadows (II)",
     "8": "Challenger: Series I",
     "9": "Domains and Spiral Abyss: Series I"
   },
@@ -8039,6 +8288,9 @@
     "Follow {0} Seelies in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak to their Seelie Courts.",
     "Open {0} chests in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
     "Complete {0} Open World Time Trial Challenges in Everfrozen Earth, Volkodlak Tundra, Flamefeather Valley, White Birch Snowgrave, and Fellfrost Peak.",
+    "Follow {0} Seelie in Novokitezhgrad and Wingspan Peak to their Seelie Courts.",
+    "Open {0} chests in Novokitezhgrad and Wingspan Peak.",
+    "Complete {0} Open World Time Trial Challenges in Novokitezhgrad and Wingspan Peak.",
     "Obtain {0} Edge of Survival Medal(s).",
     "Defeat a total of {0} enemies while sliding."
   ]

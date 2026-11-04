@@ -42,4 +42,5 @@ export const LEYLINE_BOSS_IMAGE_ENEMY_ID: Record<number, string> = {
   10112: "4345", // Veteran Wind Operative → Wind Operative
   10121: "25139001", // Battle-Hardened Domovoy Sculptor (AGD monster ID)
   10123: "11792", // Guardian Blade of Drifting Snow
+  10131: "25134601", // Wavebinder (AGD monster ID)
 };

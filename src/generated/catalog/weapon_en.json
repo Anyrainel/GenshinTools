@@ -1678,7 +1678,7 @@
   "predator": {
     "id": "15415",
     "name": "Predator",
-    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">Effective only on the following platform: </span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>Dealing Cryo DMG to opponents increases this character's Normal and Charged Attack DMG by 10% for 6s. This effect can have a maximum of 2 stacks. Additionally, when Aloy equips Predator, ATK is increased by 66.",
+    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">Effective only on the following platform: </span><br><span style=\"color: #99FFFFFF;\">\"PlayStation®\"</span><br>Dealing Cryo DMG to opponents increases this character's Normal and Charged Attack DMG by 10% for 6s. This effect can have a maximum of 2 stacks. Additionally, when Aloy equips Predator, ATK is increased by 66.",
     "refinements": [
       []
     ]
@@ -2391,6 +2391,18 @@
       ["200", "56%"]
     ]
   },
+  "starsealed_edict": {
+    "id": "14525",
+    "name": "Starsealed Edict",
+    "descHtmlTpl": "Increases CRIT DMG by <span style=\"color: #99FFFFFF;\">{0}</span>. The equipping character gains the Crystal Compounding effect when they use their Elemental Skill, increasing Elemental Mastery by <span style=\"color: #99FFFFFF;\">{1}</span> for 20s. During this time, the equipping character gains a Law of Combustion stack when a nearby party member triggers an Elemental Reaction. Each stack increases Elemental Mastery by an additional <span style=\"color: #99FFFFFF;\">{2}</span>. Max 3 stacks. These stacks last until Crystal Compounding ends or the equipping character uses their Elemental Skill again.<br>Radiance: Stellar-Conduct: Each Law of Combustion stack also increases the equipping character's Stellar-Conduct CRIT DMG by <span style=\"color: #99FFFFFF;\">{3}</span>.<br>These effects can be triggered even when the equipping character is off-field.",
+    "refinements": [
+      ["24%", "48", "24", "12%"],
+      ["30%", "60", "30", "15%"],
+      ["36%", "72", "36", "18%"],
+      ["42%", "84", "42", "21%"],
+      ["48%", "96", "48", "24%"]
+    ]
+  },
   "sturdy_bone": {
     "id": "11430",
     "name": "Sturdy Bone",
@@ -2442,7 +2454,7 @@
   "sword_of_descension": {
     "id": "11412",
     "name": "Sword of Descension",
-    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">Effective only on the following platform: </span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>Hitting opponents with Normal and Charged Attacks grants a <span style=\"color: #99FFFFFF;\">50%</span> chance to deal <span style=\"color: #99FFFFFF;\">200%</span> ATK as DMG in a small AoE. This effect can only occur once every 10s. Additionally, if the Traveler equips the Sword of Descension, their ATK is increased by <span style=\"color: #99FFFFFF;\">66</span>.",
+    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">Effective only on the following platform: </span><br><span style=\"color: #99FFFFFF;\">\"PlayStation®\"</span><br>Hitting opponents with Normal and Charged Attacks grants a <span style=\"color: #99FFFFFF;\">50%</span> chance to deal <span style=\"color: #99FFFFFF;\">200%</span> ATK as DMG in a small AoE. This effect can only occur once every 10s. Additionally, if the Traveler equips the Sword of Descension, their ATK is increased by <span style=\"color: #99FFFFFF;\">66</span>.",
     "refinements": [
       []
     ]

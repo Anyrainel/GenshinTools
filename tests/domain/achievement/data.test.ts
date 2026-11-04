@@ -15,10 +15,10 @@ describe("published split achievement data", () => {
       logic,
       zh as AchievementReferenceText
     );
-    expect(english.categories).toHaveLength(73);
-    expect(english.achievements).toHaveLength(1854);
+    expect(english.categories).toHaveLength(75);
+    expect(english.achievements).toHaveLength(1909);
     expect(new Set(english.achievements.map((entry) => entry.id)).size).toBe(
-      1854
+      1909
     );
     expect(
       english.achievements.map(({ id, groupId }) => [id, groupId])
@@ -27,7 +27,7 @@ describe("published split achievement data", () => {
       logic.categories
         .flatMap((category) => category.achievements)
         .filter((group) => group.length === 3)
-    ).toHaveLength(148);
+    ).toHaveLength(151);
     expect(
       english.achievements.every(
         (entry) => entry.name && entry.description && entry.version
@@ -52,6 +52,25 @@ describe("published split achievement data", () => {
         expect(byId.get(id)).toMatchObject({ version: "7.1" });
       }
       expect(byId.has(84517)).toBe(false);
+    }
+  });
+
+  it("includes all 55 official 7.2 achievements in both languages", () => {
+    for (const text of [en, zh]) {
+      const data = expandAchievementReferenceData(
+        logic,
+        text as AchievementReferenceText
+      );
+      const added = data.achievements.filter(
+        (entry) => entry.version === "7.2"
+      );
+      expect(added).toHaveLength(55);
+      expect(added.map((entry) => entry.id)).toEqual(
+        expect.arrayContaining([81733, 82313, 84407, 86092, 86118])
+      );
+      expect(data.categories.map((category) => category.id)).toEqual(
+        expect.arrayContaining([73, 74])
+      );
     }
   });
 });

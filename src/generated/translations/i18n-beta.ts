@@ -3,12 +3,9 @@
 
 export const i18nBetaData = {
   characters: {
-    "mitya": { en: "Mitya", zh: "米提亚" },
-    "valeriy": { en: "Valeriy", zh: "瓦列里" },
   },
   weapons: {
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
-    "starsealed_edict": { en: "Starsealed Edict", zh: "秘星典谕" },
   },
   artifacts: {
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },

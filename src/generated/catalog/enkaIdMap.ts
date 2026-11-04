@@ -811,6 +811,9 @@ export const skillTypeMap: Record<string, "auto" | "skill" | "burst"> = {
   "11331": "auto",
   "11332": "skill",
   "11335": "burst",
+  "11361": "auto",
+  "11362": "skill",
+  "11364": "burst",
   "11371": "auto",
   "11372": "skill",
   "11373": "burst",
@@ -838,4 +841,7 @@ export const skillTypeMap: Record<string, "auto" | "skill" | "burst"> = {
   "30501": "auto",
   "30502": "skill",
   "30505": "burst",
+  "30601": "auto",
+  "30602": "skill",
+  "30605": "burst",
 };

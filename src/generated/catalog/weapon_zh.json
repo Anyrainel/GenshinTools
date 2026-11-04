@@ -1678,7 +1678,7 @@
   "predator": {
     "id": "15415",
     "name": "掠食者",
-    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">仅在以下平台生效：</span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>对敌人造成冰元素伤害后，普通攻击与重击造成的伤害提高10%，该效果持续6秒，至多叠加2次；此外，埃洛伊装备掠食者时，攻击力提升66点。",
+    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">仅在以下平台生效：</span><br><span style=\"color: #99FFFFFF;\">\"PlayStation®\"</span><br>对敌人造成冰元素伤害后，普通攻击与重击造成的伤害提高10%，该效果持续6秒，至多叠加2次；此外，埃洛伊装备掠食者时，攻击力提升66点。",
     "refinements": [
       []
     ]
@@ -2391,6 +2391,18 @@
       ["200", "56%"]
     ]
   },
+  "starsealed_edict": {
+    "id": "14525",
+    "name": "秘星典谕",
+    "descHtmlTpl": "暴击伤害提升<span style=\"color: #99FFFFFF;\">{0}</span>。施放元素战技时，装备者获得「晶质调合」效果：元素精通提升<span style=\"color: #99FFFFFF;\">{1}</span>点，持续20秒；持续期间，队伍中附近的角色触发元素反应时，装备者还会获得一层「炬中法度」，使元素精通进一步提升<span style=\"color: #99FFFFFF;\">{2}</span>点，该效果至多叠加3层，持续至「晶质调合」效果结束或再次施放元素战技。<br>辉映·星超导：每层「炬中法度」还会使装备者造成的星超导反应伤害的暴击伤害提升<span style=\"color: #99FFFFFF;\">{3}</span>。<br>装备者处于队伍后台时，依然能触发上述效果。",
+    "refinements": [
+      ["24%", "48", "24", "12%"],
+      ["30%", "60", "30", "15%"],
+      ["36%", "72", "36", "18%"],
+      ["42%", "84", "42", "21%"],
+      ["48%", "96", "48", "24%"]
+    ]
+  },
   "sturdy_bone": {
     "id": "11430",
     "name": "弥坚骨",
@@ -2442,7 +2454,7 @@
   "sword_of_descension": {
     "id": "11412",
     "name": "降临之剑",
-    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">仅在以下平台生效：</span><br><span style=\"color: #99FFFFFF;\">\"PlayStation™Network\"</span><br>普通攻击与重击命中敌人后有<span style=\"color: #99FFFFFF;\">50%</span>概率在小范围内造成<span style=\"color: #99FFFFFF;\">200%</span>攻击力的伤害。该效果每10秒只能触发一次；此外，旅行者装备降临之剑时，攻击力提升<span style=\"color: #99FFFFFF;\">66</span>点。",
+    "descHtmlTpl": "<span style=\"color: #99FFFFFF;\">仅在以下平台生效：</span><br><span style=\"color: #99FFFFFF;\">\"PlayStation®\"</span><br>普通攻击与重击命中敌人后有<span style=\"color: #99FFFFFF;\">50%</span>概率在小范围内造成<span style=\"color: #99FFFFFF;\">200%</span>攻击力的伤害。该效果每10秒只能触发一次；此外，旅行者装备降临之剑时，攻击力提升<span style=\"color: #99FFFFFF;\">66</span>点。",
     "refinements": [
       []
     ]

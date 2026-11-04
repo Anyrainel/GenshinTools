@@ -29,6 +29,7 @@ import {
   migrateLegacyFormulaUnitConfigs,
   migrateLegacySkirkFormulaUnitConfigs,
 } from "./teamFormulaUnits";
+import { migrateValeriySupportConfigs } from "./valeriySupport";
 
 type TeamMigrationState = {
   teams?: LegacyPersistedTeam[];
@@ -660,7 +661,9 @@ export function mergeTeamStore<
   // The unpublished v25 migration also canonicalizes labels on v25 saves made
   // while testing this release; do not bump again for the same push.
   const nextConfigsByTeamId = compactTeamSetupConfigs(
-    migrateCharacterBuffTriggerConfigs(configsByTeamId)
+    migrateValeriySupportConfigs(
+      migrateCharacterBuffTriggerConfigs(configsByTeamId)
+    )
   );
   for (const [fromId, toId] of Object.entries(deduped.idMap)) {
     if (fromId === toId) continue;

@@ -1559,6 +1559,14 @@
       "90": {"baseAtk": 542, "secondaryStatValue": "265"}
     }
   },
+  "starsealed_edict": {
+    "rarity": 5,
+    "type": "Catalyst",
+    "secondaryStat": "cd",
+    "levels": {
+      "90": {"baseAtk": 542, "secondaryStatValue": "88.2%"}
+    }
+  },
   "sturdy_bone": {
     "rarity": 4,
     "type": "Sword",
