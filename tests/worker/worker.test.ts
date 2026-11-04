@@ -132,10 +132,10 @@ describe("Worker API routing", () => {
 
     expect(upstreamRequests).toHaveLength(1);
     const headers = upstreamRequests[0].headers;
-    expect(headers.get("x-rpc-app_version")).toBe("2.109.0");
+    expect(headers.get("x-rpc-app_version")).toBe("2.117.0");
     expect(headers.get("x-rpc-channel")).toBe("miyousheluodi");
     expect(headers.get("X-Requested-With")).toBe("com.mihoyo.hyperion");
-    expect(headers.get("User-Agent")).toContain("miHoYoBBS/2.109.0");
+    expect(headers.get("User-Agent")).toContain("miHoYoBBS/2.117.0");
   });
 
   it("rejects incomplete HoYoLAB credentials before upstream fetch", async () => {
