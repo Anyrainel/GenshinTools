@@ -1,4 +1,5 @@
 import type {
+  GOODData,
   IGOODArtifact,
   IGOODCharacter,
   IGOODWeapon,
@@ -17,6 +18,46 @@ import type {
 const DEFAULT_PORT = 8765;
 const TIMEOUT_MS = 5000;
 
+export interface ContinuousSnapshot {
+  sessionId: string;
+  revision: number;
+  updatedAt: number;
+  data: GOODData;
+}
+
+export async function fetchContinuous(
+  port = DEFAULT_PORT,
+  signal?: AbortSignal
+): Promise<ContinuousSnapshot> {
+  const snapshot = await fetchJson<ContinuousSnapshot>(
+    `${baseUrl(port)}/continuous`,
+    { cache: "no-store", signal }
+  );
+  if (
+    !snapshot ||
+    typeof snapshot.sessionId !== "string" ||
+    !snapshot.sessionId ||
+    !Number.isSafeInteger(snapshot.revision) ||
+    snapshot.revision < 0 ||
+    !Number.isFinite(snapshot.updatedAt) ||
+    snapshot.data?.format !== "GOOD" ||
+    snapshot.data.version !== 3 ||
+    ![
+      snapshot.data.characters,
+      snapshot.data.weapons,
+      snapshot.data.artifacts,
+    ].some(Array.isArray) ||
+    [
+      snapshot.data.characters,
+      snapshot.data.weapons,
+      snapshot.data.artifacts,
+    ].some((section) => section !== undefined && !Array.isArray(section))
+  ) {
+    throw new Error("Invalid continuous inventory response");
+  }
+  return snapshot;
+}
+
 function baseUrl(port: number): string {
   return `http://127.0.0.1:${port}`;
 }
@@ -25,7 +66,12 @@ async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
   try {
-    const res = await fetch(url, { ...init, signal: controller.signal });
+    const res = await fetch(url, {
+      ...init,
+      signal: init?.signal
+        ? AbortSignal.any([init.signal, controller.signal])
+        : controller.signal,
+    });
     if (!res.ok) {
       const body = await res.text().catch(() => "");
       throw new ArtifactManagerError(res.status, body);

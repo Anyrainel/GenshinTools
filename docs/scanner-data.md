@@ -18,3 +18,35 @@ the shared document's schema, provenance and collections by
 `npm run data:scanner:check` before a web build. Enka reads its capture section;
 OCR generation updates its mappings section. The old endpoints are removed.
 Normal publishing is a validated Git push; no manual deployment is required.
+
+## Continuous inventory sync
+
+Account Data offers an explicit, page-lifetime continuous sync control. It polls
+the same loopback manager address and configurable port using `GET /continuous`
+every three seconds after the previous request finishes. Disabling the feature,
+changing the port/profile, or leaving the page cancels the request and discards
+late responses. The setting is deliberately not persisted across page visits.
+
+The scanner's `{ sessionId, revision, updatedAt, data }` wrapper contains a normal
+GOOD v3 export; `updatedAt` is Unix milliseconds. Identical content is not imported
+again, and lower revisions in an approved session are ignored. Supplied inventory
+sections replace their previous section through GOOD conversion and
+`applyAccountImport`, preserving omitted sections, character talents and optional
+metadata for matching artifacts. Identical physical items retain their multiplicity;
+this is not an append-only inventory merge. Optional achievements use the existing
+profile-scoped achievement import and never gate inventory readiness.
+
+Snapshots do not include an account UID. The user must select/import a profile and
+explicitly confirm the target before the first update. Changing profiles, scanner
+sessions, connection loss, or `continuous_capture_no_data` requires confirmation
+again. A login transition occurring entirely between polls cannot be identified
+reliably without a UID or account-generation token from the scanner; users must
+disable sync before switching game accounts. No automatic profile creation or
+cross-profile merge occurs.
+
+The scanner currently publishes the latest successfully decoded baseline and full
+item-record updates. Deletion-only and some scalar-only lock/equipment notification
+shapes are not decoded yet. Re-login refreshes the baseline; the UI must not promise
+immediate synchronization of every game edit. Disabled capture, waiting for a
+baseline, capture failures with diagnostics, older unsupported scanners, invalid
+exports, and lost/blocked connections have separate localized recovery states.

@@ -1,4 +1,55 @@
 export const i18nUiData = {
+  continuous: {
+    active: { en: "On", zh: "同步中" },
+    pending: { en: "Waiting", zh: "等待中" },
+    attention: { en: "Needs attention", zh: "请检查" },
+    title: { en: "Continuous inventory sync", zh: "持续库存同步" },
+    enable: { en: "Enable for this page visit", zh: "本次停留期间启用" },
+    off: { en: "Off", zh: "未启用" },
+    connecting: { en: "Connecting to scanner…", zh: "正在连接扫描器…" },
+    waiting: {
+      en: "Waiting for inventory. Log into Genshin after starting the scanner server.",
+      zh: "等待库存数据。请先启动扫描器服务，再登录原神。",
+    },
+    confirm: {
+      en: "Inventory ready. Confirm the selected profile matches the logged-in game account.",
+      zh: "库存已就绪。请确认当前档案对应游戏中登录的账号。",
+    },
+    approve: { en: "Sync to {0}", zh: "同步至{0}" },
+    synced: {
+      en: "Syncing inventory every few seconds",
+      zh: "正在每隔几秒同步库存",
+    },
+    disabled: {
+      en: "Enable Continuous capture sync in GGScanner Manager, then restart its server.",
+      zh: "请在 GGScanner 管理器中勾选「持续抓包同步」，然后重启服务。",
+    },
+    unsupported: {
+      en: "This scanner does not support continuous sync. Update GGScanner and restart its server.",
+      zh: "当前扫描器不支持持续同步，请更新 GGScanner 并重启服务。",
+    },
+    failed: {
+      en: "Capture failed. Check the diagnostics below, fix the cause, and restart the scanner server. Retrying…",
+      zh: "抓包失败。请根据下方诊断信息排查问题并重启扫描器服务。正在重试…",
+    },
+    disconnected: {
+      en: "Connection lost or blocked. Check the port, scanner server and browser local-network permission. Retrying…",
+      zh: "连接中断或被拦截。请检查端口、扫描器服务和浏览器本地网络权限。正在重试…",
+    },
+    invalid: {
+      en: "Inventory could not be imported. Check the diagnostics and update the scanner. Retrying…",
+      zh: "无法导入库存。请检查诊断信息并更新扫描器。正在重试…",
+    },
+    safety: {
+      en: "Target profile: {0}. Snapshots have no UID. Disable sync before changing game accounts; confirm again after reconnecting. Import an account first if no profile exists.",
+      zh: "目标档案：{0}。快照不含 UID，切换游戏账号前请关闭同步；重新连接后需再次确认。没有档案时请先导入账号。",
+    },
+    limits: {
+      en: "Syncs the latest decoded inventory while this page is open. Some deletions and lock/equipment-only edits are not captured yet; log in again for a fresh inventory. Missing sections and achievements are preserved.",
+      zh: "停留在本页期间同步最新解析的库存。部分删除及仅修改锁定、装备状态的操作暂不支持，重新登录可刷新完整库存。未提供的数据分类和成就会保留。",
+    },
+    updated: { en: "Scanner snapshot: {0}", zh: "扫描器快照时间：{0}" },
+  },
   charactersMode: {
     replace: { en: "Replace characters", zh: "替换角色" },
     unowned: { en: "Replace unowned", zh: "替换未拥有" },
