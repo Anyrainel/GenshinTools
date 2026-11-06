@@ -64,14 +64,6 @@ export function ContinuousInventorySync() {
             }}
           />
         </div>
-        <p>
-          {t
-            .ui("continuous.safety")
-            .replace("{0}", account?.name ?? t.ui("accountData.noData"))}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {t.ui("continuous.limits")}
-        </p>
         {enabled && account && (
           <div role="status" className="space-y-1 break-words">
             <p>{statusText}</p>
@@ -103,6 +95,14 @@ export function ContinuousInventorySync() {
               )}
           </div>
         )}
+        <p>
+          {t
+            .ui("continuous.safety")
+            .replace("{0}", account?.name ?? t.ui("accountData.noData"))}
+        </p>
+        <p className="text-xs text-muted-foreground">
+          {t.ui("continuous.limits")}
+        </p>
       </div>
     </details>
   );
