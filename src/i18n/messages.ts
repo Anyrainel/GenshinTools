@@ -525,8 +525,20 @@ export const i18nUiData = {
         zh: "这些数据需要手动选择。勾选后，云端备份会改成当前浏览器这一侧；不勾选则两边都不改。",
       },
       downloadChoiceSectionDescription: {
-        en: "These data categories need a choice. Select a category to download the cloud copy to this browser, or leave it unchecked to keep both sides unchanged.",
-        zh: "这些数据需要手动选择。勾选后，云端数据会下载到当前浏览器；不勾选则两边都不改。",
+        en: "Local changes may be newer than this backup. Select a category to replace its local data with the cloud copy, including any changes that have not been uploaded. You will be asked to confirm again. Leave it unchecked to keep both sides unchanged.",
+        zh: "本地改动可能比云端备份更新。勾选后，该类本地数据会被云端副本覆盖，未上传的改动也会丢失，下载前还需再次确认。不勾选则两边都不改。",
+      },
+      replaceLocalTitle: {
+        en: "Replace local data?",
+        zh: "确认覆盖本地数据？",
+      },
+      replaceLocalDescription: {
+        en: "The selected data in this browser will be replaced by the cloud backup. Local changes since that backup will be lost. This cannot be undone.",
+        zh: "当前浏览器中所选的数据将被云端备份覆盖。备份之后的本地改动会丢失，此操作无法撤销。",
+      },
+      replaceAndDownload: {
+        en: "Replace and download",
+        zh: "覆盖并下载",
       },
       rowCount: {
         en: "{0} categories",

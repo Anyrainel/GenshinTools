@@ -11,6 +11,16 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CloudBackupMetadataTable } from "@/components/profile/CloudBackupMetadataTable";
 import { ManualBackupChoiceDialog } from "@/components/profile/ManualBackupChoiceDialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAppSession } from "@/contexts/AppSessionContext";
@@ -63,6 +73,10 @@ export default function CloudBackupPage() {
   const [selectedChoiceIds, setSelectedChoiceIds] = useState<
     Set<CloudPartitionId>
   >(new Set());
+  const [pendingDownload, setPendingDownload] = useState<{
+    syncResult: CloudSyncRunResult;
+    partitionIds: CloudPartitionId[];
+  } | null>(null);
   const [metadataStatus, setMetadataStatus] = useState<MetadataStatus>("idle");
   const [metadataError, setMetadataError] = useState<string | null>(null);
   const [cloudMetadata, setCloudMetadata] =
@@ -292,17 +306,27 @@ export default function CloudBackupPage() {
 
   const confirmPendingAction = async () => {
     if (!pendingAction) return;
-    const choiceIds = [...selectedChoiceIds];
+    const choiceIds = pendingAction.plan.choices
+      .filter((choice) => selectedChoiceIds.has(choice.id))
+      .map((choice) => choice.id);
     setPendingAction(null);
     setSelectedChoiceIds(new Set());
     if (pendingAction.direction === "upload") {
       await uploadSelectedShards(pendingAction, choiceIds);
       return;
     }
-    await applyCloudDownload(pendingAction.syncResult, [
+    const partitionIds = [
       ...pendingAction.plan.automaticPartitionIds,
       ...choiceIds,
-    ]);
+    ];
+    if (choiceIds.length > 0) {
+      setPendingDownload({
+        syncResult: pendingAction.syncResult,
+        partitionIds,
+      });
+      return;
+    }
+    await applyCloudDownload(pendingAction.syncResult, partitionIds);
   };
 
   const togglePendingChoice = (
@@ -537,6 +561,37 @@ export default function CloudBackupPage() {
         }}
         onConfirm={() => void confirmPendingAction()}
       />
+      <AlertDialog
+        open={pendingDownload !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingDownload(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t.ui("accountSystem.manualChoice.replaceLocalTitle")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.ui("accountSystem.manualChoice.replaceLocalDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t.ui("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                if (!pendingDownload) return;
+                const { syncResult, partitionIds } = pendingDownload;
+                setPendingDownload(null);
+                void applyCloudDownload(syncResult, partitionIds);
+              }}
+            >
+              {t.ui("accountSystem.manualChoice.replaceAndDownload")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </PageLayout>
   );
 }

@@ -58,7 +58,7 @@ export function planManualBackupAction(
       ),
       choices: [
         ...plan.conflicts.flatMap((decision) =>
-          decision.localHash ? [choiceFromConflict(decision, direction)] : []
+          decision.localHash ? [choiceFromOverwrite(decision, direction)] : []
         ),
         ...plan.deletes.map(choiceFromDelete),
       ],
@@ -71,9 +71,17 @@ export function planManualBackupAction(
     automaticItems: plan.downloads.map((decision) =>
       automaticFromDownload(decision)
     ),
-    choices: plan.conflicts.flatMap((decision) =>
-      decision.remoteRev ? [choiceFromConflict(decision, direction)] : []
-    ),
+    choices: [
+      ...plan.uploads.flatMap((decision) =>
+        decision.baseRev ? [choiceFromOverwrite(decision, direction)] : []
+      ),
+      ...plan.deletes.map((decision) =>
+        choiceFromOverwrite(decision, direction)
+      ),
+      ...plan.conflicts.flatMap((decision) =>
+        decision.remoteRev ? [choiceFromOverwrite(decision, direction)] : []
+      ),
+    ],
   };
 }
 
@@ -116,8 +124,8 @@ export function getRecordKindsForShard(
   return ["tiers"];
 }
 
-function choiceFromConflict(
-  decision: CloudConflictDecision,
+function choiceFromOverwrite(
+  decision: CloudConflictDecision | CloudUploadDecision | CloudDeleteDecision,
   direction: ManualBackupDirection
 ): ManualBackupChoice {
   return {

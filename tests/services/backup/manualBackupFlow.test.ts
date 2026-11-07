@@ -92,6 +92,76 @@ describe("manual backup flow planning", () => {
       }),
     ]);
   });
+
+  it("offers an explicit download choice when only the local data changed", () => {
+    const plan = planCloudSync({
+      localPartitions: [local("builds", "all", "hash-local-edit")],
+      localMeta: [meta("builds", "all", "rev-old", "hash-old")],
+      remoteHeads: [remote("builds", "all", "rev-old", "hash-old")],
+    });
+
+    const manual = planManualBackupAction(plan, "download");
+
+    expect(plan.uploads).toHaveLength(1);
+    expect(manual.automaticPartitionIds).toEqual([]);
+    expect(manual.automaticItems).toEqual([]);
+    expect(manual.choices).toEqual([
+      expect.objectContaining({
+        id: "builds/all",
+        kind: "download-overwrite-local",
+        reason: "local-changed",
+        recordKinds: ["builds"],
+      }),
+    ]);
+  });
+
+  it("offers an explicit download choice to restore a locally deleted cloud shard", () => {
+    const plan = planCloudSync({
+      localPartitions: [],
+      localMeta: [meta("profile.game", "600000001", "rev-old", "hash-old")],
+      remoteHeads: [remote("profile.game", "600000001", "rev-old", "hash-old")],
+    });
+
+    const manual = planManualBackupAction(plan, "download");
+
+    expect(plan.deletes).toHaveLength(1);
+    expect(manual.automaticPartitionIds).toEqual([]);
+    expect(manual.choices).toEqual([
+      expect.objectContaining({
+        id: "profile.game/600000001",
+        kind: "download-overwrite-local",
+        reason: "local-changed",
+        recordKinds: ["characters", "weapons"],
+      }),
+    ]);
+  });
+
+  it("does not offer downloads for absent cloud data, matching data, or unsupported cloud schemas", () => {
+    const plan = planCloudSync({
+      localPartitions: [
+        local("builds", "all", "hash-local-only"),
+        local("teams", "all", "hash-matching"),
+        local("tiers", "all", "hash-local-tiers"),
+      ],
+      localMeta: [],
+      remoteHeads: [
+        remote("teams", "all", "rev-matching", "hash-matching"),
+        {
+          ...remote("tiers", "all", "rev-unsupported", "hash-cloud-tiers"),
+          schemaVersion: 999,
+        },
+      ],
+    });
+
+    const manual = planManualBackupAction(plan, "download");
+
+    expect(plan.uploads).toHaveLength(1);
+    expect(plan.noops).toHaveLength(1);
+    expect(plan.unsupported).toHaveLength(1);
+    expect(manual.automaticPartitionIds).toEqual([]);
+    expect(manual.automaticItems).toEqual([]);
+    expect(manual.choices).toEqual([]);
+  });
 });
 
 function local(

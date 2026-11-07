@@ -559,13 +559,23 @@ test.describe("account cloud backup E2E", () => {
         .toMatchObject({
           status: "needs-download",
           automaticPartitionIds: ["profile.app/600000001"],
-          choices: [],
+          choices: [
+            expect.objectContaining({
+              id: "teams/all",
+              kind: "download-overwrite-local",
+              reason: "local-changed",
+            }),
+          ],
         });
 
       await secondPage.getByRole("button", { name: "Download" }).click();
+      const downloadDialog = secondPage.getByRole("dialog", {
+        name: "Download",
+      });
       await expect(
-        secondPage.getByRole("dialog", { name: "Download" })
-      ).not.toBeVisible();
+        downloadDialog.getByLabel("Custom Teams, Team configs")
+      ).not.toBeChecked();
+      await downloadDialog.getByRole("button", { name: "Download" }).click();
       await expect
         .poll(() => readLocalPayloadsByPartition(secondPage), {
           message:
@@ -851,6 +861,10 @@ test.describe("account cloud backup E2E", () => {
         .getByRole("dialog", { name: "Download" })
         .getByRole("button", { name: "Download" })
         .click();
+      await secondPage
+        .getByRole("alertdialog", { name: "Replace local data?" })
+        .getByRole("button", { name: "Replace and download" })
+        .click();
       await expect
         .poll(() => readLocalPayloadsByPartition(secondPage))
         .toMatchObject({
@@ -859,6 +873,97 @@ test.describe("account cloud backup E2E", () => {
     } finally {
       await secondContext.close();
     }
+  });
+
+  test("requires two confirmations to restore an older cloud backup over newer local changes", async ({
+    page,
+  }, testInfo) => {
+    const user = userFor(testInfo, "older-cloud-restore");
+    await signIn(page, user);
+    await seedDomainData(page, makeTeamsOnlyState("backup", 551));
+    await clickBackupAndWaitForHeads(page, ["teams/all"]);
+    const cloudBefore = await readStableBackupHead(page);
+    await replaceDomainData(page, makeTeamsOnlyState("newer-local", 552));
+
+    await expect
+      .poll(() => previewManualPlan(page, "download"))
+      .toMatchObject({
+        status: "synced",
+        automaticPartitionIds: [],
+        choices: [
+          {
+            id: "teams/all",
+            kind: "download-overwrite-local",
+            reason: "local-changed",
+          },
+        ],
+      });
+
+    await page.getByRole("button", { name: "Download" }).click();
+    let choiceDialog = page.getByRole("dialog", { name: "Download" });
+    await expect(
+      choiceDialog.getByText(
+        "This browser changed since the last sync; the cloud backup did not."
+      )
+    ).toBeVisible();
+    await expect(
+      choiceDialog.getByLabel("Custom Teams, Team configs")
+    ).not.toBeChecked();
+    await choiceDialog.getByRole("button", { name: "Cancel" }).click();
+    expect(await readLocalPayloadsByPartition(page)).toMatchObject({
+      "teams/all": { author: "Team author newer-local" },
+    });
+
+    await page.getByRole("button", { name: "Download" }).click();
+    choiceDialog = page.getByRole("dialog", { name: "Download" });
+    await choiceDialog.getByLabel("Custom Teams, Team configs").check();
+    await choiceDialog.getByRole("button", { name: "Download" }).click();
+    const finalDialog = page.getByRole("alertdialog", {
+      name: "Replace local data?",
+    });
+    await expect(finalDialog).toBeVisible();
+    expect(await readLocalPayloadsByPartition(page)).toMatchObject({
+      "teams/all": { author: "Team author newer-local" },
+    });
+    await finalDialog.getByRole("button", { name: "Cancel" }).click();
+    expect(await readLocalPayloadsByPartition(page)).toMatchObject({
+      "teams/all": { author: "Team author newer-local" },
+    });
+
+    await page.getByRole("button", { name: "Download" }).click();
+    choiceDialog = page.getByRole("dialog", { name: "Download" });
+    await expect(
+      choiceDialog.getByLabel("Custom Teams, Team configs")
+    ).not.toBeChecked();
+    await choiceDialog.getByLabel("Custom Teams, Team configs").check();
+    await choiceDialog.getByRole("button", { name: "Download" }).click();
+    await finalDialog
+      .getByRole("button", { name: "Replace and download" })
+      .click();
+
+    await expect
+      .poll(() => readLocalPayloadsByPartition(page))
+      .toMatchObject({
+        "teams/all": { author: "Team author backup" },
+      });
+    const cloudTeam = cloudBefore.heads.find(
+      (head) => head.partitionKey === "teams/all"
+    )!;
+    await expect
+      .poll(() => page.evaluate(() => window.__ggE2E.readCloudMetadata()))
+      .toMatchObject({
+        partitionsById: {
+          "teams/all": {
+            lastSeenRev: cloudTeam.rev,
+            lastAppliedHash: cloudTeam.contentHash,
+            dirty: false,
+          },
+        },
+      });
+    expect(await readStableBackupHead(page)).toEqual(cloudBefore);
+    await expect
+      .poll(() => previewManualPlan(page, "download"))
+      .toMatchObject({ choices: [], automaticPartitionIds: [] });
   });
 
   test("requires an explicit upload choice before deleting cloud data for a removed profile", async ({

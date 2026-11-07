@@ -1,6 +1,6 @@
 # Backup Data Model
 
-Last updated: 2026-05-10.
+Last updated: 2026-11-07.
 
 This document is the source of truth for cloud backup data schemas, browser storage scope, partition modeling, and restore boundaries. Auth, API behavior, and operational setup live in `docs/account-system.md`.
 
@@ -344,6 +344,8 @@ Default decisions:
 | Local changed and cloud also changed | Report conflict; require explicit choice. |
 
 Fresh devices initialize local stores with defaults. Partitions can mark default state as `isDefaultState`; if cloud exists and local is only default state, the planner should download instead of reporting a first-sync conflict. Default-state partitions are still uploaded when cloud has no head, so a brand-new backup publishes empty heads consistently and metadata can show `0` instead of "No record".
+
+Manual download also offers cloud copies for partitions changed or deleted locally since the last sync. These are unchecked choices, alongside conflicts, rather than automatic downloads. The user first selects the categories and confirms Download, then confirms Replace and download in a second dialog warning that local changes will be lost. Cancelling either step applies nothing. Unselected choices remain unchanged; safe downloads need no additional confirmation. This protection uses content hashes and sync revisions, not timestamps, and does not bypass unsupported cloud schema checks.
 
 ## Adding A Backed-Up Domain
 
