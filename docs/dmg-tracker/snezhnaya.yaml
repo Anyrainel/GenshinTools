@@ -304,3 +304,59 @@
     no-Radiance path unchanged. This does not change C2's lasting ATK bonus,
     P1 stacks that clear on leaving the field, or the separate unresolved
     P1 same-cast timing issue.
+
+- id: mitya-default-rotation-beacon-generation
+  entity: mitya
+  rule: S7
+  status: open
+  category: approximation
+  summary: >
+    Mitya's default combo is a guaranteed starter packet rather than a
+    representative Stellar-Conduct rotation. It omits reaction-generated
+    Beacon consumption and C6 refunds, and the Steady State default includes
+    only one periodic pulse and no overflow damage.
+  detail: >
+    character5Snezhnaya.ts L1036-L1067 explicitly limits Overload to one E,
+    one Q, one charged-attack initial hit and three consumptions (four at C1+).
+    Official P1 supplies Beacons every 1.5 seconds for six seconds after a
+    Stellar-Conduct reaction in Overload; C6 additionally creates a new Beacon
+    with 34% probability on consumption. These sources are neither modeled in
+    the starter count nor represented by a rotation/generation option. Steady
+    State similarly defaults to one pulse and one full-cap detonation while
+    its available overflow formula has no default count. The source does not
+    specify the periodic Core attack interval, so no exact pulse count may be
+    inferred from its 25-second duration alone. The existing one-hit formulas
+    themselves match the official ATK/EM rows and the Stellar damage equation;
+    this issue concerns the total modeled actions and expected usage.
+
+    Controlled sensitivity check (not an in-game benchmark): keeping gear,
+    peak buffs and all other counts fixed in a Mitya/Kaeya/Valeriy/Sandrone
+    team with R1 Starsealed Edict, increasing C0 charged Beacon consumption
+    from three to seven changes Mitya's personal total from 259562.94 to
+    525167.33 average damage. All characters are level 90, other characters
+    C0, Kaeya/Valeriy carry R1 Favonius Sword and Sandrone R1 Favonius
+    Greatsword; no artifact sets. Artifact stat deltas are Mitya EM 400,
+    flat ATK 311, CR 55%, CD 80%, Electro DMG 46.6%; Valeriy/Sandrone
+    flat ATK 311 and ATK 46.6%; Kaeya none. Other character options use their
+    defaults. Enemy level 100, RES 10%, field 12 hits, roll multiplier 1.
+    C1/C2/C6 increases are 81.4%/85.0%/103.1% for four extra
+    consumptions, with the C6 scenario also gaining its first C4 proc. Numeric
+    and compiled evaluations agree. These figures demonstrate count
+    sensitivity; they do not establish a universal undercount, a verified
+    channel duration, or DPS. Independently, the A10 per-Beacon formula at
+    final EM 800, CR 70%, CD 180%, reaction CD 36%, P3 base bonus 14%, field
+    coefficient 2.0 and enemy RES 10% gives 45129.764 average damage in both
+    evaluation paths. Independent equation: 800 * 4.032 * 2 * 1.14 *
+    (1 + 6 * 800 / 2800) * (1 + 0.7 * (1.8 + 0.36)) * 0.9.
+    There is no enemy DEF multiplier or ordinary Electro/charged DMG bonus
+    in this inherent Stellar-Conduct hit; those checks also match the engine.
+
+    Define documented, source-supported representative rotation assumptions
+    and expose variable channel Beacon consumption as an action-level
+    parameter/preset; retain detailed per-event control where appropriate.
+    Derive C4 count from the modeled consumed total and handle C6 refunds
+    with an explicit expected-value/time-window assumption rather than
+    treating a capacity of four/five as the lifetime channel maximum. Any
+    changed default lines, counts or formula action units require the full
+    persisted combo/investment migration and cache invalidation described in
+    S3, including existing saved teams, imports and cloud snapshots.
