@@ -278,3 +278,122 @@ describe("runWeaponChoice owned weapons", () => {
     expect(await compareOwned([])).toEqual([]);
   });
 });
+
+describe("runWeaponChoice minimum ER", () => {
+  const configs: TeamSlotConfig[] = [
+    {
+      charId: "xingqiu",
+      charLevel: 90,
+      constellation: 6,
+      weaponId: "primordial_jade_cutter",
+      refinement: 1,
+      artifactSet: null,
+    },
+  ];
+  const ownedWeaponChoices = [
+    { weaponId: "primordial_jade_cutter", refinement: 1 },
+    { weaponId: "sacrificial_sword", refinement: 1 },
+  ];
+
+  async function compare(minEr: number) {
+    const generator = runWeaponChoice({
+      baseConfigs: configs,
+      charConfigs: toWeaponChoiceCharConfigs(configs).map((config) => ({
+        ...config,
+        minEr,
+      })),
+      combo: singleFormulaCombo("xingqiu", "xingqiu-burst-tick"),
+      calcContext: CTX,
+      weaponStats: weaponStatsResource.peek()!,
+      ownedWeaponChoices,
+      opts: {},
+    });
+    for await (const result of generator) {
+      if (result.done) return result;
+    }
+    throw new Error("Comparison did not complete");
+  }
+
+  it("counts weapon ER before spending artifact rolls on the remaining gap", async () => {
+    const result = await compare(2.3);
+    const rankings = result.perCharacter.xingqiu;
+    expect(result.excludedChoices.xingqiu).toEqual([]);
+    expect(rankings).toHaveLength(2);
+    const jade = rankings.find(
+      (entry) =>
+        entry.type === "weapon" && entry.weaponId === "primordial_jade_cutter"
+    )!;
+    const sacrificial = rankings.find(
+      (entry) =>
+        entry.type === "weapon" && entry.weaponId === "sacrificial_sword"
+    )!;
+    expect(jade.substatRolls?.er).toBeGreaterThan(
+      sacrificial.substatRolls?.er ?? 0
+    );
+  });
+
+  it("excludes an infeasible weapon from both ranking and damage normalization", async () => {
+    const result = await compare(2.8);
+    expect(result.perCharacter.xingqiu).toMatchObject([
+      { weaponId: "sacrificial_sword", percentOfBest: 100 },
+    ]);
+    expect(result.excludedChoices.xingqiu).toEqual([
+      expect.objectContaining({
+        type: "weapon",
+        weaponId: "primordial_jade_cutter",
+        refinement: 1,
+        failReasons: {
+          xingqiu: expect.objectContaining({ kind: "er-unmet", minEr: 2.8 }),
+        },
+      }),
+    ]);
+    expect(result.excludedChoices.xingqiu[0]).not.toHaveProperty("damage");
+    expect(result.excludedChoices.xingqiu[0]).not.toHaveProperty(
+      "percentOfBest"
+    );
+  });
+
+  it("returns explicit constraint failures when every weapon is infeasible", async () => {
+    const result = await compare(6);
+    expect(result.perCharacter.xingqiu).toEqual([]);
+    expect(result.excludedChoices.xingqiu).toHaveLength(2);
+    for (const choice of result.excludedChoices.xingqiu) {
+      expect(choice.failReasons.xingqiu).toMatchObject({
+        kind: "er-unmet",
+        minEr: 6,
+      });
+    }
+  });
+
+  it("excludes infeasible artifact sets instead of ranking their unconstrained damage", async () => {
+    const generator = runWeaponChoice({
+      mode: "artifact",
+      baseConfigs: configs,
+      charConfigs: toWeaponChoiceCharConfigs(configs).map((config) => ({
+        ...config,
+        minEr: 6,
+      })),
+      combo: singleFormulaCombo("xingqiu", "xingqiu-burst-tick"),
+      calcContext: CTX,
+      weaponStats: weaponStatsResource.peek()!,
+      opts: {},
+    });
+    let completed = false;
+    for await (const result of generator) {
+      if (!result.done) continue;
+      completed = true;
+      expect(result.perCharacter.xingqiu).toEqual([]);
+      expect(result.artifactAssignmentSuggestion).toBeNull();
+      expect(result.excludedChoices.xingqiu.length).toBeGreaterThan(1);
+      for (const choice of result.excludedChoices.xingqiu) {
+        expect(choice.type).toBe("artifact");
+        expect(choice.failReasons.xingqiu).toMatchObject({
+          kind: "er-unmet",
+          minEr: 6,
+        });
+        expect(choice).not.toHaveProperty("damage");
+      }
+    }
+    expect(completed).toBe(true);
+  }, 60000);
+});

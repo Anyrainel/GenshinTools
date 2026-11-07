@@ -2261,6 +2261,26 @@ export const i18nUiData = {
       en: "No compatible artifact sets",
       zh: "无匹配圣遗物套装",
     },
+    excludedChoices: {
+      en: "Excluded choices ({0})",
+      zh: "未达标方案（{0}）",
+    },
+    noFeasibleChoices: {
+      en: "No choices found that meet the minimum ER / CR requirements",
+      zh: "未找到满足最低充能／暴击要求的方案",
+    },
+    generatedRequirementsUnmet: {
+      en: "No build found that meets all requirements",
+      zh: "未找到满足全部要求的配装",
+    },
+    requirementErUnmet: {
+      en: "ER below the required {0}%",
+      zh: "未满足最低充能 {0}%",
+    },
+    requirementCrUnmet: {
+      en: "CRIT Rate below the required {0}%",
+      zh: "未满足最低暴击率 {0}%",
+    },
   },
   filters: {
     title: { en: "Filters", zh: "过滤" },

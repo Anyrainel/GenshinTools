@@ -15,6 +15,7 @@ import type { MainStat, Slot, SubStat } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
 import type { ArtifactData } from "@/domain/models";
 import { artifactsById } from "@/domain/reference/catalog";
+import type { OptFailReason } from "@/domain/team/types";
 import { deriveSetKeysFromConfigs } from "../../team/teamConfigUtils";
 import type { CompiledTeamDamage } from "../damage/core/formulaCompiler";
 import {
@@ -31,6 +32,7 @@ import {
   type ErCrGap,
   erCrGapAfterMainStats,
   erMainStatInternal,
+  getErCrConstraintFailures,
 } from "../optimizer/erCrConstraints";
 import { constrainedGreedyAllocate } from "./constrainedGreedy";
 import {
@@ -59,9 +61,15 @@ export interface GeneratorOptions {
   ignoreArtifactSets?: Record<string, boolean>;
 }
 
+export type GeneratorConstraintFailure = Extract<
+  OptFailReason,
+  { kind: "er-unmet" | "cr-unmet" }
+>;
+
 export interface GeneratorResult {
   artifactsByChar: Record<string, Record<Slot, ArtifactData>>;
   sheetsByChar: Record<string, StatSheet>;
+  failReasons: Record<string, GeneratorConstraintFailure>;
   phase: string;
   progress: number;
   done: boolean;
@@ -176,7 +184,8 @@ function synthesizeArtifacts(
   subRolls: Record<Slot, Partial<Record<SubStat, number>>>,
   rv: Record<SubStat, number>,
   slotSetKeys?: Record<Slot, string>,
-  flex?: FlexSlotConfig | null
+  flex?: FlexSlotConfig | null,
+  rarity: 4 | 5 = 5
 ): Record<Slot, ArtifactData> {
   const result = {} as Record<Slot, ArtifactData>;
   for (const slot of allSlots) {
@@ -194,9 +203,13 @@ function synthesizeArtifacts(
       id: `gen-${charId}-${slot}`,
       setKey,
       slotKey: slot,
-      rarity: artifactsById[setKey]?.rarity ?? 5,
+      rarity:
+        flex?.slot === slot ? 5 : (artifactsById[setKey]?.rarity ?? rarity),
       mainStatKey: mainStats[slot],
-      level: (artifactsById[setKey]?.rarity ?? 5) === 4 ? 16 : 20,
+      level:
+        flex?.slot !== slot && (artifactsById[setKey]?.rarity ?? rarity) === 4
+          ? 16
+          : 20,
       lock: false,
       substats: subs,
     };
@@ -341,6 +354,44 @@ interface ConstraintAwareResult {
   damage: number;
 }
 
+/** Main stats can grant ER/CR indirectly, for example Xiphos EM → ER. */
+function gapAfterMainStats(
+  teamBuild: TeamBuild,
+  charId: string,
+  currentSheets: Record<string, StatSheet>,
+  ctx: CalcContext,
+  mainStats: Record<Slot, MainStat>,
+  rv: Record<SubStat, number>,
+  rarity: 4 | 5,
+  flex: FlexSlotConfig | undefined,
+  gap: ErCrGap,
+  requirements?: { minEr: number; minCr: number }
+): { erRemaining: number; crRemaining: number } {
+  if (!requirements) return erCrGapAfterMainStats(gap, mainStats, rarity, flex);
+  const sheet = buildSheetFromMainAndSubs(
+    mainStats,
+    emptySubRolls(),
+    rv,
+    rarity,
+    flex
+  );
+  const stats = teamBuild.getTeamStats(
+    { ...currentSheets, [charId]: sheet },
+    charId,
+    ctx
+  )[charId];
+  return {
+    erRemaining:
+      requirements.minEr > 0
+        ? Math.max(0, requirements.minEr - stats.get("er", null))
+        : 0,
+    crRemaining:
+      requirements.minCr > 0
+        ? Math.max(0, requirements.minCr - stats.get("cr", null))
+        : 0,
+  };
+}
+
 /**
  * Generate main stats and substats with ER/CR constraint awareness.
  *
@@ -363,8 +414,9 @@ function constraintAwareGenerate(
   rarity: 4 | 5,
   budgetPreset: SubstatBudgetPreset,
   flex?: FlexSlotConfig,
-  buffOverrides?: Record<number, BuffActivationMap>
-): ConstraintAwareResult {
+  buffOverrides?: Record<number, BuffActivationMap>,
+  requirements?: { minEr: number; minCr: number }
+): ConstraintAwareResult | null {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
   // If flex promotes sands to 5★, use 5★ ER main stat threshold
@@ -408,16 +460,23 @@ function constraintAwareGenerate(
       budgetPreset,
       variant.forceSands,
       variant.forceCirclet,
-      flex
+      flex,
+      requirements
     );
     if (!mainStats) continue; // no feasible combo found
 
     // Compute remaining gap after main stats and build pre-fill
-    const { erRemaining, crRemaining } = erCrGapAfterMainStats(
-      gap,
+    const { erRemaining, crRemaining } = gapAfterMainStats(
+      teamBuild,
+      charId,
+      currentSheets,
+      ctx,
       mainStats,
+      rv,
       rarity,
-      flex
+      flex,
+      gap,
+      requirements
     );
     const preFill =
       erRemaining > 0 || crRemaining > 0
@@ -427,7 +486,8 @@ function constraintAwareGenerate(
             mainStats,
             rv,
             maxSlot,
-            maxStat
+            maxStat,
+            flex
           )
         : undefined;
     if (preFill === null) continue; // infeasible even with max substats
@@ -468,50 +528,6 @@ function constraintAwareGenerate(
     }
   }
 
-  // Fallback: if no variant produced a result, run unconstrained
-  if (!best) {
-    const mainStats = findBestMainStats(
-      teamBuild,
-      charId,
-      combo,
-      currentSheets,
-      ctx,
-      rv,
-      rarity,
-      flex
-    );
-    const subRolls = fillSubstats(
-      teamBuild,
-      charId,
-      combo,
-      mainStats,
-      currentSheets,
-      ctx,
-      rv,
-      rarity,
-      budgetPreset,
-      undefined, // preFill
-      flex
-    );
-    const sheet = buildSheetFromMainAndSubs(
-      mainStats,
-      subRolls,
-      rv,
-      rarity,
-      flex
-    );
-    const sheets = { ...currentSheets, [charId]: sheet };
-    const damage = evaluateDamage(
-      teamBuild,
-      sheets,
-      charId,
-      combo,
-      ctx,
-      buffOverrides
-    );
-    best = { mainStats, subRolls, sheet, damage };
-  }
-
   return best;
 }
 
@@ -531,7 +547,8 @@ function findBestMainStatsConstrained(
   budgetPreset: SubstatBudgetPreset,
   forceSands?: MainStat,
   forceCirclet?: MainStat,
-  flex?: FlexSlotConfig
+  flex?: FlexSlotConfig,
+  requirements?: { minEr: number; minCr: number }
 ): Record<Slot, MainStat> | null {
   const maxSlot = rollsPerSlotForPreset(budgetPreset, rarity);
   const maxStat = maxRollsPerStatForPreset(budgetPreset, rarity);
@@ -565,11 +582,17 @@ function findBestMainStatsConstrained(
 
         // Early reject: check if substats can fill the remaining gap
         if (gap.erGap > 0 || gap.crGap > 0) {
-          const { erRemaining, crRemaining } = erCrGapAfterMainStats(
-            gap,
+          const { erRemaining, crRemaining } = gapAfterMainStats(
+            teamBuild,
+            charId,
+            currentSheets,
+            ctx,
             mainStats,
+            rv,
             rarity,
-            flex
+            flex,
+            gap,
+            requirements
           );
           if (erRemaining > 0 || crRemaining > 0) {
             const preFill = computeSubstatPreFill(
@@ -578,7 +601,8 @@ function findBestMainStatsConstrained(
               mainStats,
               rv,
               maxSlot,
-              maxStat
+              maxStat,
+              flex
             );
             if (preFill === null) continue; // infeasible
           }
@@ -618,8 +642,11 @@ function findBestMainStatsWithSubs(
   ctx: CalcContext,
   rv: Record<SubStat, number>,
   rarity: 4 | 5 = 5,
-  flex?: FlexSlotConfig
-): Record<Slot, MainStat> {
+  flex?: FlexSlotConfig,
+  gap?: ErCrGap,
+  budgetPreset?: SubstatBudgetPreset,
+  requirements?: { minEr: number; minCr: number }
+): Record<Slot, MainStat> | null {
   const { compiled, charIdx, vars } = compileEval(
     teamBuild,
     charId,
@@ -630,17 +657,7 @@ function findBestMainStatsWithSubs(
   const fastEval = makeCompiledEvalDamage(charId, compiled, charIdx, vars);
 
   let bestDamage = -1;
-  // Neutral default used only when no main stat combination distinguishes
-  // itself (i.e. compiled damage is constant in this char's vars). Picks
-  // stats that don't coincidentally look like an "atk DPS" recommendation,
-  // so a meaningless result doesn't masquerade as an optimized build.
-  let bestMainStats: Record<Slot, MainStat> = {
-    flower: "hp",
-    plume: "atk",
-    sands: "er",
-    goblet: "hp%",
-    circlet: "cr",
-  };
+  let bestMainStats: Record<Slot, MainStat> | null = null;
 
   for (const sands of mainStatPools.sands) {
     for (const goblet of mainStatPools.goblet) {
@@ -653,7 +670,35 @@ function findBestMainStatsWithSubs(
           circlet,
         };
 
-        // Evaluate with existing substats still present (ignore conflicts)
+        if (gap && budgetPreset) {
+          const { erRemaining, crRemaining } = gapAfterMainStats(
+            teamBuild,
+            charId,
+            currentSheets,
+            ctx,
+            mainStats,
+            rv,
+            rarity,
+            flex,
+            gap,
+            requirements
+          );
+          if (
+            computeSubstatPreFill(
+              erRemaining,
+              crRemaining,
+              mainStats,
+              rv,
+              rollsPerSlotForPreset(budgetPreset, rarity),
+              maxRollsPerStatForPreset(budgetPreset, rarity),
+              flex
+            ) === null
+          )
+            continue;
+        }
+
+        // This score only selects a main stat candidate; substats are regenerated
+        // with the constraints before the candidate can replace the current build.
         const sheet = buildSheetFromMainAndSubs(
           mainStats,
           existingSubRolls,
@@ -703,6 +748,7 @@ export async function* runGenerator(
       setKeysByChar[cid] = slotKeys;
     }
   }
+  const originalSetKeysByChar = { ...setKeysByChar };
   const rollMult = opts.rollMultiplier;
 
   // Per-character rarity and roll values
@@ -732,17 +778,23 @@ export async function* runGenerator(
     string,
     Record<Slot, Partial<Record<SubStat, number>>>
   > = {};
+  const failReasons: Record<string, GeneratorConstraintFailure> = {};
+  const charFlex: Record<string, FlexSlotConfig | null> = {};
 
   const yieldProgress = (phase: string) =>
     makeResult(
-      currentSheets,
       allMainStats,
       allSubRolls,
       allCharIds,
       phase,
       step / totalSteps,
       charRv,
-      setKeysByChar
+      setKeysByChar,
+      charFlex,
+      teamBuild,
+      calcContext,
+      opts.perChar,
+      failReasons
     );
 
   // ── Helper: compute ER/CR gap for a character ──
@@ -768,22 +820,27 @@ export async function* runGenerator(
     flex?: FlexSlotConfig
   ) => {
     if (gap.erGap <= 0 && gap.crGap <= 0) return undefined;
-    const { erRemaining, crRemaining } = erCrGapAfterMainStats(
-      gap,
+    const { erRemaining, crRemaining } = gapAfterMainStats(
+      teamBuild,
+      carryCharId,
+      currentSheets,
+      calcContext,
       mainStats,
+      cRv,
       r,
-      flex
+      flex,
+      gap,
+      opts.perChar?.[carryCharId]
     );
     if (erRemaining <= 0 && crRemaining <= 0) return undefined;
-    return (
-      computeSubstatPreFill(
-        erRemaining,
-        crRemaining,
-        mainStats,
-        cRv,
-        rollsPerSlotForPreset(budgetPreset, r),
-        maxRollsPerStatForPreset(budgetPreset, r)
-      ) ?? undefined
+    return computeSubstatPreFill(
+      erRemaining,
+      crRemaining,
+      mainStats,
+      cRv,
+      rollsPerSlotForPreset(budgetPreset, r),
+      maxRollsPerStatForPreset(budgetPreset, r),
+      flex
     );
   };
 
@@ -795,12 +852,7 @@ export async function* runGenerator(
     cRv: Record<SubStat, number>,
     cGap: ErCrGap,
     flex?: FlexSlotConfig
-  ): {
-    mainStats: Record<Slot, MainStat>;
-    subRolls: Record<Slot, Partial<Record<SubStat, number>>>;
-    sheet: StatSheet;
-    damage: number;
-  } => {
+  ): ConstraintAwareResult | null => {
     if (cGap.erGap > 0 || cGap.crGap > 0) {
       return constraintAwareGenerate(
         teamBuild,
@@ -813,7 +865,8 @@ export async function* runGenerator(
         cR,
         budgetPreset,
         flex,
-        buffOverrides
+        buffOverrides,
+        opts.perChar?.[cid]
       );
     }
     const mainStats = findBestMainStats(
@@ -822,13 +875,6 @@ export async function* runGenerator(
       combo,
       currentSheets,
       calcContext,
-      cRv,
-      cR,
-      flex
-    );
-    currentSheets[cid] = buildSheetFromMainAndSubs(
-      mainStats,
-      emptySubRolls(),
       cRv,
       cR,
       flex
@@ -865,16 +911,12 @@ export async function* runGenerator(
     cR: 4 | 5,
     cRv: Record<SubStat, number>,
     cGap: ErCrGap
-  ): {
-    mainStats: Record<Slot, MainStat>;
-    subRolls: Record<Slot, Partial<Record<SubStat, number>>>;
-    sheet: StatSheet;
-    damage: number;
-    winningFlex: FlexSlotConfig | null;
-  } => {
+  ):
+    | (ConstraintAwareResult & { winningFlex: FlexSlotConfig | null })
+    | null => {
     if (cR !== 4) {
       const result = generateOneChar(cid, cR, cRv, cGap);
-      return { ...result, winningFlex: null };
+      return result ? { ...result, winningFlex: null } : null;
     }
     // 4★ character: try each flex slot candidate and keep the best
     let bestResult: ReturnType<typeof generateOneChar> | null = null;
@@ -882,12 +924,97 @@ export async function* runGenerator(
     for (const flexSlot of FLEX_CANDIDATES) {
       const flex = makeFlexConfig(flexSlot, budgetPreset, rollMult);
       const result = generateOneChar(cid, cR, cRv, cGap, flex);
-      if (!bestResult || result.damage > bestResult.damage) {
+      if (result && (!bestResult || result.damage > bestResult.damage)) {
         bestResult = result;
         bestFlex = flex;
       }
     }
-    return { ...bestResult!, winningFlex: bestFlex };
+    return bestResult ? { ...bestResult, winningFlex: bestFlex } : null;
+  };
+
+  const acceptBuild = (
+    cid: string,
+    result: ConstraintAwareResult,
+    flex: FlexSlotConfig | null
+  ): boolean => {
+    const slotKeys =
+      flex && originalSetKeysByChar[cid]
+        ? {
+            ...originalSetKeysByChar[cid],
+            [flex.slot]:
+              artifactsById[setKeysByChar[cid]?.[flex.slot]]?.rarity === 5
+                ? setKeysByChar[cid][flex.slot]
+                : pickRandom5StarSetKey(),
+          }
+        : originalSetKeysByChar[cid];
+    // Use the same rounded artifact values that callers will actually equip.
+    const artifacts = synthesizeArtifacts(
+      cid,
+      result.mainStats,
+      result.subRolls,
+      charRv[cid],
+      slotKeys,
+      flex,
+      charRarity[cid]
+    );
+    const sheet = StatSheet.fromArtifacts(Object.values(artifacts));
+    const sheets = { ...currentSheets, [cid]: sheet };
+    const before = getErCrConstraintFailures(
+      teamBuild,
+      currentSheets,
+      calcContext,
+      opts.perChar
+    );
+    const after = getErCrConstraintFailures(
+      teamBuild,
+      sheets,
+      calcContext,
+      opts.perChar
+    );
+    if (after[cid]) return false;
+    // A weapon's team ER/CR conversion must not invalidate a teammate who was
+    // already feasible when this character's damage is refined.
+    if (
+      allMainStats[cid] &&
+      Object.keys(after).some((id) => allMainStats[id] && !before[id])
+    )
+      return false;
+    if (allMainStats[cid] && !before[cid]) {
+      const previousDamage = evaluateDamage(
+        teamBuild,
+        currentSheets,
+        cid,
+        combo,
+        calcContext,
+        buffOverrides
+      );
+      const candidateDamage = evaluateDamage(
+        teamBuild,
+        sheets,
+        cid,
+        combo,
+        calcContext,
+        buffOverrides
+      );
+      if (candidateDamage < previousDamage) return false;
+    }
+    allMainStats[cid] = result.mainStats;
+    allSubRolls[cid] = result.subRolls;
+    currentSheets[cid] = sheet;
+    charFlex[cid] = flex;
+    if (slotKeys) setKeysByChar[cid] = slotKeys;
+    delete failReasons[cid];
+    return true;
+  };
+
+  const recordFailure = (cid: string) => {
+    const failure = getErCrConstraintFailures(
+      teamBuild,
+      currentSheets,
+      calcContext,
+      opts.perChar
+    )[cid];
+    if (failure) failReasons[cid] = failure;
   };
 
   // ── Steps 1-2: Main stats + substats for carry, then supports ──
@@ -897,23 +1024,14 @@ export async function* runGenerator(
   const carryR = charRarity[carryCharId] ?? 5;
   const carryRv = charRv[carryCharId] ?? rv;
   const carryGap = getCharGap(carryCharId);
-  // Track winning flex config per character for carry refinement and display
-  const charFlex: Record<string, FlexSlotConfig | null> = {};
 
   yield yieldProgress("carry: main stats + substats");
   await yieldFrame();
 
   {
-    const { mainStats, subRolls, sheet, winningFlex } = generateWithFlex(
-      carryCharId,
-      carryR,
-      carryRv,
-      carryGap
-    );
-    allMainStats[carryCharId] = mainStats;
-    allSubRolls[carryCharId] = subRolls;
-    currentSheets[carryCharId] = sheet;
-    charFlex[carryCharId] = winningFlex;
+    const result = generateWithFlex(carryCharId, carryR, carryRv, carryGap);
+    if (!result || !acceptBuild(carryCharId, result, result.winningFlex))
+      recordFailure(carryCharId);
   }
   step += 2; // combined main+sub steps
 
@@ -926,82 +1044,121 @@ export async function* runGenerator(
     yield yieldProgress(`${sid}: main stats + substats`);
     await yieldFrame();
 
-    const { mainStats, subRolls, sheet, winningFlex } = generateWithFlex(
-      sid,
-      sR,
-      sRv,
-      sGap
-    );
-    allMainStats[sid] = mainStats;
-    allSubRolls[sid] = subRolls;
-    currentSheets[sid] = sheet;
-    charFlex[sid] = winningFlex;
+    const result = generateWithFlex(sid, sR, sRv, sGap);
+    if (!result || !acceptBuild(sid, result, result.winningFlex))
+      recordFailure(sid);
     step += 2; // combined main+sub steps
   }
 
-  // ── Step 5: Re-roll main stats for carry (ignore main/sub conflicts) ──
+  // Retry once all teammates have artifacts: their stat-scaling buffs can make
+  // an earlier character feasible, or change the ER/CR gap it needs to fill.
+  for (let pass = 0; pass < allCharIds.length; pass++) {
+    const violations = getErCrConstraintFailures(
+      teamBuild,
+      currentSheets,
+      calcContext,
+      opts.perChar
+    );
+    const pending = allCharIds.filter(
+      (cid) => failReasons[cid] || (allMainStats[cid] && violations[cid])
+    );
+    if (pending.length === 0) break;
+    let repaired = false;
+    for (const cid of pending) {
+      const result = generateWithFlex(
+        cid,
+        charRarity[cid],
+        charRv[cid],
+        getCharGap(cid)
+      );
+      if (result && acceptBuild(cid, result, result.winningFlex))
+        repaired = true;
+      else recordFailure(cid);
+    }
+    if (!repaired) break;
+  }
+
+  // ── Step 5: Refine main stats and refill substats atomically ──
+  // Main/sub conflicts are ignored only while scoring candidates. No intermediate
+  // main-stat swap can escape before its replacement substats meet ER/CR.
   const carryFlex = charFlex[carryCharId] ?? undefined;
   yield yieldProgress("carry: refine main stats");
   await yieldFrame();
-  allMainStats[carryCharId] = findBestMainStatsWithSubs(
-    teamBuild,
-    carryCharId,
-    combo,
-    currentSheets,
-    allSubRolls[carryCharId],
-    calcContext,
-    carryRv,
-    carryR,
-    carryFlex
-  );
-  currentSheets[carryCharId] = buildSheetFromMainAndSubs(
-    allMainStats[carryCharId],
-    allSubRolls[carryCharId],
-    carryRv,
-    carryR,
-    carryFlex
-  );
-  step++;
-
-  // ── Step 6: Clear & regenerate substats for carry ──
-  yield yieldProgress("carry: refine substats");
-  await yieldFrame();
-  {
-    const refinedPreFill = getPreFill(
-      carryGap,
-      allMainStats[carryCharId],
+  const refineCarry = (
+    mainStats: Record<Slot, MainStat>
+  ): ConstraintAwareResult | null => {
+    const preFill = getPreFill(
+      getCharGap(carryCharId),
+      mainStats,
       carryR,
       carryRv,
       carryFlex
     );
-    allSubRolls[carryCharId] = fillSubstats(
+    if (preFill === null) return null;
+    const subRolls = fillSubstats(
       teamBuild,
       carryCharId,
       combo,
-      allMainStats[carryCharId],
+      mainStats,
       currentSheets,
       calcContext,
       carryRv,
       carryR,
       budgetPreset,
-      refinedPreFill,
+      preFill,
       carryFlex
     );
+    const sheet = buildSheetFromMainAndSubs(
+      mainStats,
+      subRolls,
+      carryRv,
+      carryR,
+      carryFlex
+    );
+    const damage = evaluateDamage(
+      teamBuild,
+      { ...currentSheets, [carryCharId]: sheet },
+      carryCharId,
+      combo,
+      calcContext,
+      buffOverrides
+    );
+    return { mainStats, subRolls, sheet, damage };
+  };
+  if (allMainStats[carryCharId]) {
+    const mainStats = findBestMainStatsWithSubs(
+      teamBuild,
+      carryCharId,
+      combo,
+      currentSheets,
+      allSubRolls[carryCharId],
+      calcContext,
+      carryRv,
+      carryR,
+      carryFlex,
+      getCharGap(carryCharId),
+      budgetPreset,
+      opts.perChar?.[carryCharId]
+    );
+    const candidate = mainStats ? refineCarry(mainStats) : null;
+    if (candidate) acceptBuild(carryCharId, candidate, carryFlex ?? null);
   }
-  currentSheets[carryCharId] = buildSheetFromMainAndSubs(
-    allMainStats[carryCharId],
-    allSubRolls[carryCharId],
-    carryRv,
-    carryR,
-    carryFlex
-  );
+  step++;
+
+  // ── Step 6: Clear & regenerate substats for carry ──
+  yield yieldProgress("carry: refine substats");
+  await yieldFrame();
+  if (allMainStats[carryCharId]) {
+    const candidate = refineCarry(allMainStats[carryCharId]);
+    if (candidate) acceptBuild(carryCharId, candidate, carryFlex ?? null);
+  }
   step++;
 
   // ── Step 7: CR/CD circlet branching ──
   // Greedy tends to lock into one CR/CD path due to their multiplicative
   // relationship. If circlet is CR or CD, try the alternative with fresh
   // substat allocation and keep whichever yields higher damage.
-  const currentCirclet = allMainStats[carryCharId].circlet;
+  const currentCirclet = allMainStats[carryCharId]?.circlet;
   const altCirclet: MainStat | null =
     currentCirclet === "cr" ? "cd" : currentCirclet === "cd" ? "cr" : null;
 
@@ -1020,89 +1177,14 @@ export async function* runGenerator(
 
     // Try the alternative circlet with fresh substats
     const altMainStats = { ...allMainStats[carryCharId], circlet: altCirclet };
-    const altPreFill = getPreFill(
-      carryGap,
-      altMainStats,
-      carryR,
-      carryRv,
-      carryFlex
-    );
-    const altSubRolls = fillSubstats(
-      teamBuild,
-      carryCharId,
-      combo,
-      altMainStats,
-      currentSheets,
-      calcContext,
-      carryRv,
-      carryR,
-      budgetPreset,
-      altPreFill,
-      carryFlex
-    );
-    const altSheet = buildSheetFromMainAndSubs(
-      altMainStats,
-      altSubRolls,
-      carryRv,
-      carryR,
-      carryFlex
-    );
-    const altSheets = { ...currentSheets, [carryCharId]: altSheet };
-    const altDmg = evaluateDamage(
-      teamBuild,
-      altSheets,
-      carryCharId,
-      combo,
-      calcContext,
-      buffOverrides
-    );
-
-    if (altDmg > currentDmg) {
-      allMainStats[carryCharId] = altMainStats;
-      allSubRolls[carryCharId] = altSubRolls;
-      currentSheets[carryCharId] = altSheet;
-    }
+    const candidate = refineCarry(altMainStats);
+    if (candidate && candidate.damage > currentDmg)
+      acceptBuild(carryCharId, candidate, carryFlex ?? null);
   }
   step++;
 
-  // ── Final result ──
-  // Override set keys for flex slots: use a random 5★ set for icon display
-  for (const cid of allCharIds) {
-    const flex = charFlex[cid];
-    if (flex && setKeysByChar[cid]) {
-      setKeysByChar[cid] = {
-        ...setKeysByChar[cid],
-        [flex.slot]: pickRandom5StarSetKey(),
-      };
-    }
-  }
-
-  const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
-  const sheetsByChar: Record<string, StatSheet> = {};
-
-  for (const charId of allCharIds) {
-    const ms = allMainStats[charId] ?? {
-      flower: "hp" as MainStat,
-      plume: "atk" as MainStat,
-      sands: "atk%" as MainStat,
-      goblet: "atk%" as MainStat,
-      circlet: "cr" as MainStat,
-    };
-    const sr = allSubRolls[charId] ?? emptySubRolls();
-    artifactsByChar[charId] = synthesizeArtifacts(
-      charId,
-      ms,
-      sr,
-      charRv[charId] ?? rv,
-      setKeysByChar?.[charId],
-      charFlex[charId]
-    );
-    sheetsByChar[charId] = currentSheets[charId] ?? new StatSheet([]);
-  }
-
   yield {
-    artifactsByChar,
-    sheetsByChar,
+    ...yieldProgress("done"),
     phase: "done",
     progress: 1,
     done: true,
@@ -1112,14 +1194,18 @@ export async function* runGenerator(
 // ─── Utility ───
 
 function makeResult(
-  currentSheets: Record<string, StatSheet>,
   allMainStats: Record<string, Record<Slot, MainStat>>,
   allSubRolls: Record<string, Record<Slot, Partial<Record<SubStat, number>>>>,
   allCharIds: string[],
   phase: string,
   progress: number,
   charRvMap: Record<string, Record<SubStat, number>>,
-  setKeysByChar?: Record<string, Record<Slot, string>>
+  setKeysByChar: Record<string, Record<Slot, string>>,
+  charFlex: Record<string, FlexSlotConfig | null>,
+  teamBuild: TeamBuild,
+  calcContext: CalcContext,
+  perChar: GeneratorOptions["perChar"],
+  generationFailures: Record<string, GeneratorConstraintFailure>
 ): GeneratorResult {
   const artifactsByChar: Record<string, Record<Slot, ArtifactData>> = {};
   const sheetsByChar: Record<string, StatSheet> = {};
@@ -1133,15 +1219,41 @@ function makeResult(
         ms,
         sr,
         charRvMap[charId],
-        setKeysByChar?.[charId]
+        setKeysByChar?.[charId],
+        charFlex[charId],
+        getCharRarity(charId, setKeysByChar)
       );
-      sheetsByChar[charId] = currentSheets[charId] ?? new StatSheet([]);
+      sheetsByChar[charId] = StatSheet.fromArtifacts(
+        Object.values(artifactsByChar[charId])
+      );
     }
+  }
+
+  const failReasons = { ...generationFailures };
+  // Removing a failed provider can reduce a teammate's scaling buffs. Repeat
+  // validation against exactly the sheets returned to callers until stable.
+  for (let pass = 0; pass <= allCharIds.length; pass++) {
+    const failures = getErCrConstraintFailures(
+      teamBuild,
+      sheetsByChar,
+      calcContext,
+      perChar
+    );
+    let removed = false;
+    for (const [charId, failure] of Object.entries(failures)) {
+      if (!artifactsByChar[charId]) continue;
+      failReasons[charId] = failure;
+      delete artifactsByChar[charId];
+      delete sheetsByChar[charId];
+      removed = true;
+    }
+    if (!removed) break;
   }
 
   return {
     artifactsByChar,
     sheetsByChar,
+    failReasons,
     phase,
     progress,
     done: false,

@@ -127,6 +127,7 @@ export function BuildComparisonPanel({
       mode: computed.mode,
       timestamp: computed.timestamp,
       perCharacter: computed.perCharacter,
+      excludedChoices: computed.excludedChoices,
       artifactAssignmentSuggestion: computed.artifactAssignmentSuggestion,
     };
     if (runOwned.current && computed.mode === "weapon") setOwnedResult(result);

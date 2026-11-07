@@ -40,12 +40,13 @@ import type {
 import { getSetId } from "@/domain/combat/damage/utils";
 import type { Element } from "@/domain/enums";
 import { CharBuild } from "../damage/core/charBuild";
-import { StatSheet } from "../damage/core/statSheet";
+import type { StatSheet } from "../damage/core/statSheet";
 import { TeamBuild } from "../damage/core/teamBuild";
 import { TeamMeta } from "../damage/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
 import { SUBSTAT_BUDGET_DEFAULT_PRESET } from "../generator/substatBudget";
+import { getErCrConstraintFailures } from "../optimizer/erCrConstraints";
 import {
   characterInvestmentCost,
   hasPaidConstellations,
@@ -645,17 +646,18 @@ function assembleSheets(
   allocation: TeamInvestment,
   configs: AnalyzerCharConfig[],
   snapshotCache: SnapshotCache
-): Record<string, StatSheet> {
+): Record<string, StatSheet> | null {
   const sheets: Record<string, StatSheet> = {};
   for (const cfg of configs) {
     const inv = allocation[cfg.charId];
-    if (!inv) {
-      sheets[cfg.charId] = new StatSheet([]);
-      continue;
-    }
+    if (!inv) return null;
     const snapshotId = getNearestSnapshot(inv);
     const snapshot = snapshotCache[snapshotId];
-    sheets[cfg.charId] = snapshot?.[cfg.charId] ?? new StatSheet([]);
+    const sheet = snapshot?.[cfg.charId];
+    // Failed generation leaves the character absent. Empty artifacts must not
+    // turn an infeasible snapshot into an apparently valid damage candidate.
+    if (!sheet) return null;
+    sheets[cfg.charId] = sheet;
   }
   return sheets;
 }
@@ -682,8 +684,9 @@ function evalWithCachedArtifacts(
   calcContext: CalcContext,
   charBuildCache?: Map<string, CharBuild>,
   hasAnyStackLimited?: boolean,
-  extraBuffs: ExtraBuff[] = []
-): number {
+  extraBuffs: ExtraBuff[] = [],
+  perChar?: Record<string, { minEr: number; minCr: number }>
+): number | null {
   try {
     const configs = baseConfigs.map((bc) => {
       const inv = allocation[bc.charId];
@@ -715,6 +718,13 @@ function evalWithCachedArtifacts(
       cachedBuilds,
       calcContext
     );
+    // Snapshots can be reused across refinements/constellations and combined
+    // with other snapshots. Validate the actual allocation and its ER overrides.
+    if (
+      Object.keys(getErCrConstraintFailures(tb, sheets, calcContext, perChar))
+        .length > 0
+    )
+      return null;
 
     // Compute greedy buff allocation for this specific constellation state.
     // Filter to valid lines (formulas that exist at this constellation).
@@ -749,7 +759,7 @@ function evalWithCachedArtifacts(
       buffOverrides
     ).totalDamage;
   } catch {
-    return 0;
+    return null;
   }
 }
 
@@ -766,13 +776,15 @@ function evalAndCache(
   calcContext: CalcContext,
   charBuildCache?: Map<string, CharBuild>,
   hasAnyStackLimited?: boolean,
-  extraBuffs: ExtraBuff[] = []
-): CachedNode {
+  extraBuffs: ExtraBuff[] = [],
+  perChar?: Record<string, { minEr: number; minCr: number }>
+): CachedNode | null {
   const id = allocationNodeId(allocation);
   const existing = cache.get(id);
   if (existing) return existing;
 
   const sheets = assembleSheets(allocation, configs, snapshotCache);
+  if (!sheets) return null;
   const damage = evalWithCachedArtifacts(
     allocation,
     sheets,
@@ -783,8 +795,10 @@ function evalAndCache(
     calcContext,
     charBuildCache,
     hasAnyStackLimited,
-    extraBuffs
+    extraBuffs,
+    perChar
   );
+  if (damage === null) return null;
   const jin = computeM(allocation, configs);
   const node: CachedNode = { id, jin, allocation: { ...allocation }, damage };
   cache.add(node);
@@ -832,7 +846,11 @@ async function runGeneration(
     finalResult = result;
   }
 
-  return finalResult?.sheetsByChar ?? {};
+  if (!finalResult?.done) return {};
+  const sheets = { ...finalResult.sheetsByChar };
+  for (const charId of Object.keys(finalResult.failReasons))
+    delete sheets[charId];
+  return sheets;
 }
 
 // ─── Progress weight constants ───
@@ -1085,19 +1103,23 @@ async function* computePhase2(
           lines: derivedCombo.lines.filter((l) => l.count > 0),
         };
         const sheets = assembleSheets(alloc, configs, snapshotCache);
-        const damage = evalWithCachedArtifacts(
-          alloc,
-          sheets,
-          baseConfigs,
-          combatOpts,
-          enemyAura,
-          activeCombo,
-          opts.calcContext,
-          charBuildCache,
-          hasAnyStackLimited,
-          teamBuild.extraBuffs
-        );
-        cache.add({ id, jin: totalM, allocation: { ...alloc }, damage });
+        const damage = sheets
+          ? evalWithCachedArtifacts(
+              alloc,
+              sheets,
+              baseConfigs,
+              combatOpts,
+              enemyAura,
+              activeCombo,
+              opts.calcContext,
+              charBuildCache,
+              hasAnyStackLimited,
+              teamBuild.extraBuffs,
+              buildEffectivePerChar(alloc, opts.perChar, opts.minErOverrides)
+            )
+          : null;
+        if (damage !== null)
+          cache.add({ id, jin: totalM, allocation: { ...alloc }, damage });
       }
       count++;
       return;
@@ -1256,8 +1278,14 @@ async function* computePhase3(
           opts.calcContext,
           charBuildCache,
           hasAnyStackLimited,
-          teamBuild.extraBuffs
+          teamBuild.extraBuffs,
+          buildEffectivePerChar(
+            up.allocation,
+            opts.perChar,
+            opts.minErOverrides
+          )
         );
+        if (!cached) continue;
         if (!bestUp || cached.damage > bestUp.cached.damage) {
           bestUp = { cached, charId: up.charId, upgrade: up.upgrade };
         }

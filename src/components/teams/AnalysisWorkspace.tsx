@@ -1234,6 +1234,7 @@ export function AnalysisWorkspace({
       return equippedArtifactsByChar;
     const map = { ...equippedArtifactsByChar };
     for (const [charId, arts] of Object.entries(genResult.artifactsByChar)) {
+      if (genResult.failReasons[charId]) continue;
       map[charId] = arts as Record<string, ArtifactData>;
     }
     return map;
@@ -1246,7 +1247,7 @@ export function AnalysisWorkspace({
 
   const genDisplayResult = useMemo(
     () =>
-      genResult?.done
+      genResult?.done && Object.keys(genResult.failReasons).length === 0
         ? calcComboResults(
             teamBuild,
             displayCombo,
@@ -1259,7 +1260,7 @@ export function AnalysisWorkspace({
       teamBuild,
       displayCombo,
       genArtifactSheets,
-      genResult?.done,
+      genResult,
       displayContext,
       buffOverrides,
     ]

@@ -7,11 +7,13 @@
  * 3. Pre-fill substat rolls to meet remaining constraints
  */
 
+import type { FlexSlotConfig } from "@/domain/build/artifact/scoring/sheetBuilder";
 import { toInternal } from "@/domain/build/artifact/scoring/utils";
 import { getMainStatValue } from "@/domain/build/statUtils";
 import type { CalcContext } from "@/domain/combat/damage/types";
 import type { MainStat, Slot, SubStat } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
+import type { OptFailReason } from "@/domain/team/types";
 import { StatSheet } from "../damage/core/statSheet";
 import type { TeamBuild } from "../damage/core/teamBuild";
 
@@ -52,6 +54,31 @@ export function computeErCrGap(
   };
 }
 
+/** Validate the actual panel in each constrained character's own on-field context. */
+export function getErCrConstraintFailures(
+  teamBuild: TeamBuild,
+  sheets: Record<string, StatSheet>,
+  calcContext: CalcContext,
+  perChar?: Record<string, { minEr: number; minCr: number }>
+): Record<string, Extract<OptFailReason, { kind: "er-unmet" | "cr-unmet" }>> {
+  const failures: Record<
+    string,
+    Extract<OptFailReason, { kind: "er-unmet" | "cr-unmet" }>
+  > = {};
+  for (const [charId, { minEr, minCr }] of Object.entries(perChar ?? {})) {
+    if (!teamBuild.charBuilds[charId] || (minEr <= 0 && minCr <= 0)) continue;
+    const stats = teamBuild.getTeamStats(sheets, charId, calcContext)[charId];
+    const er = stats.get("er", null);
+    const cr = stats.get("cr", null);
+    if (minEr > 0 && er < minEr - 1e-6) {
+      failures[charId] = { kind: "er-unmet", minEr, bestEr: er };
+    } else if (minCr > 0 && cr < minCr - 1e-6) {
+      failures[charId] = { kind: "cr-unmet", minCr, bestCr: cr };
+    }
+  }
+  return failures;
+}
+
 // ─── Main Stat Thresholds ───
 
 /** ER main stat value (sands) in internal format for a given rarity. */
@@ -83,7 +110,8 @@ export function computeSubstatPreFill(
   mainStats: Record<Slot, MainStat>,
   rv: Record<SubStat, number>,
   maxRollsPerSlot: number,
-  maxRollsPerStat: number
+  maxRollsPerStat: number,
+  flex?: FlexSlotConfig
 ): Record<Slot, Partial<Record<SubStat, number>>> | null {
   const result: Record<Slot, Partial<Record<SubStat, number>>> = {
     flower: {},
@@ -93,56 +121,79 @@ export function computeSubstatPreFill(
     circlet: {},
   };
 
-  // Each artifact must have exactly 4 distinct substats. Pre-fill must reserve
-  // 1 roll per unchosen substat so the greedy allocator can reach 4 distinct stats.
-  const MAX_SUBSTATS_PER_SLOT = 4;
-
-  /** Max pre-fill rolls for a slot given how many distinct stats are already chosen. */
-  const slotBudget = (slot: Slot): number => {
-    const numChosen = Object.keys(result[slot]).length;
-    const reserved = MAX_SUBSTATS_PER_SLOT - numChosen;
-    const usedRolls = Object.values(result[slot]).reduce(
-      (a, b) => a + (b ?? 0),
-      0
-    );
-    return maxRollsPerSlot - usedRolls - reserved;
+  // Work in hundredths of a displayed percent, matching synthesized artifacts.
+  // This also prevents a threshold from being met only before display rounding.
+  const contribution = (value: number, rolls: number) =>
+    Math.round(Number((value * rolls).toFixed(2)) * 100);
+  const targetEr = Math.max(0, Math.ceil(erGapAfterMain * 10000 - 1e-6));
+  const targetCr = Math.max(0, Math.ceil(crGapAfterMain * 10000 - 1e-6));
+  const options = allSlots.map((slot) => {
+    const slotRv = flex?.slot === slot ? flex.rv : rv;
+    const budget = flex?.slot === slot ? flex.maxRolls : maxRollsPerSlot;
+    const cap = flex?.slot === slot ? flex.statCap : maxRollsPerStat;
+    const erCap = mainStats[slot] === "er" ? 0 : cap;
+    const crCap = mainStats[slot] === "cr" ? 0 : cap;
+    const variants: {
+      er: number;
+      cr: number;
+      erRolls: number;
+      crRolls: number;
+    }[] = [];
+    for (let erRolls = erCap; erRolls >= 0; erRolls--) {
+      for (let crRolls = crCap; crRolls >= 0; crRolls--) {
+        const reserved = 4 - Number(erRolls > 0) - Number(crRolls > 0);
+        if (erRolls + crRolls + reserved > budget) continue;
+        variants.push({
+          er: contribution(slotRv.er, erRolls),
+          cr: contribution(slotRv.cr, crRolls),
+          erRolls,
+          crRolls,
+        });
+      }
+    }
+    return variants;
+  });
+  const suffixEr = new Array<number>(6).fill(0);
+  const suffixCr = new Array<number>(6).fill(0);
+  for (let index = 4; index >= 0; index--) {
+    suffixEr[index] =
+      suffixEr[index + 1] + Math.max(0, ...options[index].map((v) => v.er));
+    suffixCr[index] =
+      suffixCr[index + 1] + Math.max(0, ...options[index].map((v) => v.cr));
+  }
+  const misses = new Set<string>();
+  const visit = (index: number, er: number, cr: number): boolean => {
+    if (er <= 0 && cr <= 0) return true;
+    if (index === 5 || er > suffixEr[index] || cr > suffixCr[index])
+      return false;
+    const key = `${index}|${er}|${cr}`;
+    if (misses.has(key)) return false;
+    const slotRv = flex?.slot === allSlots[index] ? flex.rv : rv;
+    for (const variant of options[index]) {
+      // Never spend extra rolls after this constraint is already filled.
+      if ((er <= 0 && variant.erRolls > 0) || (cr <= 0 && variant.crRolls > 0))
+        continue;
+      if (
+        variant.erRolls > 0 &&
+        contribution(slotRv.er, variant.erRolls - 1) >= er
+      )
+        continue;
+      if (
+        variant.crRolls > 0 &&
+        contribution(slotRv.cr, variant.crRolls - 1) >= cr
+      )
+        continue;
+      const nextEr = Math.max(0, er - variant.er);
+      const nextCr = Math.max(0, cr - variant.cr);
+      if (!visit(index + 1, nextEr, nextCr)) continue;
+      if (variant.erRolls) result[allSlots[index]].er = variant.erRolls;
+      if (variant.crRolls) result[allSlots[index]].cr = variant.crRolls;
+      return true;
+    }
+    misses.add(key);
+    return false;
   };
-
-  // Pre-fill ER
-  if (erGapAfterMain > 0) {
-    const erRollInternal = toInternal("er", rv.er);
-    if (erRollInternal <= 0) return null;
-    let erNeeded = Math.ceil(erGapAfterMain / erRollInternal);
-
-    for (const slot of allSlots) {
-      if (erNeeded <= 0) break;
-      if ((mainStats[slot] as string) === "er") continue; // can't sub ER where ER is main
-      const rolls = Math.min(erNeeded, maxRollsPerStat, slotBudget(slot));
-      if (rolls <= 0) continue;
-      result[slot].er = rolls;
-      erNeeded -= rolls;
-    }
-    if (erNeeded > 0) return null; // infeasible
-  }
-
-  // Pre-fill CR
-  if (crGapAfterMain > 0) {
-    const crRollInternal = toInternal("cr", rv.cr);
-    if (crRollInternal <= 0) return null;
-    let crNeeded = Math.ceil(crGapAfterMain / crRollInternal);
-
-    for (const slot of allSlots) {
-      if (crNeeded <= 0) break;
-      if ((mainStats[slot] as string) === "cr") continue;
-      const available = Math.min(crNeeded, maxRollsPerStat, slotBudget(slot));
-      if (available <= 0) continue;
-      result[slot].cr = available;
-      crNeeded -= available;
-    }
-    if (crNeeded > 0) return null; // infeasible
-  }
-
-  return result;
+  return visit(0, targetEr, targetCr) ? result : null;
 }
 
 /**

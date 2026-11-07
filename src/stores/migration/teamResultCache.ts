@@ -77,5 +77,12 @@ export function migrateTeamResultCacheStore(
     // old results cannot be migrated. Reuse this unpublished version bump.
     state.resultsByTeamId = {};
   }
+  if (version < 10) {
+    // v9 stored weapon/artifact choice rankings and serialized investment
+    // results in resultsByTeamId without enforcing generated ER/CR constraints
+    // throughout refinement. Their shape is unchanged, but infeasible builds
+    // may have entered damage rankings; only recomputation can reconcile them.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

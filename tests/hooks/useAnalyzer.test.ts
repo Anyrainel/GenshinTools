@@ -55,7 +55,7 @@ describe("investment result input scope", () => {
     localStorage.setItem(
       "team-result-cache",
       JSON.stringify({
-        version: 9,
+        version: 10,
         state: {
           resultsByTeamId: {
             team: {

@@ -40,6 +40,7 @@ import { fmtDamage } from "@/domain/team/displayFormatter";
 import type {
   ArtifactAssignmentSuggestion,
   ChoiceRanking,
+  InfeasibleChoice,
   TeamComp,
   TeamSetupConfig,
   WeaponChoiceResult,
@@ -100,6 +101,55 @@ function getArtifactAssignmentKey(
   if (!artifactSet) return "none";
   if (artifactSet.type === "4pc") return artifactSet.setId;
   return [...artifactSet.halfSetIds].sort().join("+");
+}
+
+function ExcludedChoiceList({
+  choices,
+  t,
+}: {
+  choices: InfeasibleChoice[];
+  t: WeaponChoiceResultCardProps["t"];
+}) {
+  if (choices.length === 0) return null;
+  return (
+    <details className="border-t border-border text-xs">
+      <summary className="cursor-pointer px-2 py-2 text-destructive">
+        {t
+          .ui("teamComp.excludedChoices")
+          .replace("{0}", String(choices.length))}
+      </summary>
+      <ul className="max-h-60 space-y-2 overflow-y-auto px-2 pb-2">
+        {choices.map((choice) => (
+          <li
+            key={
+              choice.type === "weapon"
+                ? `${choice.weaponId}-${choice.refinement}`
+                : getArtifactAssignmentKey(choice.artifactSet)
+            }
+            className="space-y-0.5 break-words"
+          >
+            <div className="font-medium">
+              {choice.type === "weapon"
+                ? `${t.weapon(choice.weaponId)} R${choice.refinement}`
+                : getArtifactSetLabel(choice.artifactSet, t)}
+            </div>
+            {Object.entries(choice.failReasons).map(([charId, reason]) => (
+              <p key={charId} className="text-destructive">
+                {t.character(charId)}:{" "}
+                {reason.kind === "er-unmet"
+                  ? t
+                      .ui("teamComp.requirementErUnmet")
+                      .replace("{0}", String(Math.round(reason.minEr * 100)))
+                  : t
+                      .ui("teamComp.requirementCrUnmet")
+                      .replace("{0}", String(Math.round(reason.minCr * 100)))}
+              </p>
+            ))}
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
 }
 
 function ChoiceCombatOptions({
@@ -540,6 +590,7 @@ export function CharacterWeaponPanel({
   characters,
   weapons,
   rankings,
+  excludedChoices = [],
   isMobile,
   t,
   onApply,
@@ -548,6 +599,7 @@ export function CharacterWeaponPanel({
   characters?: (string | null)[];
   weapons?: (string | null)[];
   rankings: ChoiceRanking[];
+  excludedChoices?: InfeasibleChoice[];
   isMobile: boolean;
   t: WeaponChoiceResultCardProps["t"];
   onApply?: (entry: ChoiceRanking) => void;
@@ -602,6 +654,7 @@ export function CharacterWeaponPanel({
             : `${t.ui("teamComp.showAllChoices")} (${rankings.length})`}
         </Button>
       )}
+      <ExcludedChoiceList choices={excludedChoices} t={t} />
     </div>
   );
 }
@@ -1097,6 +1150,7 @@ export function WeaponChoiceResultCard({
                 const rankings = hasResult
                   ? result.perCharacter[charId]
                   : undefined;
+                const excludedChoices = result?.excludedChoices?.[charId] ?? [];
 
                 if (rankings && rankings.length > 0) {
                   return (
@@ -1106,6 +1160,7 @@ export function WeaponChoiceResultCard({
                       characters={characters}
                       weapons={weapons}
                       rankings={rankings}
+                      excludedChoices={excludedChoices}
                       isMobile={isMobile}
                       t={t}
                       onApply={(entry) => applyChoice(charId, entry)}
@@ -1123,15 +1178,23 @@ export function WeaponChoiceResultCard({
                       {isComputing ? (
                         <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
                       ) : (
-                        <p className="text-xs text-muted-foreground text-center">
-                          {t.ui(
-                            choiceMode === "artifact"
-                              ? "teamComp.noCompatibleArtifactSets"
-                              : "teamComp.noCompatibleWeapons"
+                        <p
+                          className={cn(
+                            "text-xs text-center",
+                            excludedChoices.length > 0
+                              ? "text-destructive"
+                              : "text-muted-foreground"
                           )}
+                        >
+                          {excludedChoices.length > 0
+                            ? t.ui("teamComp.noFeasibleChoices")
+                            : choiceMode === "artifact"
+                              ? t.ui("teamComp.noCompatibleArtifactSets")
+                              : t.ui("teamComp.noCompatibleWeapons")}
                         </p>
                       )}
                     </div>
+                    <ExcludedChoiceList choices={excludedChoices} t={t} />
                   </div>
                 );
               })}

@@ -2348,6 +2348,29 @@ export function DamageCard({
             </div>
           )}
 
+          {genResult?.done && Object.keys(genResult.failReasons).length > 0 && (
+            <div
+              role="status"
+              className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive"
+            >
+              <p className="font-semibold">
+                {t.ui("teamComp.generatedRequirementsUnmet")}
+              </p>
+              {Object.entries(genResult.failReasons).map(([charId, reason]) => (
+                <p key={charId}>
+                  {t.character(charId)}:{" "}
+                  {reason.kind === "er-unmet"
+                    ? t
+                        .ui("teamComp.requirementErUnmet")
+                        .replace("{0}", String(Math.round(reason.minEr * 100)))
+                    : t
+                        .ui("teamComp.requirementCrUnmet")
+                        .replace("{0}", String(Math.round(reason.minCr * 100)))}
+                </p>
+              ))}
+            </div>
+          )}
+
           {/* Progress */}
           {genComputing && genResult && (
             <div className="space-y-3 bg-black/15 p-3 rounded-lg border border-foreground/20">
@@ -2365,7 +2388,9 @@ export function DamageCard({
           )}
 
           {/* Results */}
-          {genDisplayResult && teamBuild ? (
+          {genDisplayResult &&
+          teamBuild &&
+          Object.keys(genResult?.failReasons ?? {}).length === 0 ? (
             formulaMode === "single" && resolvedFormula ? (
               <SingleResultView
                 displayResult={genDisplayResult}

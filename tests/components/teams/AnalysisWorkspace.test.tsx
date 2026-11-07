@@ -5,6 +5,7 @@ import { AnalysisWorkspace } from "@/components/teams/AnalysisWorkspace";
 import type { DamageCard } from "@/components/teams/DamageCard";
 import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type { GeneratorResult } from "@/domain/combat/generator/generator";
 import type { MainStat, MainStatSlot } from "@/domain/enums";
 import type { AccountData, ArtifactData } from "@/domain/models";
 import {
@@ -25,6 +26,12 @@ import { act, render, screen } from "../../utils/render";
 import "@/domain/combat/damage/index";
 
 const mounts = vi.hoisted(() => ({ roster: vi.fn(), skills: vi.fn() }));
+const generation = vi.hoisted(() => ({
+  result: null as GeneratorResult | null,
+  start: vi.fn(),
+  stop: vi.fn(),
+  reset: vi.fn(),
+}));
 const optimization = vi.hoisted(() => ({
   account: null as AccountData | null,
   result: null as TeamOptimizationResult | null,
@@ -40,6 +47,13 @@ vi.mock("@/hooks/useActiveAccount", () => ({
 vi.mock("@/hooks/useAsyncOptimizer", () => ({
   useAsyncOptimizer: () => ({
     ...optimization,
+    isComputing: false,
+    error: null,
+  }),
+}));
+vi.mock("@/hooks/useAsyncGenerator", () => ({
+  useAsyncGenerator: () => ({
+    ...generation,
     isComputing: false,
     error: null,
   }),
@@ -144,6 +158,24 @@ function Workspace() {
     />
   );
 }
+
+it("does not calculate generated team damage by substituting current artifacts for an infeasible character", () => {
+  generation.result = {
+    artifactsByChar: {},
+    sheetsByChar: {},
+    phase: "done",
+    progress: 1,
+    done: true,
+    failReasons: { hu_tao: { kind: "er-unmet", minEr: 6, bestEr: 1 } },
+  };
+  const view = render(<Workspace />);
+  try {
+    expect(optimization.card.mock.lastCall![0].genDisplayResult).toBeNull();
+  } finally {
+    view.unmount();
+    generation.result = null;
+  }
+});
 
 it("keeps keyboard navigation and accessible panel links across the analysis modes", async () => {
   const user = userEvent.setup();

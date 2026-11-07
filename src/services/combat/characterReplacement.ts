@@ -26,6 +26,7 @@ import {
 import { buildArtifactSetChoiceCandidates } from "../../domain/combat/analyzer/weaponChoice";
 import { runGenerator } from "../../domain/combat/generator/generator";
 import { rollsPerSlotForPreset } from "../../domain/combat/generator/substatBudget";
+import { getErCrConstraintFailures } from "../../domain/combat/optimizer/erCrConstraints";
 import { computeTeamInventory } from "../../domain/team/artifactInventory";
 import type {
   CharacterReplacementMessage,
@@ -346,11 +347,30 @@ export async function runCharacterReplacement(
   let baselineDamage: number | null = null;
   try {
     const team = makeTeam(originalConfigs);
-    baselineDamage = team.getComboDamageResult(
-      request.objective,
-      screenSheets,
-      request.calcContext
-    ).totalDamage;
+    const requirements = Object.fromEntries(
+      originalConfigs.map((config) => [
+        config.charId,
+        {
+          minEr: request.setupConfig.charConfigs?.[config.charId]?.minEr ?? 0,
+          minCr: request.setupConfig.charConfigs?.[config.charId]?.minCr ?? 0,
+        },
+      ])
+    );
+    if (
+      Object.keys(
+        getErCrConstraintFailures(
+          team,
+          screenSheets,
+          request.calcContext,
+          requirements
+        )
+      ).length === 0
+    )
+      baselineDamage = team.getComboDamageResult(
+        request.objective,
+        screenSheets,
+        request.calcContext
+      ).totalDamage;
   } catch {
     /* An incomplete original team can still be repaired. */
   }
@@ -557,7 +577,8 @@ export async function runCharacterReplacement(
             ])
           ),
         }))
-          if (update.done) artifactsByChar = update.artifactsByChar;
+          if (update.done && Object.keys(update.failReasons).length === 0)
+            artifactsByChar = update.artifactsByChar;
       } else {
         const pool = candidateInventory(configs);
         const forced = pool.forceReuseChars;
@@ -782,7 +803,7 @@ export async function runIndependentCharacterReplacements(
           ])
         ),
       })) {
-        if (update.done)
+        if (update.done && Object.keys(update.failReasons).length === 0)
           baselineDamage = team.getComboDamageResult(
             request.objective,
             update.sheetsByChar,

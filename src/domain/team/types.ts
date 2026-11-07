@@ -152,6 +152,16 @@ export interface ArtifactRanking extends ChoiceRankingBase {
 
 export type ChoiceRanking = WeaponRanking | ArtifactRanking;
 
+export type InfeasibleChoice = (
+  | { type: "weapon"; weaponId: string; refinement: number }
+  | { type: "artifact"; artifactSet: ArtifactSetConfig }
+) & {
+  failReasons: Record<
+    string,
+    Extract<OptFailReason, { kind: "er-unmet" | "cr-unmet" }>
+  >;
+};
+
 export interface ArtifactAssignmentSuggestion {
   currentDamage: number;
   bestDamage: number;
@@ -167,6 +177,7 @@ export interface WeaponChoiceResult {
   mode?: "weapon" | "artifact";
   timestamp: number;
   perCharacter: Record<string, ChoiceRanking[]>;
+  excludedChoices?: Record<string, InfeasibleChoice[]>;
   artifactAssignmentSuggestion?: ArtifactAssignmentSuggestion | null;
 }
 

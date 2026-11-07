@@ -15,6 +15,27 @@ const defaultMainStats: Record<Slot, MainStat> = {
 };
 
 describe("computeSubstatPreFill — 4-substat constraint", () => {
+  it("uses the same decimal rounding as synthesized artifacts at half-cent boundaries", () => {
+    const boundaryRv = getRollValues(0.9, 5);
+    // Five CR rolls have a raw value of 17.505%. toFixed(2), used by
+    // synthesized artifacts, yields 17.50 rather than Math.round's 17.51.
+    const result = computeSubstatPreFill(
+      0,
+      0.1751,
+      defaultMainStats,
+      boundaryRv,
+      8,
+      5
+    );
+    expect(result).not.toBeNull();
+    const roundedCr = allSlots.reduce(
+      (sum, slot) =>
+        sum + Number((boundaryRv.cr * (result![slot].cr ?? 0)).toFixed(2)),
+      0
+    );
+    expect(roundedCr / 100).toBeGreaterThanOrEqual(0.1751);
+  });
+
   it("single ER pre-fill should leave room for 3 more substats per slot", () => {
     // 8 rolls per slot, max 5 per stat line
     const result = computeSubstatPreFill(

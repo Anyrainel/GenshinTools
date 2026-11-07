@@ -26,6 +26,7 @@ import type { WeaponStatsMap } from "@/domain/reference/stats";
 import type {
   ArtifactAssignmentSuggestion,
   ChoiceRanking,
+  InfeasibleChoice,
   WeaponChoiceCharConfig,
   WeaponRanking,
 } from "@/domain/team/types";
@@ -40,6 +41,7 @@ import { TeamBuild } from "../damage/core/teamBuild";
 import type { TeamMeta } from "../damage/core/teamMeta";
 import type { GeneratorResult } from "../generator/generator";
 import { runGenerator } from "../generator/generator";
+import { getErCrConstraintFailures } from "../optimizer/erCrConstraints";
 import { getCompatibleOwnedWeaponChoices } from "./weaponChoiceCandidates";
 
 export interface CharProgress {
@@ -65,6 +67,7 @@ export interface WeaponChoiceResult {
   mode: "weapon" | "artifact";
   timestamp: number;
   perCharacter: Record<string, ChoiceRanking[]>;
+  excludedChoices: Record<string, InfeasibleChoice[]>;
   artifactAssignmentSuggestion?: ArtifactAssignmentSuggestion | null;
   done: boolean;
   progress: WeaponChoiceProgress;
@@ -370,7 +373,6 @@ async function computeForChar(
   targetCharId: string,
   candidates: ChoiceCandidate[],
   configs: TeamSlotConfig[],
-  charIds: string[],
   combo: ComboFormula,
   calcContext: CalcContext,
   opts: Record<string, string>,
@@ -383,38 +385,21 @@ async function computeForChar(
     currentTarget?: string,
     totalChoices?: number
   ) => void
-): Promise<ChoiceRanking[]> {
-  const supportCharIds = charIds.filter((id) => id !== targetCharId);
+): Promise<{
+  rankings: ChoiceRanking[];
+  excludedChoices: InfeasibleChoice[];
+}> {
   const candidateQueue = [...candidates];
   const initialCandidateCount = candidateQueue.length;
-  let totalProgressSteps = initialCandidateCount + 1;
+  let totalProgressSteps = initialCandidateCount;
 
-  // Step 1: Generate supporter artifacts once using the roster weapon
+  // Each candidate regenerates the whole team: changing a weapon or set can
+  // change teammates' ER buffs and the artifact rolls needed to meet their ER.
   const rosterTeamBuild = new TeamBuild(configs, opts, enemyAura, extraBuffs);
-
-  onProgress(0, undefined, totalProgressSteps);
-  const rosterResult = await runGeneratorToCompletion(
-    rosterTeamBuild,
-    targetCharId,
-    combo,
-    calcContext,
-    perChar,
-    setKeysByChar,
-    (progress) => onProgress(progress, undefined, totalProgressSteps)
-  );
-
-  if (!rosterResult) return [];
-
-  // Extract supporter sheets (fixed across weapon swaps)
-  const supporterSheets: Record<string, StatSheet> = {};
-  for (const sid of supportCharIds) {
-    if (rosterResult.sheetsByChar[sid]) {
-      supporterSheets[sid] = rosterResult.sheetsByChar[sid];
-    }
-  }
 
   // Step 2: For each candidate, generate artifacts and evaluate
   const rankings: ChoiceRanking[] = [];
+  const excludedChoices: InfeasibleChoice[] = [];
 
   for (
     let candidateIndex = 0;
@@ -422,7 +407,7 @@ async function computeForChar(
     candidateIndex++
   ) {
     const candidate = candidateQueue[candidateIndex];
-    const progressBase = candidateIndex + 1;
+    const progressBase = candidateIndex;
     const progressLabel = getCandidateProgressLabel(candidate);
     onProgress(progressBase, progressLabel, totalProgressSteps);
 
@@ -447,6 +432,7 @@ async function computeForChar(
           ])
         : [opts];
     let bestRanking: ChoiceRanking | undefined;
+    let failReasons: InfeasibleChoice["failReasons"] = {};
     for (const [optionIndex, candidateOpts] of optionVariants.entries()) {
       const candidateTeamBuild = new TeamBuild(
         candidateConfigs,
@@ -481,20 +467,26 @@ async function computeForChar(
       );
 
       if (!weaponResult) {
-        continue;
+        throw new Error("Artifact generation ended without a result");
       }
-
-      const combinedSheets: Record<string, StatSheet> = {
-        ...supporterSheets,
+      const constraintFailures = {
+        ...getErCrConstraintFailures(
+          candidateTeamBuild,
+          weaponResult.sheetsByChar,
+          calcContext,
+          perChar
+        ),
+        ...weaponResult.failReasons,
       };
-      if (weaponResult.sheetsByChar[targetCharId]) {
-        combinedSheets[targetCharId] = weaponResult.sheetsByChar[targetCharId];
+      if (Object.keys(constraintFailures).length > 0) {
+        failReasons = constraintFailures;
+        continue;
       }
 
       const damage = evaluateComboDamage(
         candidateTeamBuild,
         combo,
-        combinedSheets,
+        weaponResult.sheetsByChar,
         calcContext
       );
 
@@ -572,19 +564,28 @@ async function computeForChar(
         bestRanking = ranking;
     }
     if (bestRanking) rankings.push(bestRanking);
+    else if (Object.keys(failReasons).length > 0)
+      excludedChoices.push({ ...candidate, failReasons });
 
-    if (candidateIndex === initialCandidateCount - 1) {
-      const twoPieceCandidates = buildTwoPieceArtifactChoiceCandidates(
-        collectGeneratedSubstatKeys(rankings)
-      );
+    if (
+      candidate.type === "artifact" &&
+      candidateIndex === initialCandidateCount - 1
+    ) {
+      const statKeys = new Set(collectGeneratedSubstatKeys(rankings));
+      // A constraint can make every 4pc choice infeasible. Still try the 2pc
+      // bonuses that address it instead of deriving candidates only from winners.
+      if (perChar[targetCharId]?.minEr > 1) statKeys.add("er");
+      if (perChar[targetCharId]?.minCr > 0) statKeys.add("cr");
+      const twoPieceCandidates =
+        buildTwoPieceArtifactChoiceCandidates(statKeys);
       candidateQueue.push(...twoPieceCandidates);
-      totalProgressSteps = candidateQueue.length + 1;
+      totalProgressSteps = candidateQueue.length;
       onProgress(progressBase + 1, undefined, totalProgressSteps);
     }
   }
 
   onProgress(totalProgressSteps, undefined, totalProgressSteps);
-  return rankings;
+  return { rankings, excludedChoices };
 }
 
 function collectGeneratedSubstatKeys(rankings: ChoiceRanking[]): StatKey[] {
@@ -765,7 +766,19 @@ async function evaluateArtifactAssignment(
       perChar,
       setKeysByChar
     );
-    if (!result) continue;
+    if (
+      !result ||
+      Object.keys(result.failReasons).length > 0 ||
+      Object.keys(
+        getErCrConstraintFailures(
+          teamBuild,
+          result.sheetsByChar,
+          calcContext,
+          perChar
+        )
+      ).length > 0
+    )
+      continue;
 
     const sheets: Record<string, StatSheet> = {};
     for (const config of candidateConfigs) {
@@ -896,6 +909,7 @@ export async function* runWeaponChoice(
     mode,
     timestamp: Date.now(),
     perCharacter: {},
+    excludedChoices: {},
     artifactAssignmentSuggestion: null,
     done: false,
     progress: {
@@ -920,6 +934,7 @@ export async function* runWeaponChoice(
       mode,
       timestamp: Date.now(),
       perCharacter: {},
+      excludedChoices: {},
       artifactAssignmentSuggestion,
       done: false,
       progress: {
@@ -936,6 +951,7 @@ export async function* runWeaponChoice(
     { done: number; total: number; currentTarget?: string }
   > = {};
   const perCharacter: Record<string, ChoiceRanking[]> = {};
+  const excludedChoices: Record<string, InfeasibleChoice[]> = {};
 
   // Pending progress updates queue — populated by parallel callbacks
   let hasPendingProgress = false;
@@ -956,6 +972,7 @@ export async function* runWeaponChoice(
         : candidatesPerChar[targetCharId];
     if (!candidates || candidates.length === 0) {
       perCharacter[targetCharId] = [];
+      excludedChoices[targetCharId] = [];
       return Promise.resolve();
     }
 
@@ -968,7 +985,6 @@ export async function* runWeaponChoice(
       targetCharId,
       candidates,
       configs,
-      charIds,
       combo,
       calcContext,
       opts,
@@ -984,7 +1000,7 @@ export async function* runWeaponChoice(
         perCharProgress[targetCharId].currentTarget = currentTarget;
         hasPendingProgress = true;
       }
-    ).then((rankings) => {
+    ).then(({ rankings, excludedChoices: excluded }) => {
       if (mode === "weapon" && options.ownedWeaponChoices) {
         // The best owned copy is 100%, including intermediate refinements.
         normalizeArtifactRankings(rankings);
@@ -992,15 +1008,21 @@ export async function* runWeaponChoice(
         normalizeRankings(mode, rankings, weaponStats);
       }
       perCharacter[targetCharId] = rankings;
+      excludedChoices[targetCharId] = excluded;
     });
   });
 
   // Poll for progress while characters compute in parallel
   const allDone = Promise.all(charPromises);
   let settled = false;
-  allDone.then(() => {
-    settled = true;
-  });
+  allDone.then(
+    () => {
+      settled = true;
+    },
+    () => {
+      settled = true;
+    }
+  );
 
   while (!settled) {
     await yieldFrame();
@@ -1021,6 +1043,7 @@ export async function* runWeaponChoice(
         mode,
         timestamp: Date.now(),
         perCharacter: { ...perCharacter },
+        excludedChoices: { ...excludedChoices },
         artifactAssignmentSuggestion,
         done: false,
         progress: {
@@ -1043,6 +1066,7 @@ export async function* runWeaponChoice(
     mode,
     timestamp: Date.now(),
     perCharacter,
+    excludedChoices,
     artifactAssignmentSuggestion,
     done: true,
     progress: {

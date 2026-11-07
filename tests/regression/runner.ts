@@ -623,6 +623,7 @@ function serializeTeamResult(
         { minEr: r4(v.minEr), minCr: r4(v.minCr) },
       ])
     ),
+    failReasons: gen.failReasons,
     damage: r4(display.totalDamage),
     comboResult,
     artifacts,
@@ -660,6 +661,7 @@ export interface GoldenTeamResult {
   characters: string[];
   carryCharId: string;
   perChar: Record<string, { minEr: number; minCr: number }>;
+  failReasons: GeneratorResult["failReasons"];
   damage: number;
   comboResult: {
     lineDamages: { perHit: number; total: number }[];

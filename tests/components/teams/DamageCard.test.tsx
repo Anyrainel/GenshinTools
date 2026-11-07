@@ -161,6 +161,33 @@ describe("DamageCard", () => {
     expect(screen.getByText(/Press Run Optimization/i)).toBeInTheDocument();
   });
 
+  it("shows which requirement prevents a generated build from being used", async () => {
+    const user = userEvent.setup({ delay: null });
+    render(
+      <TestCard
+        {...defaultProps({
+          genResult: {
+            artifactsByChar: {},
+            sheetsByChar: {},
+            phase: "done",
+            progress: 1,
+            done: true,
+            failReasons: {
+              xingqiu: { kind: "er-unmet", minEr: 2.3, bestEr: 1 },
+            },
+          },
+        })}
+      />
+    );
+    await user.click(screen.getByText("Generate"));
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "No build found that meets all requirements"
+    );
+    expect(screen.getByRole("status")).toHaveTextContent(
+      "Xingqiu: ER below the required 230%"
+    );
+  });
+
   it("shows error message when teamError is set on optimize tab", async () => {
     const user = userEvent.setup({ delay: null });
     render(

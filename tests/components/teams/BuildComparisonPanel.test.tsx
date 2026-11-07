@@ -93,12 +93,123 @@ function result(mode: "weapon" | "artifact", timestamp: number): ComputeResult {
     mode,
     timestamp,
     perCharacter: {},
+    excludedChoices: {},
     done: true,
     progress: { phase: "done", overallProgress: 1 },
   };
 }
 
 describe("owned comparison scope", () => {
+  it("keeps rejected choices out of rankings and preserves their failure details in the cache", () => {
+    const view = render(<TestPanel />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    const excludedChoices: ComputeResult["excludedChoices"] = {
+      hu_tao: [
+        {
+          type: "weapon",
+          weaponId: "favonius_lance",
+          refinement: 5,
+          failReasons: {
+            hu_tao: { kind: "er-unmet", minEr: 2.3, bestEr: 1 },
+          },
+        },
+      ],
+    };
+    state.result = {
+      ...result("weapon", 101),
+      perCharacter: {
+        hu_tao: [
+          {
+            type: "weapon",
+            weaponId: "staff_of_homa",
+            refinement: 3,
+            damage: 1000,
+            percentOfBest: 100,
+          },
+        ],
+      },
+      excludedChoices,
+    };
+    view.rerender(<TestPanel />);
+    expect(
+      screen.getByRole("button", { name: "Staff of Homa R3" })
+    ).toBeInTheDocument();
+    expect(screen.getAllByText("100.0%")).toHaveLength(1);
+    fireEvent.click(screen.getByText("Excluded choices (1)"));
+    expect(screen.getByText("Favonius Lance R5")).toBeVisible();
+    expect(
+      screen.getByText("Hu Tao: ER below the required 230%")
+    ).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "Favonius Lance R5" })
+    ).not.toBeInTheDocument();
+    expect(
+      useTeamResultCacheStore.getState().resultsByTeamId[teamComp.id]
+        .weaponChoiceResult?.excludedChoices
+    ).toEqual(excludedChoices);
+  });
+
+  it("explains when all compatible weapons fail the requirements", () => {
+    const view = render(<TestPanel />);
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    state.result = {
+      ...result("weapon", 102),
+      perCharacter: { hu_tao: [] },
+      excludedChoices: {
+        hu_tao: [
+          {
+            type: "weapon",
+            weaponId: "staff_of_homa",
+            refinement: 3,
+            failReasons: { hu_tao: { kind: "er-unmet", minEr: 6, bestEr: 1 } },
+          },
+        ],
+      },
+    };
+    view.rerender(<TestPanel />);
+    expect(
+      screen.getByText(
+        "No choices found that meet the minimum ER / CR requirements"
+      )
+    ).toBeInTheDocument();
+    expect(screen.queryByText("No compatible weapons")).not.toBeInTheDocument();
+    expect(screen.queryByText("100.0%")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Excluded choices (1)"));
+    expect(
+      screen.getByText("Hu Tao: ER below the required 600%")
+    ).toBeVisible();
+  });
+
+  it("shows rejected artifact sets and their CRIT Rate requirements", () => {
+    const view = render(<TestPanel />);
+    fireEvent.click(screen.getByRole("button", { name: "Artifact sets" }));
+    fireEvent.click(screen.getByRole("button", { name: "Run Analysis" }));
+    state.result = {
+      ...result("artifact", 103),
+      perCharacter: { hu_tao: [] },
+      excludedChoices: {
+        hu_tao: [
+          {
+            type: "artifact",
+            artifactSet: { type: "4pc", setId: "archaic_petra" },
+            failReasons: {
+              hu_tao: { kind: "cr-unmet", minCr: 0.6, bestCr: 0.05 },
+            },
+          },
+        ],
+      },
+    };
+    view.rerender(<TestPanel />);
+    expect(
+      screen.queryByText("No compatible artifact sets")
+    ).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Excluded choices (1)"));
+    expect(screen.getByText("Archaic Petra")).toBeVisible();
+    expect(
+      screen.getByText("Hu Tao: CRIT Rate below the required 60%")
+    ).toBeVisible();
+  });
+
   it("keeps pre-run settings compact and renders completed empty rankings", () => {
     const view = render(<TestPanel />);
     expect(

@@ -158,6 +158,42 @@ async function run(input: CharacterReplacementRequest) {
 }
 
 describe("selected-team character replacement", () => {
+  it("rejects generated replacements below an unchanged teammate's ER requirement", async () => {
+    const input = request();
+    input.settings.artifactBasis = "generated";
+    input.setupConfig.charConfigs = { xingqiu: { minEr: 6 } };
+    expect(await run(input)).toMatchObject({
+      type: "error",
+      reason: "no-results",
+    });
+  }, 30000);
+
+  it("keeps independent replacement results without inventing damage for an infeasible baseline", async () => {
+    const input = request();
+    input.settings.artifactBasis = "generated";
+    input.setupConfig.charConfigs = { xingqiu: { minEr: 6 } };
+    let done: CharacterSlotReplacementRanking[] = [];
+    await runIndependentCharacterReplacements(
+      input,
+      chars,
+      weapons,
+      (message) => {
+        if (message.type === "independent-result") done = message.rankings;
+      }
+    );
+    const repaired = done.find((ranking) => ranking.slotIndex === 1);
+    expect(repaired?.outcome.type).toBe("result");
+    if (repaired?.outcome.type === "result") {
+      expect(repaired.outcome.baselineDamage).toBeNull();
+      expect(repaired.outcome.results.length).toBeGreaterThan(0);
+    }
+    for (const ranking of done.filter((entry) => entry.slotIndex !== 1))
+      expect(ranking.outcome).toMatchObject({
+        type: "error",
+        reason: "no-results",
+      });
+  }, 30000);
+
   it.each([1, 3])(
     "ranks every empty position for a %i-member saved team",
     async (memberCount) => {

@@ -62,7 +62,7 @@ describe("migrateTeamResultCacheStore", () => {
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(
       JSON.parse(window.localStorage.getItem("team-result-cache")!).version
-    ).toBe(9);
+    ).toBe(10);
     window.localStorage.removeItem("team-result-cache");
   });
 
@@ -96,7 +96,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      9
+      10
     );
     localStorage.removeItem("team-result-cache");
   });
@@ -139,12 +139,12 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      9
+      10
     );
     localStorage.removeItem("team-result-cache");
   });
 
-  it("preserves current v9 results", () => {
+  it("preserves current v10 results", () => {
     const resultsByTeamId = {
       "team-1": {
         weaponChoiceResult: { mode: "weapon", timestamp: 1, perCharacter: {} },
@@ -152,7 +152,7 @@ describe("migrateTeamResultCacheStore", () => {
       },
     };
     expect(
-      migrateTeamResultCacheStore({ resultsByTeamId }, 9).resultsByTeamId
+      migrateTeamResultCacheStore({ resultsByTeamId }, 10).resultsByTeamId
     ).toBe(resultsByTeamId);
   });
 
@@ -178,7 +178,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      9
+      10
     );
     localStorage.removeItem("team-result-cache");
   });
@@ -187,7 +187,7 @@ describe("migrateTeamResultCacheStore", () => {
     localStorage.setItem(
       "team-result-cache",
       JSON.stringify({
-        version: 9,
+        version: 10,
         state: {
           resultsByTeamId: {
             team: {
@@ -195,6 +195,18 @@ describe("migrateTeamResultCacheStore", () => {
                 mode: "weapon",
                 timestamp: 1,
                 perCharacter: {},
+                excludedChoices: {
+                  xingqiu: [
+                    {
+                      type: "weapon",
+                      weaponId: "primordial_jade_cutter",
+                      refinement: 1,
+                      failReasons: {
+                        xingqiu: { kind: "er-unmet", minEr: 6, bestEr: 1 },
+                      },
+                    },
+                  ],
+                },
               },
               weaponChoiceInputKey: "weapons:C2:R3",
               artifactChoiceResult: {
@@ -213,11 +225,71 @@ describe("migrateTeamResultCacheStore", () => {
       {
         weaponChoiceInputKey: "weapons:C2:R3",
         artifactChoiceInputKey: "artifacts:C2:R3",
+        weaponChoiceResult: {
+          excludedChoices: {
+            xingqiu: [
+              { failReasons: { xingqiu: { kind: "er-unmet", minEr: 6 } } },
+            ],
+          },
+        },
       }
     );
     useTeamResultCacheStore.getState().clearChoiceResults("team");
     expect(
       useTeamResultCacheStore.getState().getForTeam("team")
     ).toBeUndefined();
+  });
+  it("invalidates v9 damage rankings that may contain builds below their ER requirement", async () => {
+    localStorage.setItem(
+      "team-result-cache",
+      JSON.stringify({
+        version: 9,
+        state: {
+          resultsByTeamId: {
+            "xingqiu-er": {
+              weaponChoiceResult: {
+                mode: "weapon",
+                timestamp: 1,
+                perCharacter: {
+                  xingqiu: [
+                    {
+                      type: "weapon",
+                      weaponId: "primordial_jade_cutter",
+                      refinement: 1,
+                      damage: 100000,
+                      percentOfBest: 100,
+                      mainStats: {
+                        sands: "atk%",
+                        goblet: "hydro%",
+                        circlet: "cd",
+                      },
+                    },
+                  ],
+                },
+              },
+              weaponChoiceInputKey: "same-inputs-min-er-230",
+              artifactChoiceResult: {
+                mode: "artifact",
+                timestamp: 1,
+                perCharacter: {},
+              },
+              artifactChoiceInputKey: "same-inputs-min-er-230",
+              investmentResult: {
+                timestamp: 1,
+                bestAtTier: [],
+                nodesByJin: [],
+              },
+              investmentInputKey: "same-inputs-min-er-230",
+            },
+          },
+        },
+      })
+    );
+    await useTeamResultCacheStore.persist.rehydrate();
+    expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
+    expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
+      10
+    );
+    localStorage.removeItem("team-result-cache");
   });
 });
