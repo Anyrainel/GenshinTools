@@ -146,4 +146,6 @@ export const charInfo: Record<string, CharacterInfo> = {
   yumemizuki_mizuki: { energy: 60, healerC: 0, supStat: ["em"], c3Talent: "E", c5Talent: "Q" },
   zhongli: { energy: 40, healerC: 6, shielderC: 0, supStat: ["hp%"], c3Talent: "E", c5Talent: "Q" },
   zibai: { energy: 60, c3Talent: "E", c5Talent: "Q", faction: "Moonsign" },
+  danica: { energy: 60, shielderC: 0, supStat: ["atk%"], c3Talent: "Q", c5Talent: "E" },
+  anastasya: { energy: 50, healerC: 0, c3Talent: "Q", c5Talent: "E" },
 };

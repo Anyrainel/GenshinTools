@@ -10,6 +10,7 @@ import { CharacterBase } from "../core/implModel";
 import { RegisterCharacter, resolveOption } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { StatSheet } from "../core/statSheet";
+import type { TeamMeta } from "../core/teamMeta";
 import type {
   BuffTarget,
   CalcContext,
@@ -20,6 +21,926 @@ import type {
   OptionDef,
 } from "../types";
 import { cbs } from "./helpers";
+
+const danicaOption = {
+  label: { zh: "女仆形态与辉映", en: "Maid Form and Radiance" },
+  choices: [
+    {
+      value: "battle-stellar",
+      label: { zh: "战斗女仆·辉映", en: "Battle Maid / Radiance" },
+      when: (tm) => tm.hasPolestarField(),
+    },
+    {
+      value: "defense-stellar",
+      label: { zh: "守护女仆·辉映", en: "Defense Maid / Radiance" },
+      when: (tm) => tm.hasPolestarField() && tm.characters.length >= 2,
+    },
+    {
+      value: "battle",
+      label: { zh: "战斗女仆·无辉映", en: "Battle Maid / No Radiance" },
+    },
+    {
+      value: "defense",
+      label: { zh: "守护女仆·无辉映", en: "Defense Maid / No Radiance" },
+      when: (tm) => tm.characters.length >= 2,
+    },
+  ] as const,
+} satisfies OptionDef;
+
+@RegisterCharacter("danica", danicaOption)
+class Danica extends CharacterBase {
+  private readonly state = resolveOption(
+    danicaOption,
+    this.option,
+    this.teamMeta
+  );
+  private readonly defense = this.state.startsWith("defense");
+  private readonly radianceOn = this.state.endsWith("stellar");
+  private readonly hasCoordinatedTrigger = Object.entries(
+    this.teamMeta.elements
+  ).some(
+    ([id, element]) =>
+      id !== this.charId && (element === "Cryo" || element === "Electro")
+  );
+
+  readonly buffs = (() => {
+    const buffs: StatBuff[] = [
+      new StatBuff(
+        cbs(this, "P1", ["E"]),
+        {
+          receiver: "team",
+          filter: { elements: ["Electro"] },
+        },
+        [{ key: "resReduction%", value: this.radianceOn ? 0.3 : 0.15 }]
+      ),
+      // The 7.2.50 EN and ZH both say per ONE ATK, not per 100 ATK.
+      new ScalingBuff(
+        cbs(this, "P3", []),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarConduct"] },
+        },
+        [],
+        "atk",
+        "reactionBaseDmg%",
+        0.007,
+        0.14
+      ),
+      new StatBuff(cbs(this, "P2", ["E"]), { receiver: "self" }, [
+        // "以上效果最多叠加3次" covers both form-specific bonuses.
+        {
+          key: this.defense ? "atk%" : "atkSpd%",
+          value: this.defense && !this.hasCoordinatedTrigger ? 0.2 : 0.6,
+        },
+      ]),
+    ];
+    if (this.teamMeta.hasPolestarField()) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P3", ["stellarConduct"]),
+          {
+            receiver: "team",
+            filter: { elements: ["Cryo", "Electro"] },
+          },
+          [{ key: "polestarField", value: 1 }]
+        )
+      );
+    }
+    if (this.radianceOn) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P1", ["E"]),
+          {
+            receiver: "team",
+            filter: { elements: ["Cryo"] },
+          },
+          [{ key: "resReduction%", value: 0.3 }]
+        )
+      );
+      if (this.defense) {
+        const c1 = this.constellation >= 1 ? 1.8 : 1;
+        buffs.push(
+          new ScalingBuff(
+            cbs(this, "Q", ["E", "Q"]),
+            { receiver: "team" },
+            [],
+            "atk",
+            "atk",
+            this.param("Q", 6) * c1,
+            this.param("Q", 7) * c1
+          )
+        );
+      }
+    }
+    if (this.constellation >= 2) {
+      // Every character owns seven Toast stacks. Battle Maid consumes her own
+      // whole pool at once; its first-hit and guaranteed refund bonuses are
+      // attached to the corresponding E2 entries below instead.
+      for (const charId of this.teamMeta.characters) {
+        if (!this.defense && charId === this.charId) continue;
+        buffs.push(
+          new ScalingBuff(
+            { ...cbs(this, "C2", ["E"]), maxStacks: 7 },
+            {
+              receiver: "team",
+              charId,
+              filter: { reactions: ["stellarConduct"] },
+            },
+            [],
+            "atk",
+            "baseDmg",
+            1
+          )
+        );
+      }
+    }
+    if (this.constellation >= 6) {
+      // ZH says 擢升 (Elevation); EN's generic DMG wording is less precise.
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          {
+            receiver: "team",
+            filter: { reactions: ["stellarConduct"] },
+          },
+          [{ key: "elevated%", value: 0.2 }]
+        )
+      );
+      if (this.defense) {
+        buffs.push(
+          new ScalingBuff(
+            cbs(this, "C6", ["E"]),
+            {
+              receiver: "teamOnField",
+              filter: { reactions: ["stellarConduct"] },
+            },
+            [],
+            "atk",
+            "reactionDmg%",
+            0.0001,
+            0.4
+          )
+        );
+      } else {
+        // Persistent E2 CRIT bonuses must not share the one-use C2 Toast
+        // bespoke overlay: its hit limit would also cut off these bonuses.
+        for (const [key, scale, cap] of [
+          ["reactionCr", 0.00005, 0.1],
+          ["reactionCd", 0.0005, 1],
+        ] as const) {
+          buffs.push(
+            new ScalingBuff(
+              cbs(this, "C6", ["E"]),
+              {
+                receiver: "selfOnField",
+                filter: { abilities: ["skill"], reactions: ["stellarConduct"] },
+              },
+              [],
+              "atk",
+              key,
+              scale,
+              cap
+            )
+          );
+        }
+      }
+    }
+    return buffs;
+  })();
+
+  protected override get comboDescriptor(): ComboTemplate {
+    if (this.defense)
+      return [
+        { id: "danica-skill", count: 1 },
+        // Before choosing a form, four Anchor stages fill 100 Excitement.
+        // With no Cryo/Electro teammate this is the only Defense-entry path;
+        // after entry, Defense prevents repeating the own-normal precharge.
+        ...(!this.hasCoordinatedTrigger
+          ? [1, 2, 3, 4].map((stage) => ({
+              id: `danica-anchor-n${stage}`,
+              count: 1,
+            }))
+          : []),
+        { id: "danica-entry", count: 1 },
+        { id: "danica-burst", count: 1 },
+        // A refreshed Anchor lasts 25s: floor(25 / 1.5) coordinated attacks.
+        {
+          id: "danica-coordinated",
+          count: this.hasCoordinatedTrigger ? 16 : 0,
+        },
+      ];
+    // Four stages initially grant 100 Excitement. After E2 #1, N2+N3
+    // supply 100; after #2, N3+N4 supply 150; then each N4 supplies 100.
+    // N3's two damage hits grant Excitement only once per normal stage.
+    // Five E2 uses destroy the Anchor. Q's instant refill is not needed by
+    // this conservative rotation; peak buffs assume the enhanced form.
+    return [
+      { id: "danica-skill", count: 1 },
+      { id: "danica-anchor-n1", count: 1 },
+      { id: "danica-anchor-n2", count: 2 },
+      { id: "danica-anchor-n3", count: 3 },
+      { id: "danica-anchor-n4", count: 4 },
+      { id: "danica-e2-first", count: 1 },
+      { id: "danica-burst", count: 1 },
+      { id: "danica-e2-battle", count: 4 },
+    ];
+  }
+
+  protected readonly formulaMap = (() => {
+    const normal: DamageTag = {
+      element: "Physical",
+      ability: "normal",
+      reaction: "none",
+    };
+    const anchor: DamageTag = { ...normal, element: "Electro" };
+    const skill: DamageTag = {
+      element: "Electro",
+      ability: "skill",
+      reaction: "none",
+    };
+    const stellarSkill: DamageTag = { ...skill, reaction: "stellarConduct" };
+    const burst: DamageTag = {
+      element: "Electro",
+      ability: "burst",
+      reaction: "none",
+    };
+    const battleBuffs: StatBuff[] = [];
+    if (this.radianceOn)
+      battleBuffs.push(
+        new StatBuff(
+          cbs(this, "Q", ["E", "Q"]),
+          { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+          [
+            {
+              key: "reactionDmg%",
+              value: this.param("Q", 8) * (this.constellation >= 1 ? 2.2 : 1),
+            },
+          ]
+        )
+      );
+    // Per-part scopes keep Q's damage bonus exclusive to On-Field E2.
+    const firstToast =
+      this.constellation >= 2
+        ? [
+            new ScalingBuff(
+              {
+                ...cbs(this, "C2", ["E"]),
+                maxStacks: 1,
+              },
+              { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+              [],
+              "atk",
+              "baseDmg",
+              7 * 1.5
+            ),
+          ]
+        : [];
+    const refundToast =
+      this.constellation >= 2
+        ? [
+            new ScalingBuff(
+              {
+                ...cbs(this, "C2", ["E"]),
+                maxStacks: 1,
+              },
+              { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+              [],
+              "atk",
+              "baseDmg",
+              1.5
+            ),
+          ]
+        : [];
+    return {
+      "danica-normal": {
+        label: { zh: "普通攻击四段", en: "Normal Attack (N4)" },
+        parts: [1, 2, 3, 4].map((i) => ({
+          formula: new DirectFormula(this.param("A", i), normal),
+          hits: i === 3 ? 2 : 1,
+        })),
+      },
+      "danica-charge": {
+        label: { zh: "重击·循环", en: "Cyclic Charged Hit" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 5), {
+              ...normal,
+              ability: "charge",
+            }),
+          },
+        ],
+      },
+      "danica-charge-final": {
+        label: { zh: "重击·终结", en: "Charged Attack (Final)" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 6), {
+              ...normal,
+              ability: "charge",
+            }),
+          },
+        ],
+      },
+      "danica-plunge-high": {
+        label: { zh: "下落·高", en: "High Plunge" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 9), {
+              ...normal,
+              ability: "plunge",
+            }),
+          },
+        ],
+      },
+      "danica-skill": {
+        label: { zh: "E初始伤害", en: "E Initial Hit" },
+        parts: [{ formula: new DirectFormula(this.param("E", 1), skill) }],
+      },
+      "danica-entry": {
+        label: { zh: "登场技E2", en: "Entry Skill E2" },
+        when: this.defense,
+        parts: [
+          {
+            formula: new StellarDirectFormula(this.param("E", 2), stellarSkill),
+          },
+        ],
+      },
+      "danica-e2-first": {
+        label: { zh: "在场技E2·首次", en: "On-Field E2 (First)" },
+        when: !this.defense,
+        parts: [
+          {
+            formula: new StellarDirectFormula(this.param("E", 3), stellarSkill),
+            bespokeBuffs: [...battleBuffs, ...firstToast],
+          },
+        ],
+      },
+      "danica-e2-battle": {
+        label: { zh: "在场技E2·后续", en: "On-Field E2 (Later)" },
+        when: !this.defense,
+        parts: [
+          {
+            formula: new StellarDirectFormula(this.param("E", 3), stellarSkill),
+            bespokeBuffs: [
+              ...battleBuffs,
+              // In Radiance the intervening Q consumes the one-stack refund.
+              ...(!this.radianceOn ? refundToast : []),
+            ],
+          },
+        ],
+      },
+      "danica-coordinated": {
+        label: { zh: "船锚协同攻击", en: "Anchor Coordinated Attack" },
+        when: this.defense && this.hasCoordinatedTrigger,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 4), skill),
+            offField: true,
+          },
+        ],
+      },
+      ...Object.fromEntries(
+        [7, 8, 9, 10].map((param, i) => [
+          `danica-anchor-n${i + 1}`,
+          {
+            label: { zh: `船锚普攻·${i + 1}段`, en: `Anchor Normal N${i + 1}` },
+            parts: [
+              {
+                formula: new DirectFormula(this.param("E", param), anchor),
+                hits: i === 2 ? 2 : 1,
+              },
+            ],
+          },
+        ])
+      ),
+      "danica-burst": {
+        label: { zh: "Q五段攻击", en: "Q Five-Hit Attack" },
+        parts: [
+          { formula: new DirectFormula(this.param("Q", 1), burst) },
+          { formula: new DirectFormula(this.param("Q", 3), burst), hits: 3 },
+          { formula: new DirectFormula(this.param("Q", 4), burst) },
+          ...(this.radianceOn
+            ? [2, 5].map((param) => ({
+                formula: new StellarDirectFormula(this.param("Q", param), {
+                  ...burst,
+                  reaction: "stellarConduct",
+                }),
+                ...(!this.defense && param === 2
+                  ? { bespokeBuffs: refundToast }
+                  : {}),
+              }))
+            : []),
+        ],
+      },
+    };
+  })();
+}
+
+const anastasyaOption = {
+  label: { zh: "加护、辉映与封存", en: "Blessing, Radiance and Sealing" },
+  choices: ["love", "honor"].flatMap((form) =>
+    ["stellarConduct", "stellarSwirl", "off"].flatMap((radiance) =>
+      ["sealed", "unsealed"].map((sealing) => ({
+        value: `${form}-${radiance}-${sealing}`,
+        label: {
+          zh: `${form === "love" ? "慈爱" : "荣耀"} / ${radiance === "stellarConduct" ? "辉映·星超导" : radiance === "stellarSwirl" ? "辉映·星扩散" : "无辉映"} / ${sealing === "sealed" ? "荣勋均分" : "未封存"}`,
+          en: `${form === "love" ? "Love" : "Honor"} / ${radiance === "stellarConduct" ? "Stellar-Conduct" : radiance === "stellarSwirl" ? "Stellar Swirl" : "No Radiance"} / ${sealing === "sealed" ? "Shared Accolades" : "Unsealed"}`,
+        },
+        when: (tm: TeamMeta) =>
+          (radiance === "off" ||
+            (radiance === "stellarConduct"
+              ? tm.hasPolestarField()
+              : tm.hasReaction("stellarSwirl"))) &&
+          (sealing !== "sealed" || tm.characters.length > 1),
+      }))
+    )
+  ),
+} satisfies OptionDef;
+
+@RegisterCharacter("anastasya", anastasyaOption)
+class Anastasya extends CharacterBase {
+  private readonly state = resolveOption(
+    anastasyaOption,
+    this.option,
+    this.teamMeta
+  );
+  private readonly love = this.state.startsWith("love-");
+  private readonly radiance = this.state.split("-")[1];
+  private readonly sealed = this.state.endsWith("-sealed");
+  private readonly stellarReaction =
+    this.radiance === "stellarSwirl" ? "stellarSwirl" : "stellarConduct";
+  private readonly accoladeScale = this.constellation >= 4 ? 1.3 : 1;
+
+  readonly buffs = (() => {
+    const buffs: StatBuff[] = [
+      new ScalingBuff(
+        cbs(this, "P3", []),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [],
+        "atk",
+        "reactionBaseDmg%",
+        0.00007,
+        0.14
+      ),
+      // This changes the inherent Swirl reaction coefficient, independently
+      // of P3's reaction base-DMG bonus and the direct talent multipliers.
+      new StatBuff(
+        cbs(this, "P2", []),
+        {
+          receiver: "team",
+          filter: { reactions: ["stellarSwirl"] },
+        },
+        [{ key: "reactionCoeff%", value: 0.15 }]
+      ),
+    ];
+    if (this.teamMeta.hasPolestarField())
+      buffs.push(
+        new StatBuff(
+          cbs(this, "P3", ["stellarConduct"]),
+          {
+            receiver: "team",
+            filter: { elements: ["Cryo", "Electro"] },
+          },
+          [{ key: "polestarField", value: 1 }]
+        )
+      );
+    // P2 also raises newly created Vortices to level 2 (the reaction engine's
+    // existing peak model already uses level 3). Its Polestar enhancement has
+    // no numeric value in 7.2.50 and is deliberately not assigned one here.
+    const count = this.teamMeta.characters.length;
+    for (const charId of this.teamMeta.characters) {
+      const isSelf = charId === this.charId;
+      const donor = this.sealed && (this.love ? isSelf : !isSelf);
+      let accolades = donor && this.constellation < 1 ? 0 : 1;
+      if (this.sealed && this.love && !isSelf)
+        accolades += (this.constellation >= 1 ? 3 : 1) / (count - 1);
+      if (this.sealed && !this.love && isSelf) accolades += count - 1;
+      if (accolades === 0) continue;
+      const magnitude = accolades * this.accoladeScale;
+      const entries = [{ key: "cd" as const, value: 0.12 * magnitude }];
+      buffs.push(
+        new StatBuff(
+          cbs(this, this.constellation >= 4 ? "P1/C4" : "P1", [
+            "E",
+            ...(this.sealed ? ["Q"] : []),
+          ]),
+          { receiver: "team", charId },
+          entries
+        )
+      );
+      if (this.constellation >= 1)
+        buffs.push(
+          new StatBuff(
+            cbs(this, this.constellation >= 4 ? "C1/C4" : "C1", [
+              "E",
+              ...(this.sealed ? ["Q"] : []),
+            ]),
+            { receiver: "team", charId },
+            [
+              {
+                key: this.teamMeta.elements[charId] === "Cryo" ? "atk%" : "em",
+                value:
+                  (this.teamMeta.elements[charId] === "Cryo" ? 0.15 : 60) *
+                  magnitude,
+              },
+            ]
+          )
+        );
+    }
+    if (this.love)
+      buffs.push(
+        new StatBuff(
+          cbs(this, "Q", ["Q"]),
+          {
+            receiver: "team",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [{ key: "reactionDmg%", value: this.param("Q", 2) }]
+        )
+      );
+    if (this.constellation >= 2) {
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C2", []),
+          {
+            receiver: "team",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [{ key: "elevated%", value: 0.05 }]
+        )
+      );
+      if (this.love)
+        buffs.push(
+          new StatBuff(
+            cbs(this, "C2", ["E"]),
+            {
+              receiver: "team",
+              filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+            },
+            [{ key: "reactionCd", value: 0.6 }]
+          )
+        );
+    }
+    if (this.constellation >= 6 && this.love)
+      buffs.push(
+        new StatBuff(
+          cbs(this, "C6", ["E"]),
+          {
+            receiver: "team",
+            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+          },
+          [{ key: "elevated%", value: 0.1 }]
+        )
+      );
+    return buffs;
+  })();
+
+  protected override get comboDescriptor(): ComboTemplate {
+    if (this.love)
+      return [
+        { id: "anastasya-e-tap", count: 1 },
+        { id: "anastasya-q-love", count: 1 },
+        // During the 20s Love burst, the frozen Crown attacks every 2s.
+        { id: "anastasya-crown", count: 10 },
+        { id: "anastasya-triumph", count: 1 },
+        {
+          id: "anastasya-c6-triumph",
+          count: 0,
+          bonus: [{ minC: 6, delta: 1 }],
+        },
+      ];
+    // The source provides no animation timings. Two full N5 chains are a
+    // conservative editable starter during the 14s Honor burst, not a DPS cap.
+    return [
+      { id: "anastasya-e-hold", count: 1 },
+      { id: "anastasya-q-honor", count: 1 },
+      ...[1, 2, 3, 4, 5].map((i) => ({
+        id: `anastasya-honor-n${i}`,
+        count: 2,
+      })),
+      { id: "anastasya-doom-1", count: 1 },
+      { id: "anastasya-doom-2", count: 1 },
+      { id: "anastasya-doom-3", count: 1 },
+      { id: "anastasya-c6-doom", count: 0, bonus: [{ minC: 6, delta: 1 }] },
+    ];
+  }
+
+  protected readonly formulaMap = (() => {
+    const normal: DamageTag = {
+      element: "Physical",
+      ability: "normal",
+      reaction: "none",
+    };
+    const cryoNormal: DamageTag = { ...normal, element: "Cryo" };
+    const skill: DamageTag = {
+      element: "Cryo",
+      ability: "skill",
+      reaction: "none",
+    };
+    const burst: DamageTag = { ...skill, ability: "burst" };
+    const stellarSkill: DamageTag = {
+      ...skill,
+      reaction: this.stellarReaction,
+    };
+    const stellarBurst: DamageTag = {
+      ...burst,
+      reaction: this.stellarReaction,
+    };
+    const reaction = this.radiance !== "off";
+    const c2Honor =
+      !this.love && this.constellation >= 2
+        ? [
+            new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
+              { key: "baseDmg%", value: 0.25 },
+            ]),
+          ]
+        : [];
+    const c6Honor =
+      !this.love && this.constellation >= 6
+        ? [
+            new StatBuff(
+              cbs(this, "C6", ["E"]),
+              {
+                receiver: "self",
+                filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+              },
+              [{ key: "elevated%", value: 0.2 }]
+            ),
+          ]
+        : [];
+    // Honor's C6 Elevation expires when the other characters are unsealed,
+    // before the regular Doom sequence. C2's original-DMG bonus persists.
+    const normalBuffs = [...c2Honor, ...c6Honor];
+    const c6Accolades =
+      this.constellation >= 6 && !this.sealed
+        ? [
+            new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+              {
+                key: "cd",
+                value:
+                  0.12 *
+                  (this.teamMeta.characters.length - 1) *
+                  this.accoladeScale,
+              },
+              {
+                key: "atk%",
+                value:
+                  0.15 *
+                  (this.teamMeta.characters.length - 1) *
+                  this.accoladeScale,
+              },
+            ]),
+          ]
+        : [];
+    return {
+      "anastasya-normal": {
+        label: { zh: "普通攻击五段", en: "Normal Attack (N5)" },
+        parts: [1, 2, 3, 4, 5].map((i) => ({
+          formula: new DirectFormula(this.param("A", i), normal),
+          hits: i === 3 ? 2 : i === 4 ? 3 : 1,
+        })),
+      },
+      "anastasya-charge": {
+        label: { zh: "满蓄力瞄准射击", en: "Charged Aimed Shot" },
+        when: this.love,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 7), {
+              ...cryoNormal,
+              ability: "charge",
+            }),
+          },
+        ],
+      },
+      "anastasya-plunge-high": {
+        label: { zh: "下落·高", en: "High Plunge" },
+        parts: [
+          {
+            formula: new DirectFormula(this.param("A", 10), {
+              ...normal,
+              ability: "plunge",
+            }),
+          },
+        ],
+      },
+      "anastasya-e-tap": {
+        label: { zh: "E点按瞬时伤害", en: "E Tap Initial Hit" },
+        when: this.love,
+        parts: [{ formula: new DirectFormula(this.param("E", 1), skill) }],
+      },
+      "anastasya-e-hold": {
+        label: { zh: "E长按瞬时伤害", en: "E Hold Initial Hit" },
+        when: !this.love,
+        parts: [{ formula: new DirectFormula(this.param("E", 2), skill) }],
+      },
+      "anastasya-crown": {
+        label: { zh: "苍星圣冕·爆发期间", en: "Crown (During Burst)" },
+        when: this.love,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("E", 3), skill),
+            hits: reaction ? 1 : 2,
+            offField: true,
+          },
+          ...(reaction
+            ? [
+                {
+                  formula: new StellarDirectFormula(
+                    this.param(
+                      "E",
+                      this.stellarReaction === "stellarSwirl" ? 5 : 4
+                    ),
+                    stellarSkill
+                  ),
+                  offField: true,
+                },
+              ]
+            : []),
+          {
+            formula: new StellarDirectFormula(
+              this.param("Q", this.stellarReaction === "stellarSwirl" ? 4 : 3),
+              stellarSkill
+            ),
+            offField: true,
+          },
+        ],
+      },
+      ...Object.fromEntries(
+        [1, 2, 3, 4, 5].map((stage) => {
+          const hits = stage === 2 ? 2 : stage >= 4 ? 3 : 1;
+          return [
+            `anastasya-honor-n${stage}`,
+            {
+              label: {
+                zh: `圣佑之枪·${stage}段`,
+                en: `Blessed Armament N${stage}`,
+              },
+              when: !this.love,
+              parts: [
+                ...(!reaction || hits > 1
+                  ? [
+                      {
+                        formula: new DirectFormula(
+                          this.param("E", stage + 5),
+                          cryoNormal
+                        ),
+                        hits: hits - (reaction ? 1 : 0),
+                        bespokeBuffs: normalBuffs,
+                      },
+                    ]
+                  : []),
+                ...(reaction
+                  ? [
+                      {
+                        formula: new StellarDirectFormula(
+                          this.param(
+                            "E",
+                            9 +
+                              stage * 2 +
+                              (this.stellarReaction === "stellarSwirl" ? 1 : 0)
+                          ),
+                          { ...cryoNormal, reaction: this.stellarReaction }
+                        ),
+                        bespokeBuffs: normalBuffs,
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          ];
+        })
+      ),
+      "anastasya-q-love": {
+        label: { zh: "Q致新世界", en: "Q To the New World" },
+        when: this.love,
+        parts: [{ formula: new DirectFormula(this.param("Q", 1), burst) }],
+      },
+      "anastasya-q-honor": {
+        label: { zh: "Q永夜将明", en: "Q Evernight to Dawn" },
+        when: !this.love,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param("Q", this.stellarReaction === "stellarSwirl" ? 8 : 7),
+              stellarBurst
+            ),
+            bespokeBuffs: normalBuffs,
+          },
+        ],
+      },
+      "anastasya-triumph": {
+        label: { zh: "苍星圣敕·凯旋", en: "Edict: Triumph" },
+        when: this.love && this.teamMeta.characters.length > 1,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param("Q", this.stellarReaction === "stellarSwirl" ? 6 : 5),
+              stellarSkill
+            ),
+          },
+        ],
+      },
+      "anastasya-doom-1": {
+        label: { zh: "苍星圣敕·裁灭一段", en: "Edict: Doom I" },
+        when: !this.love && this.teamMeta.characters.length > 1,
+        parts: [
+          {
+            formula: new DirectFormula(this.param("Q", 9), skill),
+            hits: 5,
+            bespokeBuffs: c2Honor,
+          },
+          {
+            formula: new StellarDirectFormula(
+              this.param(
+                "Q",
+                this.stellarReaction === "stellarSwirl" ? 11 : 10
+              ),
+              stellarSkill
+            ),
+            bespokeBuffs: c2Honor,
+          },
+        ],
+      },
+      "anastasya-doom-2": {
+        label: { zh: "苍星圣敕·裁灭二段", en: "Edict: Doom II" },
+        when: !this.love && this.teamMeta.characters.length > 1,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param(
+                "Q",
+                this.stellarReaction === "stellarSwirl" ? 13 : 12
+              ),
+              stellarSkill
+            ),
+            bespokeBuffs: c2Honor,
+          },
+        ],
+      },
+      "anastasya-doom-3": {
+        label: { zh: "苍星圣敕·裁灭三段", en: "Edict: Doom III" },
+        when: !this.love && this.teamMeta.characters.length > 1,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param(
+                "Q",
+                this.stellarReaction === "stellarSwirl" ? 15 : 14
+              ),
+              stellarSkill
+            ),
+            bespokeBuffs: c2Honor,
+          },
+        ],
+      },
+      "anastasya-c6-triumph": {
+        label: { zh: "C6切人·凯旋", en: "C6 Switch-In Triumph" },
+        minC: 6,
+        when: this.love && this.teamMeta.characters.length > 1,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param("Q", this.stellarReaction === "stellarSwirl" ? 6 : 5),
+              stellarSkill
+            ),
+            offField: true,
+            bespokeBuffs: [
+              new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+                { key: "baseDmg%", value: 1.5 },
+              ]),
+            ],
+          },
+        ],
+      },
+      "anastasya-c6-doom": {
+        label: { zh: "C6点按·裁灭三段", en: "C6 Tap Doom III" },
+        minC: 6,
+        when: !this.love,
+        parts: [
+          {
+            formula: new StellarDirectFormula(
+              this.param(
+                "Q",
+                this.stellarReaction === "stellarSwirl" ? 15 : 14
+              ),
+              stellarSkill
+            ),
+            bespokeBuffs: [
+              ...normalBuffs,
+              ...c6Accolades,
+              new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
+                { key: "baseDmg%", value: 1 },
+              ]),
+            ],
+          },
+        ],
+      },
+    };
+  })();
+}
 
 const mityaOption = {
   label: { zh: "侦测炉心", en: "Energy Device" },

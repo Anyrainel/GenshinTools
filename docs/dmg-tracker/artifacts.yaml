@@ -114,3 +114,53 @@
     Default conservative mode gives Mortal Hymn's additional active-character-element bonus only to otherOnField. Source grants that element bonus to all nearby party members, so same-element off-field teammates miss it.
   detail: >
     Source artifact_zh.json celestial_gift.effect4. artifact4pc.ts CelestialGift4pc L1412: self mode chooses otherOnField for non-wearer elements; team mode grants every represented team element to all recipients. Options bracket the effect but neither tracks which element was actually on field during application. Preserve an explicit approximation until active-element application is modeled.
+
+- id: artifact-15049-cr-budget-element-scope
+  entity: artifact_15049
+  rule: U5
+  status: completed
+  category: bug
+  summary: >
+    Account CR budgeting returns no artifact_15049 CR for every non-Cryo wearer,
+    although its bonus depends on the damage element rather than the wearer's
+    element. Anemo Stellar Swirl contributors can receive the full 40% on their
+    Cryo Vortex damage, and non-Cryo melee wearers can receive 20% on Cryo-infused
+    attacks, so their artifact recommendations currently omit reachable CR.
+  detail: >
+    Live 7.2.50 ZH 15049: "造成的冰元素伤害的暴击率提升20%，若该伤害为星烁反应伤害，则暴击率额外提升20%".
+    maxCrBuff.ts getDynamicArtifactBuff instead requires the wearer's stats.element
+    to be Cryo. Verified through a read-only TeamBuild runtime probe: C0 Sucrose
+    wearing the set with C0 Odette has an own statsCharId=sucrose Cryo/special/
+    stellarSwirl Vortex contribution; compared with no set, it gains 0.20 cr and
+    0.20 reactionCr, but getCrBudget reports artifactSetCr=0. A second probe using
+    C0 Razor plus C0 Chongyun with infusion:razor=chongyun produces a Cryo/normal/
+    none attack with 0.25 CR (base 0.05 plus set 0.20), while its artifact CR budget
+    is also zero. Existing tests cover only native Cryo/other-element negatives
+    and therefore assert the overly narrow vision-based assumption.
+
+    TRIAGE: Actionable. The source qualifies the wearer's damage, not their native
+    element. Preserve the account budget's team-independent reachable-single-hit
+    ceiling: include 20% when the wearer can deal their own Cryo damage and 40%
+    when a reachable own Cryo hit is classified as either Stellar reaction. A
+    possible teammate may supply infusion or enable the Stellar path; requiring
+    the actual current team would change the established budget policy. Regression
+    coverage must include Sucrose's own Cryo Stellar Swirl Vortex contribution
+    (40%), Razor's Chongyun-infused ordinary Cryo normal (at least 20%), native
+    Cryo damage, and an actually unreachable own-Cryo case. Determine the maximum
+    over each wearer's reachable damage paths; the infusion example alone does
+    not establish that 20% is Razor's absolute maximum. Keep ordinary non-Cryo
+    and non-Stellar damage from inheriting the reaction-specific increment, and
+    do not count a teammate-owned Cryo hit as the wearer's damage.
+
+    RESOLVED: Account budgeting now uses the loaded damage-capability metadata:
+    Cryo/Anemo wearers can own Cryo Stellar Swirl Vortex damage and receive a
+    40% reachable ceiling; other Sword/Claymore/Polearm wearers can use external
+    Cryo infusion and receive 20%; remaining wearers receive zero. No combat
+    engine import or Radiance whitelist was introduced into the account helper.
+    Actual TeamBuild comparisons cover Sucrose and Kaeya's own positive-damage
+    Vortex contributions, Razor's Chongyun-infused normal damage, and Fischl's
+    lack of own Cryo damage despite Cryo teammates and a selected infusion.
+    The comparisons exclude zero-damage Stellar-Conduct field procs and verify
+    ordinary Cryo stays at 20%, non-Cryo Stellar damage gets no increment, and
+    teammates do not inherit the wearer's set CR. All 43 maxCrBuff tests and
+    npm run type-check pass.

@@ -48,6 +48,7 @@ from beta_files import (  # noqa: E402
     RESOURCES_BETA_PATH,
     RESOURCES_PATH,
     cleanup_beta_files,
+    derive_beta_artifact_half_sets,
     generate_i18n_beta_ts,
     generate_resources_beta_ts,
     load_json,
@@ -305,7 +306,7 @@ def find_unreleased_artifacts(
     unreleased = []
     seen_ids: set[str] = set()
     for num_id, meta in artifactlist.items():
-        en_name = meta.get("enName", "")
+        en_name = meta.get("enName") or meta.get("chsName", "")
         # Skip placeholder names (e.g. "???" for not-yet-named beta sets).
         if not en_name or en_name.strip("?") == "":
             continue
@@ -1004,6 +1005,7 @@ def scrape_weapon(
 def scrape_artifact(
     set_id_num: str,
     version: str,
+    existing_id: str | None = None,
 ) -> tuple[str, dict, dict, int, dict[str, str]]:
     """
     Fetch artifact set data from lunaris API.
@@ -1021,7 +1023,11 @@ def scrape_artifact(
 
     en_name = en_info.get("setName", "")
     zh_name = zh_info.get("setName", en_name)
-    artifact_id = derive_id(en_name)
+    # Early beta responses can put Chinese text in the English name field.
+    # Keep IDs stable when the translation arrives, including IDs saved by users.
+    artifact_id = (
+        existing_id or (derive_id(en_name) if en_name.isascii() else "") or f"artifact_{set_id_num}"
+    )
 
     rarity = RARITY_MAP.get(en_info.get("qualityType", ""), 5)
 
@@ -1038,7 +1044,7 @@ def scrape_artifact(
 
     en_out = {
         "id": str(set_id_num),
-        "name": en_name,
+        "name": en_name or zh_name,
         "rarity": rarity,
         "effect2": _format_desc(_get_effect(en_bonuses, "2pc")),
         "effect4": _format_desc(_get_effect(en_bonuses, "4pc")),
@@ -1118,6 +1124,13 @@ def main() -> None:
     # entries with no other data source.
     released_artifact_en_data = load_json(ARTIFACT_EN_PATH)
     released_artifact_zh_data = load_json(ARTIFACT_ZH_PATH)
+    existing_artifact_ids = {
+        str(entry["id"]): artifact_id
+        for artifact_id, entry in (
+            load_json(BETA_ARTIFACT_EN_PATH) | released_artifact_en_data
+        ).items()
+        if entry.get("id")
+    }
     artifacts_with_existing_data = (
         set(released_artifact_en_data.keys()) - obtainable_artifacts - set(ARTIFACT_SKIP_LIST)
     )
@@ -1251,7 +1264,9 @@ def main() -> None:
         print("\n--- Scraping unreleased artifact sets ---")
         for num_id, _derived_id, _meta in unreleased_artifacts:
             try:
-                aid, en_out, zh_out, rarity, slot_to_icon = scrape_artifact(num_id, version)
+                aid, en_out, zh_out, rarity, slot_to_icon = scrape_artifact(
+                    num_id, version, existing_artifact_ids.get(str(num_id))
+                )
 
                 # Skip sets without effect text (test/placeholder)
                 if not en_out["effect2"] and not en_out["effect4"]:
@@ -1296,6 +1311,15 @@ def main() -> None:
             except Exception as e:
                 print(f"    ERROR processing {num_id}: {e}")
 
+    # Resolve every visible beta set before writing outputs. An unknown 2pc
+    # effect must fail loudly rather than leave scoring/filter mappings absent.
+    artifact_half_sets = derive_beta_artifact_half_sets(
+        [artifact_id for artifact_id, _rarity in artifact_resources],
+        released_artifact_en_data | artifact_en_data,
+        released_artifact_zh_data | artifact_zh_data,
+        extract_json_from_ts(resources_content, "artifactHalfSets") or [],
+    )
+
     # Write output files
     print("\n--- Writing output files ---")
 
@@ -1327,7 +1351,9 @@ def main() -> None:
     print(f"  {p}: {len(artifact_zh_data)} entries")
 
     # Generate resources_beta.ts
-    ts_content = generate_resources_beta_ts(char_resources, weapon_resources, artifact_resources)
+    ts_content = generate_resources_beta_ts(
+        char_resources, weapon_resources, artifact_resources, artifact_half_sets
+    )
     RESOURCES_BETA_PATH.parent.mkdir(parents=True, exist_ok=True)
     RESOURCES_BETA_PATH.write_text(ts_content, encoding="utf-8")
     p = RESOURCES_BETA_PATH.relative_to(PROJECT_ROOT)

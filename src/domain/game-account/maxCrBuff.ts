@@ -58,6 +58,7 @@ const STATIC_CHARACTER_CR_BUDGET: Record<string, CharacterBuffEntry> = {
   arlecchino: { constellations: [{ min: 6, cr: 0.1 }] },
   clorinde: { base: 0.2, constellations: [{ min: 6, cr: 0.1 }] },
   columbina: { base: 0.15 },
+  danica: { constellations: [{ min: 6, cr: 0.1 }] },
   dehya: { constellations: [{ min: 6, cr: 0.1 }] },
   freminet: { constellations: [{ min: 1, cr: 0.15 }] },
   gaming: { constellations: [{ min: 6, cr: 0.2 }] },
@@ -250,6 +251,20 @@ function getDynamicArtifactBuff(input: CrBudgetInput): number {
   if (input.artifact?.composition !== "4pc" || !artifactSetId) return 0;
 
   switch (artifactSetId) {
+    case "artifact_15049": {
+      const stats = characterStatsResource.peek()?.[input.characterId];
+      if (!stats) return 0;
+      // Both Cryo and Anemo characters can own Cryo Stellar Swirl Vortex
+      // damage. Other melee wearers can reach ordinary Cryo through infusion.
+      // Generic Stellar-Conduct procs deal no damage, so Electro participation
+      // alone cannot supply the extra reaction CR on a Cryo hit.
+      if (stats.element === "Cryo" || stats.element === "Anemo") return 0.4;
+      return stats.weaponType === "Sword" ||
+        stats.weaponType === "Claymore" ||
+        stats.weaponType === "Polearm"
+        ? 0.2
+        : 0;
+    }
     case "a_day_carved_from_rising_winds":
       return charInfo[input.characterId]?.faction === "Hexerei" ? 0.2 : 0;
     case "obsidian_codex":

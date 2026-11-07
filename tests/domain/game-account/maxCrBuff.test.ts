@@ -1,5 +1,13 @@
 import "@/providers/reference/statLoaders";
 import { beforeAll, describe, expect, it } from "vitest";
+import { DEFAULT_CALC_CONTEXT } from "@/domain/combat/damage/constants";
+import { StatSheet } from "@/domain/combat/damage/core/statSheet";
+import { TeamBuild } from "@/domain/combat/damage/core/teamBuild";
+import type {
+  DamageTag,
+  OptionMap,
+  TeamSlotConfig,
+} from "@/domain/combat/damage/types";
 import { getCrBudget } from "@/domain/game-account/maxCrBuff";
 import type { Build, CharacterData } from "@/domain/models";
 import {
@@ -43,6 +51,54 @@ function getBudgetFor(char: CharacterData, artifact?: Build) {
     weaponRefinement: char.weapon?.refinement,
     artifact,
   });
+}
+
+function starsparkTeam(
+  members: Array<[string, string]>,
+  combatOpts: OptionMap = {}
+) {
+  const wearer = members[0][0];
+  const configs: TeamSlotConfig[] = members.map(([charId, weaponId]) => ({
+    charId,
+    weaponId,
+    charLevel: 90,
+    constellation: 0,
+    refinement: 1,
+    artifactSet: null,
+  }));
+  const withSet = new TeamBuild(
+    configs.map((config) =>
+      config.charId === wearer
+        ? {
+            ...config,
+            artifactSet: { type: "4pc", setId: "artifact_15049" },
+          }
+        : config
+    ),
+    combatOpts
+  );
+  const withoutSet = new TeamBuild(configs, combatOpts);
+  const sheets = Object.fromEntries(
+    members.map(([charId]) => [charId, new StatSheet([])])
+  );
+  const stats = withSet.getTeamStats(sheets, wearer, DEFAULT_CALC_CONTEXT);
+  const baseline = withoutSet.getTeamStats(
+    sheets,
+    wearer,
+    DEFAULT_CALC_CONTEXT
+  );
+  const crDelta = (charId: string, tag: DamageTag) =>
+    stats[charId].get("cr", tag) +
+    stats[charId].get("reactionCr", tag) -
+    baseline[charId].get("cr", tag) -
+    baseline[charId].get("reactionCr", tag);
+  const budget = getCrBudget({
+    characterId: wearer,
+    characterLevel: 90,
+    constellation: 0,
+    artifact: { composition: "4pc", artifactSet: "artifact_15049" },
+  }).artifactSetCr;
+  return { withSet, stats, crDelta, budget };
 }
 
 describe("getCrBudget", () => {
@@ -273,6 +329,147 @@ describe("getCrBudget", () => {
           constellation,
         }).characterBuffCr
       ).toBe(expected);
+    }
+  );
+
+  it.each([
+    [5, 0],
+    [6, 0.1],
+  ])(
+    "includes Danica's C%i battle-mode CR ceiling",
+    (constellation, expected) => {
+      expect(
+        getCrBudget({
+          characterId: "danica",
+          characterLevel: 90,
+          constellation,
+        }).characterBuffCr
+      ).toBe(expected);
+    }
+  );
+
+  it.each([
+    ["kaeya", "4pc", 0.4],
+    ["sucrose", "4pc", 0.4],
+    ["razor", "4pc", 0.2],
+    ["fischl", "4pc", 0],
+    ["kaeya", "2pc+2pc", 0],
+  ] as const)(
+    "budgets reachable Cryo damage for Starspark four-piece builds: %s %s",
+    (characterId, composition, expected) => {
+      expect(
+        getCrBudget({
+          characterId,
+          characterLevel: 90,
+          constellation: 0,
+          artifact: { composition, artifactSet: "artifact_15049" },
+        }).artifactSetCr
+      ).toBe(expected);
+    }
+  );
+
+  it.each(["sucrose", "kaeya"])(
+    "matches %s's own Cryo Stellar Swirl Vortex CR to its account ceiling",
+    (wearer) => {
+      const team = starsparkTeam([
+        [wearer, wearer === "kaeya" ? "favonius_sword" : "favonius_codex"],
+        ["odette", "favonius_sword"],
+        ...(wearer === "kaeya"
+          ? ([["sucrose", "favonius_codex"]] as Array<[string, string]>)
+          : []),
+      ]);
+      const reaction = team.withSet.catalog.formulaIndex.get(
+        "rx-stellarSwirl-sucrose"
+      )!;
+      const ownVortex = reaction.parts.find(
+        ({ statsCharId, formula }) =>
+          statsCharId === wearer && formula.tag.element === "Cryo"
+      )!;
+      expect(ownVortex).toBeDefined();
+      expect(
+        ownVortex.formula.calc(team.stats[wearer], 90, DEFAULT_CALC_CONTEXT)
+      ).toBeGreaterThan(0);
+      expect(team.crDelta(wearer, ownVortex.formula.tag)).toBeCloseTo(0.4);
+      expect(team.budget).toBeCloseTo(
+        team.crDelta(wearer, ownVortex.formula.tag)
+      );
+      // The extra 20% never extends to ordinary Cryo or non-Cryo Stellar hits.
+      expect(
+        team.crDelta(wearer, { ...ownVortex.formula.tag, reaction: "none" })
+      ).toBeCloseTo(0.2);
+      expect(
+        team.crDelta(wearer, { ...ownVortex.formula.tag, element: "Anemo" })
+      ).toBe(0);
+      const teammateVortex = reaction.parts.find(
+        ({ statsCharId, formula }) =>
+          statsCharId === "odette" && formula.tag.element === "Cryo"
+      )!;
+      expect(team.crDelta("odette", teammateVortex.formula.tag)).toBe(0);
+    }
+  );
+
+  it.each([
+    ["razor", "favonius_greatsword", 0.2],
+    ["fischl", "favonius_warbow", 0],
+  ] as const)(
+    "bounds %s's Cryo ceiling using actual infusion and Stellar damage paths",
+    (wearer, weapon, expected) => {
+      const team = starsparkTeam(
+        [
+          [wearer, weapon],
+          ["chongyun", "favonius_greatsword"],
+          ["odette", "favonius_sword"],
+          ["sucrose", "favonius_codex"],
+        ],
+        { [`infusion:${wearer}`]: "chongyun" }
+      );
+      const ownParts = Array.from(
+        team.withSet.catalog.formulaIndex.values()
+      ).flatMap((entry) =>
+        entry.parts.filter(
+          (part) => (part.statsCharId ?? entry.owner) === wearer
+        )
+      );
+      const ownCryoDamage = ownParts.filter(
+        ({ formula }) =>
+          formula.tag.element === "Cryo" &&
+          formula.calc(team.stats[wearer], 90, DEFAULT_CALC_CONTEXT) > 0
+      );
+      if (wearer === "razor") {
+        expect(ownCryoDamage.length).toBeGreaterThan(0);
+        expect(
+          ownCryoDamage.some(
+            ({ formula }) =>
+              formula.tag.ability === "normal" &&
+              formula.tag.reaction === "none"
+          )
+        ).toBe(true);
+      } else {
+        // Bow attacks cannot receive Chongyun's melee infusion, and the
+        // teammate's Cryo Vortex contributions are not Fischl's own damage.
+        expect(ownCryoDamage).toHaveLength(0);
+      }
+      expect(
+        Math.max(
+          0,
+          ...ownCryoDamage.map(({ formula }) =>
+            team.crDelta(wearer, formula.tag)
+          )
+        )
+      ).toBeCloseTo(expected);
+      expect(team.budget).toBeCloseTo(expected);
+      const conduct = team.withSet.catalog.formulaIndex.get(
+        `rx-stellarConduct-${wearer}`
+      )!;
+      expect(conduct).toBeDefined();
+      // Merely creating the Polestar Field cannot establish a 40% CR hit.
+      expect(
+        conduct.parts[0].formula.calc(
+          team.stats[wearer],
+          90,
+          DEFAULT_CALC_CONTEXT
+        )
+      ).toBe(0);
     }
   );
 

@@ -3,6 +3,33 @@ import { RegisterWeapon } from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
 import { ALL_ELEMENTAL_FILTER, r, wbs } from "./helpers";
 
+@RegisterWeapon("silverdawn")
+class Silverdawn extends WeaponBase {
+  // E/Q grants White Crown's Bequest immediately. Stellar hits extend its
+  // duration, rather than gating either bonus; model the active peak window.
+  readonly buffs = [
+    new StatBuff(wbs(this, ["E", "Q"]), { receiver: "self" }, [
+      {
+        key: "atk%",
+        value: r(this.refinement, [0.4, 0.52, 0.64, 0.76, 0.88]),
+      },
+    ]),
+    new StatBuff(
+      wbs(this, ["E", "Q"]),
+      {
+        receiver: "self",
+        filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+      },
+      [
+        {
+          key: "reactionCd",
+          value: r(this.refinement, [0.4, 0.52, 0.64, 0.76, 0.88]),
+        },
+      ]
+    ),
+  ];
+}
+
 @RegisterWeapon("silvershower_heartstrings")
 class SilvershowerHeartstrings extends WeaponBase {
   // 3-stack Remedy: HP% + Burst CRIT Rate

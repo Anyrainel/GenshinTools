@@ -67,6 +67,28 @@ is the internal website-generation stage called by HoyoData; it cannot refresh
 source data by itself. GenshinTools coverage excludes unrelated lore and engine
 constants and still rejects missing required data, mappings, catalogs, or assets.
 
-Unreleased beta data remains managed by `scripts/lunaris.py`. Damage implementations,
-particle/energy data, and manually curated metadata are separate reviewed work;
-the refresh command does not generate those implementations.
+For a complete update including unreleased previews, finish the released-data
+refresh first, then refresh Lunaris from its live API:
+
+```powershell
+uv run --project scripts python scripts/lunaris.py
+uv run --project scripts python scripts/gen_char_info.py
+```
+
+This independently detects the latest Lunaris version and refreshes beta
+characters, weapons, artifacts, bilingual text, catalogs, and artwork. A successful
+released-data export does not establish that these previews are current. Inspect
+the scraper output for individual failures and review the generated diff before
+accepting an update; missing upstream data must not replace valid cached records.
+Regenerate character metadata afterward so new beta characters receive their
+burst costs and C3/C5 talent-level bonuses in the calculator.
+
+Damage implementations, particle/energy data, and manually curated metadata are
+separate reviewed work; these refresh commands do not generate those implementations.
+
+When adopting new or changed combat entities, also complete their damage
+implementations before committing the update. Use `genshin-knowledge` and the
+entity-scoped `dmg-agents` workers: implement, independent review, triage any new
+tracker tickets, then implement new actionable tickets. Verify the resulting
+changes and normal commit/push checks without weakening calculator readiness.
+Keep source gaps explicit instead of registering placeholder implementations.

@@ -258,3 +258,122 @@
     question is whether delayed sword blades use the same timing as Burst.
     https://library.keqingmains.com/characters/anemo/vesna
     https://www.prydwen.gg/genshin-impact/characters/vesna
+
+- id: danica-defense-entry-team-gate
+  entity: danica
+  rule: U12
+  status: completed
+  category: bug
+  summary: >
+    Defense Maid is incorrectly unavailable unless another party member is Cryo or
+    Electro. Danica can fill Excitement with her own Anchor Normal Attacks before
+    entering either Maid Form, switch out, and then switch back to trigger Entry E2.
+  detail: >
+    Verified against 7.2.50 ZH live char/10000147.json E and Excitement hyperlink
+    N11470001. Before selecting a Maid Form, Danica gains 25 Excitement per Anchor
+    Normal stage while on-field; neither switching out nor entering a non-Cryo/
+    Electro teammate clears it. Entry E2 requires full Excitement and switching
+    Danica in while she is off-field, not a qualifying teammate element. Gate both
+    defense choices on at least two party members, retaining hasPolestarField for
+    defense-stellar. Keep the separate Cryo/Electro teammate check on Anchor
+    coordinated attacks. Add a Danica/Barbara no-Radiance Defense regression.
+
+    TRIAGE: Actionable. The qualifying-teammate condition belongs to gaining
+    Excitement while Danica is off-field and to Defense coordinated attacks,
+    not to the first Defense entry after her own pre-form Anchor attacks fill
+    Excitement. Both Defense choices require another party member so she can
+    switch out and back in; Defense with Radiance additionally requires a
+    reachable Polestar Field. The Danica/Barbara no-Radiance case must expose
+    Defense Maid and produce its Entry E2 damage while granting no Defense
+    coordinated attacks. Also cover a solo Danica negative, a Cryo/Electro
+    teammate positive for coordinated attacks, and field availability separately
+    from teammate element. Do not broaden the dependent coordinated-attack gate
+    merely because the initial Defense entry is reachable.
+
+    Implemented 2026-11-07: Defense choices now require a teammate rather than
+    a Cryo/Electro teammate, with the independent Polestar Field gate retained.
+    Danica/Barbara defaults include four own Anchor precharge stages and Entry
+    E2; coordinated damage remains unavailable. That team can enter Defense
+    only once per Anchor, so P2 is limited to one ATK stack instead of the
+    qualified-team three-stack peak. Solo, teammate-element and field-source
+    regressions pass; type-check passes.
+
+- id: danica-c6-toast-overlay-cutoff
+  entity: danica
+  rule: U10
+  status: completed
+  category: bug
+  summary: >
+    In Battle Maid without Radiance, the one-use C2 Toast refund also limits C6's
+    persistent E2 CRIT Rate and CRIT DMG bonuses to one of the four later E2 casts.
+    All later E2 casts should retain the C6 bonuses until the Maid Form ends.
+  detail: >
+    character5Snezhnaya.ts attaches battleBuffs and refundToast together to
+    danica-e2-battle when radianceOn is false. refundToast has maxStacks: 1, and
+    core/statBuff.ts bespokeMaxStacks plus formulaEval.ts and formulaCompiler.ts
+    apply that cutoff to the entire bespoke overlay, not only the limited buff.
+    With default combo count 4, only one cast gets the two C6 ScalingBuff entries;
+    the other three lose both CRIT bonuses. Source C6 explicitly lasts until
+    exiting the current Maid Form, while only the C2 refund is once-only. Separate
+    the limited Toast overlay from the persistent E2 bonuses, for example through
+    separate refunded/unrefunded E2 entries or an exact self skill + stellarConduct
+    filter for Battle Maid's C6 buffs. Verify both numeric evaluation and compiled
+    expressions over all four later E2 casts in the no-Radiance C6 mode.
+
+    TRIAGE: Actionable. Current 7.2.50 ZH C6 grants E2 +2.5% CR and +25% CD per
+    500 Danica ATK, capped at +10% CR and +100% CD, for the entire current Battle
+    Maid state. C2's extra Toast remains once-only per Anchor; that activation
+    limit must not consume or suppress the persistent C6 crit bonuses. At 2000
+    ATK, every one of the four later no-Radiance E2 casts must receive +0.10 CR
+    and +1.00 CD, while exactly one receives the C2 refund damage. Verify the
+    complete four-cast combo in both numeric evaluation and compiled expressions,
+    with base CR below its cap so missing C6 CR cannot be hidden by clamping;
+    a single-cast or first-cast-only assertion cannot catch this defect. Preserve
+    the separate source scopes so the C6 bonuses do not leak to Entry E2, normal
+    attacks, Defense Maid, or teammates. Keep existing persisted action units
+    intact if introducing distinct formula entries.
+
+    Implemented 2026-11-07: C6's persistent CRIT ScalingBuffs now use a regular
+    selfOnField Skill + Stellar-Conduct target in Battle mode, with dedicated
+    reactionCr/reactionCd keys. The narrowly documented danica/C6 validation
+    exception permits the required ability scope. C2 Toast remains a separate
+    once-only bespoke overlay; no formula IDs, action units or Battle counts
+    changed. At 2000 ATK and 20% base CR, the complete four-cast later-E2 combo
+    matches an independent +10% CR/+100% CD reference with exactly one 3000
+    flat-DMG refund in both numeric and compiled evaluation. Scope regressions
+    exclude Defense Entry, ordinary E, normals, Q and teammates. Type-check
+    and focused behavior tests pass.
+
+- id: anastasya-p2-polestar-enhancement-data
+  entity: anastasya
+  rule: S7
+  status: open
+  category: needs-data
+  summary: >
+    P2's further enhancement of each Polestar Field buff has no quantified
+    implementation. The current marker supplies the ordinary field effect but
+    cannot represent this additional enhancement.
+  detail: >
+    Both locales in 7.2.50 live char/10000149.json P2 say the field is further
+    enhanced each time it grants a buff and creating a Starlight Prism immediately
+    grants a field buff. ZH says 极星辉域每次给予增益效果时，使其进一步提升. The raw P2
+    parameter list contains only 1.0 (the Vortex level-up cooldown) and 0.15 (the
+    Stellar Swirl base reaction coefficient bonus), so it supplies no amount or
+    replacement field table for the further enhancement. Do not invent a numeric
+    value. Obtain a later source or ability/buff configuration defining that change;
+    the faster field ramp alone is already subsumed by the existing peak field model.
+
+    TRIAGE: Remains open, needs data. Re-fetched the original public raw EN and
+    ZH P2 and all character hyperlinks on 2026-11-07; version.json still identifies
+    7.2.50 as latest. Both locales promise enhancement, but neither supplies an
+    additional field coefficient or a replacement progression table, and none
+    of the hyperlinks defines it. The missing evidence is the modified field
+    buff value by application count, its affected stat/coefficient, and its cap,
+    or an ability/buff configuration establishing those facts. It is also unclear
+    whether this changes the peak field magnitude or only its ramp. Leave the
+    established ordinary peak field treatment in place without claiming that it
+    implements this unresolved clause; do not reuse the separate 15% Stellar
+    Swirl coefficient or assume an arbitrary extra field stack.
+    https://api.lunaris.moe/data/version.json
+    https://api.lunaris.moe/data/7.2.50/chs/char/10000149.json
+    https://api.lunaris.moe/data/7.2.50/en/char/10000149.json

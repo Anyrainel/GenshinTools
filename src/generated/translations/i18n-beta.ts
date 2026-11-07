@@ -3,11 +3,17 @@
 
 export const i18nBetaData = {
   characters: {
+    "anastasya": { en: "Anastasya", zh: "安娜丝塔夏" },
+    "danica": { en: "Danica", zh: "达妮卡" },
   },
   weapons: {
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
+    "silverdawn": { en: "Silverdawn", zh: "银昼" },
+    "torrents_of_spring": { en: "Torrents of Spring", zh: "春潮" },
   },
   artifacts: {
+    "artifact_15049": { en: "肇史之遗", zh: "肇史之遗" },
+    "artifact_15050": { en: "遥天奉翠华引", zh: "遥天奉翠华引" },
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },
   },
 };

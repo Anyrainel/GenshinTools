@@ -159,6 +159,7 @@ with (
         cache = {
             "property_map": {"10007": "EnergyRecharge", "10008": "ElementalMastery"},
             "affix_map": {"101221": {"property": "CritRate", "value": 0.0272}},
+            "skill_type_map": {"10001": "Auto", "10002": "Skill", "10003": "Burst"},
         }
         result = generate_stat_map(cache)
         self.assertEqual(result["10007"], "enerRech_")
@@ -172,6 +173,10 @@ with (
         run(self.root)
         output = (self.root / "src/generated/catalog/enkaIdMap.ts").read_text("utf-8")
         self.assertIn("export const statIdMap", output)
+        self.assertIn("export const skillTypeMap", output)
+        self.assertIn('"10001": "auto"', output)
+        self.assertIn('"10002": "skill"', output)
+        self.assertIn('"10003": "burst"', output)
         self.assertNotIn("characterIdMap", output)
 
     def test_incomplete_enka_cache_is_rejected(self):
@@ -247,6 +252,36 @@ with (
         self.assertEqual(
             load_ts_data(self.root, include_beta=False)["characters"],
             [{"id": "furina"}],
+        )
+
+    def test_beta_half_sets_merge_without_changing_released_ids_or_order(self):
+        data = self.root / "src/generated/catalog"
+        data.mkdir(parents=True)
+        released = [
+            {"id": "atk%-18", "setIds": ["released_atk"]},
+            {"id": "er-20", "setIds": ["released_er"]},
+        ]
+        (data / "resources.ts").write_text(
+            'export const artifacts = [{"id":"released_atk"},{"id":"released_er"}];\n'
+            f"export const artifactHalfSets = {json.dumps(released)};\n",
+            encoding="utf-8",
+        )
+        (data / "resources_beta.ts").write_text(
+            'export const betaArtifacts = [{"id":"future_atk"},{"id":"future_er"}];\n'
+            "export const betaArtifactHalfSets = ["
+            '{"id":"atk%-18","setIds":["future_atk","future_atk","missing"]},'
+            '{"id":"er-20","setIds":["future_er","released_atk"]}];\n',
+            encoding="utf-8",
+        )
+        self.assertEqual(
+            load_ts_data(self.root)["artifactHalfSets"],
+            [
+                {"id": "atk%-18", "setIds": ["released_atk", "future_atk"]},
+                {"id": "er-20", "setIds": ["released_er", "future_er"]},
+            ],
+        )
+        self.assertEqual(
+            load_ts_data(self.root, include_beta=False)["artifactHalfSets"], released
         )
 
 

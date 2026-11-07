@@ -1630,6 +1630,58 @@ class HeartOfTheFurnace4pc extends ArtifactSetBase {
   }
 }
 
+@RegisterArtifactSet("artifact_15049")
+class Artifact15049FourPiece extends ArtifactSetBase {
+  // 2pc: ATK +18% (via halfSetId).
+  // 4pc: E/Q casts or Normal Attacks grant a Starspark (max 2). Holding any
+  // spark grants Cryo CR +20%, plus another +20% for Cryo Stellar Glimmer DMG.
+  // Peak model assumes at least one spark; two sparks do not double the bonus.
+  // Sparks decay every 3s only on-field, so both bonuses also persist off-field.
+  readonly halfSetId = "atk%-18";
+  readonly stats: StatEntry[] = [];
+  readonly buffs = [
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["E", "Q", "normal-attack"],
+      },
+      { receiver: "self", filter: { elements: ["Cryo"] } },
+      [{ key: "cr", value: 0.2 }]
+    ),
+    new StatBuff(
+      {
+        type: "artifactSet",
+        id: this.artifactSetId,
+        triggers: ["E", "Q", "normal-attack"],
+      },
+      {
+        receiver: "self",
+        filter: {
+          elements: ["Cryo"],
+          reactions: ["stellarConduct", "stellarSwirl"],
+        },
+      },
+      [{ key: "reactionCr", value: 0.2 }]
+    ),
+  ];
+}
+
+@RegisterArtifactSet("artifact_15050")
+class Artifact15050FourPiece extends ArtifactSetBase {
+  // 2pc: ER +20% (via halfSetId).
+  // 7.2.50 reveals only Skill/Burst DMG +25%; further effects are unrevealed.
+  readonly halfSetId = "er-20";
+  readonly stats: StatEntry[] = [];
+  readonly buffs = [
+    new StatBuff(
+      { type: "artifactSet", id: this.artifactSetId },
+      { receiver: "self", filter: { abilities: ["skill", "burst"] } },
+      [{ key: "dmg%", value: 0.25 }]
+    ),
+  ];
+}
+
 @RegisterArtifactSet("scarlet_proof")
 class ScarletProof4pc extends ArtifactSetBase {
   // 2pc: ATK +18% (via halfSetId)

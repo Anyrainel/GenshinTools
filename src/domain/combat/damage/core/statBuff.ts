@@ -125,10 +125,19 @@ const CONSTRAINT_ALLOWLIST: Record<string, Set<string>> = {
   // bonus onto the sweep. The general ban on ability-scoping reaction-CRIT
   // keys stays — this kit shape is the exception, not a new rule.
   "sandrone/C2": new Set(["reactionCd:forbidsDims-abilities"]),
+  // Danica C6 grants persistent CRIT only to On-Field E2, a Skill classified
+  // as Stellar-Conduct. Both dimensions exclude her ordinary E and SC Q.
+  "danica/C6": new Set([
+    "reactionCr:forbidsDims-abilities",
+    "reactionCd:forbidsDims-abilities",
+  ]),
   // Valeriy C6 increases Electro CR, then additionally increases CD when that
   // Electro damage is Stellar-Conduct. Retain both filters so Cryo Stellar
   // hits do not receive the bonus (ZH: 若受到的雷元素伤害为星超导反应伤害).
   "valeriy/C6": new Set(["reactionCd:forbidsDims-elements"]),
+  // 肇史之遗 adds reaction CR only when the Stellar Glimmer damage
+  // itself is Cryo (ZH: 造成的冰元素伤害…若该伤害为星烁反应伤害).
+  "artifact_15049/": new Set(["reactionCr:forbidsDims-elements"]),
 };
 
 function isAllowlisted(

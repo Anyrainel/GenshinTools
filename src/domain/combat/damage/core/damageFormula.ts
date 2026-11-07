@@ -1258,6 +1258,7 @@ export class StellarFormula extends DamageFormula {
       ...REACTION_KEYS,
       ...BASE_DMG_KEYS,
       "reactionBaseDmg%",
+      "reactionCoeff%",
       "elevated%",
       ...CRIT_KEYS,
       ...RES_KEYS,
@@ -1283,6 +1284,7 @@ export class StellarFormula extends DamageFormula {
     const levelMult = LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!;
     const talentDmg = E.mul(
       E.const(levelMult * this.talentMultiplier),
+      E.add(E.const(1), stats.get("reactionCoeff%", this.tag)),
       E.add(E.const(1), stats.get("baseDmg%", this.tag)),
       E.add(E.const(1), stats.get("reactionBaseDmg%", this.tag)),
       E.add(E.const(1), emBonus, stats.get("reactionDmg%", this.tag))
@@ -1310,6 +1312,7 @@ export class StellarFormula extends DamageFormula {
     const talentDmg =
       levelMult *
       this.talentMultiplier *
+      (1 + stats.get("reactionCoeff%", this.tag)) *
       (1 + stats.get("baseDmg%", this.tag)) *
       (1 + stats.get("reactionBaseDmg%", this.tag)) *
       (1 + emBonus + stats.get("reactionDmg%", this.tag));
@@ -1328,7 +1331,8 @@ export class StellarFormula extends DamageFormula {
     const { emCoeff, emDenom } = EM_BONUS.lunar;
     const damage = this.calc(stats, charLevel, ctx);
     const params: Record<string, number> = {
-      reactionCoeff: this.talentMultiplier,
+      reactionCoeff:
+        this.talentMultiplier * (1 + stats.get("reactionCoeff%", this.tag)),
       levelCoeff: LEVEL_MULTIPLIERS[charLevel] ?? LEVEL_MULTIPLIERS[100]!,
       emCoeff,
       emDenom,

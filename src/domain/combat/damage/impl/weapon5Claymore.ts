@@ -1,8 +1,80 @@
 import { WeaponBase } from "../core/implModel";
-import { RegisterWeapon, resolveOption } from "../core/registry";
+import {
+  createCharacter,
+  RegisterWeapon,
+  resolveOption,
+} from "../core/registry";
 import { ScalingBuff, StatBuff } from "../core/statBuff";
-import type { OptionDef } from "../types";
+import type { TeamMeta } from "../core/teamMeta";
+import type { OptionDef, OptionMap } from "../types";
 import { r, wbs } from "./helpers";
+
+@RegisterWeapon("torrents_of_spring")
+class TorrentsOfSpring extends WeaponBase {
+  readonly buffs: StatBuff[];
+
+  constructor(
+    weaponId: string,
+    refinement: number,
+    charId: string,
+    teamMeta: TeamMeta,
+    combatOpts: OptionMap = {}
+  ) {
+    super(weaponId, refinement, charId, teamMeta, combatOpts);
+    const atk = r(refinement, [0.16, 0.2, 0.24, 0.28, 0.32]);
+    const reactionDmg = r(refinement, [0.2, 0.25, 0.3, 0.35, 0.4]);
+    const buffs = [
+      new StatBuff(wbs(this), { receiver: "self" }, [
+        { key: "atk%", value: atk },
+      ]),
+    ];
+    const character = createCharacter(
+      charId,
+      teamMeta.charLevels[charId] ?? 90,
+      teamMeta.constellations[charId] ?? 0,
+      teamMeta,
+      combatOpts
+    );
+    // Inspect enabled own hits, preserving each kit's option/constellation
+    // gates. Teammates' Electro attacks cannot grant the wearer a Decree.
+    const tags = Object.keys(character.formulaIds).flatMap(
+      (id) =>
+        character.getFormulaEntry(id)?.parts.map((p) => p.formula.tag) ?? []
+    );
+    if (tags.some((tag) => tag.element === "Electro")) {
+      // ZH beta: triggering Stellar-Conduct OR landing a Stellar-Conduct
+      // attack completes the Decree; EN incorrectly requires an Electro SC hit.
+      // Native SC attacks (e.g. Mitya's Prisms) need no Cryo teammate.
+      const completed =
+        teamMeta.hasReaction("stellarConduct", charId) ||
+        tags.some((tag) => tag.reaction === "stellarConduct");
+      buffs.push(
+        new StatBuff(
+          wbs(
+            this,
+            completed ? ["electro-hit", "stellarConduct"] : ["electro-hit"],
+            "torrents-of-spring-decree"
+          ),
+          {
+            receiver: "teamOnField",
+            filter: { reactions: ["stellarConduct"] },
+          },
+          [{ key: "reactionDmg%", value: reactionDmg * (completed ? 2 : 1) }]
+        )
+      );
+      if (completed) {
+        buffs.push(
+          new StatBuff(
+            wbs(this, ["electro-hit", "stellarConduct"]),
+            { receiver: "self" },
+            [{ key: "atk%", value: atk }]
+          )
+        );
+      }
+    }
+    this.buffs = buffs;
+  }
+}
 
 @RegisterWeapon("a_thousand_blazing_suns")
 class AThousandBlazingSuns extends WeaponBase {

@@ -71,6 +71,7 @@ def load_ts_data(project_root: str | Path, *, include_beta: bool = True) -> dict
         beta_chars = extract_json_from_ts(beta_content, "betaCharacters")
         beta_weapons = extract_json_from_ts(beta_content, "betaWeapons")
         beta_artifacts = extract_json_from_ts(beta_content, "betaArtifacts")
+        released_artifact_ids = {a["id"] for a in result.get("artifacts", [])}
         if beta_chars:
             existing_ids = {c["id"] for c in result.get("characters", [])}
             result.setdefault("characters", []).extend(
@@ -82,10 +83,25 @@ def load_ts_data(project_root: str | Path, *, include_beta: bool = True) -> dict
                 w for w in beta_weapons if w["id"] not in existing_ids
             )
         if beta_artifacts:
-            existing_ids = {a["id"] for a in result.get("artifacts", [])}
             result.setdefault("artifacts", []).extend(
-                a for a in beta_artifacts if a["id"] not in existing_ids
+                a for a in beta_artifacts if a["id"] not in released_artifact_ids
             )
+        beta_half_sets = extract_json_from_ts(beta_content, "betaArtifactHalfSets")
+        if beta_half_sets:
+            beta_artifact_ids = {a["id"] for a in beta_artifacts} - released_artifact_ids
+            half_sets = result.setdefault("artifactHalfSets", [])
+            by_id = {half_set["id"]: half_set for half_set in half_sets}
+            for half_set in beta_half_sets:
+                set_ids = [sid for sid in half_set["setIds"] if sid in beta_artifact_ids]
+                if not set_ids:
+                    continue
+                if half_set["id"] in by_id:
+                    existing = by_id[half_set["id"]]
+                    existing["setIds"] = list(dict.fromkeys(existing["setIds"] + set_ids))
+                else:
+                    added = {"id": half_set["id"], "setIds": list(dict.fromkeys(set_ids))}
+                    half_sets.append(added)
+                    by_id[added["id"]] = added
 
     i18n_path = root / "src" / "generated" / "translations" / "i18n-game.ts"
     if i18n_path.exists():

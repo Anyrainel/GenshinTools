@@ -9,6 +9,7 @@ import {
   weapons,
 } from "../../generated/catalog/resources";
 import {
+  betaArtifactHalfSets,
   betaArtifacts,
   betaCharacters,
   betaWeapons,
@@ -86,6 +87,32 @@ export const betaArtifactIds: ReadonlySet<string> = Object.freeze(
   )
 );
 
+function includeBetaArtifactHalfSets(): ArtifactHalfSet[] {
+  const merged = artifactHalfSets.map((halfSet) => ({
+    ...halfSet,
+    setIds: [...halfSet.setIds],
+  }));
+  const byId = new Map(merged.map((halfSet) => [halfSet.id, halfSet]));
+  for (const halfSet of betaArtifactHalfSets) {
+    const setIds = halfSet.setIds.filter((id) => betaArtifactIds.has(id));
+    if (setIds.length === 0) continue;
+    const existing = byId.get(halfSet.id);
+    if (existing) {
+      existing.setIds = [...new Set([...existing.setIds, ...setIds])];
+    } else {
+      const added = { id: halfSet.id, setIds: [...new Set(setIds)] };
+      merged.push(added);
+      byId.set(added.id, added);
+    }
+  }
+  return merged;
+}
+
+/** Keep released half-set IDs and source positions stable for persisted encodings. */
+export const allHalfSets: readonly ArtifactHalfSet[] = betaEnabled()
+  ? includeBetaArtifactHalfSets()
+  : artifactHalfSets;
+
 /** Hand-picked half-set IDs shown first, then remaining IDs sorted alphabetically. */
 const pinnedHalfSetIds: string[] = [
   "atk%-18",
@@ -111,18 +138,11 @@ const pinnedHalfSetIds: string[] = [
 ];
 export const allHalfSetIds: readonly string[] = Object.freeze([
   ...pinnedHalfSetIds,
-  ...artifactHalfSets
+  ...allHalfSets
     .map((hs) => hs.id)
     .filter((id) => !pinnedHalfSetIds.includes(id))
     .sort(),
 ]);
-
-/**
- * Half sets in the raw source order (resources.ts). Use this when encoding
- * stability matters — new half sets are prepended, so existing indices into
- * this list don't shift (mirrors `allCharacters` / `allArtifacts` / `allWeapons`).
- */
-export const allHalfSets: readonly ArtifactHalfSet[] = artifactHalfSets;
 
 const createRecord = <Item, Key extends PropertyKey>(
   items: readonly Item[],
@@ -163,13 +183,13 @@ export const weaponsById = freezeRecord(
 
 export const artifactHalfSetsById = freezeRecord(
   createRecord<ArtifactHalfSet, ArtifactHalfSet["id"]>(
-    artifactHalfSets,
+    allHalfSets,
     (halfSet) => halfSet.id
   )
 );
 
 export const artifactIdToHalfSetId = freezeRecord(
-  artifactHalfSets.reduce<Record<string, string>>((acc, halfSet) => {
+  allHalfSets.reduce<Record<string, string>>((acc, halfSet) => {
     for (const setId of halfSet.setIds) {
       acc[setId] = halfSet.id;
     }
