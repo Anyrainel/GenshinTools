@@ -42,7 +42,7 @@ const APP_VERSION = {
 type Region = "cn" | "os";
 
 function uidToServer(uid: string): string {
-  const prefix = uid[0];
+  const prefix = uid.slice(0, -8);
   switch (prefix) {
     case "1":
     case "2":
@@ -55,6 +55,7 @@ function uidToServer(uid: string): string {
     case "7":
       return "os_euro";
     case "8":
+    case "18":
       return "os_asia";
     case "9":
       return "os_cht";
@@ -134,6 +135,7 @@ async function call(
     headers["Accept-Language"] = "zh-CN,en-US;q=0.8";
   } else {
     headers["x-rpc-language"] = "en-us";
+    headers["x-rpc-lang"] = "en-us";
   }
 
   const res = await fetch(url, {

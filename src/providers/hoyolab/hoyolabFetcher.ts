@@ -24,9 +24,7 @@ import {
 // the Battle Chronicle `/character/list` + `/character/detail` endpoints on
 // either hoyolab.com (overseas) or miyoushe.com (CN). The signed proxy lives
 // at /api/hoyolab/<os|cn>/<subpath> — see worker/index.ts.
-// Endpoint and DS behavior were refreshed against Womsxd/MihoyoBBSTools
-// `setting.py`, seriaati/genshin.py `constants.py` + `utility/ds.py`, and live
-// unauthenticated endpoint probes on 2026-05-29.
+// Request/signing behavior is tracked in docs/audits/hoyolab-upstream-2026-11-07.md.
 //
 // The shape of the response is completely different from Enka's, so we map
 // directly to the internal GOODData format rather than reusing any of the
@@ -35,18 +33,24 @@ import {
 export type HoyolabRegion = "os" | "cn";
 
 export function uidToRegion(uid: string): HoyolabRegion | null {
-  const prefix = uid[0];
+  const prefix = uid.slice(0, -8);
   if (prefix === "1" || prefix === "2" || prefix === "3" || prefix === "5") {
     return "cn";
   }
-  if (prefix === "6" || prefix === "7" || prefix === "8" || prefix === "9") {
+  if (
+    prefix === "6" ||
+    prefix === "7" ||
+    prefix === "8" ||
+    prefix === "18" ||
+    prefix === "9"
+  ) {
     return "os";
   }
   return null;
 }
 
 export function uidToServer(uid: string): string | null {
-  switch (uid[0]) {
+  switch (uid.slice(0, -8)) {
     case "1":
     case "2":
     case "3":
@@ -58,6 +62,7 @@ export function uidToServer(uid: string): string | null {
     case "7":
       return "os_euro";
     case "8":
+    case "18":
       return "os_asia";
     case "9":
       return "os_cht";
@@ -213,12 +218,12 @@ async function callProxy<T>(
   const envelope = (await res.json()) as HoyolabEnvelope<T>;
   if (envelope.retcode !== 0 || !envelope.data) {
     const label = region === "cn" ? "米游社" : "HoYoLAB";
-    // Upstream genshin.py classifies 5003 as a Geetest/risk-control response.
-    if (envelope.retcode === 5003) {
+    // Keep in sync with genshin.py GEETEST_RETCODES.
+    if ([10035, 5003, 10041, 1034].includes(envelope.retcode)) {
       throw new Error(
         region === "cn"
-          ? "米游社要求进行安全验证（5003）。请先在米游社 App 或网页中打开战绩页并完成验证，稍后再试。"
-          : "HoYoLAB requires a security check (5003). Open your Battle Chronicle in the HoYoLAB app or website, complete any verification, then try again later."
+          ? `米游社要求进行安全验证（${envelope.retcode}）。请先在米游社 App 或网页中打开战绩页并完成验证，稍后再试。`
+          : `HoYoLAB requires a security check (${envelope.retcode}). Open your Battle Chronicle in the HoYoLAB app or website, complete any verification, then try again later.`
       );
     }
     throw new Error(

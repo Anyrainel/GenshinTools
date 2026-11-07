@@ -1,30 +1,22 @@
 #!/usr/bin/env node
 /**
- * Check whether the miHoYo API version/salt values in our proxy are still
- * up-to-date by comparing against well-maintained upstream references.
+ * Compare Worker/probe signing constants with the current upstream references.
+ * This checks constants only; endpoint and signing-logic reviews are documented
+ * in docs/audits/hoyolab-upstream-2026-11-07.md.
  *
- * Usage:
- *   node scripts/dev/check-hoyolab-version.js          # check only
- *   node scripts/dev/check-hoyolab-version.js --fix     # auto-update files
- *
- * Called automatically from the pre-push hook.
- *
- * Upstream sources:
- *   CN: github.com/Womsxd/MihoyoBBSTools  (setting.py)
- *   OS: github.com/seriaati/genshin.py     (constants.py + utility/ds.py)
+ * npm run check:hoyolab        # read-only; incomplete checks fail
+ * npm run check:hoyolab:fix    # update constants in both consumers
  */
 
-import { readFileSync, writeFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { readFileSync, renameSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, "../..");
-
-const WORKER_PATH = resolve(ROOT, "worker/index.ts");
-const PROBE_PATH = resolve(ROOT, "scripts/hoyolab-probe.ts");
-
-// Upstream reference URLs (raw GitHub)
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const LOCAL_PATHS = [
+  resolve(ROOT, "worker/index.ts"),
+  resolve(ROOT, "scripts/hoyolab-probe.ts"),
+];
 
 const UPSTREAM = {
   cn: {
@@ -49,122 +41,104 @@ const UPSTREAM = {
   },
 };
 
-// Read our local values
-
-function readLocal(filePath) {
-  const src = readFileSync(filePath, "utf-8");
-  // Match the Worker app-version block: cn: "x.y.z"
-  const cnVersion = src.match(/APP_VERSION\s*=\s*\{[^}]*cn:\s*"([^"]+)"/s)?.[1];
-  const osVersion = src.match(/APP_VERSION\s*=\s*\{[^}]*os:\s*"([^"]+)"/s)?.[1];
-  // Match the Worker salt block: cn: "..."
-  const cnSalt = src.match(/SALTS\s*=\s*\{[^}]*cn:\s*"([^"]+)"/s)?.[1];
-  const osSalt = src.match(/SALTS\s*=\s*\{[^}]*os:\s*"([^"]+)"/s)?.[1];
-  return { cnVersion, cnSalt, osVersion, osSalt };
+function readSetting(source, block, region) {
+  return source.match(
+    new RegExp(`${block}\\s*=\\s*\\{[^}]*${region}:\\s*"([^"]+)"`, "s")
+  )?.[1];
 }
 
-// Fetch with timeout
-
-async function fetchText(url, timeoutMs = 10_000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, { signal: controller.signal });
-    if (!res.ok) throw new Error(`HTTP ${res.status} from ${url}`);
-    return await res.text();
-  } finally {
-    clearTimeout(timer);
-  }
+function replaceSetting(source, block, region, value) {
+  return source.replace(
+    new RegExp(`(${block}\\s*=\\s*\\{[^}]*${region}:\\s*)"[^"]+"`, "s"),
+    (_match, prefix) => `${prefix}"${value}"`
+  );
 }
 
-// Helper to check and fix a region
-async function checkRegion(region, label, local, fix) {
-  const cfg = UPSTREAM[region];
-  const constantsText = await fetchText(cfg.constantsUrl);
-  const versionText = cfg.dsUrl ? await fetchText(cfg.dsUrl) : constantsText;
-  const upstreamVersion = cfg.parseVersion(versionText);
-  const upstreamSalt = cfg.parseSalt(constantsText);
+async function fetchText(url) {
+  const response = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+  if (!response.ok) throw new Error(`HTTP ${response.status} from ${url}`);
+  return response.text();
+}
 
-  let regionIssues = false;
+export async function checkHoyolabVersions({
+  paths = LOCAL_PATHS,
+  fetchSource = fetchText,
+  fix = false,
+  log = console.log,
+} = {}) {
+  const sources = new Map(paths.map((path) => [path, readFileSync(path, "utf8")]));
+  const updates = new Map(sources);
+  let hasDrift = false;
+  let incomplete = false;
 
-  const localVersion = region === "cn" ? local.cnVersion : local.osVersion;
-  const localSalt = region === "cn" ? local.cnSalt : local.osSalt;
-
-  if (upstreamVersion && upstreamVersion !== localVersion) {
-    console.log(
-      `  ⚠ ${label} app_version outdated: ours=${localVersion} upstream=${upstreamVersion}`
-    );
-    regionIssues = true;
-    if (fix) {
-      applyFix(WORKER_PATH, localVersion, upstreamVersion);
-      applyFix(PROBE_PATH, localVersion, upstreamVersion);
-      if (region === "cn") {
-        applyFix(WORKER_PATH, `miHoYoBBS/${localVersion}`, `miHoYoBBS/${upstreamVersion}`);
-        applyFix(PROBE_PATH, `miHoYoBBS/${localVersion}`, `miHoYoBBS/${upstreamVersion}`);
+  for (const [region, config] of Object.entries(UPSTREAM)) {
+    log(`[hoyolab-version] Checking ${region.toUpperCase()} upstream...`);
+    try {
+      const constants = await fetchSource(config.constantsUrl);
+      const ds = config.dsUrl ? await fetchSource(config.dsUrl) : constants;
+      const salt = config.parseSalt(constants);
+      const version = config.parseVersion(ds);
+      if (!salt || !version) {
+        throw new Error("Could not parse upstream salt/version; review the upstream format");
       }
-      console.log(`  ✓ Fixed ${label} app_version in worker + probe`);
+
+      for (const [path, source] of sources) {
+        const localSalt = readSetting(source, "SALTS", region);
+        const localVersion = readSetting(source, "APP_VERSION", region);
+        const localUaVersion = source.match(/miHoYoBBS\/([\d.]+)/)?.[1];
+        if (!localSalt || !localVersion || (region === "cn" && !localUaVersion)) {
+          throw new Error(`Could not parse local signing constants: ${path}`);
+        }
+        if (
+          localSalt !== salt ||
+          localVersion !== version ||
+          (region === "cn" && localUaVersion !== version)
+        ) {
+          hasDrift = true;
+          log(`  Signing constants differ: ${path}`);
+          if (fix) {
+            let updated = replaceSetting(updates.get(path), "SALTS", region, salt);
+            updated = replaceSetting(updated, "APP_VERSION", region, version);
+            if (region === "cn") {
+              updated = updated.replace(/miHoYoBBS\/[\d.]+/g, `miHoYoBBS/${version}`);
+            }
+            updates.set(path, updated);
+          }
+        } else {
+          log(`  Constants match: ${path}`);
+        }
+      }
+    } catch (error) {
+      incomplete = true;
+      log(`  CHECK INCOMPLETE: ${error.message}`);
     }
-  } else if (upstreamVersion) {
-    console.log(`  ✓ ${label} app_version up-to-date (${localVersion})`);
-  } else {
-    console.log(`  ? Could not parse upstream ${label} version (format changed?)`);
   }
 
-  if (upstreamSalt && upstreamSalt !== localSalt) {
-    console.log(
-      `  ⚠ ${label} salt outdated: ours=${localSalt} upstream=${upstreamSalt}`
-    );
-    regionIssues = true;
-    if (fix) {
-      applyFix(WORKER_PATH, localSalt, upstreamSalt);
-      applyFix(PROBE_PATH, localSalt, upstreamSalt);
-      console.log(`  ✓ Fixed ${label} salt in worker + probe`);
+  // Do not partially update consumers when one upstream cannot be verified.
+  if (fix && !incomplete) {
+    for (const [path, updated] of updates) {
+      if (updated === sources.get(path)) continue;
+      const temporaryPath = `${path}.tmp`;
+      writeFileSync(temporaryPath, updated);
+      renameSync(temporaryPath, path);
+      log(`  Updated: ${path}`);
     }
-  } else if (upstreamSalt) {
-    console.log(`  ✓ ${label} salt up-to-date`);
   }
 
-  return regionIssues;
+  if (hasDrift && !fix) log("Run npm run check:hoyolab:fix to update signing constants.");
+  if (!incomplete && !hasDrift) {
+    log("Signing constants match; endpoint and signing-logic review is still required.");
+  }
+  return !incomplete && (!hasDrift || fix);
 }
 
-// Main
-
-async function main() {
-  const fix = process.argv.includes("--fix");
-  const local = readLocal(WORKER_PATH);
-  let hasIssues = false;
-
-  console.log("[hoyolab-version] Checking CN upstream (MihoyoBBSTools)...");
-  try {
-    const cnIssues = await checkRegion("cn", "CN", local, fix);
-    if (cnIssues) hasIssues = true;
-  } catch (err) {
-    console.log(`  ⏭ Skipped CN (network error: ${err.message})`);
-  }
-
-  console.log("[hoyolab-version] Checking OS upstream (genshin.py)...");
-  try {
-    const osIssues = await checkRegion("os", "OS", local, fix);
-    if (osIssues) hasIssues = true;
-  } catch (err) {
-    console.log(`  ⏭ Skipped OS (network error: ${err.message})`);
-  }
-
-  if (hasIssues && !fix) {
-    console.log(
-      "\nRun with --fix to auto-update:\n  node scripts/dev/check-hoyolab-version.js --fix"
-    );
-    process.exit(1);
-  }
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  checkHoyolabVersions({ fix: process.argv.includes("--fix") })
+    .then((success) => {
+      process.exitCode = success ? 0 : 1;
+    })
+    .catch((error) => {
+      console.error("[hoyolab-version] Fatal:", error.message);
+      process.exitCode = 1;
+    });
 }
-
-function applyFix(filePath, oldValue, newValue) {
-  let content = readFileSync(filePath, "utf-8");
-  content = content.replaceAll(oldValue, newValue);
-  writeFileSync(filePath, content);
-}
-
-main().catch((err) => {
-  console.error("[hoyolab-version] Fatal:", err);
-  // Don't block push on unexpected script errors
-  process.exit(0);
-});

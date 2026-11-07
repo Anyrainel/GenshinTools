@@ -10,6 +10,16 @@ type UpstreamRequest = {
   headers: { get(name: string): string | null };
 };
 
+async function expectedMd5(text: string): Promise<string> {
+  const digest = await crypto.subtle.digest(
+    "MD5",
+    new TextEncoder().encode(text)
+  );
+  return [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
 const hoyolabCredentialHeaders = {
   "x-hoyolab-ltuid-v2": "uid",
   "x-hoyolab-ltmid-v2": "mid",
@@ -108,6 +118,16 @@ describe("Worker API routing", () => {
     expect(upstreamRequests[0].headers.get("Cookie")).toBe(
       "ltuid_v2=uid; ltmid_v2=mid; ltoken_v2=token"
     );
+    expect(upstreamRequests[0].headers.get("x-rpc-language")).toBe("en-us");
+    expect(upstreamRequests[0].headers.get("x-rpc-lang")).toBe("en-us");
+    const [time, nonce, digest] =
+      upstreamRequests[0].headers.get("DS")?.split(",") ?? [];
+    expect(nonce).toMatch(/^[a-zA-Z]{6}$/);
+    expect(digest).toBe(
+      await expectedMd5(
+        `salt=6s25p5ox5y14umn1p61aqyyvbvvl3lrt&t=${time}&r=${nonce}`
+      )
+    );
   });
 
   it("uses the current upstream 米游社 web-client headers for CN requests", async () => {
@@ -136,6 +156,65 @@ describe("Worker API routing", () => {
     expect(headers.get("x-rpc-channel")).toBe("miyousheluodi");
     expect(headers.get("X-Requested-With")).toBe("com.mihoyo.hyperion");
     expect(headers.get("User-Agent")).toContain("miHoYoBBS/2.117.0");
+  });
+
+  it("signs the exact CN JSON body and sorted query parameters", async () => {
+    let capturedDs: string | null = null;
+    let capturedBody = "";
+    network.use(
+      http.post(
+        "https://api-takumi-record.mihoyo.com/game_record/app/genshin/api/character/detail",
+        async ({ request }) => {
+          capturedDs = request.headers.get("DS");
+          capturedBody = await request.text();
+          return HttpResponse.json({ retcode: 0, data: { list: [] } });
+        }
+      )
+    );
+    const body =
+      '{ "character_ids": [10000002], "role_id": "123456789", "server": "cn_gf01" }';
+    const response = await exports.default.fetch(
+      new Request(
+        "https://example.com/api/hoyolab/cn/character/detail?z=last&a=first",
+        {
+          method: "POST",
+          headers: hoyolabCredentialHeaders,
+          body,
+        }
+      )
+    );
+    expect(response.status).toBe(200);
+    expect(capturedBody).toBe(body);
+    const [time, nonce, digest] = String(capturedDs).split(",");
+    expect(Number(nonce)).toBeGreaterThanOrEqual(100001);
+    expect(Number(nonce)).toBeLessThanOrEqual(200000);
+    expect(digest).toBe(
+      await expectedMd5(
+        `salt=xV8v4Qu54lUKrEYFZkJhB8cuOh9Asafs&t=${time}&r=${nonce}&b=${body}&q=a=first&z=last`
+      )
+    );
+  });
+
+  it("routes ten-digit Asia UIDs to the overseas record endpoint", async () => {
+    const upstreamRequests: UpstreamRequest[] = [];
+    network.use(
+      http.post(
+        "https://sg-public-api.hoyolab.com/event/game_record/genshin/api/character/list",
+        ({ request }) => {
+          upstreamRequests.push(request);
+          return HttpResponse.json({ retcode: 0, data: { list: [] } });
+        }
+      )
+    );
+    const response = await exports.default.fetch(
+      new Request("https://example.com/api/hoyolab/os/character/list", {
+        method: "POST",
+        headers: hoyolabCredentialHeaders,
+        body: JSON.stringify({ role_id: "1800000000", server: "os_asia" }),
+      })
+    );
+    expect(response.status).toBe(200);
+    expect(upstreamRequests).toHaveLength(1);
   });
 
   it("rejects incomplete HoYoLAB credentials before upstream fetch", async () => {

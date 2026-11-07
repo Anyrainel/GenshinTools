@@ -39,6 +39,7 @@ const HOYOLAB_SERVER_BY_UID_PREFIX = {
   "6": "os_usa",
   "7": "os_euro",
   "8": "os_asia",
+  "18": "os_asia",
   "9": "os_cht",
 } as const;
 
@@ -305,7 +306,7 @@ async function handleHoyolabProxy(
               "X-Requested-With": "com.mihoyo.hyperion",
               "Accept-Language": "zh-CN,en-US;q=0.8",
             }
-          : { "x-rpc-language": "en-us" }),
+          : { "x-rpc-language": "en-us", "x-rpc-lang": "en-us" }),
         DS: ds,
         Cookie: cookieResult.cookie,
         Referer:
@@ -444,7 +445,7 @@ function isExpectedHoyolabServer(
 ): boolean {
   const expectedServer =
     HOYOLAB_SERVER_BY_UID_PREFIX[
-      uid[0] as keyof typeof HOYOLAB_SERVER_BY_UID_PREFIX
+      uid.slice(0, -8) as keyof typeof HOYOLAB_SERVER_BY_UID_PREFIX
     ];
   if (!expectedServer || server !== expectedServer) return false;
   return region === "cn"
