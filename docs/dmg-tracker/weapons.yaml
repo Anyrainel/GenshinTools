@@ -471,52 +471,6 @@
     Sword and Quartz confirm element-scoped swirl does belong in the set, so the
     approximation errs in scope rather than in kind.
 
-- id: weapon-sword-catalyst-radiance-trigger-label
-  entity: weapon_sword
-  rule: U7
-  status: completed
-  category: bug
-  summary: >
-    The Radiance branches of weapon_sword and weapon_catalyst are labelled with
-    the trigger "stellar-reaction", but their activation condition is the
-    wielder being in the Radiance (辉映) state, not triggering a Stellar Glimmer
-    reaction. Radiance is a per-character state entered inside a Polestar Field;
-    the two conditions are distinct and the displayed condition is wrong.
-  detail: >
-    weapon4Sword.ts WeaponSword: the Radiance branch uses
-    wbs(this, ["E", "on-hit", "stellar-reaction"]) on both StatBuffs; the real
-    activation is still "after E, on each attack hit" (the base branch's
-    ["E", "on-hit"]) with the payload swapped by the Radiance option.
-    weapon4Catalyst.ts WeaponCatalyst: the Radiance branch uses
-    wbs(this, ["stellar-reaction"]) on both StatBuffs while the base branch is
-    unconditional (bare wbs(this)); the clause is party-composition based and has
-    no reaction trigger at all.
-
-    Both Radiance states are already conveyed to the user by the weapons' own
-    "辉映状态 / Radiance State" OptionDef, so the trigger string is redundant as
-    well as inaccurate.
-
-    Two plausible fixes, needs a decision:
-    (a) Drop "stellar-reaction" from both Radiance branches — matches the
-        established character convention, where Radiance-gated buffs keep their
-        ability/origin triggers and never carry a reaction trigger (alyosha P3
-        cbs(this,"P3",["E"]), diona C6 cbs(this,"C6",["Q"]),
-        character5Liyue/character5Sumeru likewise). weapon_sword would become
-        ["E", "on-hit"]; weapon_catalyst would become bare wbs(this).
-    (b) Introduce a new "radiance" trigger string for the state. More
-        informative, but a brand-new label with no precedent in the codebase.
-
-    Display-only: no stat values, filters, receivers or noStackIds are affected.
-
-    RESOLVED: dropped the label rather than inventing a "radiance" string,
-    matching the character-side convention — Radiance-gated character buffs
-    (e.g. Sandrone, Odette) carry the real activation trigger and convey the
-    Radiance state through the OptionDef, never through a trigger label.
-    weapon_sword's Radiance branch now uses ["E", "on-hit"]; weapon_catalyst's
-    is a pure party-composition buff and carries no trigger. The four genuine
-    触发星烁反应 clauses (blade_of_atonement, emberwell, echoes_of_the_heart,
-    song_of_the_vigil) keep "stellar-reaction".
-
 - id: kaguras-verity-stellar-conduct-bonus
   entity: kaguras_verity
   rule: U3
@@ -576,3 +530,30 @@
     coverage. Retain the implemented 20%/25%/30%/35%/40% ATK buff, and do not infer
     a rotation entry count from the cooldown alone.
     https://api.lunaris.moe/data/7.2.50/chs/weapon/12438.json
+
+- id: winters-heavy-heart-radiance-idle
+  entity: winters_heavy_heart
+  rule: U8
+  status: open
+  category: bug
+  summary: >
+    Selecting Radiance replaces Winter's Heavy Heart's unconditional party-
+    composition EM/ATK bonuses in idle stats with its combat-only replacement
+    EM bonus. Idle stats must retain the ordinary composition bonuses.
+  detail: >
+    weapon4Catalyst.ts L531 emits the Radiance EM StatBuff with wbs(this),
+    without an activation trigger; the Radiance branch also returns before
+    emitting the ordinary Cryo-count EM and Electro-count ATK bonuses.
+    TeamStatSheet.getIdleStats L197-L203 includes this unfiltered,
+    trigger-free EM buff, despite Radiance being a combat state. At R1,
+    Vodyanitsa wielding the weapon with Odette, Kaeya and Fischl gets 60 EM
+    and no ATK from the weapon in idle, instead of the unconditional 48 EM
+    and 4.8% ATK from two Cryo and one Electro party members. Preserve the
+    ordinary composition bonuses for idle and apply the Radiance replacement
+    in combat through triggered deltas or equivalent state-aware handling.
+    Existing polestar-field/stellarSwirl activation conventions may be used;
+    do not restore the inaccurate stellar-reaction trigger. Any changed buff
+    identity must migrate authored activation overrides through the required
+    persistence boundaries. Verify idle on/off-field sheets and unchanged
+    replacement combat values across all refinements. This is separate from
+    the cleaned U7 ticket about the inaccurate stellar-reaction label.

@@ -193,46 +193,6 @@
     Anemo/Cryo priority rules and 0.6/0.3/0.05/0.05 weights. Added a targeted
     Odette team reaction regression test.
 
-- id: vesna-default-pinion-count
-  entity: vesna
-  rule: U9
-  status: completed
-  category: bug
-  summary: >
-    The default rotation counts one full N6 chain and only five Wind Pinions,
-    which is internally inconsistent and cannot fund all five Windborne Sword
-    casts from the opener plus a mid-rotation Burst.
-  detail: >
-    Added a distinct vesna-normal-1 formula while keeping vesna-normal as the
-    full N6 action for existing saved combos. Default is four N1C chains and
-    twelve pinions, funding five swords together with E's two Essence and Q's
-    one. C1 adds one free Lv3 cast. Q is now modeled before Lv3, following
-    Prydwen's E N1C E N1C E Q E N1C E N1C E rotation. P1 uses two prior-cast
-    stacks for Q and a Lv3 average of four at C0, 4.5 at C1, six at C2+.
-    C6 uses one N1C and three regular pinions; Transpose supplies the other nine.
-    Formula IDs keep their existing combat-action units; no schema change.
-    https://meropide.cn/chs/characters/薇斯纳/theorycraft/
-    https://www.prydwen.gg/genshin-impact/characters/vesna
-
-- id: vesna-c6-transpose-pinion-count
-  entity: vesna
-  rule: U9
-  status: completed
-  category: bug
-  summary: >
-    C6 Transpose currently includes one Wind Pinion on all four casts. It should
-    emit three pinions while Armed for Action is active, and none on the final
-    Transpose after the fourth Lv3 sword has already ended that stance.
-  detail: >
-    Kept four Transpose actions and the pinion part inside their existing
-    formula, with an explicit per-action average of 9/4 pinions: three on each
-    of the first three actions, none on the fourth. The default now adds one
-    N1C with three regular pinions, totaling twelve pinions and two Essence.
-    Existing saved Transpose counts retain their attack-action unit.
-    Meropide documents three pinions per Transpose and explicitly notes the
-    fourth Transpose occurs outside stance and creates none.
-    https://meropide.cn/chs/characters/薇斯纳/theorycraft/
-
 - id: vesna-p1-cast-stack-timing
   entity: vesna
   rule: U9
@@ -318,3 +278,29 @@
     Verify both Battle options with a Cryo/Electro teammate, the existing Defense
     positive, and a Battle team without a qualifying teammate as a negative.
     https://api.lunaris.moe/data/7.2.50/chs/char/10000147.json
+
+- id: vesna-c6-final-transpose-c1-bonus
+  entity: vesna
+  rule: U9
+  status: open
+  category: bug
+  summary: >
+    The final C6 Transpose Spirit Blade receives C1's 20% Stellar Swirl DMG
+    bonus even though the fourth highest-level Windborne Sword has already
+    ended Armed for Action. C1 grants this bonus only while that mode is active.
+  detail: >
+    Current official E ends Armed for Action after three highest-level swords;
+    C1 raises the limit to four. C6 permits Transpose after each highest-level
+    sword, including the final one after mode exit. character5Snezhnaya.ts
+    L2520-L2524 grants C1 as a generic selfOnField Stellar Swirl reactionDmg%
+    buff, while L2597 counts four Transposes and L2759-L2779 uses the same
+    Spirit Blade part for all four. The pinion part already uses 9/4 hits to
+    reflect three in-mode Transposes and one outside, but the C1 bonus still
+    applies to all four blades. Keep C1's 20% on the first three and exclude
+    it from the final blade in the modeled four-Transpose total; do not apply
+    a global reduction to other Stellar Swirl damage. Preserve persisted
+    formula action units or migrate them if splitting entries. Verify both
+    numeric and compiled full-combo damage with Radiance on, and keep the
+    no-Radiance path unchanged. This does not change C2's lasting ATK bonus,
+    P1 stacks that clear on leaving the field, or the separate unresolved
+    P1 same-cast timing issue.
