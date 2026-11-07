@@ -13,6 +13,7 @@ export const betaCharacters: CharacterResource[] = [
 ];
 export const betaWeapons: WeaponResource[] = [
   {"id":"prized_isshin_blade","rarity":4,"imagePath":"/weapon/prized_isshin_blade.webp"},
+  {"id":"blazing_lionfang","rarity":4,"imagePath":"/weapon/blazing_lionfang.webp"},
   {"id":"torrents_of_spring","rarity":5,"imagePath":"/weapon/torrents_of_spring.webp"},
   {"id":"silverdawn","rarity":5,"imagePath":"/weapon/silverdawn.webp"},
 ];

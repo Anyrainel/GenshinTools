@@ -1,4 +1,4 @@
-"""Keep beta artifact identities stable as upstream translations become available."""
+"""Keep valid bilingual beta data and stable identities during Lunaris refreshes."""
 
 import contextlib
 import sys
@@ -12,6 +12,186 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 import beta_files  # noqa: E402
 import lunaris  # noqa: E402
 from ts_reader import extract_json_from_ts  # noqa: E402
+
+
+class LunarisWeaponLocaleTests(unittest.TestCase):
+    @staticmethod
+    def raw_weapon(name, descriptions):
+        return {
+            "name": name,
+            "qualityType": "QUALITY_PURPLE",
+            "weaponType": "WEAPON_CLAYMORE",
+            "weaponIcon": "UI_EquipIcon_Claymore_NatlanEventVennessa",
+            "stats": {"90": {"atk": 510, "Energy Recharge%": 45.9}},
+            "passive": {
+                "refinements": {
+                    str(rank): {"description": descriptions.get(str(rank), "")}
+                    for rank in range(1, 6)
+                }
+            },
+        }
+
+    @staticmethod
+    def chinese_descriptions():
+        return {
+            str(rank): (
+                "装备者处于后台累计5秒后，获得「断剑重铸」效果。\\n"
+                f"「断剑重铸」效果：攻击力提升{atk}%。战斗中装备者登场时将对附近敌人"
+                f"造成{damage}%攻击力的范围伤害。登场伤害每14秒至多触发一次。"
+                "装备者在场上累计10秒后，将失去「断剑重铸」效果。"
+            )
+            for rank, (atk, damage) in enumerate(
+                [(20, 280), (25, 350), (30, 420), (35, 490), (40, 560)], start=1
+            )
+        }
+
+    def test_missing_english_effect_uses_exact_chinese_refinements_and_keeps_identity(
+        self,
+    ):
+        english = self.raw_weapon("Blazing Lionfang", {})
+        chinese = self.raw_weapon("炎烈狮牙", self.chinese_descriptions())
+        with patch.object(lunaris, "fetch_json", side_effect=[english, chinese]):
+            weapon_id, en_out, zh_out, stats, icon = lunaris.scrape_weapon(
+                "12438", "7.2.50"
+            )
+        self.assertEqual(weapon_id, "blazing_lionfang")
+        self.assertEqual(en_out["id"], "12438")
+        self.assertEqual(en_out["name"], "Blazing Lionfang")
+        self.assertEqual(zh_out["name"], "炎烈狮牙")
+        self.assertEqual(en_out["descHtmlTpl"], zh_out["descHtmlTpl"])
+        self.assertEqual(en_out["refinements"], zh_out["refinements"])
+        self.assertEqual(
+            en_out["refinements"],
+            [
+                [f"{atk}%", f"{damage}%"]
+                for atk, damage in [
+                    (20, 280),
+                    (25, 350),
+                    (30, 420),
+                    (35, 490),
+                    (40, 560),
+                ]
+            ],
+        )
+        for rank, row in enumerate(en_out["refinements"], start=1):
+            rendered = en_out["descHtmlTpl"]
+            for column, value in enumerate(row):
+                rendered = rendered.replace(f"{{{column}}}", value)
+            self.assertEqual(
+                rendered, lunaris._format_desc(self.chinese_descriptions()[str(rank)])
+            )
+        self.assertEqual(stats["rarity"], 4)
+        self.assertEqual(stats["type"], "Claymore")
+        self.assertEqual(stats["secondaryStat"], "er")
+        self.assertEqual(
+            stats["levels"]["90"], {"baseAtk": 510, "secondaryStatValue": "45.9%"}
+        )
+        self.assertEqual(icon, "UI_EquipIcon_Claymore_NatlanEventVennessa")
+
+    def test_partial_missing_english_refinement_uses_one_complete_chinese_locale(self):
+        english = self.raw_weapon(
+            "Blazing Lionfang",
+            {str(rank): f"Gain {10 * rank}% ATK." for rank in range(2, 6)},
+        )
+        chinese = self.raw_weapon("炎烈狮牙", self.chinese_descriptions())
+        with patch.object(lunaris, "fetch_json", side_effect=[english, chinese]):
+            _, en_out, zh_out, *_ = lunaris.scrape_weapon("12438", "7.2.50")
+        self.assertEqual(en_out["descHtmlTpl"], zh_out["descHtmlTpl"])
+        self.assertEqual(en_out["refinements"], zh_out["refinements"])
+        self.assertEqual(en_out["refinements"][0], ["20%", "280%"])
+        self.assertEqual(en_out["refinements"][-1], ["40%", "560%"])
+
+    def test_complete_english_refinements_keep_their_existing_text(self):
+        english = self.raw_weapon(
+            "Blazing Lionfang",
+            {str(rank): f"Gain {10 * rank}% ATK." for rank in range(1, 6)},
+        )
+        chinese = self.raw_weapon("炎烈狮牙", self.chinese_descriptions())
+        with patch.object(lunaris, "fetch_json", side_effect=[english, chinese]):
+            _, en_out, zh_out, *_ = lunaris.scrape_weapon("12438", "7.2.50")
+        self.assertEqual(en_out["descHtmlTpl"], "Gain {0} ATK.")
+        self.assertNotEqual(en_out["descHtmlTpl"], zh_out["descHtmlTpl"])
+
+    def test_refresh_keeps_either_valid_locale_and_skips_only_both_empty(self):
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            contextlib.ExitStack() as stack,
+        ):
+            root = Path(directory)
+            project_root = beta_files.PROJECT_ROOT
+            for module in (beta_files, lunaris):
+                for name, value in list(vars(module).items()):
+                    if isinstance(value, Path) and value.is_relative_to(project_root):
+                        stack.enter_context(
+                            patch.object(
+                                module, name, root / value.relative_to(project_root)
+                            )
+                        )
+            beta_files.RESOURCES_PATH.parent.mkdir(parents=True)
+            beta_files.RESOURCES_PATH.write_text(
+                "export const characters = [];\n"
+                "export const weapons = [];\n"
+                "export const artifacts = [];\n",
+                encoding="utf-8",
+            )
+            beta_files.I18N_BETA_PATH.parent.mkdir(parents=True)
+            stack.enter_context(patch.object(sys, "argv", ["lunaris.py"]))
+            weapons = {
+                "12438": (
+                    self.raw_weapon("Blazing Lionfang", {}),
+                    self.raw_weapon("炎烈狮牙", self.chinese_descriptions()),
+                ),
+                "12439": (
+                    self.raw_weapon("English Effect", {"1": "ATK +20%."}),
+                    self.raw_weapon("英文有效", {}),
+                ),
+                "12440": (
+                    self.raw_weapon("Empty Placeholder", {"1": "  "}),
+                    self.raw_weapon("空白测试", {}),
+                ),
+            }
+
+            def fetch(url):
+                if url.endswith("version.json"):
+                    return {"version": "7.2.50"}
+                if url.endswith(("charlist.json", "artifactlist.json")):
+                    return {}
+                if url.endswith("weaponlist.json"):
+                    return {
+                        numeric_id: {
+                            "enName": en["name"],
+                            "qualityType": "QUALITY_PURPLE",
+                        }
+                        for numeric_id, (en, _) in weapons.items()
+                    }
+                numeric_id = Path(url).stem
+                return weapons[numeric_id][0 if "/en/" in url else 1]
+
+            with (
+                patch.object(lunaris, "fetch_json", side_effect=fetch),
+                patch.object(lunaris, "download_icon") as download,
+            ):
+                lunaris.main()
+            en_data = beta_files.load_json(beta_files.BETA_WEAPON_EN_PATH)
+            zh_data = beta_files.load_json(beta_files.BETA_WEAPON_ZH_PATH)
+            stats = beta_files.load_json(beta_files.BETA_WEAPON_STATS_PATH)
+            self.assertEqual(set(en_data), {"blazing_lionfang", "english_effect"})
+            self.assertEqual(en_data["blazing_lionfang"]["name"], "Blazing Lionfang")
+            self.assertEqual(
+                en_data["blazing_lionfang"]["descHtmlTpl"],
+                zh_data["blazing_lionfang"]["descHtmlTpl"],
+            )
+            self.assertEqual(stats["blazing_lionfang"]["levels"]["90"]["baseAtk"], 510)
+            resources = beta_files.RESOURCES_BETA_PATH.read_text(encoding="utf-8")
+            self.assertEqual(
+                {
+                    weapon["id"]
+                    for weapon in extract_json_from_ts(resources, "betaWeapons")
+                },
+                {"blazing_lionfang", "english_effect"},
+            )
+            self.assertNotIn("empty_placeholder", resources)
+            self.assertEqual(download.call_count, 2)
 
 
 class LunarisArtifactIdentityTests(unittest.TestCase):

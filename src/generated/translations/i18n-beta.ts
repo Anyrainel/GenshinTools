@@ -7,6 +7,7 @@ export const i18nBetaData = {
     "danica": { en: "Danica", zh: "达妮卡" },
   },
   weapons: {
+    "blazing_lionfang": { en: "Blazing Lionfang", zh: "炎烈狮牙" },
     "prized_isshin_blade": { en: "Prized Isshin Blade", zh: "「一心传」名刀" },
     "silverdawn": { en: "Silverdawn", zh: "银昼" },
     "torrents_of_spring": { en: "Torrents of Spring", zh: "春潮" },

@@ -80,6 +80,9 @@ characters, weapons, artifacts, bilingual text, catalogs, and artwork. A success
 released-data export does not establish that these previews are current. Inspect
 the scraper output for individual failures and review the generated diff before
 accepting an update; missing upstream data must not replace valid cached records.
+An empty English effect alone does not identify a placeholder when the Chinese
+source provides the real effect. Retain the available source text without
+inventing a translation, following the beta Chinese-source priority rule.
 Regenerate character metadata afterward so new beta characters receive their
 burst costs and C3/C5 talent-level bonuses in the calculator.
 

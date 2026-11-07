@@ -4,6 +4,24 @@ import { ScalingBuff, StatBuff } from "../core/statBuff";
 import type { OptionDef } from "../types";
 import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
+@RegisterWeapon("blazing_lionfang")
+class BlazingLionfang extends WeaponBase {
+  // Broken Sword Reforged is gained after 5 cumulative off-field seconds and
+  // lasts until 10 cumulative on-field seconds. Peak combat keeps the effect;
+  // the ATK bonus persists on entry, so its receiver is self, not selfOffField.
+  // Entry also deals 280/350/420/490/560% ATK Physical AoE (14s cooldown).
+  // WeaponBase currently cannot provide damage formulas; that proc remains
+  // an explicit weapon-proc engine gap rather than a bonus to an unrelated hit.
+  readonly buffs = [
+    new StatBuff(wbs(this, ["off-field"]), { receiver: "self" }, [
+      {
+        key: "atk%",
+        value: r(this.refinement, [0.2, 0.25, 0.3, 0.35, 0.4]),
+      },
+    ]),
+  ];
+}
+
 @RegisterWeapon("master_key")
 class MasterKey extends WeaponBase {
   // Same as Snare Hook

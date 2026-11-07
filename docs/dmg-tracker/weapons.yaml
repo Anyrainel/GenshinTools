@@ -536,3 +536,43 @@
     The ATK bonus is gated only by base Swirl availability although current text explicitly allows Swirl or Stellar Swirl. It disappears on teams where Stellar Swirl replaces Swirl.
   detail: >
     Source weapon_zh.json astral_vultures_crimson_plumage.descHtmlTpl. weapon5Bow.ts L77: include hasReaction(stellarSwirl, this.charId), retaining the wielder-specific eligibility check. TeamMeta.hasReaction returns false for replaced base reactions.
+
+- id: blazing-lionfang-entry-proc
+  entity: blazing_lionfang
+  rule: U9
+  status: wont-do
+  category: engine-gap
+  summary: >
+    Blazing Lionfang's combat-entry Physical AoE proc (280%/350%/420%/490%/560%
+    ATK at R1-R5, once every 14 seconds while Broken Sword Reforged is active)
+    has no damage formula. Only the personal ATK bonus is implemented.
+  detail: >
+    Live 7.2.50 CHS weapon/12438.json and the generated beta templates retain
+    the entry-damage clause; EN descriptions are blank, so exact ZH text is
+    used. WeaponBase implements only IStatProvider (stats/buffs), CharBuild's
+    formula accessors expose only its CharacterBase, and TeamFormulaCatalog
+    collects character plus reaction formulas. A standalone weapon-owned proc
+    therefore needs a formula-provider integration path; adding baseDmg to an
+    unrelated character attack would give the wrong trigger, element, and hit
+    identity. This is the same engine gap tracked for Prized Isshin Blade,
+    Skyward Pride, Prototype Archaic, and Luxurious Sea-Lord. No rotation count
+    is inferred: the source supplies a 14-second cooldown, not a fixed entry
+    count. The existing off-field-triggered ATK buff correctly persists on
+    field under the peak-combat model.
+
+    TRIAGE: Wont-do under the current genuine-engine-gap policy. Re-fetched the
+    original 7.2.50 CHS source on 2026-11-07 and confirmed the separate combat-
+    entry AoE and 14-second cooldown at all five refinements. The independent
+    review establishes that weapon providers supply stats/buffs only and that
+    the formula catalog accepts character and reaction formulas, so the missing
+    weapon-owned hit cannot be expressed by an existing receiver, filter,
+    team-composition check, or limited-activation stat buff. Supporting it would
+    require extending formula-provider/catalog integration beyond this entity,
+    the same accepted limitation as the existing weapon-proc tickets above.
+    Do not substitute flat damage on an unrelated character hit: that would
+    change the entry trigger, Physical element, and proc identity. This decision
+    accepts an explicit undercount of 280%/350%/420%/490%/560% ATK per eligible
+    entry at R1-R5; it does not establish negligible damage or full weapon damage
+    coverage. Retain the implemented 20%/25%/30%/35%/40% ATK buff, and do not infer
+    a rotation entry count from the cooldown alone.
+    https://api.lunaris.moe/data/7.2.50/chs/weapon/12438.json

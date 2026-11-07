@@ -954,6 +954,19 @@ def scrape_weapon(
         for k, v in zh_refinements.items()
     }
 
+    # Missing EN text does not make a valid ZH effect a test placeholder. Keep
+    # the English identity, but use the exact available ZH effect rather than
+    # inventing a translation. A complete ZH locale also replaces partially
+    # missing EN: mixing languages would corrupt the shared refinement template.
+    refinement_keys = en_formatted.keys() | zh_formatted.keys()
+    has_en = any(desc.strip() for desc in en_formatted.values())
+    has_zh = any(desc.strip() for desc in zh_formatted.values())
+    missing_en = any(not en_formatted.get(key, "").strip() for key in refinement_keys)
+    complete_zh = all(zh_formatted.get(key, "").strip() for key in refinement_keys)
+    if has_zh and (not has_en or (missing_en and complete_zh)):
+        en_formatted = dict(zh_formatted)
+        print("      [!] EN effect text missing — using exact ZH refinement text")
+
     en_desc_tpl, en_refs = _templatize_weapon_desc(en_formatted)
     zh_desc_tpl, zh_refs = _templatize_weapon_desc(zh_formatted)
 
@@ -1223,8 +1236,9 @@ def main() -> None:
                     print("    Skipping placeholder weapon: empty derived ID")
                     continue
 
-                # Skip weapons without effect text (test/placeholder weapons)
-                if not en_out["descHtmlTpl"]:
+                # A weapon is a text placeholder only when both locales lack
+                # an effect; untranslated EN entries may have a complete ZH kit.
+                if not en_out["descHtmlTpl"].strip() and not zh_out["descHtmlTpl"].strip():
                     print(f"    Skipping {weapon_id}: no weapon effect text")
                     continue
 
