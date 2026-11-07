@@ -3,11 +3,13 @@ import { type CSSProperties, lazy, Suspense, useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { GreetingGate } from "@/app/home/GreetingGate";
 import { useTourLabels, useTours } from "@/app/tourConfig";
+import { ScannerSyncStatus } from "@/components/game-account/ScannerSyncStatus";
 import { PageErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/sonner";
 import { TourProvider } from "@/components/ui/tour";
 import { SCANNER_DOWNLOAD_PAGE } from "@/config/scannerDownloads";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ScannerSyncProvider } from "@/contexts/ScannerSyncContext";
 import { useHydrateBuildPreset } from "@/hooks/useHydrateBuildPreset";
 import { useHydrateTeamPreset } from "@/hooks/useHydrateTeamPreset";
 import { cn } from "@/lib/utils";
@@ -80,66 +82,75 @@ function App() {
   return (
     <PageErrorBoundary>
       <TourProvider tours={tours} labels={tourLabels}>
-        <div className="h-dvh bg-background text-foreground flex flex-col">
-          <main
-            className={cn(
-              "flex-1 flex flex-col",
-              isHomePage ? "overflow-y-auto" : "overflow-hidden"
-            )}
-          >
-            <Suspense fallback={null}>
-              <RouteGameData pathname={location.pathname}>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/account-data" element={<AccountDataPage />} />
-                  <Route
-                    path="/account-data/:tab"
-                    element={<AccountDataPage />}
-                  />
-                  <Route
-                    path="/artifact-filter"
-                    element={<ArtifactBuildsPage />}
-                  />
-                  <Route
-                    path="/artifact-filter/:tab"
-                    element={<ArtifactBuildsPage />}
-                  />
-                  <Route path="/tier-list" element={<TierListPage />} />
-                  <Route path="/tier-list/:tab" element={<TierListPage />} />
-                  <Route path="/archive" element={<ArchivePage />} />
-                  <Route path="/archive/:tab" element={<ArchivePage />} />
-                  <Route path="/team-comp" element={<TeamCompPage />} />
-                  <Route path="/team-comp/:tab" element={<TeamCompPage />} />
-                  <Route path="/callback" element={<AuthCallbackPage />} />
-                  <Route path="/account" element={<AccountPage />} />
-                  <Route
-                    path="/account/cloud-backup"
-                    element={<CloudBackupPage />}
-                  />
-                  <Route path="/account/support" element={<SupportMePage />} />
-                  <Route path="/account/feedback" element={<FeedbackPage />} />
-                  <Route path="/feedback" element={<FeedbackPage />} />
-                  <Route
-                    path={SCANNER_DOWNLOAD_PAGE}
-                    element={<ScannerDownloadPage />}
-                  />
-                  <Route path="*" element={<NotFoundPage />} />
-                </Routes>
-              </RouteGameData>
-            </Suspense>
-          </main>
-          <Toaster
-            style={
-              {
-                "--normal-bg": "hsl(var(--popover))",
-                "--normal-text": "hsl(var(--popover-foreground))",
-                "--normal-border": "hsl(var(--border))",
-                "--border-radius": "var(--radius)",
-              } as CSSProperties
-            }
-          />
-          {!isScannerDownloadPage && <GreetingGate />}
-        </div>
+        <ScannerSyncProvider>
+          <div className="h-dvh bg-background text-foreground flex flex-col">
+            <ScannerSyncStatus />
+            <main
+              className={cn(
+                "min-h-0 flex-1 flex flex-col",
+                isHomePage ? "overflow-y-auto" : "overflow-hidden"
+              )}
+            >
+              <Suspense fallback={null}>
+                <RouteGameData pathname={location.pathname}>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/account-data" element={<AccountDataPage />} />
+                    <Route
+                      path="/account-data/:tab"
+                      element={<AccountDataPage />}
+                    />
+                    <Route
+                      path="/artifact-filter"
+                      element={<ArtifactBuildsPage />}
+                    />
+                    <Route
+                      path="/artifact-filter/:tab"
+                      element={<ArtifactBuildsPage />}
+                    />
+                    <Route path="/tier-list" element={<TierListPage />} />
+                    <Route path="/tier-list/:tab" element={<TierListPage />} />
+                    <Route path="/archive" element={<ArchivePage />} />
+                    <Route path="/archive/:tab" element={<ArchivePage />} />
+                    <Route path="/team-comp" element={<TeamCompPage />} />
+                    <Route path="/team-comp/:tab" element={<TeamCompPage />} />
+                    <Route path="/callback" element={<AuthCallbackPage />} />
+                    <Route path="/account" element={<AccountPage />} />
+                    <Route
+                      path="/account/cloud-backup"
+                      element={<CloudBackupPage />}
+                    />
+                    <Route
+                      path="/account/support"
+                      element={<SupportMePage />}
+                    />
+                    <Route
+                      path="/account/feedback"
+                      element={<FeedbackPage />}
+                    />
+                    <Route path="/feedback" element={<FeedbackPage />} />
+                    <Route
+                      path={SCANNER_DOWNLOAD_PAGE}
+                      element={<ScannerDownloadPage />}
+                    />
+                    <Route path="*" element={<NotFoundPage />} />
+                  </Routes>
+                </RouteGameData>
+              </Suspense>
+            </main>
+            <Toaster
+              style={
+                {
+                  "--normal-bg": "hsl(var(--popover))",
+                  "--normal-text": "hsl(var(--popover-foreground))",
+                  "--normal-border": "hsl(var(--border))",
+                  "--border-radius": "var(--radius)",
+                } as CSSProperties
+              }
+            />
+            {!isScannerDownloadPage && <GreetingGate />}
+          </div>
+        </ScannerSyncProvider>
       </TourProvider>
     </PageErrorBoundary>
   );

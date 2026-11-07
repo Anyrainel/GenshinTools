@@ -8,6 +8,7 @@ export default defineConfig({
     "public-workflows.spec.ts",
     "tour.spec.ts",
     "analysis-layout.spec.ts",
+    "continuous-sync.spec.ts",
   ],
   fullyParallel: true,
   grepInvert: /@visual/,

@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import { BuildsDefaultPresetPrompt } from "@/components/builds/BuildsDefaultPresetPrompt";
 import { AccountImportControl } from "@/components/game-account/AccountImportControl";
 import { AccountManagerDialog } from "@/components/game-account/AccountManagerDialog";
-import { ContinuousInventorySync } from "@/components/game-account/ContinuousInventorySync";
 import { ScoreChangeAnnouncement } from "@/components/game-account/ScoreChangeAnnouncement";
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -577,7 +576,6 @@ export default function AccountDataPage() {
     >
       <BuildsDefaultPresetPrompt />
       <ScoreChangeAnnouncement />
-      <ContinuousInventorySync />
 
       {/* Control dialogs - render without triggers, opened via ref */}
       <AccountImportControl

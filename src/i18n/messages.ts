@@ -1,10 +1,18 @@
 export const i18nUiData = {
   continuous: {
-    active: { en: "On", zh: "同步中" },
+    active: { en: "Syncing", zh: "同步中" },
     pending: { en: "Waiting", zh: "等待中" },
     attention: { en: "Needs attention", zh: "请检查" },
-    title: { en: "Continuous inventory sync", zh: "持续库存同步" },
-    enable: { en: "Enable for this page visit", zh: "本次停留期间启用" },
+    title: { en: "Background inventory sync", zh: "后台同步背包" },
+    review: { en: "Review needed", zh: "待确认" },
+    reviewAction: { en: "Review", zh: "确认数据" },
+    details: { en: "Details", zh: "详情" },
+    stop: { en: "Turn off", zh: "关闭同步" },
+    connection: { en: "Connection settings", zh: "连接设置" },
+    noAccount: {
+      en: "Import an account before enabling sync.",
+      zh: "请先导入账号数据。",
+    },
     off: { en: "Off", zh: "未启用" },
     connecting: { en: "Connecting to scanner…", zh: "正在连接扫描器…" },
     waiting: {
@@ -41,12 +49,12 @@ export const i18nUiData = {
       zh: "无法导入库存。请检查诊断信息并更新扫描器。正在重试…",
     },
     safety: {
-      en: "Target profile: {0}. Snapshots have no UID. Disable sync before changing game accounts; confirm again after reconnecting. Import an account first if no profile exists.",
-      zh: "目标档案：{0}。快照不含 UID，切换游戏账号前请关闭同步；重新连接后需再次确认。没有档案时请先导入账号。",
+      en: "Target profile: {0}. Scanner snapshots have no UID; turn off sync before switching game accounts.",
+      zh: "目标档案：{0}。扫描器快照不含 UID，切换游戏账号前请关闭同步。",
     },
     limits: {
-      en: "Syncs the latest decoded inventory while this page is open. Some deletions and lock/equipment-only edits are not captured yet; log in again for a fresh inventory. Missing sections and achievements are preserved.",
-      zh: "停留在本页期间同步最新解析的库存。部分删除及仅修改锁定、装备状态的操作暂不支持，重新登录可刷新完整库存。未提供的数据分类和成就会保留。",
+      en: "Sync stays on as you browse the site, until turned off or this tab is closed or reloaded. Some deletions and lock/equipment-only edits are not captured yet; log in again for a fresh inventory. Missing sections and achievements are preserved.",
+      zh: "浏览本站其他页面时仍会同步，直到关闭同步、关闭或刷新此标签页。部分删除及仅修改锁定、装备状态的操作暂不支持，重新登录可刷新完整库存。未提供的数据分类和成就会保留。",
     },
     updated: { en: "Scanner snapshot: {0}", zh: "扫描器快照时间：{0}" },
   },

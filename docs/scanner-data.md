@@ -21,11 +21,14 @@ Normal publishing is a validated Git push; no manual deployment is required.
 
 ## Continuous inventory sync
 
-Account Data offers an explicit, page-lifetime continuous sync control. It polls
+The account import menu offers an explicit background inventory sync toggle. An
+app-scoped, memory-only session keeps polling after the import dialog closes and
+while navigating between site pages. A compact global status bar exposes review,
+details and an immediate turn-off action without opening a blocking dialog. It polls
 the same loopback manager address and configurable port using `GET /continuous`
 every three seconds after the previous request finishes. Disabling the feature,
-changing the port/profile, or leaving the page cancels the request and discards
-late responses. The setting is deliberately not persisted across page visits.
+changing the port/profile, or closing/reloading the tab cancels the request and
+discards late responses. The setting is deliberately not persisted across tab sessions.
 
 The scanner's `{ sessionId, revision, updatedAt, data }` wrapper contains a normal
 GOOD v3 export; `updatedAt` is Unix milliseconds. Identical content is not imported
@@ -38,7 +41,8 @@ profile-scoped achievement import and never gate inventory readiness.
 
 Snapshots do not include an account UID. The user must select/import a profile and
 explicitly confirm the target before the first update. Changing profiles, scanner
-sessions, connection loss, or `continuous_capture_no_data` requires confirmation
+sessions, replacing data in the same profile through another import, connection
+loss, or `continuous_capture_no_data` requires confirmation
 again. A login transition occurring entirely between polls cannot be identified
 reliably without a UID or account-generation token from the scanner; users must
 disable sync before switching game accounts. No automatic profile creation or

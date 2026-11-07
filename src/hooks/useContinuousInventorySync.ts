@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type { AccountData } from "@/domain/models";
 import {
   ArtifactManagerError,
   type ContinuousSnapshot,
@@ -34,12 +35,16 @@ export function useContinuousInventorySync(enabled: boolean, port: number) {
   const lastRevision = useRef<{ sessionId: string; revision: number } | null>(
     null
   );
+  const reviewData = useRef<AccountData | null>(null);
+  const approvedData = useRef<AccountData | null>(null);
 
   useEffect(() => {
     approvedSession.current = null;
     lastContent.current = null;
     pending.current = null;
     lastRevision.current = null;
+    reviewData.current = null;
+    approvedData.current = null;
     if (!enabled || accountId === null) {
       setState({ status: "off" });
       return;
@@ -56,7 +61,19 @@ export function useContinuousInventorySync(enabled: boolean, port: number) {
           useAccountStore.getState().activeAccountId !== accountId
         )
           return;
+        const account = useAccountStore.getState().accounts[accountId];
+        if (!account) return;
+        if (
+          (approvedData.current && approvedData.current !== account.data) ||
+          (reviewData.current && reviewData.current !== account.data)
+        ) {
+          approvedSession.current = null;
+          approvedData.current = null;
+          lastContent.current = null;
+          lastRevision.current = null;
+        }
         pending.current = snapshot;
+        reviewData.current = account.data;
         if (approvedSession.current !== snapshot.sessionId) {
           approvedSession.current = null;
           setState({ status: "confirm" });
@@ -72,8 +89,6 @@ export function useContinuousInventorySync(enabled: boolean, port: number) {
           };
           const content = JSON.stringify(snapshot.data);
           if (content !== lastContent.current) {
-            const account = useAccountStore.getState().accounts[accountId];
-            if (!account) return;
             const result = prepareContinuousImport(snapshot.data, account.data);
             applyAccountImport({
               accountId,
@@ -81,6 +96,9 @@ export function useContinuousInventorySync(enabled: boolean, port: number) {
               artifactIdMap: result.artifactIdMap,
               earnedAchievementIds: result.earnedAchievementIds,
             });
+            approvedData.current =
+              useAccountStore.getState().accounts[accountId]?.data ?? null;
+            reviewData.current = approvedData.current;
             lastContent.current = content;
             setState({
               status: "synced",
@@ -99,6 +117,8 @@ export function useContinuousInventorySync(enabled: boolean, port: number) {
         if (disposed) return;
         approvedSession.current = null;
         pending.current = null;
+        approvedData.current = null;
+        reviewData.current = null;
         lastRevision.current = null;
         let status: ContinuousStatus = "disconnected";
         let details: string | undefined;
@@ -155,7 +175,23 @@ export function useContinuousInventorySync(enabled: boolean, port: number) {
     ...state,
     confirm: () => {
       if (!pending.current) return;
+      const currentData =
+        accountId === null ||
+        useAccountStore.getState().activeAccountId !== accountId
+          ? null
+          : useAccountStore.getState().accounts[accountId]?.data;
+      if (!currentData || currentData !== reviewData.current) {
+        pending.current = null;
+        approvedSession.current = null;
+        approvedData.current = null;
+        reviewData.current = null;
+        lastContent.current = null;
+        lastRevision.current = null;
+        setState({ status: "connecting" });
+        return;
+      }
       approvedSession.current = pending.current.sessionId;
+      approvedData.current = currentData;
       setState({ status: "connecting" });
     },
   };

@@ -44,6 +44,7 @@ const tick = async () => {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
+  vi.mocked(applyAccountImport).mockReset();
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
@@ -66,6 +67,61 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe("continuous inventory lifecycle", () => {
+  it("requires fresh approval after an external import replaces data in the same profile", async () => {
+    vi.mocked(applyAccountImport).mockImplementation(({ accountId, data }) => {
+      useAccountStore.getState().addOrUpdateAccount(accountId, { data });
+      return {};
+    });
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
+    await flush();
+    act(() => view.result.current.confirm());
+    await tick();
+    expect(view.result.current.status).toBe("synced");
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      revision: 2,
+      data: { ...snapshot.data, achievements: [81006] },
+    });
+    await tick();
+    expect(applyAccountImport).toHaveBeenCalledTimes(2);
+    expect(view.result.current.status).toBe("synced");
+
+    act(() => {
+      const current = useAccountStore.getState().accounts[123456789];
+      useAccountStore.getState().addOrUpdateAccount(123456789, {
+        data: { ...current.data },
+      });
+    });
+    vi.mocked(fetchContinuous).mockResolvedValue({ ...snapshot, revision: 3 });
+    await tick();
+    expect(view.result.current.status).toBe("confirm");
+    expect(applyAccountImport).toHaveBeenCalledTimes(2);
+    act(() => view.result.current.confirm());
+    await tick();
+    expect(applyAccountImport).toHaveBeenCalledTimes(3);
+    view.unmount();
+  });
+
+  it("rejects stale approval after data in the reviewed profile is replaced", async () => {
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
+    await flush();
+    expect(view.result.current.status).toBe("confirm");
+    act(() => {
+      const current = useAccountStore.getState().accounts[123456789];
+      useAccountStore.getState().addOrUpdateAccount(123456789, {
+        data: { ...current.data },
+      });
+      view.result.current.confirm();
+    });
+    await tick();
+    expect(applyAccountImport).not.toHaveBeenCalled();
+    expect(view.result.current.status).toBe("confirm");
+    act(() => view.result.current.confirm());
+    await tick();
+    expect(applyAccountImport).toHaveBeenCalledTimes(1);
+    view.unmount();
+  });
+
   it("rejects older revisions even after an unchanged newer snapshot", async () => {
     const view = renderHook(() => useContinuousInventorySync(true, 8765));
     await flush();

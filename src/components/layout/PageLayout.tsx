@@ -27,7 +27,7 @@ export function PageLayout({
   return (
     <div
       className={cn(
-        "h-dvh bg-gradient-page text-foreground flex flex-col overflow-hidden",
+        "h-full min-h-0 w-full bg-gradient-page text-foreground flex flex-col overflow-hidden",
         className
       )}
     >
