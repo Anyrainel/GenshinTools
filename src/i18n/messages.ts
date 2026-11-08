@@ -4,26 +4,15 @@ export const i18nUiData = {
     pending: { en: "Waiting", zh: "等待中" },
     attention: { en: "Needs attention", zh: "请检查" },
     title: { en: "Background inventory sync", zh: "后台同步背包" },
-    review: { en: "Review needed", zh: "待确认" },
-    reviewAction: { en: "Review", zh: "确认数据" },
     details: { en: "Details", zh: "详情" },
     stop: { en: "Turn off", zh: "关闭同步" },
     connection: { en: "Connection settings", zh: "连接设置" },
-    noAccount: {
-      en: "Import an account before enabling sync.",
-      zh: "请先导入账号数据。",
-    },
     off: { en: "Off", zh: "未启用" },
     connecting: { en: "Connecting to scanner…", zh: "正在连接扫描器…" },
     waiting: {
       en: "Waiting for inventory. Log into Genshin after starting the scanner server.",
       zh: "等待库存数据。请先启动扫描器服务，再登录原神。",
     },
-    confirm: {
-      en: "Inventory ready. Confirm the selected profile matches the logged-in game account.",
-      zh: "库存已就绪。请确认当前档案对应游戏中登录的账号。",
-    },
-    approve: { en: "Sync to {0}", zh: "同步至{0}" },
     synced: {
       en: "Syncing inventory every few seconds",
       zh: "正在每隔几秒同步库存",
@@ -48,13 +37,14 @@ export const i18nUiData = {
       en: "Inventory could not be imported. Check the diagnostics and update the scanner. Retrying…",
       zh: "无法导入库存。请检查诊断信息并更新扫描器。正在重试…",
     },
-    safety: {
-      en: "Target profile: {0}. Scanner snapshots have no UID; turn off sync before switching game accounts.",
-      zh: "目标档案：{0}。扫描器快照不含 UID，切换游戏账号前请关闭同步。",
+    target: {
+      en: "Without a detected UID, captures update {0}. Detected UIDs sync to their matching profile automatically.",
+      zh: "未检测到 UID 时，抓包数据会写入「{0}」；检测到 UID 时会自动同步至对应档案。",
     },
+    routed: { en: "Detected account: {0}", zh: "已识别账号：{0}" },
     limits: {
-      en: "Sync stays on as you browse the site, until turned off or this tab is closed or reloaded. Some deletions and lock/equipment-only edits are not captured yet; log in again for a fresh inventory. Missing sections and achievements are preserved.",
-      zh: "浏览本站其他页面时仍会同步，直到关闭同步、关闭或刷新此标签页。部分删除及仅修改锁定、装备状态的操作暂不支持，重新登录可刷新完整库存。未提供的数据分类和成就会保留。",
+      en: "This profile’s sync setting is saved on this device and resumes automatically until turned off. Some deletions and lock/equipment-only edits are not captured yet; log in again for a fresh inventory. Missing sections and achievements are preserved.",
+      zh: "此档案的同步设置会保存在当前设备，重新打开页面后自动继续，直到关闭同步。部分删除及仅修改锁定、装备状态的操作暂不支持，重新登录可刷新完整库存。未提供的数据分类和成就会保留。",
     },
     updated: { en: "Scanner snapshot: {0}", zh: "扫描器快照时间：{0}" },
   },

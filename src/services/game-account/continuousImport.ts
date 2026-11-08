@@ -2,14 +2,21 @@ import type { AccountData, ArtifactData } from "@/domain/models";
 import {
   convertGOODToAccountData,
   type GOODData,
+  type GOODImportOptions,
 } from "@/providers/scanner/formats/goodConversion";
 import { mergePartialAccountData } from "./mergeAccountData";
 
 /** A continuous snapshot replaces supplied sections; it never appends a second inventory. */
-export function prepareContinuousImport(good: GOODData, existing: AccountData) {
-  const converted = convertGOODToAccountData(good, existing.characters, {
-    keepFourStarOfFiveStarSets: true,
-  });
+export function prepareContinuousImport(
+  good: GOODData,
+  existing: AccountData,
+  options: GOODImportOptions = { keepFourStarOfFiveStarSets: true }
+) {
+  const converted = convertGOODToAccountData(
+    good,
+    existing.characters,
+    options
+  );
   for (const raw of good.characters ?? []) {
     if (raw.talent !== undefined) continue;
     const key = convertGOODToAccountData({
@@ -61,7 +68,10 @@ export function prepareContinuousImport(good: GOODData, existing: AccountData) {
     const key = identity(artifact);
     oldByIdentity.set(key, [...(oldByIdentity.get(key) ?? []), artifact]);
   }
-  const artifactIdMap = new Map<string, string>();
+  // Unmatched old IDs must be removed before sequential IDs can be reused.
+  const artifactIdMap = new Map(
+    collect(existing).map((artifact) => [artifact.id, ""])
+  );
   for (const artifact of collect(merged.data)) {
     const previous = oldByIdentity.get(identity(artifact))?.shift();
     if (!previous) continue;

@@ -54,6 +54,20 @@ export function applyAccountImport(opts: {
   /** Present only when the import contains an achievement section. Replaces local status. */
   earnedAchievementIds?: readonly number[];
 }): ApplyAccountImportResult {
+  // Validate before any cache, inventory or linked-setting mutation. A UID may
+  // have been imported since the target was chosen in an open dialog.
+  const before = useAccountStore.getState();
+  if (opts.promoteToId !== undefined && opts.promoteToId !== opts.accountId) {
+    if (
+      opts.accountId !== 0 ||
+      !before.accounts[opts.accountId] ||
+      !Number.isSafeInteger(opts.promoteToId) ||
+      opts.promoteToId <= 0
+    )
+      throw new Error("Only an unbound default profile can be linked to a UID");
+    if (before.accounts[opts.promoteToId])
+      throw new Error("The destination UID profile already exists");
+  }
   const lastUpdate = opts.lastUpdate ?? Date.now();
   useScoreUpCacheStore.getState().clear();
   remapFreezeStoreForImport(opts.artifactIdMap, opts.accountId);

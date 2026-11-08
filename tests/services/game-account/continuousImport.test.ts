@@ -105,6 +105,22 @@ describe("continuous snapshot import", () => {
     );
     expect(result.earnedAchievementIds).toBeUndefined();
   });
+  it("invalidates a deleted frozen ID before a surviving item reuses its index", () => {
+    const first = { ...good.artifacts![0], location: "" };
+    const second = { ...first, level: 4 };
+    const old = convertGOODToAccountData({
+      ...good,
+      artifacts: [first, second],
+    }).data;
+    const result = prepareContinuousImport(
+      { ...good, artifacts: [second] },
+      old
+    );
+    expect(result.artifactIdMap.get("artifact-0")).toBe("");
+    expect(result.artifactIdMap.get("artifact-1")).toBe("artifact-0");
+    expect(result.data.extraArtifacts).toHaveLength(1);
+    expect(result.data.extraArtifacts[0]?.level).toBe(4);
+  });
   it("does not collapse physically distinct identical items", () => {
     const empty: AccountData = {
       characters: [],

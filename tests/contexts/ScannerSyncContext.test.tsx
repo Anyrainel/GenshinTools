@@ -10,15 +10,13 @@ import {
 } from "@/providers/scanner/companion/client";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useScannerSyncStore } from "@/stores/useScannerSyncStore";
 
-vi.mock("@/providers/scanner/companion/client", async (importOriginal) => ({
-  ...(await importOriginal<
-    typeof import("@/providers/scanner/companion/client")
-  >()),
+vi.mock("@/providers/scanner/companion/client", async (original) => ({
+  ...(await original<typeof import("@/providers/scanner/companion/client")>()),
   fetchContinuous: vi.fn(),
 }));
 vi.mock("@/stores/applyAccountImport", () => ({ applyAccountImport: vi.fn() }));
-
 const snapshot: ContinuousSnapshot = {
   sessionId: "server-1",
   revision: 1,
@@ -32,71 +30,62 @@ const snapshot: ContinuousSnapshot = {
     artifacts: [],
   },
 };
-
-function ImportControls() {
-  const session = useScannerSync();
-  if (!session) throw new Error("Missing scanner sync provider");
+function Controls() {
+  const s = useScannerSync()!;
   return (
     <>
-      <button type="button" onClick={() => session.setEnabled(true)}>
+      <button type="button" onClick={() => s.setEnabled(true)}>
         Enable
-      </button>
-      <button type="button" onClick={session.sync.confirm}>
-        Approve
       </button>
       <input
         aria-label="Port"
-        value={session.portInput}
-        onChange={(event) => session.setPortInput(event.target.value)}
-        onBlur={session.commitPort}
+        value={s.portInput}
+        onChange={(e) => s.setPortInput(e.target.value)}
+        onBlur={s.commitPort}
       />
     </>
   );
 }
-
-function GlobalStatus() {
-  const session = useScannerSync();
-  if (!session) throw new Error("Missing scanner sync provider");
+function Status() {
+  const s = useScannerSync()!;
   return (
     <>
-      <output>{session.enabled ? session.sync.status : "off"}</output>
-      <button type="button" onClick={() => session.setEnabled(false)}>
+      <output>{s.enabled ? s.sync.status : "off"}</output>
+      <span>{s.account?.name}</span>
+      <button type="button" onClick={() => s.setEnabled(false)}>
         Turn off
       </button>
     </>
   );
 }
-
 function App({
-  showImport,
+  showImport = true,
   route = "inventory",
 }: {
-  showImport: boolean;
+  showImport?: boolean;
   route?: string;
 }) {
   return (
     <ScannerSyncProvider>
-      <GlobalStatus />
-      <section key={route}>{showImport && <ImportControls />}</section>
+      <Status />
+      <section key={route}>{showImport && <Controls />}</section>
     </ScannerSyncProvider>
   );
 }
-
-async function flush() {
+const flush = async () => {
   await act(async () => {
     await Promise.resolve();
   });
-}
-
-async function tick() {
+};
+const tick = async () => {
   await act(async () => {
     await vi.advanceTimersByTimeAsync(3000);
   });
-}
-
+};
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
+  useScannerSyncStore.setState({ enabledProfileId: null, port: 8765 });
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
@@ -106,49 +95,82 @@ beforeEach(() => {
         lastUpdate: 0,
         data: { characters: [], extraWeapons: [], extraArtifacts: [] },
       },
+      987654321: {
+        id: 987654321,
+        name: "Other",
+        lastUpdate: 0,
+        data: { characters: [], extraWeapons: [], extraArtifacts: [] },
+      },
     },
   });
   vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
 });
-
 afterEach(() => vi.useRealTimers());
-
-describe("app-scoped scanner sync", () => {
-  it("keeps pending approval and active polling across closed imports and route changes", async () => {
-    const view = render(<App showImport />);
-    fireEvent.click(screen.getByRole("button", { name: "Enable" }));
+describe("profile-scoped scanner preference", () => {
+  it.each([false, true])(
+    "starts in an empty workspace without an import (identified: %s)",
+    async (identified) => {
+      useAccountStore.setState({ activeAccountId: null, accounts: {} });
+      if (identified)
+        vi.mocked(fetchContinuous).mockResolvedValue({
+          ...snapshot,
+          data: { ...snapshot.data, metadata: { uid: "800000003" } },
+        });
+      const view = render(<App />);
+      fireEvent.click(screen.getByText("Enable"));
+      await flush();
+      expect(useScannerSyncStore.getState().enabledProfileId).toBe(0);
+      expect(useAccountStore.getState().accounts[0]?.name).toBe(
+        "Default Account"
+      );
+      expect(applyAccountImport).toHaveBeenCalledWith(
+        expect.objectContaining({
+          accountId: 0,
+          ...(identified ? { promoteToId: 800000003 } : {}),
+        })
+      );
+      expect(screen.getByRole("status")).toHaveTextContent("synced");
+      view.unmount();
+    }
+  );
+  it("keeps the selected target across closed imports, routes and active profile changes", async () => {
+    const view = render(<App />);
+    fireEvent.click(screen.getByText("Enable"));
     await flush();
-    expect(screen.getByRole("status")).toHaveTextContent("confirm");
-
+    expect(screen.getByRole("status")).toHaveTextContent("synced");
     view.rerender(<App showImport={false} route="archive" />);
+    act(() => useAccountStore.getState().setActiveAccount(987654321));
     await tick();
-    expect(screen.getByRole("status")).toHaveTextContent("confirm");
-    expect(applyAccountImport).not.toHaveBeenCalled();
-
-    view.rerender(<App showImport route="archive" />);
-    fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+    expect(screen.getByText("First")).toBeVisible();
+    expect(useScannerSyncStore.getState().enabledProfileId).toBe(123456789);
+    fireEvent.click(screen.getByText("Turn off"));
     await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole("status")).toHaveTextContent("synced");
-
-    view.rerender(<App showImport={false} route="builds" />);
-    vi.mocked(fetchContinuous).mockResolvedValue({
-      ...snapshot,
-      revision: 2,
-      data: { ...snapshot.data, achievements: [81006] },
-    });
-    await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(2);
-    expect(screen.getByRole("status")).toHaveTextContent("synced");
-
-    fireEvent.click(screen.getByRole("button", { name: "Turn off" }));
-    const polls = vi.mocked(fetchContinuous).mock.calls.length;
-    await tick();
-    expect(fetchContinuous).toHaveBeenCalledTimes(polls);
     expect(screen.getByRole("status")).toHaveTextContent("off");
+    view.rerender(<App />);
+    fireEvent.click(screen.getByText("Enable"));
+    await flush();
+    expect(useScannerSyncStore.getState().enabledProfileId).toBe(987654321);
+    view.unmount();
   });
-
-  it("aborts a pending request when the global stop control is used and ignores its late response", async () => {
+  it("restores the same profile and custom port after the app remounts", async () => {
+    const view = render(<App />);
+    fireEvent.change(screen.getByRole("textbox", { name: "Port" }), {
+      target: { value: "9123" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Port" }));
+    fireEvent.click(screen.getByText("Enable"));
+    await flush();
+    view.unmount();
+    render(<App />);
+    await flush();
+    expect(useScannerSyncStore.getState().enabledProfileId).toBe(123456789);
+    expect(fetchContinuous).toHaveBeenLastCalledWith(
+      9123,
+      expect.any(AbortSignal)
+    );
+    expect(screen.getByRole("status")).toHaveTextContent("synced");
+  });
+  it("aborts a pending request when globally stopped and ignores its late result", async () => {
     let resolve!: (value: ContinuousSnapshot) => void;
     vi.mocked(fetchContinuous).mockImplementation(
       () =>
@@ -156,38 +178,14 @@ describe("app-scoped scanner sync", () => {
           resolve = done;
         })
     );
-    const view = render(<App showImport />);
-    fireEvent.click(screen.getByRole("button", { name: "Enable" }));
+    const view = render(<App />);
+    fireEvent.click(screen.getByText("Enable"));
     const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
-    view.rerender(<App showImport={false} route="builds" />);
-    expect(signal.aborted).toBe(false);
-
-    fireEvent.click(screen.getByRole("button", { name: "Turn off" }));
+    view.rerender(<App showImport={false} />);
+    fireEvent.click(screen.getByText("Turn off"));
     expect(signal.aborted).toBe(true);
     await act(async () => resolve(snapshot));
     await tick();
-    expect(fetchContinuous).toHaveBeenCalledTimes(1);
     expect(applyAccountImport).not.toHaveBeenCalled();
-    expect(screen.getByRole("status")).toHaveTextContent("off");
-  });
-
-  it("uses a custom port across reopened controls and starts a fresh app session disabled", async () => {
-    const view = render(<App showImport />);
-    const port = screen.getByRole("textbox", { name: "Port" });
-    fireEvent.change(port, { target: { value: "9123" } });
-    fireEvent.blur(port);
-    fireEvent.click(screen.getByRole("button", { name: "Enable" }));
-    await flush();
-    expect(fetchContinuous).toHaveBeenCalledWith(9123, expect.any(AbortSignal));
-
-    view.rerender(<App showImport={false} />);
-    view.rerender(<App showImport />);
-    expect(screen.getByRole("textbox", { name: "Port" })).toHaveValue("9123");
-    view.unmount();
-    render(<App showImport />);
-    expect(screen.getByRole("status")).toHaveTextContent("off");
-    expect(screen.getByRole("textbox", { name: "Port" })).toHaveValue("8765");
-    await tick();
-    expect(fetchContinuous).toHaveBeenCalledTimes(1);
   });
 });

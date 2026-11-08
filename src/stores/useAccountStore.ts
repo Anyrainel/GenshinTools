@@ -12,6 +12,7 @@ import { migrateReleasedAccountWeapons } from "./migration/releasedWeaponIds";
 import { PersistedAccountStoreSchema } from "./schemas";
 import { useAccountScoreCacheStore } from "./useAccountScoreCacheStore";
 import { useAchievementStore } from "./useAchievementStore";
+import { useScannerSyncStore } from "./useScannerSyncStore";
 
 interface AccountStore {
   accounts: Record<AccountProfileId, AccountState>;
@@ -64,7 +65,13 @@ export const useAccountStore = create<AccountStore>()(
       promoteToUid: (currentId, newId) =>
         set((state) => {
           const acc = state.accounts[currentId];
-          if (!acc || !newId || newId === currentId) return state;
+          if (!acc || newId === currentId) return state;
+          if (currentId !== 0 || !Number.isSafeInteger(newId) || newId <= 0)
+            throw new Error(
+              "Only an unbound default profile can be linked to a UID"
+            );
+          if (state.accounts[newId])
+            throw new Error("The destination UID profile already exists");
 
           const promoted: AccountState = { ...acc, id: newId };
           const newAccounts = { ...state.accounts, [newId]: promoted };
@@ -73,6 +80,7 @@ export const useAccountStore = create<AccountStore>()(
             .getState()
             .renameProfileCache(currentId, newId);
           useAchievementStore.getState().renameProfile(currentId, newId);
+          useScannerSyncStore.getState().moveProfile(currentId, newId);
 
           return {
             accounts: newAccounts,
@@ -89,6 +97,8 @@ export const useAccountStore = create<AccountStore>()(
           delete newAccounts[id];
           useAccountScoreCacheStore.getState().deleteProfileCache(id);
           useAchievementStore.getState().deleteProfile(id);
+          if (useScannerSyncStore.getState().enabledProfileId === id)
+            useScannerSyncStore.getState().setEnabledProfileId(null);
 
           let newActive = state.activeAccountId;
           if (newActive === id) {
@@ -102,6 +112,7 @@ export const useAccountStore = create<AccountStore>()(
       clearAccounts: () => {
         useAccountScoreCacheStore.getState().clearAllScores();
         useAchievementStore.getState().clearAll();
+        useScannerSyncStore.getState().setEnabledProfileId(null);
         set({ accounts: {}, activeAccountId: null });
       },
     }),

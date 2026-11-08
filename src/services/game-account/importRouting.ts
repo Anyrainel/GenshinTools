@@ -79,6 +79,20 @@ export type ResolveResult =
 
 // ─── Routing functions ────────────────────────────────────────────────────────
 
+/** Identified scanner data always chooses the matching UID before an unbound default. */
+export function resolveIdentifiedImportTarget(
+  accounts: Record<AccountProfileId, AccountState>,
+  uid: string
+): { accountId: AccountProfileId; promoteToId?: AccountProfileId } {
+  if (!/^[1-9]\d{8,9}$/.test(uid)) throw new Error("Invalid account UID");
+  const id = uidToAccountProfileId(uid);
+  if (id === null) throw new Error("Invalid account UID");
+  if (accounts[id]) return { accountId: id };
+  return accounts[DEFAULT_ACCOUNT_PROFILE_ID]
+    ? { accountId: DEFAULT_ACCOUNT_PROFILE_ID, promoteToId: id }
+    : { accountId: id };
+}
+
 /**
  * Route a local (GOOD JSON) import.
  *
@@ -193,6 +207,24 @@ export function routeResolveImport(
 ): ResolveResult {
   const { data: newData, uid, nickname } = pendingImport;
   const uidProfileId = uidToAccountProfileId(uid);
+  if (
+    pendingImport.type === "uid" &&
+    uidProfileId !== null &&
+    targetId !== DEFAULT_ACCOUNT_PROFILE_ID &&
+    targetId !== uidProfileId
+  ) {
+    targetId = uidProfileId;
+    action = accounts[uidProfileId] ? action : "create";
+  }
+  if (
+    pendingImport.type === "uid" &&
+    uidProfileId !== null &&
+    targetId === DEFAULT_ACCOUNT_PROFILE_ID &&
+    accounts[uidProfileId]
+  ) {
+    targetId = uidProfileId;
+  }
+  if (action === "create" && accounts[targetId]) action = "overwrite";
 
   if (action === "create") {
     const createName =

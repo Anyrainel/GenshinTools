@@ -33,6 +33,12 @@ describe("continuous scanner endpoint", () => {
     { ...snapshot, updatedAt: "yesterday" },
     { ...snapshot, data: { ...snapshot.data, format: "HSR-Scanner" } },
     { ...snapshot, data: { ...snapshot.data, artifacts: "invalid" } },
+    { ...snapshot, data: { ...snapshot.data, metadata: { uid: 800000003 } } },
+    { ...snapshot, data: { ...snapshot.data, metadata: { uid: "bad" } } },
+    {
+      ...snapshot,
+      data: { ...snapshot.data, metadata: { uid: "800000003", nickname: 123 } },
+    },
   ])("rejects malformed snapshots", async (response) => {
     vi.stubGlobal(
       "fetch",

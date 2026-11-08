@@ -21,14 +21,13 @@ export function ScannerSyncStatus() {
     if (!enabled) setDetailsOpen(false);
   }, [enabled]);
   if (!session || !enabled) return null;
-  const { sync, account, setEnabled } = session;
-  const review = sync.status === "confirm";
+  const { sync, account, syncedAccount, setEnabled } = session;
+  const target = syncedAccount ?? account;
   const pending = sync.status === "connecting" || sync.status === "waiting";
   const attention = !pending && sync.status !== "synced";
   const Icon = attention ? TriangleAlert : Radio;
-  const statusText = review
-    ? t.ui("continuous.review")
-    : sync.status === "synced"
+  const statusText =
+    sync.status === "synced"
       ? t.ui("continuous.active")
       : pending
         ? t.ui("continuous.pending")
@@ -53,8 +52,8 @@ export function ScannerSyncStatus() {
             <span className="block truncate text-xs leading-4 sm:inline sm:text-sm sm:leading-5">
               {statusText}
             </span>
-            {account && (
-              <span className="hidden sm:inline"> · {account.name}</span>
+            {target && (
+              <span className="hidden sm:inline"> · {target.name}</span>
             )}
           </p>
           <Button
@@ -63,9 +62,7 @@ export function ScannerSyncStatus() {
             onClick={() => setDetailsOpen(true)}
           >
             <Settings2 className="hidden h-4 w-4 sm:block" aria-hidden />
-            {review
-              ? t.ui("continuous.reviewAction")
-              : t.ui("continuous.details")}
+            {t.ui("continuous.details")}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setEnabled(false)}>
             <Power className="h-4 w-4" aria-hidden />

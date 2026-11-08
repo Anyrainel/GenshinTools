@@ -71,6 +71,8 @@ export interface GOODData {
   artifacts?: IGOODArtifact[];
   /** GenshinTools extension: dense list of earned in-game achievement IDs. */
   achievements?: number[];
+  /** GGScanner extension: identity observed in the same game login as this export. */
+  metadata?: { uid?: string; nickname?: string };
   // materials are ignored
 }
 

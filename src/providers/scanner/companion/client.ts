@@ -4,6 +4,7 @@ import type {
   IGOODCharacter,
   IGOODWeapon,
 } from "@/providers/scanner/formats/goodConversion";
+import { readGOODIdentity } from "../formats/goodIdentity";
 import type {
   EquipRequest,
   HealthResponse,
@@ -53,6 +54,11 @@ export async function fetchContinuous(
       snapshot.data.artifacts,
     ].some((section) => section !== undefined && !Array.isArray(section))
   ) {
+    throw new Error("Invalid continuous inventory response");
+  }
+  try {
+    readGOODIdentity(snapshot.data);
+  } catch {
     throw new Error("Invalid continuous inventory response");
   }
   return snapshot;

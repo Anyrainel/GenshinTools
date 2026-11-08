@@ -65,8 +65,12 @@ import {
   type GOODData,
   type GOODImportOptions,
 } from "@/providers/scanner/formats/goodConversion";
+import { readGOODIdentity } from "@/providers/scanner/formats/goodIdentity";
+import { prepareContinuousImport } from "@/services/game-account/continuousImport";
+import { identifiedAccountName } from "@/services/game-account/goodIdentity";
 import {
   type PendingImport,
+  resolveIdentifiedImportTarget,
   routeLocalImport,
   routeResolveImport,
   routeUidImport,
@@ -264,16 +268,48 @@ export default function AccountDataPage() {
     try {
       // Read fresh state to avoid stale closure
       const currentAccounts = useAccountStore.getState().accounts;
+      const identity = readGOODIdentity(data);
+      const identifiedTarget = identity
+        ? resolveIdentifiedImportTarget(currentAccounts, identity.uid)
+        : null;
 
       // For the direct path, determine the target account so we can seed
       // existing characters for partial imports (location resolution).
       const directTargetId =
+        identifiedTarget?.accountId ??
         uidToAccountProfileId(optionalUid) ??
         (Object.keys(currentAccounts).length === 0
           ? DEFAULT_ACCOUNT_PROFILE_ID
           : null);
       const existingData =
         directTargetId !== null ? currentAccounts[directTargetId]?.data : null;
+
+      if (identity && identifiedTarget) {
+        const result = prepareContinuousImport(
+          data,
+          existingData ?? {
+            characters: [],
+            extraArtifacts: [],
+            extraWeapons: [],
+          },
+          options
+        );
+        applyAccountImport({
+          ...identifiedTarget,
+          data: result.data,
+          name: identifiedAccountName(
+            currentAccounts[identifiedTarget.accountId],
+            identity
+          ),
+          setAsActive:
+            identifiedTarget.promoteToId ?? identifiedTarget.accountId,
+          artifactIdMap: result.artifactIdMap,
+          earnedAchievementIds: result.earnedAchievementIds,
+        });
+        showConversionWarnings(result);
+        showImportSuccess();
+        return;
+      }
 
       const result = convertGOODToAccountData(
         data,

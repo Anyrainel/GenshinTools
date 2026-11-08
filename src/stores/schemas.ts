@@ -731,3 +731,9 @@ const TeamResultCacheEntrySchema = z.object({
 export const PersistedTeamResultCacheStoreSchema = z.object({
   resultsByTeamId: z.record(z.string(), TeamResultCacheEntrySchema).catch({}),
 });
+
+/** Local scanner preference: exactly one profile receives captures without a UID. */
+export const PersistedScannerSyncSchema = z.object({
+  enabledProfileId: z.number().int().nonnegative().safe().nullable(),
+  port: z.number().int().min(1).max(65535),
+});

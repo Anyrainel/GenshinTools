@@ -1,6 +1,5 @@
 import { Radio } from "lucide-react";
 import { useId } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -25,7 +24,6 @@ export function ContinuousInventorySync() {
     off: t.ui("continuous.off"),
     connecting: t.ui("continuous.connecting"),
     waiting: t.ui("continuous.waiting"),
-    confirm: t.ui("continuous.confirm"),
     synced: t.ui("continuous.synced"),
     disabled: t.ui("continuous.disabled"),
     unsupported: t.ui("continuous.unsupported"),
@@ -51,7 +49,6 @@ export function ContinuousInventorySync() {
         <Switch
           id={`${id}-enabled`}
           checked={enabled}
-          disabled={!account}
           onCheckedChange={setEnabled}
         />
       </div>
@@ -72,11 +69,6 @@ export function ContinuousInventorySync() {
                 .replace("{0}", String(sync.warnings))}
             </p>
           )}
-          {sync.status === "confirm" && (
-            <Button size="sm" onClick={sync.confirm}>
-              {t.ui("continuous.approve").replace("{0}", account.name)}
-            </Button>
-          )}
           {sync.details &&
             sync.status !== "waiting" &&
             sync.status !== "disabled" && (
@@ -91,9 +83,13 @@ export function ContinuousInventorySync() {
             )}
         </div>
       )}
-      {!account && <p>{t.ui("continuous.noAccount")}</p>}
-      {enabled && account && (
-        <p>{t.ui("continuous.safety").replace("{0}", account.name)}</p>
+      {account && (
+        <p>{t.ui("continuous.target").replace("{0}", account.name)}</p>
+      )}
+      {enabled && session.syncedAccount && sync.routing === "uid" && (
+        <p>
+          {t.ui("continuous.routed").replace("{0}", session.syncedAccount.name)}
+        </p>
       )}
       <details>
         <summary className="cursor-pointer text-xs font-medium">

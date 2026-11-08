@@ -17,7 +17,7 @@ test("background scanner sync survives closing import and browsing; global stop 
         state: { onboardingCompleted: true, lastSeenUpdate: "2099-01-01" },
       })
     );
-    // A valid existing profile is required before the scanner can target it.
+    // This scenario starts on an existing profile; first-run default creation has unit coverage.
     localStorage.setItem(
       "genshin-account-storage",
       JSON.stringify({
@@ -38,19 +38,25 @@ test("background scanner sync survives closing import and browsing; global stop 
     localStorage.setItem("score-v1-300-announced", "1");
   });
   let revision = 1;
+  let sessionId = "background-test";
+  let detectedUid: string | undefined;
+  let level = 20;
   let polls = 0;
   await page.route("http://127.0.0.1:8765/continuous", async (route) => {
     polls += 1;
     await route.fulfill({
       json: {
-        sessionId: "background-test",
+        sessionId,
         revision,
         updatedAt: 1793900000000 + revision,
         data: {
           ...fixture,
+          ...(detectedUid
+            ? { metadata: { uid: detectedUid, nickname: "Detected alt" } }
+            : {}),
           characters: fixture.characters.map((character) => ({
             ...character,
-            level: revision === 1 ? 20 : 21,
+            level,
           })),
         },
       },
@@ -73,9 +79,6 @@ test("background scanner sync survives closing import and browsing; global stop 
   const status = page.getByRole("region", {
     name: "Background inventory sync",
   });
-  await dialog
-    .getByRole("button", { name: "Sync to Sync test", exact: true })
-    .click();
   await expect(status).toContainText("Syncing");
   await dialog.getByRole("button", { name: "Close", exact: true }).click();
   await expect(
@@ -92,6 +95,7 @@ test("background scanner sync survives closing import and browsing; global stop 
   await expect(status).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("background-sync.png") });
   revision = 2;
+  level = 21;
   await expect
     .poll(() =>
       page.evaluate(
@@ -101,6 +105,48 @@ test("background scanner sync survives closing import and browsing; global stop 
       )
     )
     .toBe(21);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  detectedUid = "700000002";
+  level = 22;
+  revision = 3;
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const accounts = JSON.parse(
+          localStorage.getItem("genshin-account-storage")!
+        ).state.accounts;
+        return [
+          accounts["600000001"].data.characters[0]?.level,
+          accounts["700000002"]?.data.characters[0]?.level,
+        ];
+      })
+    )
+    .toEqual([21, 22]);
+  expect(
+    await page.evaluate(
+      () =>
+        JSON.parse(localStorage.getItem("genshin-scanner-sync-storage")!).state
+          .enabledProfileId
+    )
+  ).toBe(600000001);
+  // A new scanner login without identity still uses the saved fallback, without a prompt.
+  detectedUid = undefined;
+  sessionId = "next-login";
+  revision = 1;
+  level = 23;
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const accounts = JSON.parse(
+          localStorage.getItem("genshin-account-storage")!
+        ).state.accounts;
+        return [
+          accounts["600000001"].data.characters[0]?.level,
+          accounts["700000002"]?.data.characters[0]?.level,
+        ];
+      })
+    )
+    .toEqual([23, 22]);
   await expect(page.getByRole("dialog")).toHaveCount(0);
   await status.getByRole("button", { name: "Turn off", exact: true }).click();
   await expect(status).toHaveCount(0);

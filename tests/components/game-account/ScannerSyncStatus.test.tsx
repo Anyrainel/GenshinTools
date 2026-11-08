@@ -9,6 +9,7 @@ import {
 } from "@/providers/scanner/companion/client";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useScannerSyncStore } from "@/stores/useScannerSyncStore";
 
 vi.mock("@/contexts/LanguageContext", () => ({
   useLanguage: () => ({ t: { ui: (key: string) => key } }),
@@ -54,6 +55,7 @@ async function flush() {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
+  useScannerSyncStore.setState({ enabledProfileId: null, port: 8765 });
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
@@ -70,21 +72,21 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe("scanner sync controls", () => {
-  it("shows a global review control without automatically opening a dialog, and stops directly", async () => {
+  it("shows a global status control without automatically opening a dialog, and stops directly", async () => {
     const view = render(<App />);
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     await flush();
     const bar = screen.getByRole("region", { name: "continuous.title" });
     expect(within(bar).getByRole("status")).toHaveTextContent(
-      "GGScanner · continuous.review"
+      "GGScanner · continuous.active"
     );
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Page action" })).toBeEnabled();
 
     view.rerender(<App showImport={false} />);
     fireEvent.click(
-      within(bar).getByRole("button", { name: "continuous.reviewAction" })
+      within(bar).getByRole("button", { name: "continuous.details" })
     );
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "manager.close" }));
@@ -95,14 +97,13 @@ describe("scanner sync controls", () => {
       await vi.advanceTimersByTimeAsync(3000);
     });
     expect(fetchContinuous).toHaveBeenCalledTimes(1);
-    expect(applyAccountImport).not.toHaveBeenCalled();
+    expect(applyAccountImport).toHaveBeenCalledTimes(1);
   });
 
   it("keeps details opt-in and closes them when sync is switched off", async () => {
     const view = render(<App />);
     fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     await flush();
-    fireEvent.click(screen.getByRole("button", { name: "continuous.approve" }));
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);
     });

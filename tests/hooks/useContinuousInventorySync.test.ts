@@ -8,15 +8,14 @@ import {
 } from "@/providers/scanner/companion/client";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
+import { useScannerSyncStore } from "@/stores/useScannerSyncStore";
 
-vi.mock("@/providers/scanner/companion/client", async (importOriginal) => ({
-  ...(await importOriginal<
-    typeof import("@/providers/scanner/companion/client")
-  >()),
+vi.mock("@/providers/scanner/companion/client", async (original) => ({
+  ...(await original<typeof import("@/providers/scanner/companion/client")>()),
   fetchContinuous: vi.fn(),
 }));
 vi.mock("@/stores/applyAccountImport", () => ({ applyAccountImport: vi.fn() }));
-
+const data = () => ({ characters: [], extraWeapons: [], extraArtifacts: [] });
 const snapshot: ContinuousSnapshot = {
   sessionId: "server-1",
   revision: 1,
@@ -24,7 +23,7 @@ const snapshot: ContinuousSnapshot = {
   data: {
     format: "GOOD",
     version: 3,
-    source: "GOODScanner",
+    source: "GGScanner",
     characters: [],
     weapons: [],
     artifacts: [],
@@ -40,93 +39,129 @@ const tick = async () => {
     await vi.advanceTimersByTimeAsync(3000);
   });
 };
-
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
-  vi.mocked(applyAccountImport).mockReset();
+  useScannerSyncStore.setState({ enabledProfileId: null, port: 8765 });
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
-      123456789: {
-        id: 123456789,
-        name: "First",
-        lastUpdate: 0,
-        data: { characters: [], extraWeapons: [], extraArtifacts: [] },
-      },
-      987654321: {
-        id: 987654321,
-        name: "Second",
-        lastUpdate: 0,
-        data: { characters: [], extraWeapons: [], extraArtifacts: [] },
-      },
+      123456789: { id: 123456789, name: "First", lastUpdate: 0, data: data() },
+      987654321: { id: 987654321, name: "Second", lastUpdate: 0, data: data() },
     },
   });
+  vi.mocked(applyAccountImport).mockImplementation(
+    ({ accountId, data: incoming, name }) => {
+      useAccountStore
+        .getState()
+        .addOrUpdateAccount(accountId, { data: incoming, name });
+      return {};
+    }
+  );
   vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
 });
 afterEach(() => vi.useRealTimers());
-
-describe("continuous inventory lifecycle", () => {
-  it("requires fresh approval after an external import replaces data in the same profile", async () => {
-    vi.mocked(applyAccountImport).mockImplementation(({ accountId, data }) => {
-      useAccountStore.getState().addOrUpdateAccount(accountId, { data });
-      return {};
-    });
-    const view = renderHook(() => useContinuousInventorySync(true, 8765));
+describe("hands-off continuous inventory", () => {
+  it("requires opt-in once, applies immediately, and deduplicates unchanged data", async () => {
+    const view = renderHook(
+      ({ profile }) => useContinuousInventorySync(profile, 8765),
+      { initialProps: { profile: null as number | null } }
+    );
+    expect(fetchContinuous).not.toHaveBeenCalled();
+    view.rerender({ profile: 123456789 });
     await flush();
-    act(() => view.result.current.confirm());
-    await tick();
     expect(view.result.current.status).toBe("synced");
+    expect(applyAccountImport).toHaveBeenCalledTimes(1);
+    vi.mocked(fetchContinuous).mockResolvedValue({ ...snapshot, revision: 2 });
+    await tick();
+    expect(applyAccountImport).toHaveBeenCalledTimes(1);
+    view.unmount();
+  });
+  it("keeps writing unknown captures to the enabled profile when the active profile changes", async () => {
+    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    await flush();
+    act(() => useAccountStore.getState().setActiveAccount(987654321));
     vi.mocked(fetchContinuous).mockResolvedValue({
       ...snapshot,
       revision: 2,
       data: { ...snapshot.data, achievements: [81006] },
     });
     await tick();
+    expect(applyAccountImport).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        accountId: 123456789,
+        earnedAchievementIds: [81006],
+      })
+    );
+    expect(view.result.current.routing).toBe("profile");
+    view.unmount();
+  });
+  it("routes detected UIDs to existing or new profiles rather than the fallback", async () => {
+    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      revision: 2,
+      data: { ...snapshot.data, metadata: { uid: "987654321" } },
+    });
+    await flush();
+    await tick();
+    expect(applyAccountImport).toHaveBeenLastCalledWith(
+      expect.objectContaining({ accountId: 987654321 })
+    );
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      revision: 3,
+      data: {
+        ...snapshot.data,
+        metadata: { uid: "800000003", nickname: "New account" },
+      },
+    });
+    await tick();
+    expect(applyAccountImport).toHaveBeenLastCalledWith(
+      expect.objectContaining({ accountId: 800000003, name: "New account" })
+    );
+    expect(view.result.current.targetProfileId).toBe(800000003);
+    view.unmount();
+  });
+  it("automatically binds the default when an identified UID has no matching profile", async () => {
+    useAccountStore.setState({
+      activeAccountId: 0,
+      accounts: {
+        0: { id: 0, name: "Default Account", data: data(), lastUpdate: 0 },
+      },
+    });
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      data: {
+        ...snapshot.data,
+        metadata: { uid: "800000003", nickname: "Player" },
+      },
+    });
+    const view = renderHook(() => useContinuousInventorySync(0, 8765));
+    await flush();
+    expect(applyAccountImport).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accountId: 0,
+        promoteToId: 800000003,
+        name: "Player",
+      })
+    );
+    view.unmount();
+  });
+  it("reapplies the current capture after a separate local import without another prompt", async () => {
+    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    await flush();
+    act(() =>
+      useAccountStore.getState().addOrUpdateAccount(123456789, { data: data() })
+    );
+    await tick();
     expect(applyAccountImport).toHaveBeenCalledTimes(2);
     expect(view.result.current.status).toBe("synced");
-
-    act(() => {
-      const current = useAccountStore.getState().accounts[123456789];
-      useAccountStore.getState().addOrUpdateAccount(123456789, {
-        data: { ...current.data },
-      });
-    });
-    vi.mocked(fetchContinuous).mockResolvedValue({ ...snapshot, revision: 3 });
-    await tick();
-    expect(view.result.current.status).toBe("confirm");
-    expect(applyAccountImport).toHaveBeenCalledTimes(2);
-    act(() => view.result.current.confirm());
-    await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(3);
     view.unmount();
   });
-
-  it("rejects stale approval after data in the reviewed profile is replaced", async () => {
-    const view = renderHook(() => useContinuousInventorySync(true, 8765));
+  it("ignores old revisions after a newer unchanged snapshot", async () => {
+    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
     await flush();
-    expect(view.result.current.status).toBe("confirm");
-    act(() => {
-      const current = useAccountStore.getState().accounts[123456789];
-      useAccountStore.getState().addOrUpdateAccount(123456789, {
-        data: { ...current.data },
-      });
-      view.result.current.confirm();
-    });
-    await tick();
-    expect(applyAccountImport).not.toHaveBeenCalled();
-    expect(view.result.current.status).toBe("confirm");
-    act(() => view.result.current.confirm());
-    await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(1);
-    view.unmount();
-  });
-
-  it("rejects older revisions even after an unchanged newer snapshot", async () => {
-    const view = renderHook(() => useContinuousInventorySync(true, 8765));
-    await flush();
-    act(() => view.result.current.confirm());
-    await tick();
     vi.mocked(fetchContinuous).mockResolvedValue({ ...snapshot, revision: 5 });
     await tick();
     vi.mocked(fetchContinuous).mockResolvedValue({
@@ -138,103 +173,18 @@ describe("continuous inventory lifecycle", () => {
     expect(applyAccountImport).toHaveBeenCalledTimes(1);
     view.unmount();
   });
-
-  it("aborts an unfinished request on unmount and ignores its late response", async () => {
-    let resolve!: (value: ContinuousSnapshot) => void;
-    vi.mocked(fetchContinuous).mockImplementation(
-      () =>
-        new Promise((done) => {
-          resolve = done;
-        })
-    );
-    const view = renderHook(() => useContinuousInventorySync(true, 8765));
-    const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
-    view.unmount();
-    expect(signal.aborted).toBe(true);
-    await act(async () => {
-      resolve(snapshot);
-    });
-    await tick();
-    expect(applyAccountImport).not.toHaveBeenCalled();
-    expect(fetchContinuous).toHaveBeenCalledTimes(1);
-  });
-  it("requires opt-in and confirmation, then skips repeated content even across revisions", async () => {
-    const view = renderHook(
-      ({ enabled }) => useContinuousInventorySync(enabled, 8765),
-      { initialProps: { enabled: false } }
-    );
-    expect(fetchContinuous).not.toHaveBeenCalled();
-    view.rerender({ enabled: true });
-    await flush();
-    expect(view.result.current.status).toBe("confirm");
-    expect(applyAccountImport).not.toHaveBeenCalled();
-    act(() => view.result.current.confirm());
-    await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(1);
-    expect(view.result.current.updatedAt).toBe(snapshot.updatedAt);
-    vi.mocked(fetchContinuous).mockResolvedValue({ ...snapshot, revision: 2 });
-    await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(1);
-    vi.mocked(fetchContinuous).mockResolvedValue({
-      ...snapshot,
-      revision: 2,
-      data: { ...snapshot.data, achievements: [81006] },
-    });
-    await tick();
-    expect(applyAccountImport).toHaveBeenCalledTimes(2);
-    expect(applyAccountImport).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        accountId: 123456789,
-        earnedAchievementIds: [81006],
-      })
-    );
-    view.unmount();
-    await tick();
-    expect(fetchContinuous).toHaveBeenCalledTimes(4);
-  });
-
-  it.each([
-    [409, "continuous_capture_disabled", "disabled"],
-    [503, "continuous_capture_no_data", "waiting"],
-    [503, "continuous_capture_failed", "failed"],
-    [404, "unknown endpoint", "unsupported"],
-  ])(
-    "distinguishes HTTP %s %s and retries",
-    async (status, error, expected) => {
-      vi.mocked(fetchContinuous).mockRejectedValue(
-        new ArtifactManagerError(
-          status,
-          JSON.stringify({ error, details: "capture diagnostic" })
-        )
-      );
-      const view = renderHook(() => useContinuousInventorySync(true, 9123));
-      await flush();
-      expect(view.result.current.status).toBe(expected);
-      expect(view.result.current.details).toBe("capture diagnostic");
-      expect(fetchContinuous).toHaveBeenCalledWith(
-        9123,
-        expect.any(AbortSignal)
-      );
-      vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
-      await tick();
-      expect(view.result.current.status).toBe("confirm");
-      expect(applyAccountImport).not.toHaveBeenCalled();
-      view.unmount();
-    }
-  );
-
   it.each(["restart", "login", "network"])(
-    "requires confirmation after %s",
+    "resumes automatically after %s",
     async (cause) => {
-      const view = renderHook(() => useContinuousInventorySync(true, 8765));
+      const view = renderHook(() =>
+        useContinuousInventorySync(123456789, 8765)
+      );
       await flush();
-      act(() => view.result.current.confirm());
-      await tick();
       if (cause === "restart")
         vi.mocked(fetchContinuous).mockResolvedValue({
           ...snapshot,
           sessionId: "server-2",
-          revision: 1,
+          data: { ...snapshot.data, achievements: [81006] },
         });
       else
         vi.mocked(fetchContinuous).mockRejectedValue(
@@ -250,48 +200,73 @@ describe("continuous inventory lifecycle", () => {
         expect(view.result.current.status).toBe(
           cause === "login" ? "waiting" : "disconnected"
         );
-        vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
+        vi.mocked(fetchContinuous).mockResolvedValue({
+          ...snapshot,
+          sessionId: "new-login",
+          data: { ...snapshot.data, achievements: [81006] },
+        });
         await tick();
       }
-      expect(view.result.current.status).toBe("confirm");
+      expect(view.result.current.status).toBe("synced");
+      expect(applyAccountImport).toHaveBeenCalledTimes(2);
+      view.unmount();
+    }
+  );
+  it.each([
+    [409, "continuous_capture_disabled", "disabled"],
+    [503, "continuous_capture_no_data", "waiting"],
+    [503, "continuous_capture_failed", "failed"],
+    [404, "unknown endpoint", "unsupported"],
+  ] as const)(
+    "shows HTTP %s %s and retries without approval",
+    async (status, error, expected) => {
+      vi.mocked(fetchContinuous).mockRejectedValue(
+        new ArtifactManagerError(
+          status,
+          JSON.stringify({ error, details: "diagnostic" })
+        )
+      );
+      const view = renderHook(() =>
+        useContinuousInventorySync(123456789, 9123)
+      );
+      await flush();
+      expect(view.result.current.status).toBe(expected);
+      expect(view.result.current.details).toBe("diagnostic");
+      vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
+      await tick();
+      expect(view.result.current.status).toBe("synced");
       expect(applyAccountImport).toHaveBeenCalledTimes(1);
       view.unmount();
     }
   );
-
-  it("rejects late responses after disable, port changes, profile changes and unmount", async () => {
+  it("aborts pending work on disable/port/target changes and ignores late responses", async () => {
     let resolve!: (value: ContinuousSnapshot) => void;
-    vi.mocked(fetchContinuous).mockImplementation(
+    vi.mocked(fetchContinuous).mockImplementationOnce(
       () =>
         new Promise((done) => {
           resolve = done;
         })
     );
     const view = renderHook(
-      ({ enabled, port }) => useContinuousInventorySync(enabled, port),
-      { initialProps: { enabled: true, port: 8765 } }
+      ({ profile, port }) => useContinuousInventorySync(profile, port),
+      { initialProps: { profile: 123456789 as number | null, port: 8765 } }
     );
-    await act(async () => {
-      await vi.advanceTimersByTimeAsync(12000);
-    });
-    expect(fetchContinuous).toHaveBeenCalledTimes(1);
-    const stale = resolve;
-    view.rerender({ enabled: true, port: 9000 });
-    await act(async () => {
-      stale(snapshot);
-    });
-    expect(view.result.current.status).toBe("connecting");
-    act(() => useAccountStore.getState().setActiveAccount(987654321));
-    await act(async () => {
-      resolve(snapshot);
-    });
-    expect(view.result.current.status).toBe("confirm");
-    act(() => view.result.current.confirm());
-    view.rerender({ enabled: false, port: 9000 });
-    await flush();
-    expect(view.result.current.status).toBe("off");
-    await tick();
+    const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
+    view.rerender({ profile: null, port: 8765 });
+    expect(signal.aborted).toBe(true);
+    await act(async () => resolve(snapshot));
     expect(applyAccountImport).not.toHaveBeenCalled();
+    view.rerender({ profile: 987654321, port: 9123 });
+    await flush();
+    expect(applyAccountImport).toHaveBeenLastCalledWith(
+      expect.objectContaining({ accountId: 987654321 })
+    );
+    expect(fetchContinuous).toHaveBeenLastCalledWith(
+      9123,
+      expect.any(AbortSignal)
+    );
     view.unmount();
+    await tick();
+    expect(fetchContinuous).toHaveBeenCalledTimes(2);
   });
 });

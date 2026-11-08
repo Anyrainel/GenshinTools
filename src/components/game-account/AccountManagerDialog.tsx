@@ -1,5 +1,6 @@
 import { Check, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { ImportIcon } from "@/components/shared/importExportIcons";
 import {
   AlertDialog,
@@ -28,6 +29,7 @@ import {
 import type { AccountProfileId } from "@/domain/game-account/types";
 import { cn } from "@/lib/utils";
 import type { PendingImport } from "@/services/game-account/importRouting";
+import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
 
 interface AccountManagerDialogProps {
@@ -54,7 +56,6 @@ export function AccountManagerDialog({
   const activeAccountId = useAccountStore((s) => s.activeAccountId);
   const setActiveAccount = useAccountStore((s) => s.setActiveAccount);
   const deleteAccount = useAccountStore((s) => s.deleteAccount);
-  const promoteToUid = useAccountStore((s) => s.promoteToUid);
 
   const [editingId, setEditingId] = useState<AccountProfileId | null>(null);
   const [editUid, setEditUid] = useState("");
@@ -89,8 +90,19 @@ export function AccountManagerDialog({
     const trimmed = editUid.trim();
     const nextId = uidToAccountProfileId(trimmed);
     if (nextId !== null && isDefaultAccountProfile(id)) {
-      // Rename the storage key from profile 0 to the UID, keeping id === uid.
-      promoteToUid(DEFAULT_ACCOUNT_PROFILE_ID, nextId);
+      const current =
+        useAccountStore.getState().accounts[DEFAULT_ACCOUNT_PROFILE_ID];
+      if (!current) return;
+      try {
+        applyAccountImport({
+          accountId: DEFAULT_ACCOUNT_PROFILE_ID,
+          data: current.data,
+          promoteToId: nextId,
+        });
+      } catch {
+        toast.error(t.ui("common.error"));
+        return;
+      }
     }
     setEditingId(null);
   };
