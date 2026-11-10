@@ -40,28 +40,29 @@ describe("Torrents of Spring", () => {
     [4, 0.28, 0.35],
     [5, 0.32, 0.4],
   ])(
-    "completes the R%i Decree from the wearer's Stellar-Conduct trigger",
+    "strengthens the R%i Decree when the wearer can hit with a Stellar-Conduct attack",
     (refinement, atk, reactionDmg) => {
-      const meta = new TeamMeta(["beidou", "mitya", "qiqi"]);
+      const meta = new TeamMeta(["danica", "beidou"]);
       const weapon = createWeapon(
         "torrents_of_spring",
         refinement,
-        "beidou",
-        meta
+        "danica",
+        meta,
+        { danica: "battle" }
       );
-      expect(meta.hasReaction("stellarConduct", "beidou")).toBe(true);
+      expect(meta.hasReaction("stellarConduct", "danica")).toBe(false);
       const tag = {
         element: "Cryo",
         ability: "skill",
         reaction: "stellarConduct",
       } as const;
       for (const onField of [true, false]) {
-        const self = weaponSheet(weapon, "beidou", onField);
+        const self = weaponSheet(weapon, "danica", onField);
         expect(self.getRaw("atk%")).toBeCloseTo(2 * atk);
         expect(self.get("reactionDmg%", tag)).toBeCloseTo(
           onField ? 2 * reactionDmg : 0
         );
-        const teammate = weaponSheet(weapon, "qiqi", onField);
+        const teammate = weaponSheet(weapon, "beidou", onField);
         expect(teammate.getRaw("atk%")).toBe(0);
         expect(teammate.get("reactionDmg%", tag)).toBeCloseTo(
           onField ? 2 * reactionDmg : 0
@@ -120,30 +121,33 @@ describe("Torrents of Spring", () => {
     }
   );
 
-  it("keeps the base Decree when the Electro wearer neither triggers nor deals SC", () => {
-    const weapon = createWeapon(
-      "torrents_of_spring",
-      1,
-      "beidou",
-      new TeamMeta(["beidou"])
-    );
-    const sheet = weaponSheet(weapon);
-    expect(sheet.getRaw("atk%")).toBeCloseTo(0.16);
-    expect(
-      sheet.get("reactionDmg%", {
-        element: "Electro",
-        ability: "burst",
-        reaction: "stellarConduct",
-      })
-    ).toBeCloseTo(0.2);
-    expect(
-      weapon.buffs.find((buff) => buff.target.receiver === "teamOnField")
-        ?.source.triggers
-    ).toEqual(["electro-hit"]);
-  });
+  it.each([
+    { party: ["beidou"], canTrigger: false },
+    { party: ["beidou", "mitya", "qiqi"], canTrigger: true },
+  ])(
+    "keeps Beidou's base Decree without her own Stellar-Conduct attack (reaction trigger: $canTrigger)",
+    ({ party, canTrigger }) => {
+      const meta = new TeamMeta(party);
+      expect(meta.hasReaction("stellarConduct", "beidou")).toBe(canTrigger);
+      const weapon = createWeapon("torrents_of_spring", 1, "beidou", meta);
+      const sheet = weaponSheet(weapon);
+      expect(sheet.getRaw("atk%")).toBeCloseTo(0.16);
+      expect(
+        sheet.get("reactionDmg%", {
+          element: "Electro",
+          ability: "burst",
+          reaction: "stellarConduct",
+        })
+      ).toBeCloseTo(0.2);
+      expect(
+        weapon.buffs.find((buff) => buff.target.receiver === "teamOnField")
+          ?.source.triggers
+      ).toEqual(["electro-hit"]);
+    }
+  );
 
   it.each(["diluc", "chongyun"])(
-    "requires the wearer's own Electro hit before a party reaction can enhance %s",
+    "requires the wearer's own Electro hit to grant the Decree to %s",
     (charId) => {
       const meta = new TeamMeta([charId, "mitya", "qiqi"]);
       expect(meta.hasReaction("stellarConduct")).toBe(true);
@@ -157,12 +161,12 @@ describe("Torrents of Spring", () => {
     }
   );
 
-  it("deduplicates the complete Decree magnitude across different refinements", () => {
-    const complete = createWeapon(
+  it("deduplicates the enhanced Decree magnitude across different refinements", () => {
+    const enhanced = createWeapon(
       "torrents_of_spring",
-      1,
-      "beidou",
-      new TeamMeta(["beidou", "mitya", "qiqi"])
+      3,
+      "danica",
+      new TeamMeta(["danica"])
     );
     const base = createWeapon(
       "torrents_of_spring",
@@ -171,51 +175,46 @@ describe("Torrents of Spring", () => {
       new TeamMeta(["razor"])
     );
     const buffs = deduplicateBuffs(
-      [...complete.buffs, ...base.buffs].filter(
+      [...enhanced.buffs, ...base.buffs].filter(
         (buff) => buff.target.receiver === "teamOnField"
       ),
       (buff) => buff.staticBuffs
     );
     expect(buffs).toHaveLength(1);
-    expect(buffs[0].staticBuffs).toEqual([{ key: "reactionDmg%", value: 0.4 }]);
+    expect(buffs[0].staticBuffs).toEqual([{ key: "reactionDmg%", value: 0.6 }]);
   });
 
-  it("keeps unconditional ATK in idle stats and excludes the completed bonus", () => {
-    const build = new TeamBuild([
-      {
-        charId: "beidou",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "torrents_of_spring",
-        refinement: 1,
-        artifactSet: null,
-      },
-      {
-        charId: "qiqi",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "favonius_sword",
-        refinement: 1,
-        artifactSet: null,
-      },
-      {
-        charId: "mitya",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "starsealed_edict",
-        refinement: 1,
-        artifactSet: null,
-      },
-    ]);
-    const baseline = build.charBuilds.beidou.baseStatSheet;
-    for (const sheet of Object.values(build.teamStats.getIdleStats().beidou)) {
+  it("keeps unconditional ATK in idle stats and excludes the enhanced bonus", () => {
+    const build = new TeamBuild(
+      [
+        {
+          charId: "danica",
+          charLevel: 90,
+          constellation: 0,
+          weaponId: "torrents_of_spring",
+          refinement: 1,
+          artifactSet: null,
+        },
+        {
+          charId: "qiqi",
+          charLevel: 90,
+          constellation: 0,
+          weaponId: "favonius_sword",
+          refinement: 1,
+          artifactSet: null,
+        },
+      ],
+      { danica: "battle" }
+    );
+    const baseline = build.charBuilds.danica.baseStatSheet;
+    for (const sheet of Object.values(build.teamStats.getIdleStats().danica)) {
       expect(sheet.get("atk", null)).toBeCloseTo(
         baseline.get("atk", null) + baseline.get("baseAtk", null) * 0.16
       );
     }
-    for (const onField of ["beidou", "qiqi"]) {
+    for (const onField of ["danica", "qiqi"]) {
       expect(
-        build.teamStats.getPostStats("beidou", onField).get("atk", null)
+        build.teamStats.getPostStats("danica", onField).get("atk", null)
       ).toBeCloseTo(
         baseline.get("atk", null) + baseline.get("baseAtk", null) * 0.32
       );

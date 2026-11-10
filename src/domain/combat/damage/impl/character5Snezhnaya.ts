@@ -23,25 +23,25 @@ import type {
 import { cbs } from "./helpers";
 
 const danicaOption = {
-  label: { zh: "女仆形态与辉映", en: "Maid Form and Radiance" },
+  label: { zh: "侍者形态与辉映", en: "Maid Form and Radiance" },
   choices: [
     {
       value: "battle-stellar",
-      label: { zh: "战斗女仆·辉映", en: "Battle Maid / Radiance" },
+      label: { zh: "女仆·清扫者 / 辉映", en: "Battle Maid / Radiance" },
       when: (tm) => tm.hasPolestarField(),
     },
     {
       value: "defense-stellar",
-      label: { zh: "守护女仆·辉映", en: "Defense Maid / Radiance" },
+      label: { zh: "女仆·御前护卫 / 辉映", en: "Defense Maid / Radiance" },
       when: (tm) => tm.hasPolestarField() && tm.characters.length >= 2,
     },
     {
       value: "battle",
-      label: { zh: "战斗女仆·无辉映", en: "Battle Maid / No Radiance" },
+      label: { zh: "女仆·清扫者 / 无辉映", en: "Battle Maid / No Radiance" },
     },
     {
       value: "defense",
-      label: { zh: "守护女仆·无辉映", en: "Defense Maid / No Radiance" },
+      label: { zh: "女仆·御前护卫 / 无辉映", en: "Defense Maid / No Radiance" },
       when: (tm) => tm.characters.length >= 2,
     },
   ] as const,
@@ -73,7 +73,7 @@ class Danica extends CharacterBase {
         },
         [{ key: "resReduction%", value: this.radianceOn ? 0.3 : 0.15 }]
       ),
-      // The 7.2.50 EN and ZH both say per ONE ATK, not per 100 ATK.
+      // 7.2.51 ZH grants 0.7% per 100 ATK. EN still says per point.
       new ScalingBuff(
         cbs(this, "P3", []),
         {
@@ -83,14 +83,14 @@ class Danica extends CharacterBase {
         [],
         "atk",
         "reactionBaseDmg%",
-        0.007,
+        0.00007,
         0.14
       ),
       new StatBuff(cbs(this, "P2", ["E"]), { receiver: "self" }, [
-        // "以上效果最多叠加3次" covers both form-specific bonuses.
+        // Only the On-Field E2 effects stack to three in 7.2.51 ZH.
         {
           key: this.defense ? "atk%" : "atkSpd%",
-          value: this.defense && !this.hasCoordinatedTrigger ? 0.2 : 0.6,
+          value: this.defense ? 0.2 : 0.6,
         },
       ]),
     ];
@@ -312,15 +312,17 @@ class Danica extends CharacterBase {
           ]
         : [];
     return {
+      // The active Anchor replaces NAs and prevents CA/plunge. Keep these
+      // base actions for use outside the Anchor window.
       "danica-normal": {
-        label: { zh: "普通攻击四段", en: "Normal Attack (N4)" },
+        label: { zh: "普攻四段（无锚）", en: "N4 (Without Anchor)" },
         parts: [1, 2, 3, 4].map((i) => ({
           formula: new DirectFormula(this.param("A", i), normal),
           hits: i === 3 ? 2 : 1,
         })),
       },
       "danica-charge": {
-        label: { zh: "重击·循环", en: "Cyclic Charged Hit" },
+        label: { zh: "重击循环（无锚）", en: "CA Cycle (No Anchor)" },
         parts: [
           {
             formula: new DirectFormula(this.param("A", 5), {
@@ -331,7 +333,7 @@ class Danica extends CharacterBase {
         ],
       },
       "danica-charge-final": {
-        label: { zh: "重击·终结", en: "Charged Attack (Final)" },
+        label: { zh: "重击终结（无锚）", en: "CA End (No Anchor)" },
         parts: [
           {
             formula: new DirectFormula(this.param("A", 6), {
@@ -342,7 +344,7 @@ class Danica extends CharacterBase {
         ],
       },
       "danica-plunge-high": {
-        label: { zh: "下落·高", en: "High Plunge" },
+        label: { zh: "高空下落（无锚）", en: "Plunge (No Anchor)" },
         parts: [
           {
             formula: new DirectFormula(this.param("A", 9), {
@@ -353,11 +355,11 @@ class Danica extends CharacterBase {
         ],
       },
       "danica-skill": {
-        label: { zh: "E初始伤害", en: "E Initial Hit" },
+        label: { zh: "涤尘准锚·施放", en: "E Initial Hit" },
         parts: [{ formula: new DirectFormula(this.param("E", 1), skill) }],
       },
       "danica-entry": {
-        label: { zh: "登场技E2", en: "Entry Skill E2" },
+        label: { zh: "护持之志", en: "Entry Skill E2" },
         when: this.defense,
         parts: [
           {
@@ -366,7 +368,7 @@ class Danica extends CharacterBase {
         ],
       },
       "danica-e2-first": {
-        label: { zh: "在场技E2·首次", en: "On-Field E2 (First)" },
+        label: { zh: "荡除之志·首次", en: "On-Field E2 (First)" },
         when: !this.defense,
         parts: [
           {
@@ -376,7 +378,7 @@ class Danica extends CharacterBase {
         ],
       },
       "danica-e2-battle": {
-        label: { zh: "在场技E2·后续", en: "On-Field E2 (Later)" },
+        label: { zh: "荡除之志·后续", en: "On-Field E2 (Later)" },
         when: !this.defense,
         parts: [
           {
@@ -390,8 +392,9 @@ class Danica extends CharacterBase {
         ],
       },
       "danica-coordinated": {
-        label: { zh: "船锚协同攻击", en: "Anchor Coordinated Attack" },
-        when: this.defense && this.hasCoordinatedTrigger,
+        label: { zh: "准雷定锚协同攻击", en: "Anchor Coordinated Attack" },
+        // Swapping out can trigger the Anchor in either form while it lasts.
+        when: this.hasCoordinatedTrigger,
         parts: [
           {
             formula: new DirectFormula(this.param("E", 4), skill),
@@ -403,7 +406,7 @@ class Danica extends CharacterBase {
         [7, 8, 9, 10].map((param, i) => [
           `danica-anchor-n${i + 1}`,
           {
-            label: { zh: `船锚普攻·${i + 1}段`, en: `Anchor Normal N${i + 1}` },
+            label: { zh: `准雷定锚·${i + 1}段`, en: `Anchor Normal N${i + 1}` },
             parts: [
               {
                 formula: new DirectFormula(this.param("E", param), anchor),
@@ -414,7 +417,7 @@ class Danica extends CharacterBase {
         ])
       ),
       "danica-burst": {
-        label: { zh: "Q五段攻击", en: "Q Five-Hit Attack" },
+        label: { zh: "净世卫仪", en: "Q Five-Hit Attack" },
         parts: [
           { formula: new DirectFormula(this.param("Q", 1), burst) },
           { formula: new DirectFormula(this.param("Q", 3), burst), hits: 3 },
@@ -507,9 +510,8 @@ class Anastasya extends CharacterBase {
           [{ key: "polestarField", value: 1 }]
         )
       );
-    // P2 also raises newly created Vortices to level 2 (the reaction engine's
-    // existing peak model already uses level 3). Its Polestar enhancement has
-    // no numeric value in 7.2.50 and is deliberately not assigned one here.
+    // P2 raises newly created Vortices to level 2, which the reaction engine
+    // already uses for peak damage. 7.2.51 gives no Polestar enhancement value.
     const count = this.teamMeta.characters.length;
     for (const charId of this.teamMeta.characters) {
       const isSelf = charId === this.charId;
@@ -776,7 +778,7 @@ class Anastasya extends CharacterBase {
             {
               label: {
                 zh: `圣佑之枪·${stage}段`,
-                en: `Blessed Armament N${stage}`,
+                en: `Blessed Spear N${stage}`,
               },
               when: !this.love,
               parts: [

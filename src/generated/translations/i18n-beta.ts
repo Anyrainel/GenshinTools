@@ -13,8 +13,8 @@ export const i18nBetaData = {
     "torrents_of_spring": { en: "Torrents of Spring", zh: "春潮" },
   },
   artifacts: {
-    "artifact_15049": { en: "肇史之遗", zh: "肇史之遗" },
-    "artifact_15050": { en: "遥天奉翠华引", zh: "遥天奉翠华引" },
+    "artifact_15049": { en: "Epochal Advent", zh: "肇史之遗" },
+    "artifact_15050": { en: "Empyrean Sojourn", zh: "遥天奉翠华引" },
     "glacier_and_snowfield": { en: "Glacier and Snowfield", zh: "冰之川与雪之砂" },
   },
 };

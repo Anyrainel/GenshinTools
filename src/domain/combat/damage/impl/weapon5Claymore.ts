@@ -37,32 +37,30 @@ class TorrentsOfSpring extends WeaponBase {
     );
     // Inspect enabled own hits, preserving each kit's option/constellation
     // gates. Teammates' Electro attacks cannot grant the wearer a Decree.
-    const tags = Object.keys(character.formulaIds).flatMap(
-      (id) =>
-        character.getFormulaEntry(id)?.parts.map((p) => p.formula.tag) ?? []
-    );
+    const tags = Object.keys(character.formulaIds)
+      .flatMap((id) => character.getFormulaEntry(id)?.parts ?? [])
+      .filter((part) => !part.statsCharId || part.statsCharId === charId)
+      .map((part) => part.formula.tag);
     if (tags.some((tag) => tag.element === "Electro")) {
-      // ZH beta: triggering Stellar-Conduct OR landing a Stellar-Conduct
-      // attack completes the Decree; EN incorrectly requires an Electro SC hit.
-      // Native SC attacks (e.g. Mitya's Prisms) need no Cryo teammate.
-      const completed =
-        teamMeta.hasReaction("stellarConduct", charId) ||
-        tags.some((tag) => tag.reaction === "stellarConduct");
+      // 7.2.51 ZH: the 15s Decree strengthens when an attack counted as
+      // Stellar-Conduct damage hits. Character formulas include native hits
+      // even without a Cryo teammate and exclude the generic reaction trigger.
+      const enhanced = tags.some((tag) => tag.reaction === "stellarConduct");
       buffs.push(
         new StatBuff(
           wbs(
             this,
-            completed ? ["electro-hit", "stellarConduct"] : ["electro-hit"],
+            enhanced ? ["electro-hit", "stellarConduct"] : ["electro-hit"],
             "torrents-of-spring-decree"
           ),
           {
             receiver: "teamOnField",
             filter: { reactions: ["stellarConduct"] },
           },
-          [{ key: "reactionDmg%", value: reactionDmg * (completed ? 2 : 1) }]
+          [{ key: "reactionDmg%", value: reactionDmg * (enhanced ? 2 : 1) }]
         )
       );
-      if (completed) {
+      if (enhanced) {
         buffs.push(
           new StatBuff(
             wbs(this, ["electro-hit", "stellarConduct"]),

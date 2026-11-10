@@ -85,12 +85,14 @@ describe("new beta constellation talent metadata", () => {
   );
 });
 
-describe("Danica 7.2.50 beta", () => {
+describe("Danica 7.2 beta", () => {
   it("derives mutually exclusive modes and Radiance from the source activation paths", () => {
     const battle = danica();
     expect(battle.formulaIds).toHaveProperty("danica-e2-first");
     expect(battle.formulaIds).not.toHaveProperty("danica-entry");
-    expect(battle.formulaIds).not.toHaveProperty("danica-coordinated");
+    expect(
+      battle.buffs.find((buff) => buff.source.origin === "P2")!.staticBuffs
+    ).toEqual([{ key: "atkSpd%", value: 0.6 }]);
     const defense = danica(0, "defense-stellar");
     expect(defense.formulaIds).toHaveProperty("danica-entry");
     expect(defense.formulaIds).not.toHaveProperty("danica-e2-first");
@@ -102,6 +104,25 @@ describe("Danica 7.2.50 beta", () => {
     expect(noField.getFormulaEntry("danica-burst")!.parts).toHaveLength(3);
     expect(battle.getFormulaEntry("danica-burst")!.parts).toHaveLength(5);
   });
+
+  it.each([
+    ["battle", "fischl"],
+    ["battle-stellar", "kaeya"],
+  ])(
+    "allows optional off-field coordinated attacks in %s with %s",
+    (mode, teammate) => {
+      const character = danica(0, mode, ["danica", teammate]);
+      expect(character.formulaIds).toHaveProperty("danica-coordinated");
+      expect(
+        character.getFormulaEntry("danica-coordinated")!.parts[0].offField
+      ).toBe(true);
+      expect(character.combo["danica-coordinated"] ?? 0).toBe(0);
+      expect(character.formulaIds).not.toHaveProperty("danica-entry");
+      expect(
+        danica(0, "battle", ["danica", "barbara"]).formulaIds
+      ).not.toHaveProperty("danica-coordinated");
+    }
+  );
 
   it("precharges Defense with own Anchor normals while keeping coordinated attacks element-gated", () => {
     const character = danica(0, "defense", ["danica", "barbara"]);
@@ -132,7 +153,7 @@ describe("Danica 7.2.50 beta", () => {
     expect(qualified.formulaIds).toHaveProperty("danica-coordinated");
     expect(
       qualified.buffs.find((buff) => buff.source.origin === "P2")!.staticBuffs
-    ).toEqual([{ key: "atk%", value: 0.6 }]);
+    ).toEqual([{ key: "atk%", value: 0.2 }]);
   });
 
   it("keeps talent rows, repeated hits and the five-E2 Excitement budget distinct", () => {
@@ -170,15 +191,23 @@ describe("Danica 7.2.50 beta", () => {
     ).toEqual([1, 3, 1, 1, 1]);
   });
 
-  it("preserves the literal per-one-ATK P3 scale and caps team buffs", () => {
+  it("scales P3 by 0.7% per 100 ATK and caps team buffs", () => {
     const character = danica(1, "defense-stellar");
     const p3 = character.buffs.find(
       (buff) => buff instanceof ScalingBuff && buff.source.origin === "P3"
     )!;
+    const [bonus] = p3.dynamicBuffs(
+      new StatSheet([{ key: "baseAtk", value: 1000 }]),
+      [atk2000]
+    );
+    expect(bonus.key).toBe("reactionBaseDmg%");
+    expect(bonus.value).toBeCloseTo(0.07);
+    expect(p3.dynamicBuffs(atk2000, [atk2000])[0].value).toBeCloseTo(0.14);
     expect(
-      p3.dynamicBuffs(new StatSheet([{ key: "baseAtk", value: 10 }]), [atk2000])
-    ).toEqual([{ key: "reactionBaseDmg%", value: 0.07 }]);
-    expect(p3.dynamicBuffs(atk2000, [atk2000])[0].value).toBe(0.14);
+      p3.dynamicBuffs(new StatSheet([{ key: "baseAtk", value: 3000 }]), [
+        atk2000,
+      ])[0].value
+    ).toBe(0.14);
     const q = character.buffs.find((buff) => buff.source.origin === "Q")!;
     expect(q.target.receiver).toBe("team");
     expect(
@@ -363,10 +392,13 @@ describe("Danica 7.2.50 beta", () => {
   });
 });
 
-describe("Anastasya 7.2.50 beta", () => {
-  it.each(["stellarConduct", "stellarSwirl"])(
+describe("Anastasya 7.2 beta", () => {
+  it.each([
+    ["stellarConduct", 0.605],
+    ["stellarSwirl", 0.907],
+  ])(
     "replaces only the final Crown and Honor hits under %s",
-    (radiance) => {
+    (radiance, crownMultiplier) => {
       const love = anastasya(0, `love-${radiance}-sealed`);
       const crown = love.getFormulaEntry("anastasya-crown")!.parts;
       expect(crown.map((part) => part.hits ?? 1)).toEqual([1, 1, 1]);
@@ -377,6 +409,10 @@ describe("Anastasya 7.2.50 beta", () => {
       ]);
       expect(crown.every((part) => part.offField)).toBe(true);
       expect(love.combo["anastasya-crown"]).toBe(10);
+      expect(crown[1].formula.talentMultiplier).toBeCloseTo(crownMultiplier, 3);
+      expect(
+        love.buffs.find((buff) => buff.source.origin === "Q")?.staticBuffs
+      ).toEqual([{ key: "reactionDmg%", value: 0.3 }]);
       const honor = anastasya(0, `honor-${radiance}-sealed`);
       expect(honor.getFormulaEntry("anastasya-honor-n1")!.parts).toHaveLength(
         1
