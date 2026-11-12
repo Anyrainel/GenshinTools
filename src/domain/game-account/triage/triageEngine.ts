@@ -110,7 +110,7 @@ export function runTriage(
     allArtifacts.push({ artifact: art, equippedOn: null });
   }
 
-  // TODO: support 4-star artifacts (different thresholds needed)
+  // Four-star artifacts bypass evaluation until their tier thresholds are supported.
   const fiveStarArtifacts = allArtifacts.filter(
     (artifactEntry) => artifactEntry.artifact.rarity === 5
   );
@@ -594,8 +594,18 @@ export function runTriage(
     specialRules: p.specialRules,
     supplyDemand: p.supplyDemand,
   }));
+  const protectedFourStarDecisions = allArtifacts
+    .filter(({ artifact }) => artifact.rarity === 4)
+    .map<TriageDecision>(({ artifact }) => ({
+      artifact,
+      label: artifact.lock ? "lock" : "unlock",
+      decidingResult: null,
+      allResults: [],
+      specialRules: ["rarityProtected"],
+      supplyDemand: null,
+    }));
   return {
-    decisions,
+    decisions: [...decisions, ...protectedFourStarDecisions],
     flexPatterns: allFlex,
     statistics: buildTriageStatistics({
       activeGroups: selectActiveBuildGroups(buildGroups, accountData, settings),

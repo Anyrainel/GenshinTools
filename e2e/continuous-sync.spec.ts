@@ -96,15 +96,17 @@ test("continuous scanner sync starts from account management and survives browsi
   const status = page.getByRole("region", {
     name: "Continuous Sync (Capture)",
   });
-  await expect(status).toContainText("Syncing");
+  await expect(status).toContainText(/Last sync: \d+[sm] ago/);
+  await expect(status).toContainText("Port 8765");
+  await expect(status.getByRole("button")).toHaveCount(1);
   await dialog.getByRole("button", { name: "Close", exact: true }).click();
   await expect(
-    status.getByRole("status").getByText("Syncing", { exact: true })
+    status.getByRole("status").getByText(/Last sync: \d+[sm] ago/)
   ).toBeVisible();
   expect(
     await status
       .getByRole("status")
-      .getByText("Syncing", { exact: true })
+      .getByText(/Last sync: \d+[sm] ago/)
       .evaluate((element) => element.scrollWidth <= element.clientWidth)
   ).toBe(true);
   await page.locator('a[href="/"]').first().click();

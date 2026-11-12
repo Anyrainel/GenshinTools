@@ -62,6 +62,47 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 describe("hands-off continuous inventory", () => {
+  it("tracks pending requests and refreshes receipt time even when inventory is unchanged", async () => {
+    const startedAt = Date.UTC(2026, 10, 12, 12);
+    vi.setSystemTime(startedAt);
+    let resolve!: (value: ContinuousSnapshot) => void;
+    vi.mocked(fetchContinuous).mockImplementationOnce(
+      () =>
+        new Promise((done) => {
+          resolve = done;
+        })
+    );
+    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    expect(view.result.current.isRequesting).toBe(true);
+    expect(view.result.current.requestStartedAt).toBe(startedAt);
+    expect(view.result.current.lastSyncedAt).toBeUndefined();
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1250);
+      resolve(snapshot);
+    });
+    expect(view.result.current.isRequesting).toBe(false);
+    expect(view.result.current.lastSyncedAt).toBe(startedAt + 1250);
+    expect(view.result.current.lastSyncedAt).not.toBe(snapshot.updatedAt);
+    expect(view.result.current.updatedAt).toBe(snapshot.updatedAt);
+
+    await tick();
+    expect(view.result.current.requestStartedAt).toBe(startedAt + 4250);
+    expect(view.result.current.lastSyncedAt).toBe(startedAt + 4250);
+    expect(view.result.current.isRequesting).toBe(false);
+    expect(applyAccountImport).toHaveBeenCalledTimes(1);
+
+    vi.mocked(fetchContinuous).mockRejectedValue(
+      new TypeError("Failed to fetch")
+    );
+    await tick();
+    expect(view.result.current.status).toBe("disconnected");
+    expect(view.result.current.isRequesting).toBe(false);
+    expect(view.result.current.requestStartedAt).toBe(startedAt + 7250);
+    expect(view.result.current.lastSyncedAt).toBe(startedAt + 4250);
+    view.unmount();
+  });
+
   it("requires opt-in once, applies immediately, and deduplicates unchanged data", async () => {
     const view = renderHook(
       ({ profile }) => useContinuousInventorySync(profile, 8765),
@@ -232,6 +273,8 @@ describe("hands-off continuous inventory", () => {
       await flush();
       expect(view.result.current.status).toBe(expected);
       expect(view.result.current.details).toBe("diagnostic");
+      expect(view.result.current.isRequesting).toBe(false);
+      expect(view.result.current.lastSyncedAt).toBeUndefined();
       vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
       await tick();
       expect(view.result.current.status).toBe("synced");
@@ -252,10 +295,14 @@ describe("hands-off continuous inventory", () => {
       { initialProps: { profile: 123456789 as number | null, port: 8765 } }
     );
     const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
+    expect(view.result.current.isRequesting).toBe(true);
+    expect(view.result.current.requestStartedAt).toBe(Date.now());
     view.rerender({ profile: null, port: 8765 });
     expect(signal.aborted).toBe(true);
+    expect(view.result.current).toEqual({ status: "off", isRequesting: false });
     await act(async () => resolve(snapshot));
     expect(applyAccountImport).not.toHaveBeenCalled();
+    expect(view.result.current).toEqual({ status: "off", isRequesting: false });
     view.rerender({ profile: 987654321, port: 9123 });
     await flush();
     expect(applyAccountImport).toHaveBeenLastCalledWith(

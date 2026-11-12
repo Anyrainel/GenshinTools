@@ -1,8 +1,8 @@
 export const i18nUiData = {
   continuous: {
-    active: { en: "Syncing", zh: "同步中" },
-    pending: { en: "Waiting", zh: "等待中" },
-    attention: { en: "Needs attention", zh: "请检查" },
+    port: { en: "Port {0}", zh: "端口 {0}" },
+    lastSyncSeconds: { en: "Last sync: {0}s ago", zh: "上次同步：{0}秒前" },
+    lastSyncMinutes: { en: "Last sync: {0}m ago", zh: "上次同步：{0}分钟前" },
     title: { en: "Continuous Sync (Capture)", zh: "持续同步（抓包）" },
     newBadge: { en: "New", zh: "新功能" },
     start: { en: "Start sync", zh: "开启同步" },
@@ -27,8 +27,8 @@ export const i18nUiData = {
       zh: "当前扫描器不支持持续同步，请更新 GGScanner 并重启服务。",
     },
     failed: {
-      en: "Capture failed. Check the diagnostics below, fix the cause, and restart the scanner server. Retrying…",
-      zh: "抓包失败。请根据下方诊断信息排查问题并重启扫描器服务。正在重试…",
+      en: "Capture failed. Check GGScanner and restart its server. Retrying…",
+      zh: "抓包失败。请检查 GGScanner 并重启扫描器服务。正在重试…",
     },
     disconnected: {
       en: "Connection lost or blocked. Check the port, scanner server and browser local-network permission. Retrying…",
@@ -2976,8 +2976,8 @@ export const i18nUiData = {
     tabLabel: { en: "Artifact Triage", zh: "锁定助手" },
     title: { en: "Artifact Triage Helper", zh: "圣遗物锁定助手" },
     subtitle: {
-      en: "{0} artifacts analyzed:",
-      zh: "已分析 {0} 个圣遗物：",
+      en: "{0} artifacts in inventory:",
+      zh: "共 {0} 个圣遗物：",
     },
     recommendLock: {
       en: "Recommend Lock",
@@ -3000,8 +3000,8 @@ export const i18nUiData = {
       zh: "保护区不参与",
     },
     noActionDesc: {
-      en: "High-level or equipped artifacts — already protected, no lock change needed",
-      zh: "高等级或已装备的圣遗物——已受保护，无需改变锁定状态",
+      en: "4-star artifacts and artifacts protected by level or equipment rules; lock status stays unchanged",
+      zh: "四星圣遗物及受等级、装备保护规则保护的圣遗物，保持当前锁定状态",
     },
     noChange: {
       en: "No Change",
@@ -3070,6 +3070,10 @@ export const i18nUiData = {
       allSetErHoard: { en: "4-liner ER (all sets)", zh: "4初始充能（全套装）" },
       levelProtected: { en: "Level protected", zh: "高等级保护" },
       equippedProtected: { en: "Equipped protected", zh: "已装备保护" },
+      rarityProtected: {
+        en: "4-star artifacts are not evaluated for locking yet",
+        zh: "4星目前不参与锁定判断",
+      },
       doubleCrit: { en: "4-liner CR+CD", zh: "4初始双暴" },
       setSlotFloor: { en: "Set+slot keep", zh: "套装部位最低保留" },
       offPiecePattern: { en: "Off-piece match", zh: "散件匹配保留" },

@@ -55,6 +55,7 @@ const SP_KEY = {
   allSetErHoard: "triage.sp.allSetErHoard",
   levelProtected: "triage.sp.levelProtected",
   equippedProtected: "triage.sp.equippedProtected",
+  rarityProtected: "triage.sp.rarityProtected",
   doubleCrit: "triage.sp.doubleCrit",
   setSlotFloor: "triage.sp.setSlotFloor",
   offPiecePattern: "triage.sp.offPiecePattern",
@@ -283,9 +284,11 @@ export function TriageCard({
             {(() => {
               let spRules = decision.specialRules;
               if (isProtected) {
-                spRules = spRules.includes("levelProtected")
-                  ? ["levelProtected"]
-                  : spRules.filter((sp) => sp === "equippedProtected");
+                spRules = spRules.includes("rarityProtected")
+                  ? ["rarityProtected"]
+                  : spRules.includes("levelProtected")
+                    ? ["levelProtected"]
+                    : spRules.filter((sp) => sp === "equippedProtected");
               }
               if (spRules.length > 0) {
                 return (

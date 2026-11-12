@@ -63,6 +63,7 @@ export type TriageSpecialRule =
   | "allSetErHoard"
   | "levelProtected"
   | "equippedProtected"
+  | "rarityProtected"
   | "doubleCrit"
   | "setSlotFloor"
   | "offPiecePattern"

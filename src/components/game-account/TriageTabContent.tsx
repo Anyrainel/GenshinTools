@@ -175,19 +175,19 @@ export function TriageTabContent({
         isStale && "opacity-60 pointer-events-none transition-opacity"
       )}
     >
-      <TabsList className="w-full bg-card/80 backdrop-blur-md h-auto gap-1 grid grid-cols-2 sm:grid-cols-4 sticky top-0 z-20">
+      <TabsList className="w-full shrink-0 bg-card/80 backdrop-blur-md group-data-[orientation=horizontal]/tabs:h-auto gap-1 grid grid-cols-2 sm:grid-cols-4 sticky top-0 z-20">
         {TABS.map(({ value, labelKey, descKey, icon: Icon, color }) => (
           <TabsTrigger
             key={value}
             value={value}
             title={t.ui(descKey)}
             className={cn(
-              "gap-1.5 data-[state=active]:border data-[state=active]:shadow-none rounded-md",
+              "h-auto min-h-9 min-w-0 gap-1.5 whitespace-normal text-xs sm:text-sm data-[state=active]:border data-[state=active]:shadow-none rounded-md",
               COLOR_CLASS[color]
             )}
           >
             <Icon className="w-3.5 h-3.5" />
-            {t.ui(labelKey)}
+            <span className="min-w-0">{t.ui(labelKey)}</span>
             <Badge variant="secondary" className="text-xs ml-0.5">
               {itemsMap[value].length}
             </Badge>

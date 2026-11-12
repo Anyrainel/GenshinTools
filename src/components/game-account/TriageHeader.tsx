@@ -54,7 +54,7 @@ const TIER_KEY = {
 
 const TIER_COLOR = TRIAGE_TIER_COLORS.text;
 const TRIAGE_ARTIFACT_SET_IDS = sortedArtifacts
-  .filter((artifactSet) => artifactSet.rarity === 5)
+  .filter((artifactSet) => artifactSet.rarity >= 4)
   .map((artifactSet) => artifactSet.id);
 const TRIAGE_STATUS_FILTERS = [
   "flexRuleLocked",
@@ -145,6 +145,7 @@ export function TriageHeader({
     fodder: 0,
   };
   for (const d of decisions) {
+    if (d.specialRules.includes("rarityProtected")) continue;
     const tier = d.decidingResult?.tier ?? "fodder";
     tierCounts[tier]++;
   }

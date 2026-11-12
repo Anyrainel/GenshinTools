@@ -24,6 +24,9 @@ export type ContinuousStatus =
 
 interface ContinuousState {
   status: ContinuousStatus;
+  isRequesting: boolean;
+  requestStartedAt?: number;
+  lastSyncedAt?: number;
   details?: string;
   updatedAt?: number;
   warnings?: number;
@@ -36,10 +39,13 @@ export function useContinuousInventorySync(
   fallbackProfileId: number | null,
   port: number
 ) {
-  const [state, setState] = useState<ContinuousState>({ status: "off" });
+  const [state, setState] = useState<ContinuousState>({
+    status: "off",
+    isRequesting: false,
+  });
   useEffect(() => {
     if (fallbackProfileId === null) {
-      setState({ status: "off" });
+      setState({ status: "off", isRequesting: false });
       return;
     }
     let disposed = false;
@@ -51,11 +57,17 @@ export function useContinuousInventorySync(
       content: string;
       data: AccountData | undefined;
     } | null = null;
-    setState({ status: "connecting" });
+    setState({ status: "connecting", isRequesting: false });
     const poll = async () => {
+      setState((previous) => ({
+        ...previous,
+        isRequesting: true,
+        requestStartedAt: Date.now(),
+      }));
       try {
         const snapshot = await fetchContinuous(port, controller.signal);
         if (disposed) return;
+        const receivedAt = Date.now();
         if (
           latestRevision?.sessionId === snapshot.sessionId &&
           snapshot.revision < latestRevision.revision
@@ -103,17 +115,22 @@ export function useContinuousInventorySync(
             content,
             data: useAccountStore.getState().accounts[profileId]?.data,
           };
-          setState({
+          setState((previous) => ({
+            ...previous,
             status: "synced",
+            details: undefined,
+            lastSyncedAt: receivedAt,
             updatedAt: snapshot.updatedAt,
             warnings: result.warnings.length,
             targetProfileId: profileId,
             routing: identity ? "uid" : "profile",
-          });
+          }));
         } else
           setState((previous) => ({
             ...previous,
             status: "synced",
+            details: undefined,
+            lastSyncedAt: receivedAt,
             updatedAt: snapshot.updatedAt,
             targetProfileId: profileId,
             routing: identity ? "uid" : "profile",
@@ -156,9 +173,12 @@ export function useContinuousInventorySync(
           status = "invalid";
           details = error.message;
         }
-        setState({ status, details });
+        setState((previous) => ({ ...previous, status, details }));
       } finally {
-        if (!disposed) timer = setTimeout(poll, 3000);
+        if (!disposed) {
+          setState((previous) => ({ ...previous, isRequesting: false }));
+          timer = setTimeout(poll, 3000);
+        }
       }
     };
     void poll();

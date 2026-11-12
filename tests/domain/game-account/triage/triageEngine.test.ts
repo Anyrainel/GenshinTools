@@ -460,15 +460,60 @@ describe("runTriage", () => {
     expect(flexPatterns.length).toBeGreaterThan(0);
   });
 
-  it("skips 4-star artifacts", () => {
-    const art = makeArt({ rarity: 4 });
-    const account = makeAccount([], [art]);
+  it("protects equipped and unequipped 4-star artifacts without changing their lock state", () => {
+    const equipped = makeArt({ rarity: 4, lock: true, level: 16 });
+    const unequipped = makeArt({ rarity: 4, lock: false });
+    const account = makeAccount(
+      [{ key: "char_a", artifacts: { flower: equipped } }],
+      [unequipped]
+    );
     const { decisions } = runTriage(
       account,
       [{ characterId: "char_a", builds: [makeBuild()] }],
-      { ...SETTINGS, ownedOnly: false }
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        highLevelProtection: false,
+        equippedProtection: false,
+      }
     );
-    expect(decisions).toHaveLength(0);
+    expect(decisions).toEqual([
+      {
+        artifact: equipped,
+        label: "lock",
+        decidingResult: null,
+        allResults: [],
+        specialRules: ["rarityProtected"],
+        supplyDemand: null,
+      },
+      {
+        artifact: unequipped,
+        label: "unlock",
+        decidingResult: null,
+        allResults: [],
+        specialRules: ["rarityProtected"],
+        supplyDemand: null,
+      },
+    ]);
+  });
+
+  it("does not let protected 4-star artifacts alter five-star decisions or supply statistics", () => {
+    const fiveStar = makeArt({});
+    const fourStar = makeArt({ rarity: 4, lock: true });
+    const groups = [{ characterId: "char_a", builds: [makeBuild()] }];
+    const settings = { ...SETTINGS, ownedOnly: false };
+    const baseline = runTriage(makeAccount([], [fiveStar]), groups, settings);
+    const mixed = runTriage(
+      makeAccount([], [fourStar, fiveStar]),
+      groups,
+      settings
+    );
+
+    expect(
+      mixed.decisions.filter((decision) => decision.artifact.rarity === 5)
+    ).toEqual(baseline.decisions);
+    expect(mixed.statistics).toEqual(baseline.statistics);
+    expect(mixed.decisions).toHaveLength(2);
   });
 
   it("custom patterns from customFlexInputs cause off-piece special rule to fire", () => {

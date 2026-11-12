@@ -155,11 +155,14 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
   const hasSP = useCallback(
     (d: TriageDecision) =>
       d.specialRules.includes("levelProtected") ||
-      d.specialRules.includes("equippedProtected"),
+      d.specialRules.includes("equippedProtected") ||
+      d.specialRules.includes("rarityProtected"),
     []
   );
   const passesTier = useCallback(
-    (d: TriageDecision) => tierFilter.has(d.decidingResult?.tier ?? "fodder"),
+    (d: TriageDecision) =>
+      d.specialRules.includes("rarityProtected") ||
+      tierFilter.has(d.decidingResult?.tier ?? "fodder"),
     [tierFilter]
   );
   const passesFilters = useCallback(
@@ -168,7 +171,9 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
       (artifactSetFilter.size === 0 ||
         artifactSetFilter.has(d.artifact.setKey)) &&
       (slotFilter.size === 0 || slotFilter.has(d.artifact.slotKey)) &&
-      (statusFilter.size === 0 || statusFilter.has(getDecisionStatus(d))),
+      (statusFilter.size === 0 ||
+        d.specialRules.includes("rarityProtected") ||
+        statusFilter.has(getDecisionStatus(d))),
     [passesTier, artifactSetFilter, slotFilter, statusFilter]
   );
   const sortDecisions = useCallback(
