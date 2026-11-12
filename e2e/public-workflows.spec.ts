@@ -75,6 +75,52 @@ async function dismissInitialBuildPrompt(page: Page) {
     .click();
 }
 
+test("sort options keep a visible selection when tooltips open and close", async ({
+  page,
+  isMobile,
+}) => {
+  await page.goto("/artifact-filter/configure");
+  await dismissInitialBuildPrompt(page);
+  const filters = page.getByRole("button", { name: "Filters", exact: true });
+  if (isMobile) await filters.click();
+
+  const group = page.locator('[data-slot="toggle-group"]:visible').nth(2);
+  const options = group.getByRole("radio");
+  for (const name of ["Sort ascending", "Sort descending", "No sorting"]) {
+    const selected = group.getByRole("radio", { name, exact: true });
+    await selected.click();
+    await expect(selected).toHaveAttribute("aria-checked", "true");
+    await expect(selected).toHaveAttribute("data-state", "on");
+    await page.mouse.move(0, 0, { steps: 5 });
+    if (!isMobile) {
+      await selected.hover();
+      await expect(page.getByRole("tooltip")).toHaveText(name);
+      await expect(selected).toHaveAttribute("data-state", "on");
+      await page.mouse.move(0, 0, { steps: 5 });
+    }
+    await expect(page.getByRole("tooltip")).toHaveCount(0);
+    await expect
+      .poll(() =>
+        options.evaluateAll((buttons) => {
+          const selected = buttons.find(
+            (button) => button.getAttribute("aria-checked") === "true"
+          )!;
+          const background = getComputedStyle(selected).backgroundColor;
+          return (
+            background !== "rgba(0, 0, 0, 0)" &&
+            buttons
+              .filter((button) => button !== selected)
+              .every(
+                (button) =>
+                  getComputedStyle(button).backgroundColor !== background
+              )
+          );
+        })
+      )
+      .toBe(true);
+  }
+});
+
 test("@visual build-card weapons stay anchored to the right with placeholders and responsive caps", async ({
   page,
 }, testInfo) => {

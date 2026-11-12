@@ -63,19 +63,21 @@ export function SortToggleGroup({
     >
       {options.map(({ value, label, icon: Icon, className }) => (
         <Tooltip key={value}>
-          <TooltipTrigger asChild>
-            <ToggleGroupItem
-              value={value}
-              aria-label={label}
-              disabled={disabled}
-              className={cn(
-                "h-7 w-9 px-0 border data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100",
-                className
-              )}
-            >
+          {/* Keep the toggle's on/off state on the shared trigger button. */}
+          <ToggleGroupItem
+            asChild
+            value={value}
+            aria-label={label}
+            disabled={disabled}
+            className={cn(
+              "h-7 w-9 px-0 border data-[state=on]:bg-primary/70 data-[state=on]:text-primary-foreground disabled:opacity-100",
+              className
+            )}
+          >
+            <TooltipTrigger>
               <Icon className="h-4 w-4" />
-            </ToggleGroupItem>
-          </TooltipTrigger>
+            </TooltipTrigger>
+          </ToggleGroupItem>
           <TooltipContent>{label}</TooltipContent>
         </Tooltip>
       ))}
