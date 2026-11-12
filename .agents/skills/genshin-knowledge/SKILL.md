@@ -13,6 +13,9 @@ description: >
 Reference material for verifying concrete game mechanics and implementing, reviewing, or tracking damage calculator
 extensions in `src/domain/combat/damage/`. This is not a general team-building, guide-research, or optimization-design skill.
 
+Standalone physical damage triggered by weapons is outside the calculator's supported scope; maintain supported weapon
+stats and buffs without extending the weapon damage pipeline for those effects.
+
 ## Activation Boundary
 
 Use this skill when at least one of these is required:
