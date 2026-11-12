@@ -30,13 +30,8 @@
       "artifactSet": "aubade_of_morningstar_and_moon",
       "kOverride": 3,
       "characterId": "ineffa",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -84,13 +79,8 @@
       "artifactSet": "silken_moons_serenade",
       "kOverride": 3,
       "characterId": "ineffa",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -142,13 +132,8 @@
       "artifactSet": "gilded_dreams",
       "kOverride": 3,
       "characterId": "ineffa",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -196,13 +181,8 @@
       "artifactSet": "tenacity_of_the_millelith",
       "kOverride": 3,
       "characterId": "ineffa",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -249,13 +229,8 @@
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "citlali",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -306,13 +281,8 @@
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "citlali",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -359,13 +329,8 @@
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "citlali",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "minCons": 6,
       "source": "preset",
       "sandsWeights": [
@@ -414,12 +379,8 @@
       "artifactSet": "fragment_of_harmonic_whimsy",
       "characterId": "arlecchino",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -466,12 +427,8 @@
       ],
       "artifactSet": "fragment_of_harmonic_whimsy",
       "characterId": "clorinde",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -518,12 +475,8 @@
       ],
       "artifactSet": "unfinished_reverie",
       "characterId": "emilie",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -593,12 +546,8 @@
       ],
       "normalizer": 0.701977294544408,
       "artifactSet": "deepwood_memories",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "modified"
     },
     "DSYztEu": {
@@ -627,12 +576,8 @@
       "artifactSet": "obsidian_codex",
       "kOverride": 3,
       "characterId": "mualani",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -687,12 +632,8 @@
       ],
       "artifactSet": "obsidian_codex",
       "characterId": "kinich",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -735,12 +676,8 @@
       ],
       "artifactSet": "obsidian_codex",
       "characterId": "chasca",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -783,13 +720,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "chasca",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "support",
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["support", "dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -837,13 +769,8 @@
       "artifactSet": "obsidian_codex",
       "characterId": "mavuika",
       "kOverride": 3,
-      "styles": [
-        "on-field",
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -895,13 +822,8 @@
       "artifactSet": "crimson_witch_of_flames",
       "characterId": "mavuika",
       "kOverride": 3,
-      "styles": [
-        "on-field",
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -953,12 +875,8 @@
       "artifactSet": "wanderers_troupe",
       "characterId": "sethos",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1001,13 +919,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "lan_yan",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1050,12 +963,8 @@
       ],
       "artifactSet": "long_nights_oath",
       "characterId": "varesa",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1134,13 +1043,8 @@
       "normalizer": 0.6587132530636342,
       "artifactSet": "golden_troupe",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "source": "modified"
     },
     "F2_UEGG": {
@@ -1168,12 +1072,8 @@
         }
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1218,12 +1118,8 @@
       "halfSet1": "skill-dmg%-20",
       "characterId": "freminet",
       "halfSet2": "cryo%-15",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1274,12 +1170,8 @@
       ],
       "artifactSet": "pale_flame",
       "characterId": "freminet",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -1334,13 +1226,8 @@
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "xilonen",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1379,12 +1266,8 @@
       ],
       "artifactSet": "instructor",
       "characterId": "xilonen",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1427,12 +1310,8 @@
       ],
       "artifactSet": "obsidian_codex",
       "characterId": "xilonen",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "minCons": 6,
       "sandsWeights": [
@@ -1484,13 +1363,8 @@
       ],
       "artifactSet": "nighttime_whispers_in_the_echoing_woods",
       "characterId": "navia",
-      "styles": [
-        "on-field",
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1537,12 +1411,8 @@
       ],
       "artifactSet": "song_of_days_past",
       "characterId": "chevreuse",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1585,12 +1455,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "chevreuse",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1634,13 +1500,8 @@
       "halfSet1": "atk%-18",
       "halfSet2": "er-20",
       "characterId": "charlotte",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1683,12 +1544,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "lynette",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -1754,12 +1611,8 @@
       ],
       "normalizer": 0.7544436732353562,
       "artifactSet": "viridescent_venerer",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "modified"
     },
     "FnZeWYG": {
@@ -1787,12 +1640,8 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "lauma",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1843,12 +1692,8 @@
       ],
       "artifactSet": "silken_moons_serenade",
       "characterId": "lauma",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -1899,12 +1744,8 @@
         }
       ],
       "artifactSet": "night_of_the_skys_unveiling",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "minCons": 6,
       "sandsWeights": [
         {
@@ -1948,12 +1789,8 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "lauma",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "minCons": 6,
       "sandsWeights": [
@@ -2002,12 +1839,8 @@
       ],
       "artifactSet": "silken_moons_serenade",
       "kOverride": 3,
-      "roles": [
-        "support"
-      ],
-      "styles": [
-        "off-field"
-      ],
+      "roles": ["support"],
+      "styles": ["off-field"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2067,13 +1900,8 @@
       ],
       "artifactSet": "aubade_of_morningstar_and_moon",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -2133,12 +1961,8 @@
       ],
       "artifactSet": "silken_moons_serenade",
       "minCons": 2,
-      "roles": [
-        "support"
-      ],
-      "styles": [
-        "off-field"
-      ],
+      "roles": ["support"],
+      "styles": ["off-field"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2219,12 +2043,8 @@
         }
       ],
       "normalizer": 0.6834925443778894,
-      "roles": [
-        "support"
-      ],
-      "styles": [
-        "off-field"
-      ],
+      "roles": ["support"],
+      "styles": ["off-field"],
       "halfSet1": "em-80",
       "halfSet2": "em-80",
       "source": "modified"
@@ -2255,12 +2075,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2312,12 +2128,8 @@
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2373,12 +2185,8 @@
       ],
       "artifactSet": "night_of_the_skys_unveiling",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2425,12 +2233,8 @@
         }
       ],
       "artifactSet": "night_of_the_skys_unveiling",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2477,13 +2281,8 @@
         }
       ],
       "artifactSet": "silken_moons_serenade",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2534,13 +2333,8 @@
         }
       ],
       "artifactSet": "viridescent_venerer",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2591,12 +2385,8 @@
       ],
       "artifactSet": "silken_moons_serenade",
       "characterId": "aino",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2643,12 +2433,8 @@
       ],
       "artifactSet": "instructor",
       "characterId": "aino",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2700,13 +2486,8 @@
       "artifactSet": "golden_troupe",
       "characterId": "furina",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2762,12 +2543,8 @@
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "furina",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2820,12 +2597,8 @@
       "halfSet1": "er-20",
       "halfSet2": "er-20",
       "characterId": "furina",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2876,12 +2649,8 @@
         }
       ],
       "artifactSet": "night_of_the_skys_unveiling",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -2920,12 +2689,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "dahlia",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -2977,12 +2742,8 @@
       "artifactSet": "crimson_witch_of_flames",
       "characterId": "gaming",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "minCons": 6,
       "sandsWeights": [
         {
@@ -3030,12 +2791,8 @@
       ],
       "artifactSet": "golden_troupe",
       "characterId": "chiori",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -3078,13 +2835,8 @@
       ],
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "chiori",
-      "styles": [
-        "on-field",
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
       "minCons": 6,
       "sandsWeights": [
         {
@@ -3133,13 +2885,8 @@
       "halfSet1": "atk%-18",
       "halfSet2": "atk%-18",
       "characterId": "xianyun",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -3204,12 +2951,8 @@
         }
       ],
       "normalizer": 0.696594696824573,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "artifactSet": "long_nights_oath",
       "minCons": 6,
       "source": "modified"
@@ -3239,13 +2982,8 @@
       ],
       "artifactSet": "song_of_days_past",
       "characterId": "sigewinne",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -3298,13 +3036,8 @@
       "halfSet1": "hp%-20",
       "halfSet2": "hp%-20",
       "characterId": "sigewinne",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -3347,12 +3080,8 @@
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "kachina",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -3423,12 +3152,8 @@
       "normalizer": 0.7102089878722937,
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "modified"
     },
     "EvhRG0G": {
@@ -3448,12 +3173,8 @@
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
       "characterId": "iansan",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -3496,12 +3217,8 @@
       ],
       "artifactSet": "finale_of_the_deep_galleries",
       "characterId": "skirk",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -3549,12 +3266,8 @@
       "artifactSet": "marechaussee_hunter",
       "characterId": "wriothesley",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -3602,12 +3315,8 @@
       "artifactSet": "disenchantment_in_deep_shadow",
       "characterId": "wriothesley",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -3650,12 +3359,8 @@
       ],
       "artifactSet": "marechaussee_hunter",
       "characterId": "neuvillette",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -3702,12 +3407,8 @@
       ],
       "artifactSet": "marechaussee_hunter",
       "characterId": "lyney",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -3746,12 +3447,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "shenhe",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -3789,12 +3486,8 @@
         }
       ],
       "characterId": "shenhe",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "halfSet1": "atk%-18",
       "halfSet2": "atk%-18",
       "sandsWeights": [
@@ -3837,12 +3530,8 @@
       "halfSet1": "hp%-20",
       "halfSet2": "hp%-20",
       "characterId": "kirara",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -3883,13 +3572,8 @@
       "halfSet1": "hp%-20",
       "halfSet2": "hp%-20",
       "characterId": "kirara",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -3928,12 +3612,8 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "baizhu",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -3995,12 +3675,8 @@
       ],
       "normalizer": 0.701977294544408,
       "artifactSet": "deepwood_memories",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "modified"
     },
     "AEh3Fk0": {
@@ -4019,12 +3695,8 @@
         }
       ],
       "characterId": "baizhu",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "halfSet1": "hp%-20",
       "halfSet2": "hp%-20",
       "sandsWeights": [
@@ -4074,12 +3746,8 @@
       "artifactSet": "crimson_witch_of_flames",
       "kOverride": 3,
       "characterId": "hu_tao",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -4122,13 +3790,8 @@
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "zhongli",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -4176,13 +3839,8 @@
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
       "characterId": "yelan",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -4232,12 +3890,8 @@
       "halfSet1": "hydro%-15",
       "halfSet2": "hydro%-15",
       "characterId": "yelan",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "minCons": 6,
       "sandsWeights": [
         {
@@ -4286,12 +3940,8 @@
       "artifactSet": "gilded_dreams",
       "kOverride": 3,
       "characterId": "cyno",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -4339,12 +3989,8 @@
       "artifactSet": "disenchantment_in_deep_shadow",
       "kOverride": 3,
       "characterId": "cyno",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -4391,12 +4037,8 @@
       ],
       "artifactSet": "desert_pavilion_chronicle",
       "characterId": "wanderer",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -4439,12 +4081,8 @@
       ],
       "artifactSet": "echoes_of_an_offering",
       "characterId": "wanderer",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "minCons": 6,
       "sandsWeights": [
         {
@@ -4493,12 +4131,8 @@
       "artifactSet": "gilded_dreams",
       "kOverride": 3,
       "characterId": "alhaitham",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -4545,12 +4179,8 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "nahida",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -4605,13 +4235,8 @@
       ],
       "artifactSet": "gilded_dreams",
       "characterId": "nahida",
-      "styles": [
-        "off-field",
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field", "on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -4663,12 +4288,8 @@
       "artifactSet": "emblem_of_severed_fate",
       "characterId": "dehya",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "minCons": 4,
       "sandsWeights": [
         {
@@ -4716,12 +4337,8 @@
       ],
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "dehya",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -4760,12 +4377,8 @@
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "dehya",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -4804,12 +4417,8 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "yaoyao",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -4861,12 +4470,8 @@
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "faruzan",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "minCons": 6,
       "sandsWeights": [
         {
@@ -4910,12 +4515,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "mika",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -4958,12 +4559,8 @@
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "layla",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "sandsWeights": [
         {
           "stat": "hp%",
@@ -5003,12 +4600,8 @@
       "halfSet1": "hp%-20",
       "halfSet2": "hp%-20",
       "characterId": "nilou",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -5042,12 +4635,8 @@
         }
       ],
       "characterId": "nilou",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "artifactSet": "instructor",
       "source": "preset",
       "sandsWeights": [
@@ -5087,12 +4676,8 @@
       ],
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "kaveh",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -5131,12 +4716,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "yumemizuki_mizuki",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["on-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -5183,12 +4764,8 @@
       ],
       "artifactSet": "scarlet_proof",
       "characterId": "yumemizuki_mizuki",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -5231,12 +4808,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "ifa",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["on-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -5275,12 +4848,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "candace",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -5325,12 +4894,8 @@
       "halfSet1": "er-20",
       "halfSet2": "hp%-20",
       "characterId": "candace",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -5373,12 +4938,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "dori",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -5425,12 +4986,8 @@
       ],
       "artifactSet": "deepwood_memories",
       "characterId": "collei",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -5485,12 +5042,8 @@
       ],
       "artifactSet": "wanderers_troupe",
       "characterId": "tighnari",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -5533,12 +5086,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "shikanoin_heizou",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["on-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -5581,13 +5130,8 @@
       ],
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "kuki_shinobu",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "sustain"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -5635,12 +5179,8 @@
       "artifactSet": "echoes_of_an_offering",
       "kOverride": 3,
       "characterId": "kamisato_ayato",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -5683,12 +5223,8 @@
       ],
       "artifactSet": "golden_troupe",
       "characterId": "yae_miko",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -5758,13 +5294,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "disenchantment_in_deep_shadow",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "source": "preset"
     },
     "14x533O": {
@@ -5815,13 +5346,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "heart_of_the_furnace",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "source": "preset"
     },
     "2NFAU-m": {
@@ -5842,12 +5368,8 @@
       "halfSet1": "er-20",
       "halfSet2": "hp%-20",
       "characterId": "thoma",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -5886,12 +5408,8 @@
       ],
       "characterId": "thoma",
       "artifactSet": "flower_of_paradise_lost",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -5934,12 +5452,8 @@
       ],
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "gorou",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -5982,12 +5496,8 @@
       ],
       "artifactSet": "instructor",
       "characterId": "gorou",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -6030,12 +5540,8 @@
       ],
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "arataki_itto",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -6074,13 +5580,8 @@
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "characterId": "sangonomiya_kokomi",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -6127,13 +5628,8 @@
       ],
       "artifactSet": "flower_of_paradise_lost",
       "characterId": "sangonomiya_kokomi",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps",
-        "sustain"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps", "sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -6181,13 +5677,8 @@
       "artifactSet": "emblem_of_severed_fate",
       "characterId": "raiden_shogun",
       "kOverride": 3,
-      "styles": [
-        "on-field",
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field", "off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -6243,12 +5734,8 @@
       "artifactSet": "emblem_of_severed_fate",
       "characterId": "kujou_sara",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -6295,13 +5782,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "sayu",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -6352,12 +5834,8 @@
       ],
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "yun_jin",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -6402,12 +5880,8 @@
       "halfSet1": "def%-30",
       "halfSet2": "er-20",
       "characterId": "yun_jin",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -6450,12 +5924,8 @@
       ],
       "artifactSet": "archaic_petra",
       "characterId": "yun_jin",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -6502,12 +5972,8 @@
       ],
       "artifactSet": "shimenawas_reminiscence",
       "characterId": "yoimiya",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -6550,12 +6016,8 @@
       ],
       "artifactSet": "echoes_of_an_offering",
       "characterId": "yoimiya",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -6598,12 +6060,8 @@
       ],
       "artifactSet": "blizzard_strayer",
       "characterId": "kamisato_ayaka",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["on-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -6646,12 +6104,8 @@
         }
       ],
       "artifactSet": "noblesse_oblige",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -6690,12 +6144,8 @@
       ],
       "artifactSet": "viridescent_venerer",
       "characterId": "kaedehara_kazuha",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -6743,12 +6193,8 @@
       "artifactSet": "pale_flame",
       "kOverride": 3,
       "characterId": "eula",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -6791,13 +6237,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "diona",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -6844,12 +6285,8 @@
       ],
       "artifactSet": "crimson_witch_of_flames",
       "characterId": "yanfei",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -6900,12 +6337,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "characterId": "rosaria",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -6975,12 +6408,8 @@
       ],
       "normalizer": 0.7102089878722937,
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "modified"
     },
     "7LOww6u": {
@@ -7009,12 +6438,8 @@
       "artifactSet": "vermillion_hereafter",
       "kOverride": 3,
       "characterId": "xiao",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -7062,12 +6487,8 @@
       "artifactSet": "marechaussee_hunter",
       "kOverride": 3,
       "characterId": "xiao",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -7110,12 +6531,8 @@
       ],
       "artifactSet": "wanderers_troupe",
       "characterId": "ganyu",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -7190,12 +6607,8 @@
       "normalizer": 0.6587132530636342,
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "source": "modified"
     },
     "3zhLqYm": {
@@ -7217,12 +6630,8 @@
       "halfSet1": "er-20",
       "halfSet2": "er-20",
       "characterId": "ganyu",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -7265,12 +6674,8 @@
       ],
       "artifactSet": "husk_of_opulent_dreams",
       "characterId": "albedo",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -7317,12 +6722,8 @@
       ],
       "artifactSet": "golden_troupe",
       "characterId": "albedo",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -7366,12 +6767,8 @@
       "halfSet1": "def%-30",
       "halfSet2": "er-20",
       "characterId": "xinyan",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -7423,12 +6820,8 @@
       ],
       "artifactSet": "nymphs_dream",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -7472,12 +6865,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "minCons": 4,
       "sandsWeights": [
         {
@@ -7521,12 +6910,8 @@
         }
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -7569,12 +6954,8 @@
         }
       ],
       "artifactSet": "instructor",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "minCons": 2,
       "source": "preset",
       "sandsWeights": [
@@ -7626,12 +7007,8 @@
         }
       ],
       "artifactSet": "tenacity_of_the_millelith",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "minCons": 2,
       "sandsWeights": [
         {
@@ -7684,12 +7061,8 @@
       ],
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -7740,12 +7113,8 @@
         }
       ],
       "artifactSet": "scroll_of_the_hero_of_cinder_city",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -7792,12 +7161,8 @@
         }
       ],
       "artifactSet": "deepwood_memories",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -7849,12 +7214,8 @@
       ],
       "artifactSet": "oceanhued_clam",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -7912,13 +7273,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "tenacity_of_the_millelith",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
       "source": "preset"
     },
     "1EF2GAO": {
@@ -7943,12 +7299,8 @@
       ],
       "artifactSet": "nighttime_whispers_in_the_echoing_woods",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -7996,12 +7348,8 @@
       ],
       "artifactSet": "marechaussee_hunter",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8053,12 +7401,8 @@
       ],
       "artifactSet": "thundering_fury",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8105,12 +7449,8 @@
         }
       ],
       "artifactSet": "emblem_of_severed_fate",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8162,12 +7502,8 @@
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8214,12 +7550,8 @@
         }
       ],
       "artifactSet": "viridescent_venerer",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8262,12 +7594,8 @@
         }
       ],
       "artifactSet": "noblesse_oblige",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8306,13 +7634,8 @@
         }
       ],
       "artifactSet": "viridescent_venerer",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8359,13 +7682,8 @@
         }
       ],
       "artifactSet": "viridescent_venerer",
-      "styles": [
-        "off-field",
-        "on-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field", "on-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -8413,12 +7731,8 @@
       ],
       "artifactSet": "noblesse_oblige",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8466,12 +7780,8 @@
       ],
       "artifactSet": "tenacity_of_the_millelith",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8510,12 +7820,8 @@
         }
       ],
       "artifactSet": "song_of_days_past",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -8571,12 +7877,8 @@
       ],
       "artifactSet": "golden_troupe",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8628,12 +7930,8 @@
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -8685,13 +7983,8 @@
       ],
       "artifactSet": "emblem_of_severed_fate",
       "kOverride": 3,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8734,12 +8027,8 @@
         }
       ],
       "artifactSet": "noblesse_oblige",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8786,12 +8075,8 @@
         }
       ],
       "artifactSet": "emblem_of_severed_fate",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -8838,12 +8123,8 @@
         }
       ],
       "artifactSet": "husk_of_opulent_dreams",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -8894,12 +8175,8 @@
         }
       ],
       "artifactSet": "marechaussee_hunter",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "def%",
@@ -8954,12 +8231,8 @@
         }
       ],
       "artifactSet": "emblem_of_severed_fate",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "er",
@@ -9011,12 +8284,8 @@
       ],
       "artifactSet": "crimson_witch_of_flames",
       "kOverride": 3,
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "em",
@@ -9067,12 +8336,8 @@
         }
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -9119,12 +8384,8 @@
         }
       ],
       "artifactSet": "noblesse_oblige",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset",
       "sandsWeights": [
         {
@@ -9167,12 +8428,8 @@
         }
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -9215,12 +8472,8 @@
         }
       ],
       "artifactSet": "a_day_carved_from_rising_winds",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "sandsWeights": [
         {
           "stat": "atk%",
@@ -9290,14 +8543,8 @@
         }
       ],
       "normalizer": 0,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support", "sustain"],
       "artifactSet": "aubade_of_morningstar_and_moon",
       "source": "preset"
     },
@@ -9344,14 +8591,8 @@
         }
       ],
       "normalizer": 0,
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support", "sustain"],
       "artifactSet": "husk_of_opulent_dreams",
       "source": "preset",
       "minCons": 1
@@ -9396,12 +8637,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "viridescent_venerer",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "preset"
     },
     "Jj10PaG": {
@@ -9444,12 +8681,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "celestial_gift",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support"],
       "source": "modified"
     },
     "JQOwU2m": {
@@ -9488,13 +8721,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "celestial_gift",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset"
     },
     "JZiz0Du": {
@@ -9545,12 +8773,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "a_day_carved_from_rising_winds",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset"
     },
     "JsL3jYu": {
@@ -9613,12 +8837,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "disenchantment_in_deep_shadow",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset"
     },
     "J_f7VZO": {
@@ -9665,13 +8885,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "heart_of_the_furnace",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "source": "preset"
     },
     "J_f7Vfe": {
@@ -9722,13 +8937,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "heart_of_the_furnace",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "dps",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["dps", "support"],
       "minCons": 4,
       "source": "modified"
     },
@@ -9780,13 +8990,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "noblesse_oblige",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset"
     },
     "KIHCeIu": {
@@ -9845,12 +9050,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "disenchantment_in_deep_shadow",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset"
     },
     "Kau_ZmG": {
@@ -9889,13 +9090,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "tenacity_of_the_millelith",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "support",
-        "sustain"
-      ],
+      "styles": ["off-field"],
+      "roles": ["support", "sustain"],
       "source": "preset"
     },
     "KRbF-zO": {
@@ -9954,12 +9150,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "scarlet_proof",
-      "styles": [
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["on-field"],
+      "roles": ["dps"],
       "source": "preset"
     },
     "KkDLdxO": {
@@ -10006,13 +9198,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "disenchantment_in_deep_shadow",
-      "styles": [
-        "off-field",
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field", "on-field"],
+      "roles": ["dps"],
       "source": "custom"
     },
     "KikVIyu": {
@@ -10056,13 +9243,8 @@
       "normalizer": 0,
       "halfSet1": "em-80",
       "halfSet2": "em-80",
-      "styles": [
-        "off-field",
-        "on-field"
-      ],
-      "roles": [
-        "dps"
-      ],
+      "styles": ["off-field", "on-field"],
+      "roles": ["dps"],
       "source": "custom"
     },
     "KtXPLoG": {
@@ -10101,13 +9283,8 @@
       ],
       "normalizer": 0,
       "artifactSet": "heart_of_the_furnace",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
       "source": "custom"
     },
     "KsUEZjm": {
@@ -10147,834 +9324,271 @@
       "normalizer": 0,
       "halfSet1": "atk%-18",
       "halfSet2": "atk%-18",
-      "styles": [
-        "off-field"
-      ],
-      "roles": [
-        "sustain",
-        "support"
-      ],
+      "styles": ["off-field"],
+      "roles": ["sustain", "support"],
       "source": "custom"
     }
   },
   "characterBuilds": {
-    "ineffa": [
-      "FeFiQU8",
-      "FeFi2JG",
-      "FeFbxRe",
-      "FeFQVGG"
-    ],
-    "citlali": [
-      "EB7CPkm",
-      "EB6ymmG",
-      "EB7CPu8"
-    ],
-    "arlecchino": [
-      "CRMdwFO"
-    ],
-    "clorinde": [
-      "CagguVO"
-    ],
-    "emilie": [
-      "D0cqE68",
-      "D0cm1oG"
-    ],
-    "mualani": [
-      "DSYztEu"
-    ],
-    "kinich": [
-      "D9wtwku"
-    ],
-    "chasca": [
-      "DuV6n-u",
-      "DuU-PN8"
-    ],
-    "mavuika": [
-      "E1p9r7O",
-      "E1p0hBO"
-    ],
-    "sethos": [
-      "CtIdh3O"
-    ],
-    "lan_yan": [
-      "EKR7NIG"
-    ],
-    "varesa": [
-      "EmNO_vO"
-    ],
-    "escoffier": [
-      "F2_SKRO",
-      "F2_UEGG"
-    ],
-    "freminet": [
-      "Apmx9Du",
-      "Aqw0M2O"
-    ],
-    "xilonen": [
-      "Dbt0Wkm",
-      "Dbspw5m",
-      "Dbt0reG"
-    ],
-    "navia": [
-      "BioON2u"
-    ],
-    "chevreuse": [
-      "Bs6RhWm",
-      "Bs6GdWG"
-    ],
-    "charlotte": [
-      "BYQzdRG"
-    ],
-    "lynette": [
-      "AYHw3pm",
-      "AYHw3pn"
-    ],
-    "lauma": [
-      "FnZeWYG",
-      "FnZk_am",
-      "FnZkadm",
-      "FnZeWhe"
-    ],
-    "columbina": [
-      "IhqgSam",
-      "IhqgrEu"
-    ],
-    "illuga": [
-      "I-SmP7u",
-      "IyzxbmG"
-    ],
-    "durin": [
-      "GMpinGG",
-      "GMpxfA8"
-    ],
-    "flins": [
-      "G4BqW-O"
-    ],
-    "zibai": [
-      "Ir8i_kO"
-    ],
-    "jahoda": [
-      "GW7ztpG",
-      "GW7pz2G"
-    ],
-    "aino": [
-      "Fwtnzqm",
-      "FwtZU5m"
-    ],
-    "furina": [
-      "BQAI0BO",
-      "BQA4H1m",
-      "BOfjRIm"
-    ],
-    "nefer": [
-      "GDVtVEO"
-    ],
-    "dahlia": [
-      "FUxQxmG"
-    ],
-    "gaming": [
-      "C8kPzCG"
-    ],
-    "chiori": [
-      "CI2ZrC8",
-      "CI2MXIG"
-    ],
-    "xianyun": [
-      "B-NPETm",
-      "B_QWXIm"
-    ],
-    "sigewinne": [
-      "Cj-jX_G",
-      "Ci_roTG"
-    ],
-    "kachina": [
-      "DJEwZGG"
-    ],
-    "ororon": [
-      "DlB3U0G"
-    ],
-    "iansan": [
-      "EvhRG0G"
-    ],
-    "skirk": [
-      "FLdbHJu"
-    ],
-    "wriothesley": [
-      "B7YBeLO",
-      "B7YHMYu"
-    ],
-    "neuvillette": [
-      "BGsEcbO"
-    ],
-    "lyney": [
-      "Ahc2jbO"
-    ],
-    "shenhe": [
-      "48Vp4GG",
-      "47Suh_G"
-    ],
-    "kirara": [
-      "AN_6D-0",
-      "AOzwYGm"
-    ],
-    "baizhu": [
-      "AFftZXW",
-      "AFftZ2G",
-      "AEh3Fk0"
-    ],
-    "hu_tao": [
-      "4t45KYu"
-    ],
-    "zhongli": [
-      "6cqYBmG"
-    ],
-    "yelan": [
-      "7UixGOu",
-      "7TUW-dG"
-    ],
-    "cyno": [
-      "8fDNC0u",
-      "8fDUqIu"
-    ],
-    "wanderer": [
-      "9Nncq5u",
-      "9NnUR8G"
-    ],
-    "alhaitham": [
-      "9gPh_mu"
-    ],
-    "nahida": [
-      "8xrSooG",
-      "8xrTDPO"
-    ],
-    "dehya": [
-      "9z1jlpe",
-      "9z1oNNG",
-      "9z1cYXm"
-    ],
-    "yaoyao": [
-      "9X5eiHW"
-    ],
-    "faruzan": [
-      "9ETNhR8"
-    ],
-    "mika": [
-      "9pjd00G"
-    ],
-    "layla": [
-      "959KjX0"
-    ],
-    "nilou": [
-      "8UwVaEm",
-      "8VvBtLm"
-    ],
-    "kaveh": [
-      "A6LrIxO"
-    ],
-    "yumemizuki_mizuki": [
-      "Ed3DGNW",
-      "Ed3P4zO"
-    ],
-    "ifa": [
-      "FCJP9NW"
-    ],
-    "candace": [
-      "8oXICGG",
-      "8n1DH-m"
-    ],
-    "dori": [
-      "8DH6JGG"
-    ],
-    "collei": [
-      "83zAzIG"
-    ],
-    "tighnari": [
-      "7wf2cZO"
-    ],
-    "shikanoin_heizou": [
-      "7nL1YdW"
-    ],
-    "kuki_shinobu": [
-      "7e12q68"
-    ],
-    "kamisato_ayato": [
-      "4R7vMUu"
-    ],
-    "yae_miko": [
-      "14w-xy8",
-      "14x4IEO",
-      "14x533O"
-    ],
-    "thoma": [
-      "2NFAU-m",
-      "2OlNo7e"
-    ],
-    "gorou": [
-      "oIhfCG",
-      "oIkK5m"
-    ],
-    "arataki_itto": [
-      "59i4o0O"
-    ],
-    "sangonomiya_kokomi": [
-      "3ZFZmWG",
-      "3ZFlYfu"
-    ],
-    "raiden_shogun": [
-      "72moNbu"
-    ],
-    "kujou_sara": [
-      "Vgia9G"
-    ],
-    "sayu": [
-      "2z_VVoG"
-    ],
-    "yun_jin": [
-      "e-egyG",
-      "dnM9om",
-      "e-gb0m"
-    ],
-    "yoimiya": [
-      "2FRJFnO",
-      "2FRCmku"
-    ],
-    "kamisato_ayaka": [
-      "4aRtm0W",
-      "4aRx_0G"
-    ],
-    "kaedehara_kazuha": [
-      "37JYT3m"
-    ],
-    "eula": [
-      "xcsD2O"
-    ],
-    "diona": [
-      "6KCVg-m"
-    ],
-    "yanfei": [
-      "3Pxdc2u"
-    ],
-    "rosaria": [
-      "4jl-zGG",
-      "4jmBAWG"
-    ],
-    "xiao": [
-      "7LOww6u",
-      "7LO-LrO"
-    ],
-    "ganyu": [
-      "3_BoLpO",
-      "3_Bpvve",
-      "3zhLqYm"
-    ],
-    "albedo": [
-      "6m8bXCe",
-      "6m8oti8"
-    ],
-    "xinyan": [
-      "5t31BI0"
-    ],
-    "tartaglia": [
-      "61aYqmO",
-      "61aPjcW"
-    ],
-    "klee": [
-      "1pVILju",
-      "1pV37uu",
-      "1pV04au"
-    ],
-    "xiangling": [
-      "7C4rJPe"
-    ],
-    "traveler_pyro": [
-      "ETlILGG"
-    ],
-    "traveler_dendro": [
-      "8MbGvoG"
-    ],
-    "qiqi": [
-      "D2bUv0",
-      "D2VOmG"
-    ],
-    "ningguang": [
-      "1EF2GAO",
-      "1EF1VLO"
-    ],
-    "keqing": [
-      "1WswsAu"
-    ],
-    "kaeya": [
-      "1NY-PPe"
-    ],
-    "venti": [
-      "3Gdm4Du",
-      "3GdbRJm"
-    ],
-    "bennett": [
-      "3iZg9WG"
-    ],
-    "jean": [
-      "3rtnLIG"
-    ],
-    "sucrose": [
-      "4HpwHW0"
-    ],
-    "mona": [
-      "5J0AsGG",
-      "5J07QXm"
-    ],
-    "barbara": [
-      "50OF-G0"
-    ],
-    "fischl": [
-      "5SKO7S8",
-      "5SKSiQ8"
-    ],
-    "beidou": [
-      "1gB4N7m"
-    ],
-    "amber": [
-      "2679SmG"
-    ],
-    "xingqiu": [
-      "5beKcfe"
-    ],
-    "noelle": [
-      "5kyGh0O",
-      "5kyTf5O"
-    ],
-    "lisa": [
-      "MMfbfe"
-    ],
-    "diluc": [
-      "6AuW4ou"
-    ],
-    "razor": [
-      "6vSwOTu"
-    ],
-    "chongyun": [
-      "6TWYeGG"
-    ],
-    "varka": [
-      "J7mq5Tu",
-      "J7mq5X0"
-    ],
-    "linnea": [
-      "JH4slDO",
-      "JH4bCBy"
-    ],
-    "prune": [
-      "Jj0rLZm",
-      "Jj10PaG"
-    ],
-    "nicole": [
-      "JQOwU2m"
-    ],
-    "lohen": [
-      "JZiz0Du"
-    ],
-    "sandrone": [
-      "JsL3jYu"
-    ],
-    "odette": [
-      "J_f7VZO",
-      "J_f7Vfe"
-    ],
-    "alyosha": [
-      "K8yw4km"
-    ],
-    "traveler_cryo": [
-      "KIHCeIu"
-    ],
-    "vodyanitsa": [
-      "Kau_ZmG"
-    ],
-    "vesna": [
-      "KRbF-zO"
-    ],
-    "mitya": [
-      "KkDLdxO",
-      "KikVIyu"
-    ],
-    "valeriy": [
-      "KtXPLoG",
-      "KsUEZjm"
-    ]
+    "ineffa": ["FeFiQU8", "FeFi2JG", "FeFbxRe", "FeFQVGG"],
+    "citlali": ["EB7CPkm", "EB6ymmG", "EB7CPu8"],
+    "arlecchino": ["CRMdwFO"],
+    "clorinde": ["CagguVO"],
+    "emilie": ["D0cqE68", "D0cm1oG"],
+    "mualani": ["DSYztEu"],
+    "kinich": ["D9wtwku"],
+    "chasca": ["DuV6n-u", "DuU-PN8"],
+    "mavuika": ["E1p9r7O", "E1p0hBO"],
+    "sethos": ["CtIdh3O"],
+    "lan_yan": ["EKR7NIG"],
+    "varesa": ["EmNO_vO"],
+    "escoffier": ["F2_SKRO", "F2_UEGG"],
+    "freminet": ["Apmx9Du", "Aqw0M2O"],
+    "xilonen": ["Dbt0Wkm", "Dbspw5m", "Dbt0reG"],
+    "navia": ["BioON2u"],
+    "chevreuse": ["Bs6RhWm", "Bs6GdWG"],
+    "charlotte": ["BYQzdRG"],
+    "lynette": ["AYHw3pm", "AYHw3pn"],
+    "lauma": ["FnZeWYG", "FnZk_am", "FnZkadm", "FnZeWhe"],
+    "columbina": ["IhqgSam", "IhqgrEu"],
+    "illuga": ["I-SmP7u", "IyzxbmG"],
+    "durin": ["GMpinGG", "GMpxfA8"],
+    "flins": ["G4BqW-O"],
+    "zibai": ["Ir8i_kO"],
+    "jahoda": ["GW7ztpG", "GW7pz2G"],
+    "aino": ["Fwtnzqm", "FwtZU5m"],
+    "furina": ["BQAI0BO", "BQA4H1m", "BOfjRIm"],
+    "nefer": ["GDVtVEO"],
+    "dahlia": ["FUxQxmG"],
+    "gaming": ["C8kPzCG"],
+    "chiori": ["CI2ZrC8", "CI2MXIG"],
+    "xianyun": ["B-NPETm", "B_QWXIm"],
+    "sigewinne": ["Cj-jX_G", "Ci_roTG"],
+    "kachina": ["DJEwZGG"],
+    "ororon": ["DlB3U0G"],
+    "iansan": ["EvhRG0G"],
+    "skirk": ["FLdbHJu"],
+    "wriothesley": ["B7YBeLO", "B7YHMYu"],
+    "neuvillette": ["BGsEcbO"],
+    "lyney": ["Ahc2jbO"],
+    "shenhe": ["48Vp4GG", "47Suh_G"],
+    "kirara": ["AN_6D-0", "AOzwYGm"],
+    "baizhu": ["AFftZXW", "AFftZ2G", "AEh3Fk0"],
+    "hu_tao": ["4t45KYu"],
+    "zhongli": ["6cqYBmG"],
+    "yelan": ["7UixGOu", "7TUW-dG"],
+    "cyno": ["8fDNC0u", "8fDUqIu"],
+    "wanderer": ["9Nncq5u", "9NnUR8G"],
+    "alhaitham": ["9gPh_mu"],
+    "nahida": ["8xrSooG", "8xrTDPO"],
+    "dehya": ["9z1jlpe", "9z1oNNG", "9z1cYXm"],
+    "yaoyao": ["9X5eiHW"],
+    "faruzan": ["9ETNhR8"],
+    "mika": ["9pjd00G"],
+    "layla": ["959KjX0"],
+    "nilou": ["8UwVaEm", "8VvBtLm"],
+    "kaveh": ["A6LrIxO"],
+    "yumemizuki_mizuki": ["Ed3DGNW", "Ed3P4zO"],
+    "ifa": ["FCJP9NW"],
+    "candace": ["8oXICGG", "8n1DH-m"],
+    "dori": ["8DH6JGG"],
+    "collei": ["83zAzIG"],
+    "tighnari": ["7wf2cZO"],
+    "shikanoin_heizou": ["7nL1YdW"],
+    "kuki_shinobu": ["7e12q68"],
+    "kamisato_ayato": ["4R7vMUu"],
+    "yae_miko": ["14w-xy8", "14x4IEO", "14x533O"],
+    "thoma": ["2NFAU-m", "2OlNo7e"],
+    "gorou": ["oIhfCG", "oIkK5m"],
+    "arataki_itto": ["59i4o0O"],
+    "sangonomiya_kokomi": ["3ZFZmWG", "3ZFlYfu"],
+    "raiden_shogun": ["72moNbu"],
+    "kujou_sara": ["Vgia9G"],
+    "sayu": ["2z_VVoG"],
+    "yun_jin": ["e-egyG", "dnM9om", "e-gb0m"],
+    "yoimiya": ["2FRJFnO", "2FRCmku"],
+    "kamisato_ayaka": ["4aRtm0W", "4aRx_0G"],
+    "kaedehara_kazuha": ["37JYT3m"],
+    "eula": ["xcsD2O"],
+    "diona": ["6KCVg-m"],
+    "yanfei": ["3Pxdc2u"],
+    "rosaria": ["4jl-zGG", "4jmBAWG"],
+    "xiao": ["7LOww6u", "7LO-LrO"],
+    "ganyu": ["3_BoLpO", "3_Bpvve", "3zhLqYm"],
+    "albedo": ["6m8bXCe", "6m8oti8"],
+    "xinyan": ["5t31BI0"],
+    "tartaglia": ["61aYqmO", "61aPjcW"],
+    "klee": ["1pVILju", "1pV37uu", "1pV04au"],
+    "xiangling": ["7C4rJPe"],
+    "traveler_pyro": ["ETlILGG"],
+    "traveler_dendro": ["8MbGvoG"],
+    "qiqi": ["D2bUv0", "D2VOmG"],
+    "ningguang": ["1EF2GAO", "1EF1VLO"],
+    "keqing": ["1WswsAu"],
+    "kaeya": ["1NY-PPe"],
+    "venti": ["3Gdm4Du", "3GdbRJm"],
+    "bennett": ["3iZg9WG"],
+    "jean": ["3rtnLIG"],
+    "sucrose": ["4HpwHW0"],
+    "mona": ["5J0AsGG", "5J07QXm"],
+    "barbara": ["50OF-G0"],
+    "fischl": ["5SKO7S8", "5SKSiQ8"],
+    "beidou": ["1gB4N7m"],
+    "amber": ["2679SmG"],
+    "xingqiu": ["5beKcfe"],
+    "noelle": ["5kyGh0O", "5kyTf5O"],
+    "lisa": ["MMfbfe"],
+    "diluc": ["6AuW4ou"],
+    "razor": ["6vSwOTu"],
+    "chongyun": ["6TWYeGG"],
+    "varka": ["J7mq5Tu", "J7mq5X0"],
+    "linnea": ["JH4slDO", "JH4bCBy"],
+    "prune": ["Jj0rLZm", "Jj10PaG"],
+    "nicole": ["JQOwU2m"],
+    "lohen": ["JZiz0Du"],
+    "sandrone": ["JsL3jYu"],
+    "odette": ["J_f7VZO", "J_f7Vfe"],
+    "alyosha": ["K8yw4km"],
+    "traveler_cryo": ["KIHCeIu"],
+    "vodyanitsa": ["Kau_ZmG"],
+    "vesna": ["KRbF-zO"],
+    "mitya": ["KkDLdxO", "KikVIyu"],
+    "valeriy": ["KtXPLoG", "KsUEZjm"]
   },
   "characterWeapons": {
-    "ineffa": [
-      "fractured_halo"
-    ],
-    "citlali": [
-      "starcallers_watch"
-    ],
-    "arlecchino": [
-      "crimson_moons_semblance"
-    ],
-    "clorinde": [
-      "absolution"
-    ],
-    "emilie": [
-      "lumidouce_elegy"
-    ],
-    "mualani": [
-      "surfs_up"
-    ],
-    "kinich": [
-      "fang_of_the_mountain_king"
-    ],
-    "chasca": [
-      "astral_vultures_crimson_plumage"
-    ],
-    "mavuika": [
-      "a_thousand_blazing_suns"
-    ],
-    "sethos": [
-      "slingshot",
-      "scion_of_the_blazing_sun"
-    ],
-    "lan_yan": [
-      "memory_of_dust",
-      "oathsworn_eye"
-    ],
-    "varesa": [
-      "vivid_notions"
-    ],
-    "escoffier": [
-      "symphonist_of_scents"
-    ],
-    "xilonen": [
-      "peak_patrol_song"
-    ],
-    "navia": [
-      "verdict"
-    ],
-    "chevreuse": [
-      "rightful_reward"
-    ],
-    "charlotte": [
-      "favonius_codex"
-    ],
-    "lynette": [
-      "favonius_sword"
-    ],
-    "lauma": [
-      "nightweavers_looking_glass"
-    ],
-    "columbina": [
-      "nocturnes_curtain_call"
-    ],
-    "illuga": [
-      "kitain_cross_spear",
-      "favonius_lance"
-    ],
-    "durin": [
-      "athame_artis"
-    ],
-    "flins": [
-      "bloodsoaked_ruins"
-    ],
-    "zibai": [
-      "lightbearing_moonshard"
-    ],
-    "jahoda": [
-      "rainbow_serpents_rain_bow"
-    ],
-    "aino": [
-      "flameforged_insight"
-    ],
+    "ineffa": ["fractured_halo"],
+    "citlali": ["starcallers_watch"],
+    "arlecchino": ["crimson_moons_semblance"],
+    "clorinde": ["absolution"],
+    "emilie": ["lumidouce_elegy"],
+    "mualani": ["surfs_up"],
+    "kinich": ["fang_of_the_mountain_king"],
+    "chasca": ["astral_vultures_crimson_plumage"],
+    "mavuika": ["a_thousand_blazing_suns"],
+    "sethos": ["slingshot", "scion_of_the_blazing_sun"],
+    "lan_yan": ["memory_of_dust", "oathsworn_eye"],
+    "varesa": ["vivid_notions"],
+    "escoffier": ["symphonist_of_scents"],
+    "xilonen": ["peak_patrol_song"],
+    "navia": ["verdict"],
+    "chevreuse": ["rightful_reward"],
+    "charlotte": ["favonius_codex"],
+    "lynette": ["favonius_sword"],
+    "lauma": ["nightweavers_looking_glass"],
+    "columbina": ["nocturnes_curtain_call"],
+    "illuga": ["kitain_cross_spear", "favonius_lance"],
+    "durin": ["athame_artis"],
+    "flins": ["bloodsoaked_ruins"],
+    "zibai": ["lightbearing_moonshard"],
+    "jahoda": ["rainbow_serpents_rain_bow"],
+    "aino": ["flameforged_insight"],
     "furina": [
       "freedomsworn",
       "key_of_khajnisut",
       "splendor_of_tranquil_waters"
     ],
-    "nefer": [
-      "reliquary_of_truth"
-    ],
-    "dahlia": [
-      "sacrificial_sword"
-    ],
-    "gaming": [
-      "fruitful_hook"
-    ],
-    "chiori": [
-      "uraku_misugiri"
-    ],
-    "xianyun": [
-      "cranes_echoing_call"
-    ],
-    "sigewinne": [
-      "silvershower_heartstrings"
-    ],
-    "kachina": [
-      "footprint_of_the_rainbow"
-    ],
-    "ororon": [
-      "favonius_warbow"
-    ],
-    "iansan": [
-      "skyward_spine",
-      "tamayuratei_no_ohanashi"
-    ],
-    "skirk": [
-      "azurelight"
-    ],
-    "wriothesley": [
-      "cashflow_supervision"
-    ],
-    "neuvillette": [
-      "tome_of_the_eternal_flow"
-    ],
-    "lyney": [
-      "the_first_great_magic"
-    ],
-    "shenhe": [
-      "calamity_queller"
-    ],
-    "kirara": [
-      "the_dockhands_assistant"
-    ],
-    "baizhu": [
-      "jadefalls_splendor"
-    ],
-    "hu_tao": [
-      "staff_of_homa"
-    ],
-    "zhongli": [
-      "black_tassel"
-    ],
-    "yelan": [
-      "aqua_simulacra"
-    ],
-    "cyno": [
-      "staff_of_the_scarlet_sands"
-    ],
-    "wanderer": [
-      "tulaytullahs_remembrance"
-    ],
-    "alhaitham": [
-      "light_of_foliar_incision"
-    ],
-    "nahida": [
-      "a_thousand_floating_dreams"
-    ],
-    "dehya": [
-      "beacon_of_the_reed_sea"
-    ],
-    "yaoyao": [
-      "dialogues_of_the_desert_sages"
-    ],
-    "faruzan": [
-      "favonius_warbow"
-    ],
-    "mika": [
-      "favonius_lance"
-    ],
-    "layla": [
-      "the_dockhands_assistant"
-    ],
-    "nilou": [
-      "key_of_khajnisut"
-    ],
-    "kaveh": [
-      "mailed_flower"
-    ],
-    "yumemizuki_mizuki": [
-      "sunny_morning_sleepin"
-    ],
-    "ifa": [
-      "wandering_evenstar"
-    ],
-    "candace": [
-      "black_tassel"
-    ],
-    "dori": [
-      "sacrificial_greatsword"
-    ],
-    "collei": [
-      "windblume_ode"
-    ],
-    "tighnari": [
-      "hunters_path"
-    ],
-    "kuki_shinobu": [
-      "xiphos_moonlight"
-    ],
-    "kamisato_ayato": [
-      "haran_geppaku_futsu"
-    ],
-    "yae_miko": [
-      "kaguras_verity"
-    ],
-    "thoma": [
-      "kitain_cross_spear"
-    ],
-    "gorou": [
-      "favonius_warbow"
-    ],
-    "arataki_itto": [
-      "redhorn_stonethresher"
-    ],
+    "nefer": ["reliquary_of_truth"],
+    "dahlia": ["sacrificial_sword"],
+    "gaming": ["fruitful_hook"],
+    "chiori": ["uraku_misugiri"],
+    "xianyun": ["cranes_echoing_call"],
+    "sigewinne": ["silvershower_heartstrings"],
+    "kachina": ["footprint_of_the_rainbow"],
+    "ororon": ["favonius_warbow"],
+    "iansan": ["skyward_spine", "tamayuratei_no_ohanashi"],
+    "skirk": ["azurelight"],
+    "wriothesley": ["cashflow_supervision"],
+    "neuvillette": ["tome_of_the_eternal_flow"],
+    "lyney": ["the_first_great_magic"],
+    "shenhe": ["calamity_queller"],
+    "kirara": ["the_dockhands_assistant"],
+    "baizhu": ["jadefalls_splendor"],
+    "hu_tao": ["staff_of_homa"],
+    "zhongli": ["black_tassel"],
+    "yelan": ["aqua_simulacra"],
+    "cyno": ["staff_of_the_scarlet_sands"],
+    "wanderer": ["tulaytullahs_remembrance"],
+    "alhaitham": ["light_of_foliar_incision"],
+    "nahida": ["a_thousand_floating_dreams"],
+    "dehya": ["beacon_of_the_reed_sea"],
+    "yaoyao": ["dialogues_of_the_desert_sages"],
+    "faruzan": ["favonius_warbow"],
+    "mika": ["favonius_lance"],
+    "layla": ["the_dockhands_assistant"],
+    "nilou": ["key_of_khajnisut"],
+    "kaveh": ["mailed_flower"],
+    "yumemizuki_mizuki": ["sunny_morning_sleepin"],
+    "ifa": ["wandering_evenstar"],
+    "candace": ["black_tassel"],
+    "dori": ["sacrificial_greatsword"],
+    "collei": ["windblume_ode"],
+    "tighnari": ["hunters_path"],
+    "kuki_shinobu": ["xiphos_moonlight"],
+    "kamisato_ayato": ["haran_geppaku_futsu"],
+    "yae_miko": ["kaguras_verity"],
+    "thoma": ["kitain_cross_spear"],
+    "gorou": ["favonius_warbow"],
+    "arataki_itto": ["redhorn_stonethresher"],
     "sangonomiya_kokomi": [
       "everlasting_moonglow",
       "thrilling_tales_of_dragon_slayers",
       "sacrificial_fragments"
     ],
-    "raiden_shogun": [
-      "engulfing_lightning"
-    ],
-    "kujou_sara": [
-      "skyward_harp"
-    ],
-    "sayu": [
-      "sacrificial_greatsword"
-    ],
-    "yun_jin": [
-      "footprint_of_the_rainbow"
-    ],
-    "yoimiya": [
-      "thundering_pulse"
-    ],
-    "kamisato_ayaka": [
-      "mistsplitter_reforged"
-    ],
-    "kaedehara_kazuha": [
-      "freedomsworn"
-    ],
-    "eula": [
-      "song_of_broken_pines"
-    ],
-    "diona": [
-      "sacrificial_bow"
-    ],
-    "yanfei": [
-      "thrilling_tales_of_dragon_slayers"
-    ],
-    "rosaria": [
-      "favonius_lance"
-    ],
-    "xiao": [
-      "primordial_jade_wingedspear"
-    ],
-    "ganyu": [
-      "amos_bow",
-      "elegy_for_the_end"
-    ],
-    "albedo": [
-      "cinnabar_spindle",
-      "flute_of_ezpitzal"
-    ],
-    "xinyan": [
-      "whiteblind"
-    ],
-    "tartaglia": [
-      "polar_star"
-    ],
-    "klee": [
-      "lost_prayer_to_the_sacred_winds"
-    ],
-    "xiangling": [
-      "engulfing_lightning",
-      "the_catch"
-    ],
-    "traveler_pyro": [
-      "favonius_sword"
-    ],
-    "qiqi": [
-      "sacrificial_sword"
-    ],
-    "ningguang": [
-      "memory_of_dust"
-    ],
-    "keqing": [
-      "mistsplitter_reforged"
-    ],
-    "venti": [
-      "the_daybreak_chronicles",
-      "elegy_for_the_end"
-    ],
-    "bennett": [
-      "skyward_blade",
-      "aquila_favonia"
-    ],
-    "jean": [
-      "sacrificial_sword"
-    ],
-    "sucrose": [
-      "sacrificial_fragments"
-    ],
+    "raiden_shogun": ["engulfing_lightning"],
+    "kujou_sara": ["skyward_harp"],
+    "sayu": ["sacrificial_greatsword"],
+    "yun_jin": ["footprint_of_the_rainbow"],
+    "yoimiya": ["thundering_pulse"],
+    "kamisato_ayaka": ["mistsplitter_reforged"],
+    "kaedehara_kazuha": ["freedomsworn"],
+    "eula": ["song_of_broken_pines"],
+    "diona": ["sacrificial_bow"],
+    "yanfei": ["thrilling_tales_of_dragon_slayers"],
+    "rosaria": ["favonius_lance"],
+    "xiao": ["primordial_jade_wingedspear"],
+    "ganyu": ["amos_bow", "elegy_for_the_end"],
+    "albedo": ["cinnabar_spindle", "flute_of_ezpitzal"],
+    "xinyan": ["whiteblind"],
+    "tartaglia": ["polar_star"],
+    "klee": ["lost_prayer_to_the_sacred_winds"],
+    "xiangling": ["engulfing_lightning", "the_catch"],
+    "traveler_pyro": ["favonius_sword"],
+    "qiqi": ["sacrificial_sword"],
+    "ningguang": ["memory_of_dust"],
+    "keqing": ["mistsplitter_reforged"],
+    "venti": ["the_daybreak_chronicles", "elegy_for_the_end"],
+    "bennett": ["skyward_blade", "aquila_favonia"],
+    "jean": ["sacrificial_sword"],
+    "sucrose": ["sacrificial_fragments"],
     "mona": [
       "thrilling_tales_of_dragon_slayers",
       "the_widsith",
       "reliquary_of_truth"
     ],
-    "barbara": [
-      "thrilling_tales_of_dragon_slayers"
-    ],
+    "barbara": ["thrilling_tales_of_dragon_slayers"],
     "fischl": [
       "the_daybreak_chronicles",
       "elegy_for_the_end",
       "the_stringless"
     ],
-    "beidou": [
-      "skyward_pride"
-    ],
-    "xingqiu": [
-      "sacrificial_sword"
-    ],
-    "noelle": [
-      "serpent_spine"
-    ],
-    "diluc": [
-      "wolfs_gravestone",
-      "beacon_of_the_reed_sea"
-    ],
-    "razor": [
-      "serpent_spine"
-    ],
-    "chongyun": [
-      "favonius_greatsword"
-    ],
-    "varka": [
-      "gest_of_the_mighty_wolf"
-    ],
-    "linnea": [
-      "golden_frostbound_oath"
-    ],
-    "prune": [
-      "skyward_atlas",
-      "oathsworn_eye"
-    ],
-    "nicole": [
-      "angelos_heptades"
-    ],
-    "lohen": [
-      "disaster_and_remorse"
-    ],
-    "sandrone": [
-      "a_teaspoon_of_transcendence"
-    ],
-    "odette": [
-      "whitelake_frostfeather"
-    ],
-    "alyosha": [
-      "favonius_lance",
-      "symphonist_of_scents"
-    ],
-    "vodyanitsa": [
-      "hymn_of_the_maelstrom"
-    ],
-    "vesna": [
-      "beyond_the_chrysalis"
-    ],
-    "mitya": [
-      "starsealed_edict"
-    ],
-    "valeriy": [
-      "athame_artis",
-      "silver_light",
-      "favonius_sword"
-    ]
+    "beidou": ["skyward_pride"],
+    "xingqiu": ["sacrificial_sword"],
+    "noelle": ["serpent_spine"],
+    "diluc": ["wolfs_gravestone", "beacon_of_the_reed_sea"],
+    "razor": ["serpent_spine"],
+    "chongyun": ["favonius_greatsword"],
+    "varka": ["gest_of_the_mighty_wolf"],
+    "linnea": ["golden_frostbound_oath"],
+    "prune": ["skyward_atlas", "oathsworn_eye"],
+    "nicole": ["angelos_heptades"],
+    "lohen": ["disaster_and_remorse"],
+    "sandrone": ["a_teaspoon_of_transcendence"],
+    "odette": ["whitelake_frostfeather"],
+    "alyosha": ["favonius_lance", "symphonist_of_scents"],
+    "vodyanitsa": ["hymn_of_the_maelstrom"],
+    "vesna": ["beyond_the_chrysalis"],
+    "mitya": ["starsealed_edict"],
+    "valeriy": ["athame_artis", "silver_light", "favonius_sword"]
   },
   "computeOptions": {
     "expandElementalGoblet": true,
