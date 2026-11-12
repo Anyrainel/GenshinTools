@@ -78,7 +78,7 @@ describe("triage statistics gap", () => {
     expect(result.totalGap).toBe(6);
   });
 
-  it("includes unmatched artifacts as fodder without filling demand, and excludes four-star inventory", () => {
+  it("includes unmatched artifacts as fodder without filling demand, and excludes ineligible four-star variants", () => {
     const result = buildTriageStatistics({
       activeGroups: [],
       buildGroups: [],
@@ -90,6 +90,42 @@ describe("triage statistics gap", () => {
     expect(result.sets[0].gap).toBe(2);
     expect(result.sets[0].supplyByTier.fodder).toBe(1);
     expect(result.totalSupply).toBe(1);
+  });
+
+  it("counts native four-star set supply without counting four-star variants of five-star sets", () => {
+    const instructor: ArtifactData = {
+      ...art("instructor", "flower", "instructor"),
+      rarity: 4,
+    };
+    const result = buildTriageStatistics({
+      activeGroups: [],
+      buildGroups: [],
+      demandGroups: new Map([["instructor", group("instructor", "flower", 1)]]),
+      supply: [
+        { artifact: instructor, embryoKey: "instructor", tier: "solid" },
+      ],
+      artifacts: [
+        instructor,
+        {
+          ...art("emblem-four", "flower", "emblem_of_severed_fate"),
+          rarity: 4,
+        },
+        art("emblem-five", "flower", "emblem_of_severed_fate"),
+      ],
+      decisions: [],
+    });
+    expect(result.totalSupply).toBe(2);
+    expect(result.totalGap).toBe(0);
+    expect(
+      result.sets.find((row) => row.key === "4pc:instructor")
+    ).toMatchObject({
+      supplyByTier: { prime: 0, solid: 1, filler: 0, fodder: 0 },
+    });
+    expect(
+      result.sets.find((row) => row.key === "4pc:emblem_of_severed_fate")
+    ).toMatchObject({
+      supplyByTier: { prime: 0, solid: 0, filler: 0, fodder: 1 },
+    });
   });
 
   it("counts every configured build but ranks by active counts, including characters with zero active builds", () => {

@@ -1,9 +1,47 @@
 {
   "teams": [
     {
+      "id": "ZlC6qUeyOYU470wZ0O",
+      "name": "",
+      "characters": [
+        "mitya",
+        "valeriy",
+        "odette",
+        "sucrose"
+      ],
+      "weapons": [
+        "starsealed_edict",
+        "favonius_sword",
+        "whitelake_frostfeather",
+        "sacrificial_fragments"
+      ],
+      "artifacts": [
+        {
+          "setId": "disenchantment_in_deep_shadow"
+        },
+        {
+          "halfSetIds": [
+            "atk%-18",
+            "atk%-18"
+          ]
+        },
+        {
+          "setId": "heart_of_the_furnace"
+        },
+        {
+          "setId": "viridescent_venerer"
+        }
+      ]
+    },
+    {
       "id": "ZEq6yRt04YU471-fWD",
       "name": "",
-      "characters": ["vesna", "vodyanitsa", "odette", "faruzan"],
+      "characters": [
+        "vesna",
+        "vodyanitsa",
+        "odette",
+        "faruzan"
+      ],
       "weapons": [
         "beyond_the_chrysalis",
         "hymn_of_the_maelstrom",
@@ -24,12 +62,52 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["stellarSwirl"]
+      "reactions": [
+        "stellarSwirl"
+      ]
+    },
+    {
+      "id": "YE06qTvW4YU470EWWD",
+      "name": "",
+      "characters": [
+        "sandrone",
+        "mitya",
+        "odette",
+        "yae_miko"
+      ],
+      "weapons": [
+        "a_teaspoon_of_transcendence",
+        "starsealed_edict",
+        "whitelake_frostfeather",
+        "kaguras_verity"
+      ],
+      "artifacts": [
+        {
+          "setId": "disenchantment_in_deep_shadow"
+        },
+        {
+          "setId": "tenacity_of_the_millelith"
+        },
+        {
+          "setId": "heart_of_the_furnace"
+        },
+        {
+          "setId": "noblesse_oblige"
+        }
+      ],
+      "reactions": [
+        "stellarConduct"
+      ]
     },
     {
       "id": "YE06qRt04YU470EWWs",
       "name": "",
-      "characters": ["sandrone", "vodyanitsa", "odette", "yae_miko"],
+      "characters": [
+        "sandrone",
+        "vodyanitsa",
+        "odette",
+        "yae_miko"
+      ],
       "weapons": [
         "a_teaspoon_of_transcendence",
         "hymn_of_the_maelstrom",
@@ -50,12 +128,19 @@
           "setId": "disenchantment_in_deep_shadow"
         }
       ],
-      "reactions": ["stellarConduct"]
+      "reactions": [
+        "stellarConduct"
+      ]
     },
     {
       "id": "Xjy6aBl0rSDS1gxT0j",
       "name": "",
-      "characters": ["lohen", "nicole", "durin", "xilonen"],
+      "characters": [
+        "lohen",
+        "nicole",
+        "durin",
+        "xilonen"
+      ],
       "weapons": [
         "disaster_and_remorse",
         "angelos_heptades",
@@ -76,12 +161,19 @@
           "setId": "scroll_of_the_hero_of_cinder_city"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "Xjy6ZFZ0DJam0X8h0r",
       "name": "",
-      "characters": ["lohen", "escoffier", "furina", "mona"],
+      "characters": [
+        "lohen",
+        "escoffier",
+        "furina",
+        "mona"
+      ],
       "weapons": [
         "disaster_and_remorse",
         "symphonist_of_scents",
@@ -102,12 +194,19 @@
           "setId": "celestial_gift"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "Wzm6aBl0rXnS33XhWD",
       "name": "",
-      "characters": ["varka", "nicole", "prune", "durin"],
+      "characters": [
+        "varka",
+        "nicole",
+        "prune",
+        "durin"
+      ],
       "weapons": [
         "gest_of_the_mighty_wolf",
         "angelos_heptades",
@@ -128,12 +227,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["swirl"]
+      "reactions": [
+        "swirl"
+      ]
     },
     {
       "id": "Wzm6aBl0rSDS1eia0O",
       "name": "",
-      "characters": ["varka", "nicole", "durin", "venti"],
+      "characters": [
+        "varka",
+        "nicole",
+        "durin",
+        "venti"
+      ],
       "weapons": [
         "gest_of_the_mighty_wolf",
         "angelos_heptades",
@@ -154,12 +260,19 @@
           "setId": "viridescent_venerer"
         }
       ],
-      "reactions": ["swirl"]
+      "reactions": [
+        "swirl"
+      ]
     },
     {
       "id": "WTe6C9kW5WbK6K1jWp",
       "name": "",
-      "characters": ["zibai", "linnea", "illuga", "columbina"],
+      "characters": [
+        "zibai",
+        "linnea",
+        "illuga",
+        "columbina"
+      ],
       "weapons": [
         "lightbearing_moonshard",
         "golden_frostbound_oath",
@@ -180,12 +293,19 @@
           "setId": "aubade_of_morningstar_and_moon"
         }
       ],
-      "reactions": ["lunarCrystallize"]
+      "reactions": [
+        "lunarCrystallize"
+      ]
     },
     {
       "id": "SDS6aBl0r95O1ewZ0O",
       "name": "",
-      "characters": ["durin", "nicole", "mona", "sucrose"],
+      "characters": [
+        "durin",
+        "nicole",
+        "mona",
+        "sucrose"
+      ],
       "weapons": [
         "athame_artis",
         "angelos_heptades",
@@ -206,12 +326,19 @@
           "setId": "viridescent_venerer"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "RzO6C1jWoRD449r3WC",
       "name": "",
-      "characters": ["nefer", "columbina", "lauma", "nilou"],
+      "characters": [
+        "nefer",
+        "columbina",
+        "lauma",
+        "nilou"
+      ],
       "weapons": [
         "reliquary_of_truth",
         "nocturnes_curtain_call",
@@ -232,12 +359,19 @@
           "setId": "instructor"
         }
       ],
-      "reactions": ["lunarBloom"]
+      "reactions": [
+        "lunarBloom"
+      ]
     },
     {
       "id": "RjC6C1jWoQya6Owh0O",
       "name": "",
-      "characters": ["flins", "columbina", "ineffa", "sucrose"],
+      "characters": [
+        "flins",
+        "columbina",
+        "ineffa",
+        "sucrose"
+      ],
       "weapons": [
         "bloodsoaked_ruins",
         "nocturnes_curtain_call",
@@ -258,12 +392,19 @@
           "setId": "viridescent_venerer"
         }
       ],
-      "reactions": ["lunarCharged"]
+      "reactions": [
+        "lunarCharged"
+      ]
     },
     {
       "id": "QSW63FZ0jJam0WuIWD",
       "name": "",
-      "characters": ["skirk", "escoffier", "furina", "shenhe"],
+      "characters": [
+        "skirk",
+        "escoffier",
+        "furina",
+        "shenhe"
+      ],
       "weapons": [
         "azurelight",
         "symphonist_of_scents",
@@ -284,12 +425,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "QSW63FZ0jJam0W_T0D",
       "name": "",
-      "characters": ["skirk", "escoffier", "furina", "kamisato_ayaka"],
+      "characters": [
+        "skirk",
+        "escoffier",
+        "furina",
+        "kamisato_ayaka"
+      ],
       "weapons": [
         "azurelight",
         "symphonist_of_scents",
@@ -310,12 +458,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "QCC32ya0kJgK51AC0e",
       "name": "",
-      "characters": ["ifa", "ororon", "furina", "fischl"],
+      "characters": [
+        "ifa",
+        "ororon",
+        "furina",
+        "fischl"
+      ],
       "weapons": [
         "sunny_morning_sleepin",
         "elegy_for_the_end",
@@ -336,12 +491,19 @@
           "setId": "golden_troupe"
         }
       ],
-      "reactions": ["electroCharged"]
+      "reactions": [
+        "electroCharged"
+      ]
     },
     {
       "id": "PSK5yBl0rSDS1gZLWg",
       "name": "",
-      "characters": ["varesa", "nicole", "durin", "chevreuse"],
+      "characters": [
+        "varesa",
+        "nicole",
+        "durin",
+        "chevreuse"
+      ],
       "weapons": [
         "vivid_notions",
         "angelos_heptades",
@@ -362,12 +524,19 @@
           "setId": "song_of_days_past"
         }
       ],
-      "reactions": ["overloaded"]
+      "reactions": [
+        "overloaded"
+      ]
     },
     {
       "id": "PSK5xCCWjKgdZ2Sc04",
       "name": "",
-      "characters": ["varesa", "iansan", "xianyun", "furina"],
+      "characters": [
+        "varesa",
+        "iansan",
+        "xianyun",
+        "furina"
+      ],
       "weapons": [
         "vivid_notions",
         "skyward_spine",
@@ -382,7 +551,10 @@
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "halfSetIds": ["atk%-18", "atk%-18"]
+          "halfSetIds": [
+            "atk%-18",
+            "atk%-18"
+          ]
         },
         {
           "setId": "tenacity_of_the_millelith"
@@ -392,7 +564,12 @@
     {
       "id": "PSK5xCCWjKQi5GoB0D",
       "name": "",
-      "characters": ["varesa", "iansan", "chevreuse", "bennett"],
+      "characters": [
+        "varesa",
+        "iansan",
+        "chevreuse",
+        "bennett"
+      ],
       "weapons": [
         "vivid_notions",
         "skyward_spine",
@@ -413,12 +590,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["overloaded"]
+      "reactions": [
+        "overloaded"
+      ]
     },
     {
       "id": "PCC6yJmWuFte0XMYWD",
       "name": "",
-      "characters": ["yumemizuki_mizuki", "odette", "faruzan", "diona"],
+      "characters": [
+        "yumemizuki_mizuki",
+        "odette",
+        "faruzan",
+        "diona"
+      ],
       "weapons": [
         "sunny_morning_sleepin",
         "whitelake_frostfeather",
@@ -439,12 +623,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["stellarSwirl"]
+      "reactions": [
+        "stellarSwirl"
+      ]
     },
     {
       "id": "OC45qBl0rOS85gxT0C",
       "name": "",
-      "characters": ["mavuika", "nicole", "citlali", "xilonen"],
+      "characters": [
+        "mavuika",
+        "nicole",
+        "citlali",
+        "xilonen"
+      ],
       "weapons": [
         "a_thousand_blazing_suns",
         "angelos_heptades",
@@ -465,12 +656,19 @@
           "setId": "instructor"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "OC45p3X0jNRe1Wgc0O",
       "name": "",
-      "characters": ["mavuika", "citlali", "xilonen", "kaedehara_kazuha"],
+      "characters": [
+        "mavuika",
+        "citlali",
+        "xilonen",
+        "kaedehara_kazuha"
+      ],
       "weapons": [
         "a_thousand_blazing_suns",
         "starcallers_watch",
@@ -491,12 +689,19 @@
           "setId": "viridescent_venerer"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "OC45p3X0jNRe1WorWD",
       "name": "",
-      "characters": ["mavuika", "citlali", "xilonen", "bennett"],
+      "characters": [
+        "mavuika",
+        "citlali",
+        "xilonen",
+        "bennett"
+      ],
       "weapons": [
         "a_thousand_blazing_suns",
         "starcallers_watch",
@@ -517,12 +722,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "Ny05qBl0rSDS6X8h0D",
       "name": "",
-      "characters": ["chasca", "nicole", "durin", "mona"],
+      "characters": [
+        "chasca",
+        "nicole",
+        "durin",
+        "mona"
+      ],
       "weapons": [
         "astral_vultures_crimson_plumage",
         "angelos_heptades",
@@ -543,12 +755,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "Ny05p3X0jNRe1WoB0D",
       "name": "",
-      "characters": ["chasca", "citlali", "xilonen", "bennett"],
+      "characters": [
+        "chasca",
+        "citlali",
+        "xilonen",
+        "bennett"
+      ],
       "weapons": [
         "astral_vultures_crimson_plumage",
         "starcallers_watch",
@@ -569,12 +788,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "Ny05p3X0jJeS0WoB0D",
       "name": "",
-      "characters": ["chasca", "citlali", "furina", "bennett"],
+      "characters": [
+        "chasca",
+        "citlali",
+        "furina",
+        "bennett"
+      ],
       "weapons": [
         "astral_vultures_crimson_plumage",
         "starcallers_watch",
@@ -595,12 +821,20 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["melt", "vaporize"]
+      "reactions": [
+        "melt",
+        "vaporize"
+      ]
     },
     {
       "id": "Mh45qBl0rSDS1gpO0i",
       "name": "",
-      "characters": ["kinich", "nicole", "durin", "emilie"],
+      "characters": [
+        "kinich",
+        "nicole",
+        "durin",
+        "emilie"
+      ],
       "weapons": [
         "fang_of_the_mountain_king",
         "angelos_heptades",
@@ -621,12 +855,19 @@
           "setId": "unfinished_reverie"
         }
       ],
-      "reactions": ["burning"]
+      "reactions": [
+        "burning"
+      ]
     },
     {
       "id": "NB85p3X0jOC45oxT0C",
       "name": "",
-      "characters": ["mualani", "citlali", "mavuika", "xilonen"],
+      "characters": [
+        "mualani",
+        "citlali",
+        "mavuika",
+        "xilonen"
+      ],
       "weapons": [
         "surfs_up",
         "starcallers_watch",
@@ -647,12 +888,20 @@
           "setId": "instructor"
         }
       ],
-      "reactions": ["melt", "vaporize"]
+      "reactions": [
+        "melt",
+        "vaporize"
+      ]
     },
     {
       "id": "Lgu5S1jWpQya6IxT0j",
       "name": "",
-      "characters": ["clorinde", "columbina", "ineffa", "xilonen"],
+      "characters": [
+        "clorinde",
+        "columbina",
+        "ineffa",
+        "xilonen"
+      ],
       "weapons": [
         "absolution",
         "nocturnes_curtain_call",
@@ -673,12 +922,19 @@
           "setId": "scroll_of_the_hero_of_cinder_city"
         }
       ],
-      "reactions": ["lunarCharged"]
+      "reactions": [
+        "lunarCharged"
+      ]
     },
     {
       "id": "Lgu5RXhWDKQi5fAa04",
       "name": "",
-      "characters": ["clorinde", "durin", "chevreuse", "fischl"],
+      "characters": [
+        "clorinde",
+        "durin",
+        "chevreuse",
+        "fischl"
+      ],
       "weapons": [
         "absolution",
         "athame_artis",
@@ -699,12 +955,19 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": ["overloaded"]
+      "reactions": [
+        "overloaded"
+      ]
     },
     {
       "id": "Lgu5Px50X5Km31AC0e",
       "name": "",
-      "characters": ["clorinde", "nahida", "kaedehara_kazuha", "fischl"],
+      "characters": [
+        "clorinde",
+        "nahida",
+        "kaedehara_kazuha",
+        "fischl"
+      ],
       "weapons": [
         "absolution",
         "a_thousand_floating_dreams",
@@ -725,12 +988,19 @@
           "setId": "golden_troupe"
         }
       ],
-      "reactions": ["aggravate"]
+      "reactions": [
+        "aggravate"
+      ]
     },
     {
       "id": "M7q2Px50XBIS0XAC0e",
       "name": "",
-      "characters": ["sethos", "nahida", "zhongli", "fischl"],
+      "characters": [
+        "sethos",
+        "nahida",
+        "zhongli",
+        "fischl"
+      ],
       "weapons": [
         "hunters_path",
         "a_thousand_floating_dreams",
@@ -751,12 +1021,19 @@
           "setId": "golden_troupe"
         }
       ],
-      "reactions": ["aggravate"]
+      "reactions": [
+        "aggravate"
+      ]
     },
     {
       "id": "LQm5SBl0rXnS33XhWD",
       "name": "",
-      "characters": ["arlecchino", "nicole", "prune", "durin"],
+      "characters": [
+        "arlecchino",
+        "nicole",
+        "prune",
+        "durin"
+      ],
       "weapons": [
         "crimson_moons_semblance",
         "angelos_heptades",
@@ -781,7 +1058,12 @@
     {
       "id": "LQm5R3X0jNRe1WorWD",
       "name": "",
-      "characters": ["arlecchino", "citlali", "xilonen", "bennett"],
+      "characters": [
+        "arlecchino",
+        "citlali",
+        "xilonen",
+        "bennett"
+      ],
       "weapons": [
         "crimson_moons_semblance",
         "starcallers_watch",
@@ -802,12 +1084,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "LQm5QxT0jCte2uorWD",
       "name": "",
-      "characters": ["arlecchino", "xilonen", "yelan", "bennett"],
+      "characters": [
+        "arlecchino",
+        "xilonen",
+        "yelan",
+        "bennett"
+      ],
       "weapons": [
         "crimson_moons_semblance",
         "peak_patrol_song",
@@ -828,12 +1117,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "LQm5QT3W4Cte2uorWD",
       "name": "",
-      "characters": ["arlecchino", "furina", "yelan", "bennett"],
+      "characters": [
+        "arlecchino",
+        "furina",
+        "yelan",
+        "bennett"
+      ],
       "weapons": [
         "crimson_moons_semblance",
         "key_of_khajnisut",
@@ -854,12 +1150,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "LAe0gxT0jJam50AfW5",
       "name": "",
-      "characters": ["chiori", "xilonen", "furina", "gorou"],
+      "characters": [
+        "chiori",
+        "xilonen",
+        "furina",
+        "gorou"
+      ],
       "weapons": [
         "uraku_misugiri",
         "peak_patrol_song",
@@ -884,7 +1187,12 @@
     {
       "id": "Kqy2obKWOJgK50orWD",
       "name": "",
-      "characters": ["gaming", "xianyun", "furina", "bennett"],
+      "characters": [
+        "gaming",
+        "xianyun",
+        "furina",
+        "bennett"
+      ],
       "weapons": [
         "serpent_spine",
         "cranes_echoing_call",
@@ -905,12 +1213,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "KiNZ2Sc0eFrC0WoB0D",
       "name": "",
-      "characters": ["xianyun", "furina", "faruzan", "bennett"],
+      "characters": [
+        "xianyun",
+        "furina",
+        "faruzan",
+        "bennett"
+      ],
       "weapons": [
         "vivid_notions",
         "freedomsworn",
@@ -919,7 +1234,10 @@
       ],
       "artifacts": [
         {
-          "halfSetIds": ["atk%-18", "atk%-18"]
+          "halfSetIds": [
+            "atk%-18",
+            "atk%-18"
+          ]
         },
         {
           "setId": "golden_troupe"
@@ -935,7 +1253,12 @@
     {
       "id": "KAS5C1jWoNRe5gTIW4",
       "name": "",
-      "characters": ["navia", "columbina", "xilonen", "furina"],
+      "characters": [
+        "navia",
+        "columbina",
+        "xilonen",
+        "furina"
+      ],
       "weapons": [
         "verdict",
         "nocturnes_curtain_call",
@@ -956,12 +1279,19 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": ["lunarCrystallize"]
+      "reactions": [
+        "lunarCrystallize"
+      ]
     },
     {
       "id": "KAS5AxT0jJgK50orWD",
       "name": "",
-      "characters": ["navia", "xilonen", "furina", "bennett"],
+      "characters": [
+        "navia",
+        "xilonen",
+        "furina",
+        "bennett"
+      ],
       "weapons": [
         "verdict",
         "peak_patrol_song",
@@ -986,7 +1316,12 @@
     {
       "id": "JgK5xXhWDOS85gbKyO",
       "name": "",
-      "characters": ["furina", "durin", "citlali", "xianyun"],
+      "characters": [
+        "furina",
+        "durin",
+        "citlali",
+        "xianyun"
+      ],
       "weapons": [
         "splendor_of_tranquil_waters",
         "athame_artis",
@@ -1004,15 +1339,25 @@
           "setId": "scroll_of_the_hero_of_cinder_city"
         },
         {
-          "halfSetIds": ["atk%-18", "atk%-18"]
+          "halfSetIds": [
+            "atk%-18",
+            "atk%-18"
+          ]
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "JAG4xXhWq72K1WoB0D",
       "name": "",
-      "characters": ["wriothesley", "durin", "shenhe", "bennett"],
+      "characters": [
+        "wriothesley",
+        "durin",
+        "shenhe",
+        "bennett"
+      ],
       "weapons": [
         "cashflow_supervision",
         "athame_artis",
@@ -1033,12 +1378,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "JAG4wxT0jJgK50uIWD",
       "name": "",
-      "characters": ["wriothesley", "xilonen", "furina", "shenhe"],
+      "characters": [
+        "wriothesley",
+        "xilonen",
+        "furina",
+        "shenhe"
+      ],
       "weapons": [
         "cashflow_supervision",
         "peak_patrol_song",
@@ -1059,12 +1411,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "JQC4x3X0jNRe0gTIWe",
       "name": "",
-      "characters": ["neuvillette", "citlali", "xilonen", "furina"],
+      "characters": [
+        "neuvillette",
+        "citlali",
+        "xilonen",
+        "furina"
+      ],
       "weapons": [
         "tome_of_the_eternal_flow",
         "starcallers_watch",
@@ -1089,7 +1448,12 @@
     {
       "id": "JQC4wxT0jJgK50gc0O",
       "name": "",
-      "characters": ["neuvillette", "xilonen", "furina", "kaedehara_kazuha"],
+      "characters": [
+        "neuvillette",
+        "xilonen",
+        "furina",
+        "kaedehara_kazuha"
+      ],
       "weapons": [
         "tome_of_the_eternal_flow",
         "peak_patrol_song",
@@ -1114,7 +1478,12 @@
     {
       "id": "IZC0JFZ0DJgK50uIWD",
       "name": "",
-      "characters": ["freminet", "escoffier", "furina", "shenhe"],
+      "characters": [
+        "freminet",
+        "escoffier",
+        "furina",
+        "shenhe"
+      ],
       "weapons": [
         "song_of_broken_pines",
         "symphonist_of_scents",
@@ -1135,12 +1504,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "IP84xXhWqKSO1fAa04",
       "name": "",
-      "characters": ["lyney", "durin", "chevreuse", "fischl"],
+      "characters": [
+        "lyney",
+        "durin",
+        "chevreuse",
+        "fischl"
+      ],
       "weapons": [
         "the_first_great_magic",
         "athame_artis",
@@ -1161,12 +1537,19 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": ["overloaded"]
+      "reactions": [
+        "overloaded"
+      ]
     },
     {
       "id": "HOu49x50XD4m4PCW0N",
       "name": "",
-      "characters": ["kaveh", "nahida", "kuki_shinobu", "xingqiu"],
+      "characters": [
+        "kaveh",
+        "nahida",
+        "kuki_shinobu",
+        "xingqiu"
+      ],
       "weapons": [
         "mailed_flower",
         "a_thousand_floating_dreams",
@@ -1187,12 +1570,19 @@
           "setId": "emblem_of_severed_fate"
         }
       ],
-      "reactions": ["hyperbloom"]
+      "reactions": [
+        "hyperbloom"
+      ]
     },
     {
       "id": "Geq4Hx50XD8W4PCXWC",
       "name": "",
-      "characters": ["alhaitham", "nahida", "kuki_shinobu", "xingqiu"],
+      "characters": [
+        "alhaitham",
+        "nahida",
+        "kuki_shinobu",
+        "xingqiu"
+      ],
       "weapons": [
         "light_of_foliar_incision",
         "a_thousand_floating_dreams",
@@ -1213,12 +1603,19 @@
           "setId": "instructor"
         }
       ],
-      "reactions": ["hyperbloom"]
+      "reactions": [
+        "hyperbloom"
+      ]
     },
     {
       "id": "G8m4ZXhWqFrC0WoB0D",
       "name": "",
-      "characters": ["wanderer", "durin", "faruzan", "bennett"],
+      "characters": [
+        "wanderer",
+        "durin",
+        "faruzan",
+        "bennett"
+      ],
       "weapons": [
         "tulaytullahs_remembrance",
         "athame_artis",
@@ -1243,7 +1640,12 @@
     {
       "id": "EeV6BPeWXFOe4GmZ0Z",
       "name": "",
-      "characters": ["nilou", "lauma", "nahida", "sangonomiya_kokomi"],
+      "characters": [
+        "nilou",
+        "lauma",
+        "nahida",
+        "sangonomiya_kokomi"
+      ],
       "weapons": [
         "key_of_khajnisut",
         "nightweavers_looking_glass",
@@ -1252,7 +1654,10 @@
       ],
       "artifacts": [
         {
-          "halfSetIds": ["hp%-20", "hp%-20"]
+          "halfSetIds": [
+            "hp%-20",
+            "hp%-20"
+          ]
         },
         {
           "setId": "deepwood_memories"
@@ -1264,12 +1669,19 @@
           "setId": "flower_of_paradise_lost"
         }
       ],
-      "reactions": ["bloom"]
+      "reactions": [
+        "bloom"
+      ]
     },
     {
       "id": "EuO4ID80XFOe49AC0e",
       "name": "",
-      "characters": ["cyno", "baizhu", "nahida", "fischl"],
+      "characters": [
+        "cyno",
+        "baizhu",
+        "nahida",
+        "fischl"
+      ],
       "weapons": [
         "staff_of_the_scarlet_sands",
         "jadefalls_splendor",
@@ -1290,12 +1702,19 @@
           "setId": "golden_troupe"
         }
       ],
-      "reactions": ["aggravate"]
+      "reactions": [
+        "aggravate"
+      ]
     },
     {
       "id": "Ddq4GEWWeBIS0XAC0e",
       "name": "",
-      "characters": ["tighnari", "yae_miko", "zhongli", "fischl"],
+      "characters": [
+        "tighnari",
+        "yae_miko",
+        "zhongli",
+        "fischl"
+      ],
       "weapons": [
         "hunters_path",
         "kaguras_verity",
@@ -1316,7 +1735,9 @@
           "setId": "golden_troupe"
         }
       ],
-      "reactions": ["spread"]
+      "reactions": [
+        "spread"
+      ]
     },
     {
       "id": "7ZO29x50XD8W4Ogc0O",
@@ -1347,12 +1768,19 @@
           "setId": "viridescent_venerer"
         }
       ],
-      "reactions": ["hyperbloom"]
+      "reactions": [
+        "hyperbloom"
+      ]
     },
     {
       "id": "8ru0gxT0jJgK50AfWD",
       "name": "",
-      "characters": ["arataki_itto", "xilonen", "furina", "gorou"],
+      "characters": [
+        "arataki_itto",
+        "xilonen",
+        "furina",
+        "gorou"
+      ],
       "weapons": [
         "redhorn_stonethresher",
         "peak_patrol_song",
@@ -1377,7 +1805,12 @@
     {
       "id": "8ru0gxT0jBby6X8h0N",
       "name": "",
-      "characters": ["arataki_itto", "xilonen", "albedo", "mona"],
+      "characters": [
+        "arataki_itto",
+        "xilonen",
+        "albedo",
+        "mona"
+      ],
       "weapons": [
         "redhorn_stonethresher",
         "peak_patrol_song",
@@ -1402,7 +1835,12 @@
     {
       "id": "C8O2y1jWpNRe5gSc04",
       "name": "",
-      "characters": ["raiden_shogun", "columbina", "xilonen", "furina"],
+      "characters": [
+        "raiden_shogun",
+        "columbina",
+        "xilonen",
+        "furina"
+      ],
       "weapons": [
         "staff_of_the_scarlet_sands",
         "nocturnes_curtain_call",
@@ -1423,7 +1861,9 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": ["lunarCharged"]
+      "reactions": [
+        "lunarCharged"
+      ]
     },
     {
       "id": "C4u2u6a0N5Km30orWD",
@@ -1458,7 +1898,12 @@
     {
       "id": "C4u2vYd0N9aC2uorWD",
       "name": "",
-      "characters": ["raiden_shogun", "xiangling", "xingqiu", "bennett"],
+      "characters": [
+        "raiden_shogun",
+        "xiangling",
+        "xingqiu",
+        "bennett"
+      ],
       "weapons": [
         "engulfing_lightning",
         "engulfing_lightning",
@@ -1479,12 +1924,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "3su3x3X0jNRe1W8gW5",
       "name": "",
-      "characters": ["yoimiya", "citlali", "xilonen", "yun_jin"],
+      "characters": [
+        "yoimiya",
+        "citlali",
+        "xilonen",
+        "yun_jin"
+      ],
       "weapons": [
         "thundering_pulse",
         "starcallers_watch",
@@ -1505,12 +1957,19 @@
           "setId": "husk_of_opulent_dreams"
         }
       ],
-      "reactions": ["melt"]
+      "reactions": [
+        "melt"
+      ]
     },
     {
       "id": "7sa0JFZ0jJam0WuIWD",
       "name": "",
-      "characters": ["kamisato_ayaka", "escoffier", "furina", "shenhe"],
+      "characters": [
+        "kamisato_ayaka",
+        "escoffier",
+        "furina",
+        "shenhe"
+      ],
       "weapons": [
         "mistsplitter_reforged",
         "symphonist_of_scents",
@@ -1531,12 +1990,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "1ZC3ATIWeGrK1fWd0N",
       "name": "",
-      "characters": ["eula", "furina", "mika", "raiden_shogun"],
+      "characters": [
+        "eula",
+        "furina",
+        "mika",
+        "raiden_shogun"
+      ],
       "weapons": [
         "song_of_broken_pines",
         "splendor_of_tranquil_waters",
@@ -1557,12 +2023,19 @@
           "setId": "emblem_of_severed_fate"
         }
       ],
-      "reactions": ["superconduct"]
+      "reactions": [
+        "superconduct"
+      ]
     },
     {
       "id": "8IS2p3X0jJb451cfWN",
       "name": "",
-      "characters": ["hu_tao", "citlali", "furina", "yelan"],
+      "characters": [
+        "hu_tao",
+        "citlali",
+        "furina",
+        "yelan"
+      ],
       "weapons": [
         "staff_of_homa",
         "starcallers_watch",
@@ -1583,12 +2056,20 @@
           "setId": "emblem_of_severed_fate"
         }
       ],
-      "reactions": ["vaporize", "melt"]
+      "reactions": [
+        "vaporize",
+        "melt"
+      ]
     },
     {
       "id": "8IS2oxT0jJgK51CXWN",
       "name": "",
-      "characters": ["hu_tao", "xilonen", "furina", "xingqiu"],
+      "characters": [
+        "hu_tao",
+        "xilonen",
+        "furina",
+        "xingqiu"
+      ],
       "weapons": [
         "staff_of_homa",
         "peak_patrol_song",
@@ -1609,12 +2090,19 @@
           "setId": "emblem_of_severed_fate"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "CX03obKWOJgK51-fWO",
       "name": "",
-      "characters": ["xiao", "xianyun", "furina", "faruzan"],
+      "characters": [
+        "xiao",
+        "xianyun",
+        "furina",
+        "faruzan"
+      ],
       "weapons": [
         "primordial_jade_wingedspear",
         "cranes_echoing_call",
@@ -1639,7 +2127,12 @@
     {
       "id": "6te0ITIWe72K1eia0O",
       "name": "",
-      "characters": ["ganyu", "furina", "shenhe", "venti"],
+      "characters": [
+        "ganyu",
+        "furina",
+        "shenhe",
+        "venti"
+      ],
       "weapons": [
         "aqua_simulacra",
         "splendor_of_tranquil_waters",
@@ -1660,12 +2153,19 @@
           "setId": "viridescent_venerer"
         }
       ],
-      "reactions": ["frozen"]
+      "reactions": [
+        "frozen"
+      ]
     },
     {
       "id": "AGO28gc0OCKu2uorWD",
       "name": "",
-      "characters": ["tartaglia", "kaedehara_kazuha", "xiangling", "bennett"],
+      "characters": [
+        "tartaglia",
+        "kaedehara_kazuha",
+        "xiangling",
+        "bennett"
+      ],
       "weapons": [
         "polar_star",
         "freedomsworn",
@@ -1686,12 +2186,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "2ca0nx50X5Km31AC0e",
       "name": "",
-      "characters": ["keqing", "nahida", "kaedehara_kazuha", "fischl"],
+      "characters": [
+        "keqing",
+        "nahida",
+        "kaedehara_kazuha",
+        "fischl"
+      ],
       "weapons": [
         "mistsplitter_reforged",
         "a_thousand_floating_dreams",
@@ -1712,12 +2219,19 @@
           "setId": "golden_troupe"
         }
       ],
-      "reactions": ["aggravate"]
+      "reactions": [
+        "aggravate"
+      ]
     },
     {
       "id": "3446aBl0rKQi1fAa04",
       "name": "",
-      "characters": ["klee", "nicole", "chevreuse", "fischl"],
+      "characters": [
+        "klee",
+        "nicole",
+        "chevreuse",
+        "fischl"
+      ],
       "weapons": [
         "kaguras_verity",
         "angelos_heptades",
@@ -1738,12 +2252,19 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "3AG6YxT0jJgK51SlW5",
       "name": "",
-      "characters": ["klee", "xilonen", "furina", "albedo"],
+      "characters": [
+        "klee",
+        "xilonen",
+        "furina",
+        "albedo"
+      ],
       "weapons": [
         "cashflow_supervision",
         "peak_patrol_song",
@@ -1764,12 +2285,19 @@
           "setId": "husk_of_opulent_dreams"
         }
       ],
-      "reactions": ["vaporize"]
+      "reactions": [
+        "vaporize"
+      ]
     },
     {
       "id": "9ru0fSlW595O6eoB0D",
       "name": "",
-      "characters": ["noelle", "albedo", "mona", "bennett"],
+      "characters": [
+        "noelle",
+        "albedo",
+        "mona",
+        "bennett"
+      ],
       "weapons": [
         "redhorn_stonethresher",
         "cinnabar_spindle",
@@ -1794,7 +2322,12 @@
     {
       "id": "Bzm6YZLWg9Ta6eoB0D",
       "name": "",
-      "characters": ["razor", "chevreuse", "fischl", "bennett"],
+      "characters": [
+        "razor",
+        "chevreuse",
+        "fischl",
+        "bennett"
+      ],
       "weapons": [
         "gest_of_the_mighty_wolf",
         "dialogues_of_the_desert_sages",
@@ -1815,12 +2348,19 @@
           "setId": "noblesse_oblige"
         }
       ],
-      "reactions": ["overloaded"]
+      "reactions": [
+        "overloaded"
+      ]
     },
     {
       "id": "5ja6aBl0rSDS1f-a04",
       "name": "",
-      "characters": ["venti", "nicole", "durin", "faruzan"],
+      "characters": [
+        "venti",
+        "nicole",
+        "durin",
+        "faruzan"
+      ],
       "weapons": [
         "the_daybreak_chronicles",
         "angelos_heptades",
@@ -1841,12 +2381,19 @@
           "setId": "tenacity_of_the_millelith"
         }
       ],
-      "reactions": ["swirl"]
+      "reactions": [
+        "swirl"
+      ]
     },
     {
       "id": "Y-86qJmWuYbK1gxT0C",
       "name": "",
-      "characters": ["traveler_cryo", "odette", "alyosha", "xilonen"],
+      "characters": [
+        "traveler_cryo",
+        "odette",
+        "alyosha",
+        "xilonen"
+      ],
       "weapons": [
         "exaiphanes_blade",
         "whitelake_frostfeather",
@@ -1867,7 +2414,9 @@
           "setId": "instructor"
         }
       ],
-      "reactions": ["stellarConduct"]
+      "reactions": [
+        "stellarConduct"
+      ]
     }
   ],
   "author": "GGArtifact",

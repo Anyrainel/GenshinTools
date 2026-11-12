@@ -1,5 +1,6 @@
 import { allSlots } from "@/domain/enums";
 import type { ArtifactData, Build } from "@/domain/models";
+import { isTriageArtifactEligible } from "./eligibility";
 import type {
   DemandSource,
   QualityTier,
@@ -109,7 +110,7 @@ export function buildTriageStatistics({
     }
   }
   const uniqueArtifacts = new Map(
-    artifacts.filter((a) => a.rarity === 5).map((a) => [a.id, a])
+    artifacts.filter(isTriageArtifactEligible).map((a) => [a.id, a])
   );
   for (const artifact of uniqueArtifacts.values()) {
     if (assigned.has(artifact.id)) continue;

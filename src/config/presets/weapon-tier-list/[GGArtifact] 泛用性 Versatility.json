@@ -26,7 +26,7 @@
     },
     "uraku_misugiri": {
       "tier": "B",
-      "position": 0
+      "position": 3
     },
     "light_of_foliar_incision": {
       "tier": "A",
@@ -42,15 +42,15 @@
     },
     "skyward_blade": {
       "tier": "B",
-      "position": 4
+      "position": 7
     },
     "haran_geppaku_futsu": {
       "tier": "B",
-      "position": 1
+      "position": 4
     },
     "azurelight": {
       "tier": "B",
-      "position": 2
+      "position": 5
     },
     "aquila_favonia": {
       "tier": "C",
@@ -58,19 +58,19 @@
     },
     "absolution": {
       "tier": "B",
-      "position": 3
+      "position": 6
     },
     "a_thousand_blazing_suns": {
       "tier": "B",
-      "position": 5
+      "position": 12
     },
     "fang_of_the_mountain_king": {
       "tier": "B",
-      "position": 6
+      "position": 13
     },
     "verdict": {
       "tier": "B",
-      "position": 7
+      "position": 14
     },
     "beacon_of_the_reed_sea": {
       "tier": "A",
@@ -78,7 +78,7 @@
     },
     "redhorn_stonethresher": {
       "tier": "B",
-      "position": 8
+      "position": 15
     },
     "wolfs_gravestone": {
       "tier": "C",
@@ -94,15 +94,15 @@
     },
     "skyward_pride": {
       "tier": "B",
-      "position": 9
+      "position": 16
     },
     "bloodsoaked_ruins": {
       "tier": "B",
-      "position": 10
+      "position": 18
     },
     "fractured_halo": {
       "tier": "B",
-      "position": 11
+      "position": 19
     },
     "symphonist_of_scents": {
       "tier": "S",
@@ -110,11 +110,11 @@
     },
     "lumidouce_elegy": {
       "tier": "B",
-      "position": 12
+      "position": 20
     },
     "crimson_moons_semblance": {
       "tier": "B",
-      "position": 13
+      "position": 21
     },
     "staff_of_the_scarlet_sands": {
       "tier": "A",
@@ -138,39 +138,39 @@
     },
     "skyward_spine": {
       "tier": "B",
-      "position": 14
+      "position": 22
     },
     "primordial_jade_wingedspear": {
       "tier": "A",
       "position": 8
     },
     "reliquary_of_truth": {
-      "tier": "B",
-      "position": 18
+      "tier": "A",
+      "position": 17
     },
     "nightweavers_looking_glass": {
       "tier": "B",
-      "position": 19
+      "position": 29
     },
     "vivid_notions": {
       "tier": "B",
-      "position": 15
+      "position": 26
     },
     "sunny_morning_sleepin": {
       "tier": "B",
-      "position": 20
+      "position": 30
     },
     "starcallers_watch": {
       "tier": "S",
-      "position": 6
+      "position": 7
     },
     "cranes_echoing_call": {
       "tier": "B",
-      "position": 16
+      "position": 27
     },
     "a_thousand_floating_dreams": {
       "tier": "S",
-      "position": 7
+      "position": 8
     },
     "kaguras_verity": {
       "tier": "A",
@@ -178,7 +178,7 @@
     },
     "surfs_up": {
       "tier": "B",
-      "position": 17
+      "position": 28
     },
     "cashflow_supervision": {
       "tier": "A",
@@ -186,11 +186,11 @@
     },
     "tome_of_the_eternal_flow": {
       "tier": "B",
-      "position": 21
+      "position": 31
     },
     "jadefalls_splendor": {
       "tier": "B",
-      "position": 22
+      "position": 32
     },
     "everlasting_moonglow": {
       "tier": "C",
@@ -206,11 +206,11 @@
     },
     "tulaytullahs_remembrance": {
       "tier": "B",
-      "position": 23
+      "position": 33
     },
     "skyward_atlas": {
       "tier": "B",
-      "position": 29
+      "position": 41
     },
     "the_daybreak_chronicles": {
       "tier": "A",
@@ -218,15 +218,15 @@
     },
     "astral_vultures_crimson_plumage": {
       "tier": "B",
-      "position": 24
+      "position": 36
     },
     "amos_bow": {
       "tier": "B",
-      "position": 25
+      "position": 37
     },
     "silvershower_heartstrings": {
       "tier": "B",
-      "position": 26
+      "position": 38
     },
     "the_first_great_magic": {
       "tier": "A",
@@ -242,19 +242,75 @@
     },
     "elegy_for_the_end": {
       "tier": "S",
-      "position": 8
+      "position": 9
     },
     "skyward_harp": {
       "tier": "B",
-      "position": 28
+      "position": 40
     },
     "thundering_pulse": {
       "tier": "B",
-      "position": 27
+      "position": 39
     },
     "polar_star": {
       "tier": "A",
       "position": 16
+    },
+    "lightbearing_moonshard": {
+      "tier": "B",
+      "position": 2
+    },
+    "whitelake_frostfeather": {
+      "tier": "B",
+      "position": 1
+    },
+    "exaiphanes_blade": {
+      "tier": "B",
+      "position": 8
+    },
+    "beyond_the_chrysalis": {
+      "tier": "B",
+      "position": 0
+    },
+    "torrents_of_spring": {
+      "tier": "B",
+      "position": 9
+    },
+    "a_teaspoon_of_transcendence": {
+      "tier": "B",
+      "position": 10
+    },
+    "gest_of_the_mighty_wolf": {
+      "tier": "B",
+      "position": 11
+    },
+    "disaster_and_remorse": {
+      "tier": "B",
+      "position": 17
+    },
+    "starsealed_edict": {
+      "tier": "B",
+      "position": 23
+    },
+    "angelos_heptades": {
+      "tier": "S",
+      "position": 6
+    },
+    "nocturnes_curtain_call": {
+      "tier": "B",
+      "position": 25
+    },
+    "hymn_of_the_maelstrom": {
+      "tier": "B",
+      "position": 24
+    },
+    "silverdawn": {
+      "tier": "B",
+      "position": 34
+    },
+    "golden_frostbound_oath": {
+      "tier": "B",
+      "position": 35
     }
   },
   "tierCustomization": {
@@ -276,5 +332,5 @@
   },
   "customTitle": "强度x泛用性",
   "author": "GGArtifact",
-  "description": "强度x泛用性 Versatility"
+  "description": "泛用性 Versatility"
 }

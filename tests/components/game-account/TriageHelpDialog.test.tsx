@@ -65,7 +65,7 @@ describe("TriageHelpDialog statistics", () => {
     selectTab("Set demand");
     expect(screen.getByText("Gap: 6")).toBeVisible();
     expect(screen.getByText("Total demand: 7")).toBeVisible();
-    expect(screen.getByText("5★ inventory: 3")).toBeVisible();
+    expect(screen.getByText("Evaluated inventory: 3")).toBeVisible();
     const expand = screen.getByRole("button", { name: "Gladiator's Finale" });
     const cells = within(expand.closest("tr")!).getAllByRole("cell");
     expect(cells[1]).toHaveTextContent("6");
@@ -140,7 +140,7 @@ describe("TriageHelpDialog statistics", () => {
     );
     selectTab("Set demand");
     expect(
-      screen.getByText("No demand or 5★ inventory to show.")
+      screen.getByText("No demand or eligible inventory to show.")
     ).toBeVisible();
     selectTab("Active builds");
     expect(

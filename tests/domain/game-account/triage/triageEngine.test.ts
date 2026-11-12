@@ -17,6 +17,7 @@ import type {
   WeightedMainStat,
   WeightedSubStat,
 } from "@/domain/models";
+import { artifactIdToHalfSetId } from "@/domain/reference/catalog";
 
 // Helpers
 
@@ -58,6 +59,9 @@ function rolls(counts: Partial<Record<SubStat, number>>) {
 function makeBuild(opts?: {
   id?: string;
   artifactSet?: string;
+  composition?: "4pc" | "2pc+2pc";
+  halfSet1?: string;
+  halfSet2?: string;
   substats?: WeightedSubStat[];
   circletWeights?: WeightedMainStat[];
   sandsWeights?: WeightedMainStat[];
@@ -68,8 +72,10 @@ function makeBuild(opts?: {
     characterId: "char_a",
     name: "Build",
     visible: true,
-    composition: "4pc" as const,
+    composition: opts?.composition ?? "4pc",
     artifactSet: opts?.artifactSet ?? "test_set",
+    halfSet1: opts?.halfSet1,
+    halfSet2: opts?.halfSet2,
     substats: opts?.substats ?? [
       { stat: "cr", weight: 100 },
       { stat: "cd", weight: 100 },
@@ -460,16 +466,38 @@ describe("runTriage", () => {
     expect(flexPatterns.length).toBeGreaterThan(0);
   });
 
-  it("protects equipped and unequipped 4-star artifacts without changing their lock state", () => {
-    const equipped = makeArt({ rarity: 4, lock: true, level: 16 });
-    const unequipped = makeArt({ rarity: 4, lock: false });
+  it("protects four-star variants of five-star sets without changing either lock state", () => {
+    const equipped = makeArt({
+      setKey: "emblem_of_severed_fate",
+      rarity: 4,
+      lock: true,
+      level: 16,
+    });
+    const unequipped = makeArt({
+      setKey: "emblem_of_severed_fate",
+      rarity: 4,
+      lock: false,
+    });
     const account = makeAccount(
       [{ key: "char_a", artifacts: { flower: equipped } }],
       [unequipped]
     );
     const { decisions } = runTriage(
       account,
-      [{ characterId: "char_a", builds: [makeBuild()] }],
+      [
+        {
+          characterId: "char_a",
+          builds: [
+            makeBuild({ artifactSet: "emblem_of_severed_fate" }),
+            makeBuild({
+              id: "half-set-build",
+              composition: "2pc+2pc",
+              halfSet1: artifactIdToHalfSetId.emblem_of_severed_fate,
+              halfSet2: artifactIdToHalfSetId.emblem_of_severed_fate,
+            }),
+          ],
+        },
+      ],
       {
         ...SETTINGS,
         ownedOnly: false,
@@ -498,9 +526,18 @@ describe("runTriage", () => {
   });
 
   it("does not let protected 4-star artifacts alter five-star decisions or supply statistics", () => {
-    const fiveStar = makeArt({});
-    const fourStar = makeArt({ rarity: 4, lock: true });
-    const groups = [{ characterId: "char_a", builds: [makeBuild()] }];
+    const fiveStar = makeArt({ setKey: "emblem_of_severed_fate" });
+    const fourStar = makeArt({
+      setKey: "emblem_of_severed_fate",
+      rarity: 4,
+      lock: true,
+    });
+    const groups = [
+      {
+        characterId: "char_a",
+        builds: [makeBuild({ artifactSet: "emblem_of_severed_fate" })],
+      },
+    ];
     const settings = { ...SETTINGS, ownedOnly: false };
     const baseline = runTriage(makeAccount([], [fiveStar]), groups, settings);
     const mixed = runTriage(
@@ -514,6 +551,264 @@ describe("runTriage", () => {
     ).toEqual(baseline.decisions);
     expect(mixed.statistics).toEqual(baseline.statistics);
     expect(mixed.decisions).toHaveLength(2);
+  });
+
+  it("evaluates native four-star sets against matching four-piece builds and counts their supply", () => {
+    const art = makeArt({
+      rarity: 4,
+      setKey: "instructor",
+      substats: { cr: 3.11, cd: 6.22, "atk%": 4.66 },
+      totalRolls: 3,
+    });
+    const { decisions, statistics } = runTriage(
+      makeAccount([], [art]),
+      [
+        {
+          characterId: "char_a",
+          builds: [
+            makeBuild({
+              artifactSet: "instructor",
+              substats: [
+                { stat: "cr", weight: 100 },
+                { stat: "cd", weight: 100 },
+                { stat: "atk%", weight: 100 },
+              ],
+            }),
+          ],
+        },
+      ],
+      { ...SETTINGS, ownedOnly: false, setSlotKeep: 0 }
+    );
+
+    expect(decisions).toHaveLength(1);
+    expect(decisions[0]).toMatchObject({
+      label: "lock",
+      decidingResult: {
+        ruleId: "solidTierKeep",
+        tier: "solid",
+        embryo: {
+          demand: { demandSource: { type: "4pc", setKey: "instructor" } },
+        },
+      },
+    });
+    expect(decisions[0].specialRules).not.toContain("rarityProtected");
+    expect(statistics.totalSupply).toBe(1);
+    expect(statistics.keepReasons.solid).toBe(1);
+    expect(
+      statistics.sets.find((row) => row.key === "4pc:instructor")?.supplyByTier
+        .solid
+    ).toBe(1);
+  });
+
+  it("never evaluates native four-star artifacts for two-piece demand or off-piece rules", () => {
+    const art = makeArt({
+      rarity: 4,
+      setKey: "instructor",
+      level: 16,
+      totalRolls: 7,
+      substats: { er: 20.72, "hp%": 4.66, cr: 3.11, cd: 6.22 },
+    });
+    const halfSet = artifactIdToHalfSetId.instructor;
+    expect(halfSet).toBeDefined();
+    const fiveStarHalfSet = {
+      ...art,
+      id: "five-star-shared-em-half-set",
+      rarity: 5 as const,
+      setKey: "wanderers_troupe",
+    };
+    const { decisions } = runTriage(
+      makeAccount([], [art, fiveStarHalfSet]),
+      [
+        {
+          characterId: "char_a",
+          builds: [
+            makeBuild({
+              composition: "2pc+2pc",
+              halfSet1: halfSet,
+              halfSet2: halfSet,
+            }),
+          ],
+        },
+      ],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        highLevelProtection: false,
+        levelProtection: 12,
+        setSlotKeep: 3,
+        erHoardingEnabled: true,
+        erHoardingAllEnabled: true,
+        doubleCritLockEnabled: true,
+        customFlexInputs: [
+          { slot: "flower", mainStat: "hp", requiredSubs: ["er", "hp%"] },
+        ],
+      }
+    );
+
+    expect(decisions[0]).toMatchObject({
+      label: "unlock",
+      decidingResult: { ruleId: "noDemand" },
+      allResults: [],
+      specialRules: [],
+    });
+    const fiveStarDecision = decisions.find(
+      (decision) => decision.artifact.id === fiveStarHalfSet.id
+    )!;
+    expect(fiveStarDecision.allResults).not.toHaveLength(0);
+    expect(
+      fiveStarDecision.allResults.every(
+        (result) => result.embryo.demand.demandSource.type === "2pc"
+      )
+    ).toBe(true);
+  });
+
+  it("never gives native four-star artifacts four-initial-line bonuses from pending metadata", () => {
+    const art = makeArt({
+      rarity: 4,
+      setKey: "instructor",
+      substats: { cr: 3.11, cd: 6.22, "atk%": 4.66 },
+      unactivatedSubstats: { er: 5.18 },
+    });
+    const { decisions } = runTriage(
+      makeAccount([], [art]),
+      [
+        {
+          characterId: "char_a",
+          builds: [makeBuild({ artifactSet: "instructor" })],
+        },
+      ],
+      { ...SETTINGS, ownedOnly: false, erHoardingAllEnabled: true }
+    );
+    expect(decisions[0].decidingResult?.embryo?.grade.initial4Line).toBe(false);
+    expect(decisions[0].specialRules).not.toContain("allSetErHoard");
+    expect(decisions[0].specialRules).not.toContain("doubleCrit");
+    expect(decisions[0].specialRules).not.toContain("offPiecePattern");
+  });
+
+  it("does not rescue a native four-star artifact with the wrong four-piece main stat", () => {
+    const art = makeArt({
+      rarity: 4,
+      setKey: "instructor",
+      slotKey: "sands",
+      mainStatKey: "er",
+      level: 16,
+      totalRolls: 7,
+      substats: { em: 67.16, "hp%": 4.66, def: 18.52, atk: 15.56 },
+    });
+    const { decisions } = runTriage(
+      makeAccount([], [art]),
+      [
+        {
+          characterId: "char_a",
+          builds: [makeBuild({ artifactSet: "instructor" })],
+        },
+      ],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        highLevelProtection: false,
+        levelProtection: 12,
+        setSlotKeep: 3,
+        erHoardingAllEnabled: true,
+        customFlexInputs: [
+          { slot: "sands", mainStat: "er", requiredSubs: ["em", "hp%"] },
+        ],
+      }
+    );
+    expect(decisions[0]).toMatchObject({
+      label: "unlock",
+      decidingResult: { ruleId: "noDemand" },
+      allResults: [],
+      specialRules: [],
+    });
+  });
+
+  it("does not apply off-piece flex keeps even when a native four-star four-piece main stat matches", () => {
+    const art = makeArt({
+      rarity: 4,
+      setKey: "instructor",
+      substats: { er: 4.66, "hp%": 4.2, def: 16.67 },
+      totalRolls: 3,
+    });
+    const { decisions } = runTriage(
+      makeAccount([], [art]),
+      [
+        {
+          characterId: "char_a",
+          builds: [
+            makeBuild({
+              artifactSet: "instructor",
+              substats: [{ stat: "cr", weight: 100 }],
+            }),
+          ],
+        },
+      ],
+      {
+        ...SETTINGS,
+        ownedOnly: false,
+        setSlotKeep: 0,
+        customFlexInputs: [
+          { slot: "flower", mainStat: "hp", requiredSubs: ["er", "hp%"] },
+        ],
+      }
+    );
+    expect(decisions[0].label).toBe("unlock");
+    expect(decisions[0].specialRules).not.toContain("offPiecePattern");
+    expect(decisions[0].allResults).toHaveLength(1);
+  });
+
+  it("keeps native four-star build queues independent of five-star queues", () => {
+    const fiveStar = makeArt({
+      setKey: "wanderers_troupe",
+      substats: { cr: 3.11, cd: 6.22, er: 5.18 },
+      totalRolls: 3,
+    });
+    const fourStar = makeArt({
+      setKey: "instructor",
+      rarity: 4,
+      substats: { cr: 3.11, cd: 6.22, "atk%": 4.66 },
+      totalRolls: 3,
+    });
+    const groups = [
+      {
+        characterId: "char_a",
+        builds: [makeBuild({ artifactSet: "wanderers_troupe" })],
+      },
+      {
+        characterId: "char_b",
+        builds: [makeBuild({ artifactSet: "instructor" })],
+      },
+    ];
+    const settings = {
+      ...SETTINGS,
+      ownedOnly: false,
+      qualityMargin: 0,
+      setSlotKeep: 0,
+    };
+    const baseline = runTriage(makeAccount([], [fiveStar]), groups, settings);
+    const mixed = runTriage(
+      makeAccount([], [fiveStar, fourStar]),
+      groups,
+      settings
+    );
+    expect(
+      mixed.decisions.find((decision) => decision.artifact.id === fiveStar.id)
+    ).toEqual(baseline.decisions[0]);
+    expect(
+      mixed.statistics.sets.find((row) => row.key === "4pc:wanderers_troupe")
+    ).toEqual(
+      baseline.statistics.sets.find((row) => row.key === "4pc:wanderers_troupe")
+    );
+    expect(mixed.statistics.totalSupply).toBe(
+      baseline.statistics.totalSupply + 1
+    );
+    expect(
+      mixed.decisions
+        .find((decision) => decision.artifact.id === fourStar.id)
+        ?.allResults.every(
+          (result) => result.embryo.demand.demandSource.type === "4pc"
+        )
+    ).toBe(true);
   });
 
   it("custom patterns from customFlexInputs cause off-piece special rule to fire", () => {

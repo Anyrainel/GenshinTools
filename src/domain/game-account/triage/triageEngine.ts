@@ -15,10 +15,12 @@ import type {
   Build,
   GlobalStatWeights,
 } from "@/domain/models";
+import { artifactsById } from "@/domain/reference/catalog";
 import { runConcentrationValueRules } from "./concentrationValue";
 import { QUALITY_TIER_RANK, QUALITY_TIERS } from "./constants";
 import { countDemand, makeEmbryoKey } from "./demandCounting";
 import { getEligibleSetsForHalfSet } from "./demandExtractor";
+import { isTriageArtifactEligible } from "./eligibility";
 import { buildCustomFlexPattern, buildFlexPatterns } from "./flexRegistry";
 import { startedWithFourSubstats } from "./initialSubstats";
 import { extractRules, selectActiveBuildGroups } from "./ruleBuilder";
@@ -42,11 +44,21 @@ import type {
 
 // Set matching
 
-function matchesSet(rule: TriageRule, setKey: string): boolean {
+function matchesSet(rule: TriageRule, artifact: ArtifactData): boolean {
   const src = rule.demandSource;
-  if (src.type === "4pc") return src.setKey === setKey;
+  if (artifact.rarity === 4) {
+    return (
+      isTriageArtifactEligible(artifact) &&
+      src.type === "4pc" &&
+      src.setKey === artifact.setKey
+    );
+  }
+  if (src.type === "4pc")
+    return (
+      artifactsById[src.setKey]?.rarity !== 4 && src.setKey === artifact.setKey
+    );
   if (src.type === "2pc")
-    return getEligibleSetsForHalfSet(src.halfSetId).includes(setKey);
+    return getEligibleSetsForHalfSet(src.halfSetId).includes(artifact.setKey);
   return true; // flex matches any set
 }
 
@@ -110,9 +122,9 @@ export function runTriage(
     allArtifacts.push({ artifact: art, equippedOn: null });
   }
 
-  // Four-star artifacts bypass evaluation until their tier thresholds are supported.
-  const fiveStarArtifacts = allArtifacts.filter(
-    (artifactEntry) => artifactEntry.artifact.rarity === 5
+  // Native four-star sets have their own exact four-piece demand queues.
+  const eligibleArtifacts = allArtifacts.filter(({ artifact }) =>
+    isTriageArtifactEligible(artifact)
   );
 
   // Phase 1: Evaluate each artifact
@@ -145,10 +157,11 @@ export function runTriage(
 
   const prelims: PrelimResult[] = [];
 
-  for (const { artifact, equippedOn } of fiveStarArtifacts) {
+  for (const { artifact, equippedOn } of eligibleArtifacts) {
     const specialRules: TriageSpecialRule[] = [];
     const substats = getAllSubstats(artifact);
-    const hasFourInitialSubstats = startedWithFourSubstats(artifact);
+    const hasFourInitialSubstats =
+      artifact.rarity === 5 && startedWithFourSubstats(artifact);
 
     // --- Pre-checks ---
     // Universal ER hoarding for support sets. This intentionally ignores
@@ -194,7 +207,7 @@ export function runTriage(
         (rule) =>
           rule.slot === artifact.slotKey &&
           rule.mainStat === artifact.mainStatKey &&
-          matchesSet(rule, artifact.setKey)
+          matchesSet(rule, artifact)
       )
       .sort((a, b) => {
         const ka = makeEmbryoKey(a.demandSource, a.slot, a.mainStat, a.desired);
@@ -283,7 +296,7 @@ export function runTriage(
     }
 
     // Flex check: tag only, does not change tier
-    for (const flexPattern of enabledFlex) {
+    for (const flexPattern of artifact.rarity === 5 ? enabledFlex : []) {
       if (flexPattern.slot !== artifact.slotKey) continue;
       if (flexPattern.mainStat !== artifact.mainStatKey) continue;
       if (flexPattern.requiresFourInitialSubstats && !hasFourInitialSubstats)
@@ -516,6 +529,7 @@ export function runTriage(
   if (settings.setSlotKeep > 0) {
     const setSlotGroups = new Map<string, PrelimResult[]>();
     for (const p of prelims) {
+      if (p.artifact.rarity === 4 && p.evaluations.length === 0) continue;
       const key = `${p.artifact.setKey}:${p.artifact.slotKey}`;
       if (!setSlotGroups.has(key)) setSlotGroups.set(key, []);
       setSlotGroups.get(key)!.push(p);
@@ -565,7 +579,10 @@ export function runTriage(
     if (isHighLevel) {
       if (settings.highLevelProtection) {
         prelim.specialRules.push("levelProtected");
-      } else if (prelim.bestLabel === "unlock") {
+      } else if (
+        prelim.bestLabel === "unlock" &&
+        (prelim.artifact.rarity === 5 || prelim.evaluations.length > 0)
+      ) {
         const result = runConcentrationValueRules(prelim.artifact);
         if (result.kept) {
           setLabel(prelim, "lock", "concentrationValue");
@@ -594,8 +611,11 @@ export function runTriage(
     specialRules: p.specialRules,
     supplyDemand: p.supplyDemand,
   }));
-  const protectedFourStarDecisions = allArtifacts
-    .filter(({ artifact }) => artifact.rarity === 4)
+  const excludedFourStarDecisions = allArtifacts
+    .filter(
+      ({ artifact }) =>
+        artifact.rarity === 4 && !isTriageArtifactEligible(artifact)
+    )
     .map<TriageDecision>(({ artifact }) => ({
       artifact,
       label: artifact.lock ? "lock" : "unlock",
@@ -605,13 +625,13 @@ export function runTriage(
       supplyDemand: null,
     }));
   return {
-    decisions: [...decisions, ...protectedFourStarDecisions],
+    decisions: [...decisions, ...excludedFourStarDecisions],
     flexPatterns: allFlex,
     statistics: buildTriageStatistics({
       activeGroups: selectActiveBuildGroups(buildGroups, accountData, settings),
       buildGroups: allBuildGroups,
       demandGroups: demandCounts,
-      artifacts: fiveStarArtifacts.map(({ artifact }) => artifact),
+      artifacts: eligibleArtifacts.map(({ artifact }) => artifact),
       supply: rankedEdges.map((edge) => ({
         artifact: edge.prelim.artifact,
         embryoKey: edge.embryoKey,

@@ -3000,8 +3000,8 @@ export const i18nUiData = {
       zh: "保护区不参与",
     },
     noActionDesc: {
-      en: "4-star artifacts and artifacts protected by level or equipment rules; lock status stays unchanged",
-      zh: "四星圣遗物及受等级、装备保护规则保护的圣遗物，保持当前锁定状态",
+      en: "Excluded 4-star variants and artifacts protected by level or equipment rules; lock status stays unchanged",
+      zh: "不参与判断的四星版本及受等级、装备保护规则保护的圣遗物，保持当前锁定状态",
     },
     noChange: {
       en: "No Change",
@@ -3071,8 +3071,8 @@ export const i18nUiData = {
       levelProtected: { en: "Level protected", zh: "高等级保护" },
       equippedProtected: { en: "Equipped protected", zh: "已装备保护" },
       rarityProtected: {
-        en: "4-star artifacts are not evaluated for locking yet",
-        zh: "4星目前不参与锁定判断",
+        en: "4-star variants of 5-star sets are excluded",
+        zh: "五星套装的四星版本不参与锁定判断",
       },
       doubleCrit: { en: "4-liner CR+CD", zh: "4初始双暴" },
       setSlotFloor: { en: "Set+slot keep", zh: "套装部位最低保留" },
@@ -3233,7 +3233,7 @@ export const i18nUiData = {
         zh: "每个部位的需求由达到权重门槛的主词条均分；2+2 配装中，每种两件套效果的需求再减半（两组效果相同则按完整需求计）。按套装、部位、主词条和核心副词条组合汇总后，统一向上取整。",
       },
       totalDemand: { en: "Total demand", zh: "需求总量" },
-      totalInventory: { en: "5★ inventory", zh: "五星库存" },
+      totalInventory: { en: "Evaluated inventory", zh: "参与判断的库存" },
       setColumn: { en: "Set / 2-piece pool", zh: "套装 / 两件套池" },
       sharedPool: { en: "2pc shared", zh: "两件套共享" },
       setStatisticsDetail: {
@@ -3253,8 +3253,8 @@ export const i18nUiData = {
         zh: "当前没有通过筛选的配装。",
       },
       noSetStatistics: {
-        en: "No demand or 5★ inventory to show.",
-        zh: "暂无配装需求或五星库存。",
+        en: "No demand or eligible inventory to show.",
+        zh: "暂无配装需求或符合判断范围的库存。",
       },
       desc: {
         en: "Compares every artifact's substats against your builds to decide what to keep.",
