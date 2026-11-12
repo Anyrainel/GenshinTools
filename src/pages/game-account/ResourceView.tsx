@@ -18,11 +18,12 @@ import { ScrollLayout } from "@/components/layout/ScrollLayout";
 import { CategoryChip } from "@/components/shared/CategoryChip";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  TIER_LIST_OTHER_ARTIFACT_SETS,
-  TIER_LIST_SUPPORT_ARTIFACT_SETS,
-} from "@/config/gameConstants";
 import { useLanguage } from "@/contexts/LanguageContext";
+import {
+  ARTIFACT_SET_CATEGORIES,
+  type ArtifactSetCategory,
+  getArtifactSetCategory,
+} from "@/domain/build/artifact/setCategory";
 import type { Tier } from "@/domain/enums";
 import { tiers } from "@/domain/enums";
 import {
@@ -56,33 +57,14 @@ import {
 } from "@/stores/useResourceRecStore";
 import { useTierStore } from "@/stores/useTierStore";
 
-type ResourceSetCategory = "dps" | "support" | "other";
-
-const RESOURCE_SET_CATEGORIES: ResourceSetCategory[] = [
-  "dps",
-  "support",
-  "other",
-];
-
 const RESOURCE_KIND_ICONS: Record<ResourceKind, string> = {
   craft: "/assets/craft.webp",
   reroll: "/assets/reroll.webp",
   levelup: "/assets/upgrde.webp",
 };
 
-function getResourceSetCategory(setId: string): ResourceSetCategory {
-  if (TIER_LIST_SUPPORT_ARTIFACT_SETS.has(setId)) return "support";
-  if (
-    TIER_LIST_OTHER_ARTIFACT_SETS.has(setId) ||
-    artifactsById[setId]?.rarity === 4
-  ) {
-    return "other";
-  }
-  return "dps";
-}
-
 function getResourceSetCategoryLabel(
-  category: ResourceSetCategory,
+  category: ArtifactSetCategory,
   t: ReturnType<typeof useLanguage>["t"]
 ): string {
   if (category === "support") return t.ui("tierList.supportSet");
@@ -217,7 +199,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
     () => new Set()
   );
   const [setCategoryFilters, setSetCategoryFilters] = useState<
-    Record<ResourceSetCategory, boolean>
+    Record<ArtifactSetCategory, boolean>
   >({
     dps: true,
     support: true,
@@ -232,7 +214,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
       ((s.kind === "craft" && showCraft) ||
         (s.kind === "reroll" && showReroll) ||
         (s.kind === "levelup" && showLevelup)) &&
-      setCategoryFilters[getResourceSetCategory(s.setId)] &&
+      setCategoryFilters[getArtifactSetCategory(s.setId)] &&
       (!onlyInitialFourSubstats ||
         s.kind === "craft" ||
         (s.sourceArtifact && startedWithFourSubstats(s.sourceArtifact)))
@@ -249,6 +231,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
   const filteredSuggestions = activeSetId
     ? categoryFilteredSuggestions.filter((s) => s.setId === activeSetId)
     : categoryFilteredSuggestions;
+  const visibleSetCount = activeSetId ? 1 : setSummaries.length;
   const byTier = new Map<Tier, ResourceSuggestion[]>();
   for (const tier of tiers) byTier.set(tier as Tier, []);
   for (const s of filteredSuggestions) {
@@ -268,7 +251,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
       return next;
     });
   };
-  const toggleSetCategoryFilter = (category: ResourceSetCategory) => {
+  const toggleSetCategoryFilter = (category: ArtifactSetCategory) => {
     setSetCategoryFilters((prev) => ({
       ...prev,
       [category]: !prev[category],
@@ -292,7 +275,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
     <ScrollLayout
       header={
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-3 pb-2">
+          <div className="flex w-full flex-wrap items-center gap-3 pb-2">
             <h2 className="text-xl font-bold text-white">
               {t.ui("evaluation.resourceSuggestions")}
             </h2>
@@ -301,19 +284,29 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
               onClick={() => setHelpOpen(true)}
             />
             <AccountDataSourceAgeBadge lastUpdate={activeAccount?.lastUpdate} />
+            <span className="text-sm text-muted-foreground">
+              {t.format(
+                "evaluation.resourceSubtitle",
+                filteredSuggestions.length,
+                visibleSetCount
+              )}
+            </span>
             <div className="flex-1" />
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={() => {
                 clearPUpgradeCache();
                 setRecomputeTrigger((n) => n + 1);
               }}
-              className="gap-1 text-foreground"
+              title={t.ui("evaluation.reassess")}
+              className="h-7 gap-1.5 px-2 text-xs"
             >
-              <RefreshCw className="w-4 h-4" />
-              {t.ui("evaluation.reassess")}
+              <RefreshCw className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">
+                {t.ui("evaluation.reassess")}
+              </span>
             </Button>
           </div>
           <div className="flex items-center gap-1.5 md:gap-3 flex-wrap">
@@ -349,7 +342,7 @@ export function ResourceView({ onOpenImport, onShowTour }: ResourceViewProps) {
               </span>
             </label>
             <div className="flex items-center gap-1.5 flex-wrap ml-2 md:ml-4 lg:ml-6">
-              {RESOURCE_SET_CATEGORIES.map((category) => (
+              {ARTIFACT_SET_CATEGORIES.map((category) => (
                 <CategoryChip
                   key={category}
                   active={setCategoryFilters[category]}
