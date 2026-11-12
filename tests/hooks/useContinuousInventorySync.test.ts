@@ -62,6 +62,89 @@ beforeEach(() => {
 });
 afterEach(() => vi.useRealTimers());
 describe("hands-off continuous inventory", () => {
+  it("replaces upgraded artifacts and removes consumed or salvaged items through successive snapshots", async () => {
+    const artifact = {
+      setKey: "GladiatorsFinale",
+      slotKey: "flower",
+      level: 0,
+      rarity: 5,
+      mainStatKey: "hp",
+      location: "",
+      lock: false,
+      substats: [
+        { key: "critRate_", value: 3.9 },
+        { key: "critDMG_", value: 7.8 },
+        { key: "atk_", value: 5.8 },
+      ],
+    };
+    const initial = {
+      ...snapshot,
+      data: {
+        ...snapshot.data,
+        metadata: { uid: "123456789" },
+        characters: [
+          {
+            key: "Amber",
+            level: 80,
+            ascension: 5,
+            constellation: 0,
+            talent: { auto: 8, skill: 7, burst: 6 },
+          },
+        ],
+        artifacts: [
+          { ...artifact, location: "Amber" },
+          artifact,
+          { ...artifact, slotKey: "plume", mainStatKey: "atk" },
+        ],
+      },
+    };
+    vi.mocked(fetchContinuous).mockResolvedValue(initial);
+    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    await flush();
+    const account = () => useAccountStore.getState().accounts[123456789]!.data!;
+    expect(account().characters[0]!.artifacts.flower?.level).toBe(0);
+    expect(account().extraArtifacts).toHaveLength(2);
+
+    // One poll can span both enhancing the equipped piece and consuming fodder.
+    const upgraded = {
+      ...artifact,
+      location: "Amber",
+      level: 4,
+      substats: [...artifact.substats, { key: "eleMas", value: 23.31 }],
+    };
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...initial,
+      revision: 4,
+      data: {
+        ...initial.data,
+        artifacts: [upgraded, initial.data.artifacts[2]!],
+      },
+    });
+    await tick();
+    expect(account().characters[0]!.artifacts.flower?.level).toBe(4);
+    expect(account().extraArtifacts).toHaveLength(1);
+    expect(account().extraArtifacts[0]?.slotKey).toBe("plume");
+    await tick();
+    expect(applyAccountImport).toHaveBeenCalledTimes(2);
+
+    // A ready empty inventory must clear the final items, including equipped gear.
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...initial,
+      revision: 5,
+      data: { ...initial.data, artifacts: [] },
+    });
+    await tick();
+    expect(account().characters[0]!.artifacts).toEqual({});
+    expect(account().extraArtifacts).toEqual([]);
+    expect(account().characters[0]!.talent).toEqual({
+      auto: 8,
+      skill: 7,
+      burst: 6,
+    });
+    expect(view.result.current.status).toBe("synced");
+    view.unmount();
+  });
+
   it("tracks pending requests and refreshes receipt time even when inventory is unchanged", async () => {
     const startedAt = Date.UTC(2026, 10, 12, 12);
     vi.setSystemTime(startedAt);
