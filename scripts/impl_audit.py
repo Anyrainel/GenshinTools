@@ -755,12 +755,12 @@ def print_char_kit(
         else:
             print(f"\n[{tag}] {name_en}  |  {name_zh}")
         if not zh_only and en_s:
-            print(f"  EN: {strip_html(en_s.get('descHtml', ''))}")
+            print(f"  {strip_html(en_s.get('descHtml', ''))}")
         if zh_s:
-            print(f"  ZH: {strip_html(zh_s.get('descHtml', ''))}")
+            print(f"  {strip_html(zh_s.get('descHtml', ''))}")
         elif zh_only and en_s:
             # Nothing in ZH to print — EN text beats an empty entry.
-            print(f"  EN: {strip_html(en_s.get('descHtml', ''))}")
+            print(f"  {strip_html(en_s.get('descHtml', ''))}")
 
         en_details = (en_s.get("details") or []) if en_s else []
         zh_details = (zh_s.get("details") or []) if zh_s else []
@@ -795,11 +795,11 @@ def print_char_kit(
             en_name = en_p.get("name", "") if en_p else _NO_EN
             print(f"\n[P{i + 1}] {en_name}  |  {zh_p['name'] if zh_p else _NO_ZH}")
             if en_p:
-                print(f"  EN: {en_desc}")
+                print(f"  {en_desc}")
         if zh_p:
-            print(f"  ZH: {zh_desc}")
+            print(f"  {zh_desc}")
         elif zh_only and en_p:
-            print(f"  EN: {en_desc}")
+            print(f"  {en_desc}")
 
     # Constellations are positional (C1..C6), so they pair by index.
     en_cons = en_kit.get("constellations", [])
@@ -815,11 +815,11 @@ def print_char_kit(
             en_name = en_c.get("name", "") if en_c else _NO_EN
             print(f"\n[C{i + 1}] {en_name}  |  {zh_c['name'] if zh_c else _NO_ZH}")
             if en_c:
-                print(f"  EN: {en_desc}")
+                print(f"  {en_desc}")
         if zh_c:
-            print(f"  ZH: {strip_html(zh_c.get('descHtml', ''))}")
+            print(f"  {strip_html(zh_c.get('descHtml', ''))}")
         elif zh_only and en_c:
-            print(f"  EN: {en_desc}")
+            print(f"  {en_desc}")
 
     # Glossary terms are unordered, and a term can exist in one language only
     # (vesna's ZH-only 灵剑武装), so they align rather than pair by index.
@@ -850,11 +850,11 @@ def print_char_kit(
             else:
                 print(f"\n[G] {names_en}  |  {names_zh}")
                 if groups[key]:
-                    print(f"  EN: {strip_html(key)}")
+                    print(f"  {strip_html(key)}")
             if zh_entry:
-                print(f"  ZH: {strip_html(zh_entry.get('descHtml', ''))}")
+                print(f"  {strip_html(zh_entry.get('descHtml', ''))}")
             elif zh_only and groups[key]:
-                print(f"  EN: {strip_html(key)}")
+                print(f"  {strip_html(key)}")
 
 
 def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
@@ -934,8 +934,8 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
 
         print("[Effect]")
         if not zh_only:
-            print(f"  EN: {strip_html(effect_texts.get('en', ''))}")
-        print(f"  ZH: {strip_html(effect_texts.get('zh', ''))}")
+            print(f"  {strip_html(effect_texts.get('en', ''))}")
+        print(f"  {strip_html(effect_texts.get('zh', ''))}")
 
         refinement_warnings = weapon_refinement_warnings(entity_id)
         if refinement_warnings:
@@ -949,8 +949,8 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
             print("═" * 80)
             print("[2pc]")
             if not zh_only:
-                print(f"  EN: {strip_html(i18n_data.get('en', ''))}")
-            print(f"  ZH: {strip_html(i18n_data.get('zh', ''))}")
+                print(f"  {strip_html(i18n_data.get('en', ''))}")
+            print(f"  {strip_html(i18n_data.get('zh', ''))}")
         else:
             name_zh = i18n_data.get("zh", entity_id)
             if zh_only:
@@ -988,9 +988,9 @@ def cmd_show(mode: Mode, entity_id: str, *, zh_only: bool = False) -> None:
                 if en_eff or zh_eff:
                     print(f"[{pc}pc]")
                     if en_eff and not zh_only:
-                        print(f"  EN: {strip_html(en_eff)}")
+                        print(f"  {strip_html(en_eff)}")
                     if zh_eff:
-                        print(f"  ZH: {strip_html(zh_eff)}")
+                        print(f"  {strip_html(zh_eff)}")
 
     if impl:
         n_lines = impl["end_line"] - impl["start_line"] + 1
