@@ -3,7 +3,7 @@ import fixture from "../tests/fixtures/goodscanner-v3.json" with {
   type: "json",
 };
 
-test("background scanner sync survives closing import and browsing; global stop ends it", async ({
+test("continuous scanner sync starts from account management and survives browsing; global stop ends it", async ({
   page,
 }, testInfo) => {
   if (testInfo.project.name === "mobile")
@@ -62,22 +62,39 @@ test("background scanner sync survives closing import and browsing; global stop 
       },
     });
   });
-  await page.goto("/account-data/inventory?import=1");
+  await page.goto("/account-data/inventory");
   const preset = page.getByRole("dialog", {
     name: "Preset Builds Loaded",
     exact: true,
   });
   // The unrelated first-use build prompt is dismissed through its public action.
   await preset.getByRole("button", { name: "Got it", exact: true }).click();
-  const dialog = page.getByRole("dialog", {
-    name: "Import Game Account Data",
+  if (testInfo.project.name === "mobile") {
+    await page.getByRole("button", { name: "More", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Accounts", exact: true }).click();
+  } else {
+    await page.getByRole("button", { name: "Accounts", exact: true }).click();
+  }
+  const manager = page.getByRole("dialog", {
+    name: "Manage Profiles",
     exact: true,
   });
-  await dialog
-    .getByRole("switch", { name: "Background inventory sync" })
-    .check();
+  const syncButton = manager.getByRole("button", {
+    name: /^Continuous Sync \(Capture\)/,
+  });
+  await expect(syncButton.getByText("New", { exact: true })).toBeVisible();
+  await syncButton.click();
+  const dialog = page.getByRole("dialog", {
+    name: "Continuous Sync (Capture)",
+    exact: true,
+  });
+  await expect(
+    dialog.getByRole("textbox", { name: "Port", exact: true })
+  ).toBeVisible();
+  expect(polls).toBe(0);
+  await dialog.getByRole("button", { name: "Start sync", exact: true }).click();
   const status = page.getByRole("region", {
-    name: "Background inventory sync",
+    name: "Continuous Sync (Capture)",
   });
   await expect(status).toContainText("Syncing");
   await dialog.getByRole("button", { name: "Close", exact: true }).click();

@@ -1,10 +1,11 @@
-import { Radio } from "lucide-react";
+import { Power, Radio } from "lucide-react";
 import { useId } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScannerSync } from "@/contexts/ScannerSyncContext";
+import { cn } from "@/lib/utils";
 
 export function ContinuousInventorySync() {
   const { t } = useLanguage();
@@ -32,28 +33,43 @@ export function ContinuousInventorySync() {
     invalid: t.ui("continuous.invalid"),
   }[sync.status];
   return (
-    <section className="space-y-3 rounded-xl border border-border bg-card p-4 text-sm">
+    <section className="space-y-4 text-left text-sm">
       <div className="flex w-full items-center justify-between gap-3">
-        <div className="min-w-0 space-y-1">
-          <h3 className="flex items-center gap-2 font-semibold">
-            <Radio className="h-4 w-4 text-primary" aria-hidden />
-            GGScanner
-          </h3>
-          <Label
-            htmlFor={`${id}-enabled`}
-            className="block cursor-pointer text-sm"
-          >
-            {t.ui("continuous.title")}
-          </Label>
-        </div>
-        <Switch
-          id={`${id}-enabled`}
-          checked={enabled}
-          onCheckedChange={setEnabled}
+        <Label htmlFor={`${id}-port`}>{t.ui("manager.port")}</Label>
+        <Input
+          id={`${id}-port`}
+          className="h-9 w-28 border-border"
+          inputMode="numeric"
+          value={portInput}
+          disabled={enabled}
+          onChange={(event) => setPortInput(event.target.value)}
+          onBlur={commitPort}
         />
       </div>
+      <Button
+        variant={enabled ? "secondary" : "default"}
+        className={cn(
+          "h-11 w-full",
+          !enabled &&
+            "bg-golden text-golden-foreground hover:bg-golden/90 focus-visible:ring-golden/50"
+        )}
+        onClick={() => {
+          if (!enabled) commitPort();
+          setEnabled(!enabled);
+        }}
+      >
+        {enabled ? (
+          <Power className="h-4 w-4" aria-hidden />
+        ) : (
+          <Radio className="h-4 w-4" aria-hidden />
+        )}
+        {enabled ? t.ui("continuous.stop") : t.ui("continuous.start")}
+      </Button>
       {enabled && account && (
-        <div role="status" className="space-y-2 break-words">
+        <div
+          role="status"
+          className="space-y-2 rounded-lg border border-border bg-muted p-3 break-words"
+        >
           <p>{statusText}</p>
           {sync.updatedAt !== undefined && (
             <p className="text-xs text-muted-foreground">
@@ -91,22 +107,10 @@ export function ContinuousInventorySync() {
           {t.ui("continuous.routed").replace("{0}", session.syncedAccount.name)}
         </p>
       )}
-      <details>
+      <details className="rounded-lg border border-border p-3">
         <summary className="cursor-pointer text-xs font-medium">
-          {t.ui("continuous.connection")}
+          {t.ui("continuous.details")}
         </summary>
-        <div className="mt-3 flex items-center gap-3">
-          <Label htmlFor={`${id}-port`}>{t.ui("manager.port")}</Label>
-          <Input
-            id={`${id}-port`}
-            className="h-8 w-24"
-            inputMode="numeric"
-            value={portInput}
-            disabled={enabled}
-            onChange={(event) => setPortInput(event.target.value)}
-            onBlur={commitPort}
-          />
-        </div>
         <p className="mt-3 text-xs text-muted-foreground">
           {t.ui("continuous.limits")}
         </p>

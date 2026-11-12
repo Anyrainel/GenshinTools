@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 
-import { ContinuousInventorySync } from "@/components/game-account/ContinuousInventorySync";
 import type { ControlHandle } from "@/components/shared/controlHandle";
 import { ImportMethodItem } from "@/components/shared/ImportMethodItem";
 import { Accordion } from "@/components/ui/accordion";
@@ -245,7 +244,6 @@ export const AccountImportControl = forwardRef<
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        <ContinuousInventorySync />
         <Accordion
           type="single"
           value={method}

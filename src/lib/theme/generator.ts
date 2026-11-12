@@ -240,6 +240,9 @@ export function generateThemeVars(themeId: ThemeId): Record<string, string> {
     // Primary - vivid elemental accent
     primary: hslVar(glow1.h, primaryS, primaryL),
     "primary-foreground": primaryFg,
+    // A warm action accent, distinct from each theme's primary.
+    golden: hslVar(43, 80, 60),
+    "golden-foreground": hslVar(35, 60, 12),
 
     // Secondary - subtle lift from background
     secondary: hslVar(base.h, base.s + 8, base.l + 5),

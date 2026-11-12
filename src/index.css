@@ -15,6 +15,8 @@
   --color-popover-foreground: hsl(var(--popover-foreground));
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-golden: hsl(var(--golden));
+  --color-golden-foreground: hsl(var(--golden-foreground));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-destructive: hsl(var(--destructive));
@@ -144,6 +146,8 @@
     /* Violet primary - darker for Abyss void theme */
     --primary: 280 60% 35%;
     --primary-foreground: 0 0% 98%;
+    --golden: 43 80% 60%;
+    --golden-foreground: 35 60% 12%;
 
     --secondary: 270 28% 9%;
     --secondary-foreground: 0 0% 95%;

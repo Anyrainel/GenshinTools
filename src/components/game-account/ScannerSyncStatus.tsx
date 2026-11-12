@@ -1,14 +1,7 @@
 import { Power, Radio, Settings2, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ContinuousInventorySync } from "@/components/game-account/ContinuousInventorySync";
+import { ContinuousInventorySyncDialog } from "@/components/game-account/ContinuousInventorySyncDialog";
 import { Button } from "@/components/ui/button";
-import {
-  ResponsiveDialog,
-  ResponsiveDialogContent,
-  ResponsiveDialogDescription,
-  ResponsiveDialogHeader,
-  ResponsiveDialogTitle,
-} from "@/components/ui/responsive-dialog";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScannerSync } from "@/contexts/ScannerSyncContext";
 
@@ -70,22 +63,10 @@ export function ScannerSyncStatus() {
           </Button>
         </div>
       </section>
-      <ResponsiveDialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <ResponsiveDialogContent
-          className="md:max-w-xl"
-          closeLabel={t.ui("manager.close")}
-        >
-          <ResponsiveDialogHeader className="pr-8">
-            <ResponsiveDialogTitle>
-              {t.ui("continuous.title")}
-            </ResponsiveDialogTitle>
-            <ResponsiveDialogDescription className="sr-only">
-              GGScanner
-            </ResponsiveDialogDescription>
-          </ResponsiveDialogHeader>
-          <ContinuousInventorySync />
-        </ResponsiveDialogContent>
-      </ResponsiveDialog>
+      <ContinuousInventorySyncDialog
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+      />
     </>
   );
 }

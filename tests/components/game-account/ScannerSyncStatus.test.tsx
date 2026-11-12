@@ -72,10 +72,22 @@ beforeEach(() => {
 afterEach(() => vi.useRealTimers());
 
 describe("scanner sync controls", () => {
+  it("commits an edited port when starting without blurring the input", async () => {
+    render(<App />);
+    const port = screen.getByRole("textbox", { name: "manager.port" });
+    expect(port).toBeEnabled();
+    fireEvent.change(port, { target: { value: "9876" } });
+    expect(fetchContinuous).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
+    await flush();
+    expect(fetchContinuous).toHaveBeenCalledWith(9876, expect.any(AbortSignal));
+    expect(port).toBeDisabled();
+  });
+
   it("shows a global status control without automatically opening a dialog, and stops directly", async () => {
     const view = render(<App />);
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
+    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
     await flush();
     const bar = screen.getByRole("region", { name: "continuous.title" });
     expect(within(bar).getByRole("status")).toHaveTextContent(
@@ -102,7 +114,7 @@ describe("scanner sync controls", () => {
 
   it("keeps details opt-in and closes them when sync is switched off", async () => {
     const view = render(<App />);
-    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
+    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
     await flush();
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);
@@ -110,11 +122,15 @@ describe("scanner sync controls", () => {
     view.rerender(<App showImport={false} />);
     fireEvent.click(screen.getByRole("button", { name: "continuous.details" }));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
-    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getByRole("button", {
+        name: "continuous.stop",
+      })
+    );
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
     view.rerender(<App />);
-    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
+    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
     await flush();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });

@@ -3,10 +3,11 @@ export const i18nUiData = {
     active: { en: "Syncing", zh: "同步中" },
     pending: { en: "Waiting", zh: "等待中" },
     attention: { en: "Needs attention", zh: "请检查" },
-    title: { en: "Background inventory sync", zh: "后台同步背包" },
+    title: { en: "Continuous Sync (Capture)", zh: "持续同步（抓包）" },
+    newBadge: { en: "New", zh: "新功能" },
+    start: { en: "Start sync", zh: "开启同步" },
     details: { en: "Details", zh: "详情" },
     stop: { en: "Turn off", zh: "关闭同步" },
-    connection: { en: "Connection settings", zh: "连接设置" },
     off: { en: "Off", zh: "未启用" },
     connecting: { en: "Connecting to scanner…", zh: "正在连接扫描器…" },
     waiting: {
@@ -18,8 +19,8 @@ export const i18nUiData = {
       zh: "正在每隔几秒同步库存",
     },
     disabled: {
-      en: "Enable Continuous capture sync in GGScanner Manager, then restart its server.",
-      zh: "请在 GGScanner 管理器中勾选「持续抓包同步」，然后重启服务。",
+      en: "Enable Continuous Sync (Capture) in GGScanner Manager, then restart its server.",
+      zh: "请在 GGScanner 管理器中勾选「持续同步（抓包）」，然后重启服务。",
     },
     unsupported: {
       en: "This scanner does not support continuous sync. Update GGScanner and restart its server.",
