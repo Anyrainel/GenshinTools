@@ -485,27 +485,9 @@ class ClashOfKings extends WeaponBase {
   ];
 }
 
-// Radiance (辉映·星超导 / 辉映·星扩散) is a character-side state that weapons
-// cannot read, and it REPLACES the base bonus instead of adding to it, so it
-// must be an explicit user toggle: the base branch is what every wielder gets,
-// and the Radiance branch is opt-in. The "on" choice is only offered when the
-// team can create a Polestar Field or trigger Stellar Swirl. Mirrors New Bough.
-const wintersHeavyHeartOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
-  choices: [
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-    {
-      value: "on",
-      label: { zh: "开启", en: "On" },
-      when: (tm) => tm.hasPolestarField() || tm.hasReaction("stellarSwirl"),
-    },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterWeapon("winters_heavy_heart", wintersHeavyHeartOption)
+@RegisterWeapon("winters_heavy_heart")
 class WintersHeavyHeart extends WeaponBase {
-  private readonly radianceOn =
-    resolveOption(wintersHeavyHeartOption, this.option, this.teamMeta) === "on";
+  private readonly radiance = this.teamMeta.getRadianceState(this.charId);
 
   // Party-composition scaling: each Cryo party member grants EM, each
   // Electro party member grants ATK%. The wielder counts toward their own
@@ -522,47 +504,51 @@ class WintersHeavyHeart extends WeaponBase {
       else if (el === "Electro") electro++;
     }
 
-    if (this.radianceOn) {
-      const counted = Math.min(cryo + electro, 4);
-      if (counted === 0) return [];
-      return [
-        new StatBuff(wbs(this), { receiver: "self" }, [
-          {
-            key: "em",
-            value: counted * r(this.refinement, [20, 25, 30, 35, 40]),
-          },
-        ]),
-        new StatBuff(
-          wbs(this),
-          {
-            receiver: "self",
-            filter: { reactions: ["stellarConduct", "stellarSwirl"] },
-          },
-          [
-            {
-              key: "reactionDmg%",
-              value:
-                counted * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
-            },
-          ]
-        ),
-      ];
-    }
-
     const stats: StatEntry[] = [];
+    const baseEm = cryo * r(this.refinement, [24, 30, 36, 42, 48]);
+    const baseAtk =
+      electro * r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]);
     if (cryo > 0) {
-      stats.push({
-        key: "em",
-        value: cryo * r(this.refinement, [24, 30, 36, 42, 48]),
-      });
+      stats.push({ key: "em", value: baseEm });
     }
     if (electro > 0) {
-      stats.push({
-        key: "atk%",
-        value: electro * r(this.refinement, [0.048, 0.06, 0.072, 0.084, 0.096]),
-      });
+      stats.push({ key: "atk%", value: baseAtk });
     }
     if (stats.length === 0) return [];
-    return [new StatBuff(wbs(this), { receiver: "self" }, stats)];
+    const buffs = [new StatBuff(wbs(this), { receiver: "self" }, stats)];
+    if (this.radiance === null) return buffs;
+
+    // Keep the unconditional composition bonus in idle panels. In combat the
+    // triggered delta replaces its EM/ATK with the Radiance values.
+    const counted = Math.min(cryo + electro, 4);
+    const triggers =
+      this.radiance === "stellarConduct"
+        ? ["polestar-field"]
+        : ["stellarSwirl"];
+    const replacement: StatEntry[] = [
+      {
+        key: "em",
+        value: counted * r(this.refinement, [20, 25, 30, 35, 40]) - baseEm,
+      },
+    ];
+    if (electro > 0) replacement.push({ key: "atk%", value: -baseAtk });
+    buffs.push(
+      new StatBuff(wbs(this, triggers), { receiver: "self" }, replacement),
+      new StatBuff(
+        wbs(this, triggers),
+        {
+          receiver: "self",
+          filter: { reactions: ["stellarConduct", "stellarSwirl"] },
+        },
+        [
+          {
+            key: "reactionDmg%",
+            value:
+              counted * r(this.refinement, [0.06, 0.075, 0.09, 0.105, 0.12]),
+          },
+        ]
+      )
+    );
+    return buffs;
   }
 }

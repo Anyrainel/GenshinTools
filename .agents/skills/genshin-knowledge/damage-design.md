@@ -97,7 +97,7 @@ BuffSource {
   type: "character" | "weapon" | "artifactSet" | "artifactHalfSet" | "teamResonance" | "extra"
   id: string
   origin?: string        // C0–C6, A, E, Q, P1–P4, R1–R5 (display-only)
-  triggers?: string[]    // Activation conditions (display-only)
+  triggers?: string[]    // Combat activation labels; nonempty excludes from idle stats
   noStackId?: string     // Dedup key — same noStackId across buffs → only highest value applies per stat key
   maxStacks?: number     // Limited activation count — greedy allocator distributes across formula parts
   element?: Element      // Display hint
@@ -138,16 +138,16 @@ All in `calc/damageFormula.ts`. Base class: `DamageFormula(talentMultiplier, tag
 | `TransformFormula` | overloaded, electroCharged, superconduct, swirl, shatter, bloom, hyperbloom, burgeon, burning | DamageFormula |
 | `LunarFormula` | lunarCharged, lunarCrystallize, lunarBloom | DamageFormula |
 | `LunarDirectFormula` | lunarCharged, lunarCrystallize, lunarBloom | DamageFormula |
-| `StellarFormula` | stellarConduct | DamageFormula |
-| `StellarDirectFormula` | stellarConduct | DamageFormula |
+| `StellarFormula` | stellarConduct, stellarSwirl | DamageFormula |
+| `StellarDirectFormula` | stellarConduct, stellarSwirl | DamageFormula |
 
 **Unified reaction selection:** Characters register only `DirectFormula` entries. Amplifying/catalyze variants are created at evaluation time via `formula.createAmplified()`, `formula.createCatalyzed()`, or the dispatcher `createReactionVariant()`. Custom formula subclasses override these factory methods.
 
 **LunarDirectFormula:** Pass the raw game% as `talentMult`. `DirectCoeff` (×3 lunarCharged, ×1.6 lunarCrystallize, ×1 lunarBloom) is applied internally.
 
-**StellarDirectFormula:** Pass the raw game% as `talentMult`. `directCoeff` is looked up in `STELLAR_DIRECT_COEFF_BY_HITS` by recorded Polestar Field attach hits (1–12; range 1.45–2.0, default 1.64 at `STELLAR_ATTACH_HITS_DEFAULT = 5`), and serves both 星超导 and 星扩散. Same reaction zones as Lunar Direct — no `dmg%` or DEF. `StellarFormula` covers auto-generated `rx-stellarConduct` / `rx-stellarSwirl` triggers; the proc itself deals zero damage (Polestar Field only). All kit Stellar DPS flows through `StellarDirectFormula`, not `StellarFormula`.
+**StellarDirectFormula:** Pass the raw game% as `talentMult`. Direct Stellar-Conduct looks up `directCoeff` in `STELLAR_DIRECT_COEFF_BY_HITS` by recorded Polestar Field attach hits (1–12; range 1.45–2.0, peak default 2.0 at `STELLAR_ATTACH_HITS_DEFAULT = 12`). Direct Stellar Swirl instead uses a fixed 1.0 coefficient. Both use reaction zones without traditional `dmg%` or DEF. For auto-generated reactions, `rx-stellarConduct` deals zero proc damage (field creation only), while `rx-stellarSwirl` deals level-based initial Anemo damage and delayed Cryo Vortex damage; these are separate from explicit kit hits.
 
-**Radiance: Stellar-Conduct (6.7 Witch's Revelation):** Six enhanced characters use a shared `OptionDef` (`辉映·星超导`) with `radianceOn = resolveOption(...) === "on"` and `when: (tm) => tm.hasReaction("stellarConduct")` on the "on" choice. Radiance branches **replace** base mechanics (`if (radianceOn) … else …`). Mizuki is the seventh enhanced character but has no Radiance state. See `translator-rules.md` §S1b for cast-vs-tick proc placement, OptionDef migration when displacing an existing option, and peak-model caveats.
+**Radiance:** Resolve each character's source-supported state centrally through `TeamMeta`, with applicable Stellar-Conduct taking priority over Stellar Swirl. Mizuki carries Stellar Swirl via her P4 party-reaction activation path. Derive setup-determined states automatically and preserve meaningful unresolved HP/playstyle/ramp choices under the [combat option boundary](translator-rules.md#combat-option-boundary). Replacement wording controls branching, not whether an option is required. See `translator-rules.md` §S1b for activation paths, cast-vs-tick proc placement, and peak-model caveats.
 
 **Dual-stat scaling:** `extraTerm: { key, multiplier }` for "X% ATK + Y% EM" type talents.
 
@@ -194,7 +194,9 @@ Decorators: `@RegisterCharacter("id")`, `@RegisterWeapon("id")`, `@RegisterArtif
 
 ### OptionMap
 
-Declarative option schema with ordered choices. First choice = preferred default. `when?: (teamMeta) => boolean` gates choices behind team conditions. `resolveOption()` falls back to next enabled choice. See `calc/implModel.ts` for full types.
+Use options only within the [canonical combat option boundary](translator-rules.md#combat-option-boundary): meaningful playstyle/rotation choices and states unresolved by existing setup/environment controls. Derive reaction eligibility, faction conditions, and applicable Radiance through the framework. Preserve genuinely unresolved HP, ramp/uptime, enemy behavior, pickup, and position choices; compose independent dimensions rather than displacing them.
+
+Schemas have ordered choices: first enabled choice = preferred default. `when?: (teamMeta) => boolean` filters invalid choices; `resolveOption()` falls back to the next enabled choice. Availability filtering does not justify exposing a derived state as an option. See `src/domain/combat/damage/types.ts` for full types.
 
 ### this.param()
 
@@ -219,6 +221,7 @@ Constructed from character IDs, constellations, artifact sets, and optional enem
 | `countByRegion(region)` | Character count from that region |
 | `countByFaction(faction)` | Character count in that faction |
 | `hasReaction(reaction, charId?)` | Whether team elements enable this reaction |
+| `getRadianceState(charId)` | Applicable carrier state with Stellar-Conduct priority, or `null` |
 | `hasHealer()` / `hasShielder()` | Role detection at current constellation |
 | `talentPassiveBonuses()` | `{ A, E, Q }` bonus levels (internal use by CharacterBase) |
 

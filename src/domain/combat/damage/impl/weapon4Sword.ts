@@ -511,34 +511,17 @@ class HereticsMoltenBlade extends WeaponBase {
   }
 }
 
-// Radiance (辉映·星超导 / 辉映·星扩散) is a character-side state that weapons
-// cannot read, and it REPLACES the base bonus instead of adding to it, so it
-// must be an explicit user toggle: the base branch is what every wielder gets,
-// and the Radiance branch is opt-in. The "on" choice is only offered when the
-// team can create a Polestar Field or trigger Stellar Swirl.
-const newBoughOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
-  choices: [
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-    {
-      value: "on",
-      label: { zh: "开启", en: "On" },
-      when: (tm) => tm.hasPolestarField() || tm.hasReaction("stellarSwirl"),
-    },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterWeapon("new_bough", newBoughOption)
+@RegisterWeapon("new_bough")
 class NewBough extends WeaponBase {
   private readonly radianceOn =
-    resolveOption(newBoughOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) !== null;
 
   // In the 12s after E, every attack hit grants ATK% + EM for 6s, once
   // per second, max 3 stacks. Stacks also build off-field, so max stacks are
   // easy to maintain over the window — hardcoded at 3 per U8.
   //
   // Under Radiance the stack changes to a larger ATK% plus Stellar reaction
-  // DMG% (a replacement, not an addition), selected by the option above.
+  // DMG% (a replacement, not an addition), derived from the wielder's state.
   get buffs() {
     const stacks = 3;
     if (this.radianceOn) {

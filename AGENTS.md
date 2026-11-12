@@ -79,6 +79,7 @@ general folder descriptions. Read it before reorganizing modules.
 ## Skills And Domain References
 
 - For Genshin game data, formulas, damage implementations, or calculator review, use the `genshin-knowledge` skill first.
+- Combat options must follow the [canonical option boundary](.agents/skills/genshin-knowledge/translator-rules.md#combat-option-boundary): derive setup-determined mechanics centrally and preserve meaningful unresolved playstyle/state choices.
 - For damage, energy, or gcsim batch work, use the dispatcher skills under `.agents/skills/`; they launch Codex `worker` subagents that read `.agents/agents/*.md`.
 - When a new or changed character, weapon, artifact, or resonance grants CRIT Rate, update `src/domain/game-account/maxCrBuff.ts` and its tests so score-up recommendations use the same CR budget.
 - For persisted stores, imports, conversions, or artifact mutation flows, inspect the relevant store, migration code, and nearby tests before editing.

@@ -117,7 +117,7 @@ describe("Mitya carried-Beacon activation migration", () => {
       expect(local.description).toBe(before.description);
       expect(
         JSON.parse(localStorage.getItem("team-builder-storage")!).version
-      ).toBe(26);
+      ).toBe(27);
       expect(before).toEqual(untouched);
     }
   );
@@ -151,7 +151,7 @@ describe("Mitya carried-Beacon activation migration", () => {
       configsByTeamId: useTeamStore.getState().configsByTeamId,
     };
     const exported = teamToCloud(current);
-    expect(exported[0].schemaVersion).toBe(8);
+    expect(exported[0].schemaVersion).toBe(9);
     const restored = teamFromCloud(exported);
     expect(overrides(restored.configsByTeamId)).toEqual({
       [oldKey]: oldActivation,

@@ -32,14 +32,15 @@ const CTX: CalcContext = {
 type RadianceMode = "off" | "stellarSwirl" | "stellarConduct";
 
 function getTravelerEntries(mode: RadianceMode): Record<string, FormulaEntry> {
-  const teammate = mode === "stellarSwirl" ? "venti" : "fischl";
-  const teamMeta = new TeamMeta(["traveler_cryo", teammate]);
+  const teammates =
+    mode === "off" ? [] : [mode === "stellarSwirl" ? "venti" : "fischl"];
+  const teamMeta = new TeamMeta(["traveler_cryo", ...teammates]);
   const traveler = createCharacter(
     "traveler_cryo",
     90,
     0,
     teamMeta,
-    { traveler_cryo: mode },
+    {},
     { auto: 10, skill: 10, burst: 10 }
   );
 

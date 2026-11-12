@@ -530,30 +530,3 @@
     coverage. Retain the implemented 20%/25%/30%/35%/40% ATK buff, and do not infer
     a rotation entry count from the cooldown alone.
     https://api.lunaris.moe/data/7.2.50/chs/weapon/12438.json
-
-- id: winters-heavy-heart-radiance-idle
-  entity: winters_heavy_heart
-  rule: U8
-  status: open
-  category: bug
-  summary: >
-    Selecting Radiance replaces Winter's Heavy Heart's unconditional party-
-    composition EM/ATK bonuses in idle stats with its combat-only replacement
-    EM bonus. Idle stats must retain the ordinary composition bonuses.
-  detail: >
-    weapon4Catalyst.ts L531 emits the Radiance EM StatBuff with wbs(this),
-    without an activation trigger; the Radiance branch also returns before
-    emitting the ordinary Cryo-count EM and Electro-count ATK bonuses.
-    TeamStatSheet.getIdleStats L197-L203 includes this unfiltered,
-    trigger-free EM buff, despite Radiance being a combat state. At R1,
-    Vodyanitsa wielding the weapon with Odette, Kaeya and Fischl gets 60 EM
-    and no ATK from the weapon in idle, instead of the unconditional 48 EM
-    and 4.8% ATK from two Cryo and one Electro party members. Preserve the
-    ordinary composition bonuses for idle and apply the Radiance replacement
-    in combat through triggered deltas or equivalent state-aware handling.
-    Existing polestar-field/stellarSwirl activation conventions may be used;
-    do not restore the inaccurate stellar-reaction trigger. Any changed buff
-    identity must migrate authored activation overrides through the required
-    persistence boundaries. Verify idle on/off-field sheets and unchanged
-    replacement combat values across all refinements. This is separate from
-    the cleaned U7 ticket about the inaccurate stellar-reaction label.

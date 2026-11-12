@@ -62,7 +62,7 @@ describe("migrateTeamResultCacheStore", () => {
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(
       JSON.parse(window.localStorage.getItem("team-result-cache")!).version
-    ).toBe(10);
+    ).toBe(11);
     window.localStorage.removeItem("team-result-cache");
   });
 
@@ -96,7 +96,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      10
+      11
     );
     localStorage.removeItem("team-result-cache");
   });
@@ -139,7 +139,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      10
+      11
     );
     localStorage.removeItem("team-result-cache");
   });
@@ -152,7 +152,7 @@ describe("migrateTeamResultCacheStore", () => {
       },
     };
     expect(
-      migrateTeamResultCacheStore({ resultsByTeamId }, 10).resultsByTeamId
+      migrateTeamResultCacheStore({ resultsByTeamId }, 11).resultsByTeamId
     ).toBe(resultsByTeamId);
   });
 
@@ -178,7 +178,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      10
+      11
     );
     localStorage.removeItem("team-result-cache");
   });
@@ -187,7 +187,7 @@ describe("migrateTeamResultCacheStore", () => {
     localStorage.setItem(
       "team-result-cache",
       JSON.stringify({
-        version: 10,
+        version: 11,
         state: {
           resultsByTeamId: {
             team: {
@@ -288,7 +288,7 @@ describe("migrateTeamResultCacheStore", () => {
     await useTeamResultCacheStore.persist.rehydrate();
     expect(useTeamResultCacheStore.getState().resultsByTeamId).toEqual({});
     expect(JSON.parse(localStorage.getItem("team-result-cache")!).version).toBe(
-      10
+      11
     );
     localStorage.removeItem("team-result-cache");
   });

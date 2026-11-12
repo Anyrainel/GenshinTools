@@ -38,9 +38,11 @@
   category: "approximation"
   summary: >
     C2 HP% bonus is hardcoded to max (140%) but ramps with Fanfare overflow above cap.
-    Since the entity already uses OptionMap for Fanfare stacks, forced averaging is acceptable
-    but should be documented.
-  detail: acknowledge the problem, will tackle this later.
+    The existing Fanfare choice does not resolve how far the HP bonus has ramped.
+  detail: >
+    Acknowledged for later work. This remains an unresolved peak approximation;
+    an existing Fanfare selector does not justify forcing another dimension to
+    its maximum or average. Compose meaningful ramp choices under U9/U11.
 
 - id: "clorinde-impale-ability"
   entity: "clorinde"
@@ -196,22 +198,3 @@
     consumed HP. lyney-strike stays at count 3, since the detonation replaces
     the Q-summoned Hat's own end-of-life Strike. Label updated to
     "E(满层)+引爆猫帽" / "E (Max) + Hat Blast".
-
-- id: "lyney-c2-cd-ramp"
-  entity: "lyney"
-  rule: "U11"
-  status: completed
-  category: "approximation"
-  summary: >
-    C2 Crisp Focus is hardcoded at 3 stacks (+60% CRIT DMG) with no note that stacks accrue one
-    per 2s of on-field time. Only the opening ~6s of each on-field window is over-credited —
-    roughly the first of the three aimed shots in the modeled rotation — after which the buff
-    plateaus at max for the rest of the window.
-  detail: >
-    Documented the assumption in a code comment above the C2 StatBuff: Crisp
-    Focus accrues 1 stack per 2s on-field and releases on swap-out, so only the
-    opening ~6s of each on-field window (roughly the first of the three aimed
-    shots) is over-credited, after which it plateaus at max for the rest of
-    Lyney's ~15-20s window. Modeled at max; ramp-up not tracked, following the
-    Wanderer C6 precedent. No OptionMap added — the accuracy gain does not
-    justify spending Lyney's single OptionDef slot.

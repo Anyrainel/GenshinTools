@@ -21,6 +21,7 @@ import { PersistedTeamStoreSchema } from "@/stores/schemas";
 import { migrateCharacterBuffTriggerConfigs } from "./characterBuffTriggers";
 import { migrateLegacyMityaBeaconConfigs } from "./mityaBeacons";
 import { migrateBundledPresetId } from "./presetIds";
+import { migrateRadianceSetupConfigs } from "./radianceOptions";
 import { migrateReleasedTeamWeapons } from "./releasedWeaponIds";
 import {
   type LegacyAnalyzerConfig,
@@ -625,6 +626,11 @@ export function migrateTeamStore(
       state.configsByTeamId ?? {}
     );
   }
+  if (version < 27) {
+    state.configsByTeamId = migrateRadianceSetupConfigs(
+      state.configsByTeamId ?? {}
+    );
+  }
   state.configsByTeamId = compactTeamSetupConfigs(state.configsByTeamId ?? {});
   // v24 adds optional absoluteCountTargets for future constellation counts.
   // v23 delta/exact maps are retained verbatim; absent targets stay absent.
@@ -665,8 +671,10 @@ export function mergeTeamStore<
   // The unpublished v25 migration also canonicalizes labels on v25 saves made
   // while testing this release; do not bump again for the same push.
   const nextConfigsByTeamId = compactTeamSetupConfigs(
-    migrateValeriySupportConfigs(
-      migrateCharacterBuffTriggerConfigs(configsByTeamId)
+    migrateRadianceSetupConfigs(
+      migrateValeriySupportConfigs(
+        migrateCharacterBuffTriggerConfigs(configsByTeamId)
+      )
     )
   );
   for (const [fromId, toId] of Object.entries(deduped.idMap)) {

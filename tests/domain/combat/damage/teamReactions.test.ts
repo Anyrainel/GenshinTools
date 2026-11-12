@@ -23,7 +23,7 @@ import type {
   ReactionComboGridRow,
   TeamFormulaCatalog,
 } from "@/domain/combat/damage/core/teamFormulaCatalog";
-import type { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
+import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
 import {
   MULTI_CONTRIBUTOR_REACTIONS,
   resolveReactionComboEntries,
@@ -360,6 +360,51 @@ describe("TeamReactionProvider — swirl variants", () => {
     expect(eligible.has("kaedehara_kazuha")).toBe(true);
     expect(eligible.has("bennett")).toBe(false);
     expect(eligible.has("xingqiu")).toBe(false);
+  });
+
+  it("replaces Cryo Swirl with Stellar Swirl while retaining other elements", () => {
+    const provider = new TeamReaction(
+      new TeamMeta(["odette", "kaedehara_kazuha", "bennett"])
+    );
+
+    expect(
+      provider.getFormulaEntry("rx-stellarSwirl-kaedehara_kazuha")
+    ).toBeDefined();
+    expect(
+      provider.getFormulaEntry("rx-swirl-Pyro-kaedehara_kazuha")
+    ).toBeDefined();
+    expect(
+      provider.getFormulaEntry("rx-swirl-Cryo-kaedehara_kazuha")
+    ).toBeUndefined();
+  });
+
+  it("generates ordinary Swirl from an enemy aura without that team element", () => {
+    const provider = new TeamReaction(
+      new TeamMeta(["kaedehara_kazuha"], {}, {}, "Cryo")
+    );
+
+    expect(
+      provider.getFormulaEntry("rx-swirl-Cryo-kaedehara_kazuha")
+    ).toBeDefined();
+    expect(
+      provider.getFormulaEntry("rx-stellarSwirl-kaedehara_kazuha")
+    ).toBeUndefined();
+  });
+
+  it("keeps an enemy aura's ordinary Swirl alongside Stellar Swirl", () => {
+    const provider = new TeamReaction(
+      new TeamMeta(["odette", "kaedehara_kazuha"], {}, {}, "Pyro")
+    );
+
+    expect(
+      provider.getFormulaEntry("rx-swirl-Pyro-kaedehara_kazuha")
+    ).toBeDefined();
+    expect(
+      provider.getFormulaEntry("rx-stellarSwirl-kaedehara_kazuha")
+    ).toBeDefined();
+    expect(
+      provider.getFormulaEntry("rx-swirl-Cryo-kaedehara_kazuha")
+    ).toBeUndefined();
   });
 });
 

@@ -23,25 +23,15 @@ import type {
 import { cbs } from "./helpers";
 
 const danicaOption = {
-  label: { zh: "侍者形态与辉映", en: "Maid Form and Radiance" },
+  label: { zh: "侍者形态", en: "Maid Form" },
   choices: [
     {
-      value: "battle-stellar",
-      label: { zh: "女仆·清扫者 / 辉映", en: "Battle Maid / Radiance" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    {
-      value: "defense-stellar",
-      label: { zh: "女仆·御前护卫 / 辉映", en: "Defense Maid / Radiance" },
-      when: (tm) => tm.hasPolestarField() && tm.characters.length >= 2,
-    },
-    {
       value: "battle",
-      label: { zh: "女仆·清扫者 / 无辉映", en: "Battle Maid / No Radiance" },
+      label: { zh: "女仆·清扫者", en: "Battle Maid" },
     },
     {
       value: "defense",
-      label: { zh: "女仆·御前护卫 / 无辉映", en: "Defense Maid / No Radiance" },
+      label: { zh: "女仆·御前护卫", en: "Defense Maid" },
       when: (tm) => tm.characters.length >= 2,
     },
   ] as const,
@@ -54,8 +44,9 @@ class Danica extends CharacterBase {
     this.option,
     this.teamMeta
   );
-  private readonly defense = this.state.startsWith("defense");
-  private readonly radianceOn = this.state.endsWith("stellar");
+  private readonly defense = this.state === "defense";
+  private readonly radianceOn =
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
   private readonly hasCoordinatedTrigger = Object.entries(
     this.teamMeta.elements
   ).some(
@@ -440,23 +431,16 @@ class Danica extends CharacterBase {
 }
 
 const anastasyaOption = {
-  label: { zh: "加护、辉映与封存", en: "Blessing, Radiance and Sealing" },
+  label: { zh: "加护与封存", en: "Blessing and Sealing" },
   choices: ["love", "honor"].flatMap((form) =>
-    ["stellarConduct", "stellarSwirl", "off"].flatMap((radiance) =>
-      ["sealed", "unsealed"].map((sealing) => ({
-        value: `${form}-${radiance}-${sealing}`,
-        label: {
-          zh: `${form === "love" ? "慈爱" : "荣耀"} / ${radiance === "stellarConduct" ? "辉映·星超导" : radiance === "stellarSwirl" ? "辉映·星扩散" : "无辉映"} / ${sealing === "sealed" ? "荣勋均分" : "未封存"}`,
-          en: `${form === "love" ? "Love" : "Honor"} / ${radiance === "stellarConduct" ? "Stellar-Conduct" : radiance === "stellarSwirl" ? "Stellar Swirl" : "No Radiance"} / ${sealing === "sealed" ? "Shared Accolades" : "Unsealed"}`,
-        },
-        when: (tm: TeamMeta) =>
-          (radiance === "off" ||
-            (radiance === "stellarConduct"
-              ? tm.hasPolestarField()
-              : tm.hasReaction("stellarSwirl"))) &&
-          (sealing !== "sealed" || tm.characters.length > 1),
-      }))
-    )
+    ["sealed", "unsealed"].map((sealing) => ({
+      value: `${form}-${sealing}`,
+      label: {
+        zh: `${form === "love" ? "慈爱" : "荣耀"} / ${sealing === "sealed" ? "荣勋均分" : "未封存"}`,
+        en: `${form === "love" ? "Love" : "Honor"} / ${sealing === "sealed" ? "Shared Accolades" : "Unsealed"}`,
+      },
+      when: (tm: TeamMeta) => sealing !== "sealed" || tm.characters.length > 1,
+    }))
   ),
 } satisfies OptionDef;
 
@@ -468,7 +452,7 @@ class Anastasya extends CharacterBase {
     this.teamMeta
   );
   private readonly love = this.state.startsWith("love-");
-  private readonly radiance = this.state.split("-")[1];
+  private readonly radiance = this.teamMeta.getRadianceState(this.charId);
   private readonly sealed = this.state.endsWith("-sealed");
   private readonly stellarReaction =
     this.radiance === "stellarSwirl" ? "stellarSwirl" : "stellarConduct";
@@ -651,7 +635,7 @@ class Anastasya extends CharacterBase {
       ...burst,
       reaction: this.stellarReaction,
     };
-    const reaction = this.radiance !== "off";
+    const reaction = this.radiance !== null;
     const c2Honor =
       !this.love && this.constellation >= 2
         ? [
@@ -1688,35 +1672,11 @@ class Tartaglia extends CharacterBase {
   })();
 }
 
-const sandroneOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
-  choices: [
-    {
-      value: "stellarConduct",
-      label: {
-        zh: "辉映·星超导 (极星辉域)",
-        en: "Radiance: Stellar-Conduct (Polestar Field)",
-      },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    {
-      value: "stellarSwirl",
-      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("sandrone", sandroneOption)
+@RegisterCharacter("sandrone")
 class Sandrone extends CharacterBase {
-  private readonly rState = resolveOption(
-    sandroneOption,
-    this.option,
-    this.teamMeta
-  );
+  private readonly rState = this.teamMeta.getRadianceState(this.charId);
 
-  private readonly radianceOn = this.rState !== "off";
+  private readonly radianceOn = this.rState !== null;
 
   // Peak model: max 10 Refined Tactics stacks consumed on burst (P1)
   private readonly refinedTacticsStacks = this.radianceOn ? 10 : 0;
@@ -2068,33 +2028,9 @@ class Sandrone extends CharacterBase {
   })();
 }
 
-const odetteOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
-  choices: [
-    {
-      value: "stellarConduct",
-      label: {
-        zh: "辉映·星超导 (极星辉域)",
-        en: "Radiance: Stellar-Conduct (Polestar Field)",
-      },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    {
-      value: "stellarSwirl",
-      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("odette", odetteOption)
+@RegisterCharacter("odette")
 class Odette extends CharacterBase {
-  private readonly rState = resolveOption(
-    odetteOption,
-    this.option,
-    this.teamMeta
-  );
+  private readonly rState = this.teamMeta.getRadianceState(this.charId);
 
   readonly buffs = (() => {
     const maxSplendorStacks = this.constellation >= 1 ? 6 : 4;
@@ -2452,23 +2388,11 @@ class Odette extends CharacterBase {
   })();
 }
 
-const vesnaOption = {
-  label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启", en: "On" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("vesna", vesnaOption)
+@RegisterCharacter("vesna")
 class Vesna extends CharacterBase {
   // P3 only converts 冰元素扩散 → 星扩散; Vesna never unlocks Stellar-Conduct.
   private readonly radianceOn =
-    resolveOption(vesnaOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarSwirl";
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [

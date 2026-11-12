@@ -84,5 +84,10 @@ export function migrateTeamResultCacheStore(
     // may have entered damage rankings; only recomputation can reconcile them.
     state.resultsByTeamId = {};
   }
+  if (version < 11) {
+    // v10 results could disable automatic Radiance, override its priority,
+    // double-count Cryo Swirl and apply impossible reaction/field bonuses.
+    state.resultsByTeamId = {};
+  }
   return state;
 }

@@ -82,7 +82,7 @@ Every `DamageFormula` carries a `DamageTag` — the full context of a damage ins
 
 See [`types.ts`](../src/domain/team/types.ts) for full definitions. Key design points:
 
-- **BuffSource** is display-only provenance (type, id, origin, triggers, `noStackId`). It does not affect calculation.
+- **BuffSource** records provenance and activation. Nonempty `triggers` exclude a buff from idle stats, `noStackId` controls deduplication, and source fields participate in saved activation identities. The labels do not simulate triggering actions.
 - **BuffTarget** combines a **receiver** with an optional **DamageTagFilter**:
 
 | Receiver | Semantics (where calcTarget = character being optimized) | Applied When |
@@ -107,7 +107,9 @@ See [`types.ts`](../src/domain/team/types.ts) for definitions.
 
 ### 1.6 OptionMap (Schema-Driven Options)
 
-User-selected combat options for providers that support multiple modes (e.g., Durin DPS/Support, The Widsith random buff). See `OptionDef`, `OptionMap`, and `InferOption` in [`types.ts`](../src/domain/team/types.ts).
+Combat options follow the [canonical combat option boundary](../.agents/skills/genshin-knowledge/translator-rules.md#combat-option-boundary): expose meaningful playstyle/rotation choices and combat/environment states left unresolved by existing settings. Derive everything decidable from the configured team, gear, constellations, talents, and exposed environment through framework APIs. Do not add duplicate reaction, faction, or Radiance eligibility toggles. Preserve unresolved HP, ramp/uptime, enemy behavior, pickup, and position choices; replacement wording alone does not justify an option.
+
+Examples include Durin DPS/Support and The Widsith's random buff. See `OptionDef`, `OptionMap`, and `InferOption` in [`types.ts`](../src/domain/combat/damage/types.ts). The current registry accepts one schema per provider; compose independent unresolved dimensions as valid combined choices instead of discarding an existing choice.
 
 **Option schema** is declared per-provider alongside the class and registered via the decorator. Base classes expose `protected readonly option: string` (raw value from `OptionMap`); subclasses narrow it via `resolveOption()`:
 
@@ -119,7 +121,6 @@ const durinOption = {
     { value: "dps",     label: { zh: "输出", en: "DPS" } },
     { value: "support", label: { zh: "辅助", en: "Support" } },
   ] as const,
-  default: "dps",
 } satisfies OptionDef;
 
 // Registration: schema passed to decorator → stored in optionRegistry
@@ -130,29 +131,29 @@ class Durin extends CharacterBase {
 }
 
 // Query from UI:
-getEntityOption("durin")  // → durinOption (OptionDef) or null
+getOptionDef("durin")  // → durinOption (OptionDef) or null
 ```
 
-**Ordering rule**: Choices must be ordered by preference — **the first choice is the most preferred default**. The `default` field must match the first choice's value. When a higher-preference choice is disabled by `when`, `resolveOption` naturally falls back to the next enabled choice.
+**Ordering rule**: Choices must be ordered by preference — **the first enabled choice is the preferred default**. There is no separate `default` field. When a higher-preference choice is disabled by `when`, `resolveOption` falls back to the next enabled choice.
 
-**Conditional availability (`when`)**: Each `OptionEntry` may have an optional `when?: (teamMeta: ITeamMeta) => boolean` predicate. When provided, the choice is disabled in the UI if the predicate returns false. `resolveOption()` skips disabled choices when falling back. Common patterns:
+**Conditional availability (`when`)**: Each `OptionEntry` may have an optional `when?: (teamMeta: TeamMeta) => boolean` predicate. When provided, the choice is disabled in the UI if the predicate returns false. `resolveOption()` skips disabled choices when falling back. Filter meaningful choices with this predicate; it is not a reason to expose an automatically determined state. Common patterns:
 
 ```typescript
 // Constellation-gated choice:
 { value: "c6", label: ..., when: (tm) => (tm.constellations["hu_tao"] ?? 0) >= 6 }
 
 // Reaction-gated choice:
-{ value: "frozen", label: ..., when: (tm) => tm.hasReaction("freeze") }
+{ value: "frozen", label: ..., when: (tm) => tm.hasReaction("frozen") }
 
 // Element-gated choice:
 { value: "electro", label: ..., when: (tm) => tm.countByElement("Electro") >= 1 }
 ```
 
-The UI renders **all** choices but disables those where `when` returns false. If **all** choices are disabled, the dropdown is replaced with `--`. `isChoiceEnabled(choice, teamMeta?)` is the helper for checking availability.
+The UI renders **all** choices but disables those where `when` returns false. Every schema must include at least one ungated fallback choice. `isChoiceEnabled(choice, teamMeta?)` is the helper for checking availability.
 
 **Diff detection**: When `OptionMap` changes in the store, compare `oldOpts[providerId] !== newOpts[providerId]` → reconstruct only affected providers.
 
-**UI rendering**: `getEntityOption(id)` returns the `OptionDef`. Render as toggle (2 choices) or dropdown (3+). All labels are bilingual via `I18nLabel`.
+**UI rendering**: `getOptionDef(id)` returns the `OptionDef`. Render as toggle (2 choices) or dropdown (3+). All labels are bilingual via `I18nLabel`.
 
 ### 1.7 StatSheet
 

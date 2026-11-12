@@ -190,20 +190,28 @@ The model targets **peak damage**, not average loop DPS. Verify each assumption 
 
 `origin` identifies kit provenance; `triggers` labels activation conditions. Combat distribution does not simulate E/Q casts from these labels, but idle calculation excludes buffs with nonempty `triggers` (U8). Assuming an effect active or fully stacked in combat does not permit omitting its trigger labels.
 
+#### Combat option boundary
+
+Combat options represent playstyle/rotation choices and material combat conditions left unresolved by existing inputs. Derive consequences of the configured team, equipment, constellations, talents, and environment through shared framework APIs; reaction eligibility, faction counts, and Radiance are not independent switches.
+
+Reuse enemy aura, enemy level/RES, extra buffs, reaction/combo selections, buff activation overrides, and Stellar attach-hit settings. Meaningful unresolved conditions include HP, nontrivial ramps/uptime, random outcomes, enemy behavior, positioning, and pickups. Apply the peak conventions below to ordinary post-cast effects and easy action-based stacks.
+
+Replacement wording determines how effects combine, not option eligibility. Compose independent real choices within an entity's schema; never discard an HP/playstyle/ramp choice to fit a derived toggle. Migrate saved meanings when options change.
+
 | Assumption type | Expected handling | Flag if wrong |
 |---|---|---|
-| Conditional buff with no team dependency (e.g., post-skill, post-attack) | Always active; label the condition accurately in `triggers` | [BUG] if blocked by unnecessary runtime check, or if `triggers` are missing/wrong |
+| Ordinary post-skill/post-attack buff, without an unresolved state requirement | Active under the peak convention; label the condition accurately in `triggers` | [BUG] if blocked by unnecessary runtime check, or if `triggers` are missing/wrong |
 | Stackable buff, easy to maintain at max | Max stacks, no OptionMap | [BUG] |
 | Stackable buff, each stack needs specific teammates | `teamMeta` count per stack | [BUG] if assumed max without checking |
 | Stackable buff, hard to maintain at max | `OptionMap` | [BUG] if hardcoded |
-| Mutually exclusive modes (form switches, random buffs like 流浪乐章, HP-state gates) | `OptionMap` per mode | [BUG] if all variants applied simultaneously |
+| Mutually exclusive modes or outcomes still unresolved by the setup (form/rotation choices, random buffs like 流浪乐章) | `OptionMap` per meaningful mode | [BUG] if all variants applied simultaneously or a determined mode gets a redundant option |
 | Dual-mode character with lasting buffs (character can switch between modes freely, and buffs from each mode persist for a duration) | Both modes' **buffs** treated as simultaneously active; implement separate **formulas** for each mode's damage; if modes grant different **team buffs**, use `OptionMap` to select which team buff the character provides | [BUG] if one mode's buffs are deleted because "only one mode is active at a time" — the character can switch and retain both |
 | Low-HP condition ("HP低于X%", "when HP is below X%") ★ | `OptionMap` with explicit HP states | [BUG] if assumed always-on |
 | Enemy HP condition ("HP高于/低于X%的敌人", "opponents with more/less than X% HP") ★ | `OptionMap` with enemy HP states | [BUG] if assumed always-active |
 | Shield condition | `teamMeta.hasShielder()` | [BUG] if always-on or always-off |
 | Heal condition | `teamMeta.hasHealer()` | [BUG] if always-on or always-off |
 | Reaction condition | `teamMeta.hasReaction(...)` — see note on lunar superseding below | [BUG] if unconditional |
-| Enemy element affection ("对处于X元素影响下的敌人") | Active if team has an X-element character (see U12) | [BUG] if assumed always-active |
+| Enemy element affection ("对处于X元素影响下的敌人") | Derive from configured enemy aura and applicable team-element assumptions (see U12) | [BUG] if assumed always-active or configured aura is ignored |
 | Self element affection ("处于X元素附着下") | Always assumed active; add a code comment noting the assumption | [BUG] if gated unnecessarily |
 | Moonsign Nascent Gleam (初辉) | `teamMeta.countByFaction("Moonsign") >= 1` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
 | Moonsign Ascendant Gleam (满辉) | `teamMeta.countByFaction("Moonsign") >= 2` | [BUG] if wrong count or uses `countByRegion("Nod-Krai")` |
@@ -251,9 +259,9 @@ for (const cid of Object.keys(this.teamMeta.elements)) {
 "char-normal": { parts: [{ formula }] },
 ```
 
-### U11. Ramping Buffs → OptionMap
+### U11. Ramping Buffs and Uptime
 
-Buffs that ramp up or down over time (not instant) should be implemented as `OptionMap` using an `OptionMap`, offering fixed value tiers for the user to choose from.
+Apply the [combat option boundary](#combat-option-boundary). When existing setup/rotation settings do not determine a nontrivial ramp or uptime, offer meaningful value tiers or states through `OptionMap` rather than silently assuming the maximum.
 
 **When this applies:** The buff's value changes continuously over a duration and takes more than ~1 second to reach its target. The user cannot meaningfully control which value they get — it depends on elapsed time.
 
@@ -264,12 +272,12 @@ Buffs that ramp up or down over time (not instant) should be implemented as `Opt
 
 **When this does NOT apply:** Buffs that stack after using specific abilities (A/E/Q) individually do NOT need this treatment — those are modeled as fixed stack counts at max. For example, "gain 1 stack per Normal Attack hit, max 5 stacks" is fine as a fixed 5-stack assumption, because the player can easily reach max stacks by performing the required actions.
 
-**Key distinction:** Time-dependent ramp (needs `OptionMap` with tiers) vs action-dependent stacking (fixed max assumption is fine per U8).
+**Key distinction:** A time-dependent ramp or difficult uptime left unresolved by the configured rotation needs a choice; easy action-dependent stacking retains the fixed-max convention in U9. Do not duplicate timing or activation already represented by an existing setting.
 
-- **[BUG]** if a time-ramping buff is hardcoded to its maximum value without offering user-selectable tiers.
-- **[BUG]** if an action-dependent stackable buff (easy to maintain at max per U8) is unnecessarily gated behind `OptionMap`.
+- **[BUG]** if an unresolved nontrivial ramp is hardcoded to its maximum value without offering user-selectable tiers.
+- **[BUG]** if an action-dependent stackable buff (easy to maintain at max per U9) is unnecessarily gated behind `OptionMap`.
 
-**Forced averaging:** When an entity already has a more important `OptionMap` (each entity supports only one), a time-ramping buff may be hardcoded to an amortized average instead.
+**Independent dimensions:** An existing playstyle or HP choice does not justify forcing a ramp to an average. Compose the real choices in the entity schema; remove derived dimensions instead of displacing meaningful ones. Document any remaining approximation explicitly.
 
 - **[TRACK]** if a buff uses a forced average (not max, not user-selectable) and no tracker item documents it with category `approximation`.
 
@@ -288,9 +296,9 @@ Buffs that ramp up or down over time (not instant) should be implemented as `Opt
   | while in a state/field | Derive availability from the source-described ways to enter or create that state. Use `hasReaction()` only when a reaction is the required activation path. |
 
   **[BUG]** if a 触发-worded weapon/artifact clause omits `charId` — it grants the buff to wielders who can never trigger it, e.g. a Pyro wielder on a Cryo/Electro team. Contrast `earth_shaker` (「队伍中的角色触发」), which correctly omits it. Note `OptionDef.when` predicates receive only `TeamMeta` and cannot scope to `charId`; use the team-wide form there and apply the `charId` gate inside `get buffs()`.
-- **Enemy element affection** ("对处于X元素影响下的敌人"): active if any team character applies element X. Check `Object.values(this.teamMeta.elements).includes("X")`.
+- **Enemy element affection** ("对处于X元素影响下的敌人"): include the configured `teamMeta.enemyAura` as well as the applicable peak assumption that a team character applies element X. Reuse or extend the shared framework query for this condition; do not add a separate aura option or check only teammate elements.
 - **Element absorption** (buffs): when an absorbed element changes a **buff's** scope or value (e.g., Sucrose C6 "+20% DMG of the absorbed element"), iterate `Object.values(this.teamMeta.elements)` to find which absorbable elements are present and add one buff per match. Derive the absorbable set from game text — do not assume.
-- **Element absorption** (formulas): when absorption changes the **damage element** of a formula (e.g., Kazuha Q additional hits, Traveler Anemo Q), the absorbed element depends on in-game aura priority (Pyro > Hydro > Electro > Cryo) and enemy state — it cannot be determined from team composition alone. **[TRACK]** create a tracker item with category `engine-gap`. **[BUG]** if the implementation picks the first team element or any single element by default — this produces incorrect results when multiple absorbable elements are present.
+- **Element absorption** (formulas): when absorption changes the **damage element** of a formula (e.g., Kazuha Q additional hits, Traveler Anemo Q), apply source-specific absorption priority to the configured aura and represented conditions. Team composition alone may leave the actual absorbed element unresolved; preserve a meaningful choice in that case, and track an `engine-gap` only if the framework cannot express it. **[BUG]** if the implementation arbitrarily picks the first team element or adds an option for an outcome the settings already determine.
 - **Self element affection** ("处于X元素附着下"): always assumed active under the peak-damage model. No `teamMeta` check needed; add a code comment noting the assumption.
 - **Element-count threshold**: when a mechanic scales based on the number of qualifying teammates (e.g., "1/2/3 Hydro or Geo characters", "fewer than 2 converted samples"), use `teamMeta.countByElement` or a `Set` over `teamMeta.elements` values. Declare the result as a `private readonly` field before `readonly buffs`. **[BUG]** if hardcoded to max stacks without checking team composition, or tracked in a tracker item as an engine limitation.
 
@@ -298,14 +306,14 @@ If a team-element condition cannot be modeled with any of the above approaches, 
 
 ### U13. Radiance Conditions on Weapons & Artifacts
 
-Radiance (辉映) is a per-character state, not a reaction trigger — see [Part 3 of `elemental-reactions.md`](elemental-reactions.md) for the mechanic. A weapon or artifact **cannot read the wielder's Radiance state**: `hasReaction("stellarConduct" | "stellarSwirl")` proves the *team* can produce Stellar reactions, never that *this wielder* is in Radiance.
+Radiance (辉映) is a per-character state, not a reaction trigger — see [Part 3 of `elemental-reactions.md`](elemental-reactions.md). Resolve the wielder's applicable state through `TeamMeta`, using its central carrier capabilities, activation paths, and Conduct-over-Swirl priority. Team reaction availability alone does not prove that an arbitrary wielder can enter Radiance; an additional local toggle does not supply that missing capability either.
 
-**Decide by the verb.**
+Apply the [combat option boundary](#combat-option-boundary) independently from the source verb:
 
-- 「效果变更为」/「改为」 (the Radiance clause **replaces** the base effect) → give the entity its own two-choice `OptionDef`: `off` first so it is the default, `on` gated by `when: (tm) => tm.hasReaction("stellarConduct") || tm.hasReaction("stellarSwirl")`. Then branch: `if (radianceOn) { return [replacement]; } return [base];`. Reference: `newBoughOption` in `weapon4Sword.ts`.
-- 「提升」/「获得」 within a 触发星烁反应 window (the clause **adds** to the base effect) → no option needed; gate on `hasReaction(r, this.charId)` per U12. A false positive only over-grants.
+- 「效果变更为」/「改为」 means **replace** the base effect with the applicable branch. Derive that branch from the shared state; replacement wording does not require an Off/On option.
+- 「提升」/「获得」 means **add** the stated bonus when its own condition is met. Reaction-triggered clauses use `hasReaction(r, this.charId)` or the party-wide form according to U12; Radiance-state clauses use the wielder's state.
 
-**[BUG]** if a 变更为/改为 clause is gated on `hasReaction(...)` alone — a wrong gate is two-sided there, granting an unearned branch *and* stripping the base one. **[BUG]** if a Radiance branch is applied additively on top of the base branch.
+**[BUG]** if a team-wide reaction check grants a wielder an unsupported Radiance state, if a redundant option can contradict the derived state, or if a replacement branch is applied additively. Keep a choice only for an actual unresolved condition described by the source.
 
 ---
 
@@ -328,10 +336,11 @@ For every formula in `formulaMap`, verify the correct class. Wrong class = **[BU
 
 **`LunarDirectFormula` talentMult convention**: Pass the **raw game%** directly. The class multiplies by `directCoeff` internally (`lunarCharged ×3`, `lunarCrystallize ×1.6`, `lunarBloom ×1`). **[BUG]** if the passed value is `gameText% / directCoeff` — this cancels the internal multiplication and produces damage 3× (or 1.6×) too low.
 
-**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Unlike Lunar (fixed per reaction subtype), Stellar `directCoeff` is looked up in `STELLAR_DIRECT_COEFF_BY_HITS` by recorded Polestar Field attach hits (1–12), range **1.45–2.0**, default **1.64** (`STELLAR_ATTACH_HITS_DEFAULT = 5`). The same table serves both 星超导 and 星扩散. **[BUG]** if talentMult is pre-divided by `directCoeff`.
+**`StellarDirectFormula` talentMult convention**: Same as Lunar Direct — pass the **raw game%**; `directCoeff` is applied internally. Direct Stellar-Conduct looks up the coefficient in `STELLAR_DIRECT_COEFF_BY_HITS` by recorded Polestar Field attach hits (1–12), range **1.45–2.0**, peak default **2.0** (`STELLAR_ATTACH_HITS_DEFAULT = 12`). Direct Stellar Swirl uses a fixed **1.0** coefficient. **[BUG]** if talentMult is pre-divided by `directCoeff` or if Stellar Swirl uses the Conduct attach-hit table.
 
 **Stellar vs Lunar — two damage paths** (mirror lunar design):
 - **Reaction trigger** (`StellarFormula`): SC replaces Superconduct but deals **no proc damage** — only enables Polestar Field. `rx-stellarConduct` auto-formulas contribute 0 DPS.
+- **Stellar Swirl reaction trigger** (`StellarFormula`): deals level-based initial Anemo damage and delayed Cryo Vortex damage, with contributor weights handled centrally by `TeamReaction`; it is not a zero-damage field marker.
 - **Skill direct** (`StellarDirectFormula`): talent% × stat scaling, same zone count as `LunarDirectFormula`. This is what Sandrone kit hits use under 辉映.
 
 **Stellar Direct zone model** (same layers as Lunar Direct; no traditional `dmg%` or DEF):
@@ -355,36 +364,24 @@ Radiance (辉映) has two variants — **辉映·星超导** (Stellar-Conduct) a
 
 Radiance arrived in 6.7 (**Witch's Revelation**), which added Stellar-Conduct clauses to six existing characters — **Wriothesley, Yae Miko, Cyno, Qiqi, Diona, Beidou** — via an **Additional Talent** (A4 slot) and enhanced constellations. 7.0 added the Stellar Swirl variant and native Snezhnaya carriers. Reference implementations: `character5Snezhnaya.ts` (both variants), `character5None.ts` (Cryo Traveler).
 
-**Do not assume a character carries only one variant.** Several 6.7 kits enter *either* state depending on the team: Diona's and Qiqi's P4 grant 辉映·星超导 inside a Polestar Field **or** 辉映·星扩散 for 8s after a nearby ally triggers a Stellar Swirl. Their options must offer both: gate the field choice on `hasPolestarField()` and the Swirl choice on `hasReaction("stellarSwirl")`. Otherwise a branch becomes unreachable on a field-only or Swirl-only team. **Yumemizuki Mizuki is a Stellar Swirl carrier** — her P4 and C1 carry 辉映·星扩散 clauses, entered via a party Swirl trigger rather than the Polestar Field wording.
+**Capability and priority:** Several kits can enter either state through different activation paths: Diona's and Qiqi's P4 grant 辉映·星超导 inside a Polestar Field or 辉映·星扩散 for 8s after a nearby party Stellar Swirl. The source glossary permits only one state at a time and gives Stellar-Conduct priority. Resolve each character's applicable state centrally as **Conduct > Swirl > none**, after checking that character's capabilities and source-described activation paths. Both feasible paths do not create a user choice between states. **Yumemizuki Mizuki is a Stellar Swirl carrier** — her P4 and C1 carry 辉映·星扩散 clauses entered via a party Stellar Swirl trigger, not merely field presence.
 
 Characters who merely *enable* a Stellar reaction for the party are a different set from those who *enter* Radiance — see `STELLAR_ENABLERS` for the former.
 
-**User option (Radiance characters):** Register with `@RegisterCharacter("id", radianceOption)`. Each entity supports **only one** `OptionDef` (see U11 for the ramping-buff case). When Radiance is added to a character that already had an `OptionMap` (e.g., Diona C6 HP states), the Radiance toggle **occupies that slot**; displaced modes may be hardcoded to a peak branch (always-on EM+200 ≈ HP>50%) with a tracker `approximation` item if needed.
+**Automatic state:** Use `teamMeta.getRadianceState(charId)` rather than registering a blanket Radiance option. Under the peak convention, an available party-triggered state is maintained through the modeled triggering actions. Preserve real unresolved HP/playstyle/ramp choices; Radiance must not displace them. If a source-specific rotation choice genuinely changes state access and existing settings do not represent it, expose that choice rather than a redundant state toggle.
 
-Standard schema:
+For a Swirl-only carrier whose source activation is a nearby party Stellar Swirl, the underlying eligibility condition is:
 
 ```typescript
-const radianceOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-// In class body:
-private readonly radianceOn =
-  resolveOption(radianceOption, this.option, this.teamMeta) === "on";
+teamMeta.hasReaction("stellarSwirl");
 ```
 
-- **[BUG]** if Radiance-gated buffs or SC formulas are active when `radianceOn` is false.
-- **[BUG]** if a Polestar Field choice is not gated on `teamMeta.hasPolestarField()`. Field availability and reaction availability are distinct: Mitya's burst creates Prisms that create a field even without a Cryo teammate. Keep actual reaction-triggered effects gated on `hasReaction("stellarConduct")`, and Stellar Swirl choices gated on `hasReaction("stellarSwirl")`.
+Keep that rule in shared state resolution, together with carrier capability and priority, so character formulas, weapons, and artifacts agree.
 
-**Radiance replaces, not stacks:** Game text under `辉映·星超导` **changes** the base mechanic (e.g., Rebuke → Luster, Judication bolts → Starsame). Implement as `if (this.radianceOn) { … } else { … }` for buffs and formula variants — not additive overlays on the pre-6.7 path. When a constellation scales differently in vs out of Radiance (Wriothesley C2), implement **both** branches; do not assume Radiance is always on for the non-Radiance branch.
+- **[BUG]** if Radiance-gated effects are active for an unsupported or unavailable state, or if the UI offers an option that contradicts the resolved state.
+- **Field availability and reaction availability are distinct:** Mitya's burst creates Prisms that create a field even without a Cryo teammate. Use `hasPolestarField()` for source clauses entered through field presence and `hasReaction("stellarConduct")` for actual reaction-triggered clauses. Stellar Swirl entry clauses use Stellar Swirl eligibility. The shared state resolver combines only the paths that the character actually has.
+
+**Explicit Radiance replacements:** Clauses saying 「变更为」/「改为」/「转为」 **replace** the named base mechanic (e.g., Rebuke → Luster, Judication bolts → Starsame). Implement these as mutually exclusive branches rather than additive overlays. Clauses saying 「提升」/「获得」 add their stated effect; a Radiance heading alone does not imply replacement (e.g., Qiqi C2). When a constellation scales differently in vs out of Radiance (Wriothesley C2), implement **both** branches against the centrally resolved state.
 
 **SC direct damage:** Any hit tagged "视为星超导反应伤害" → `StellarDirectFormula` + `reaction: "stellarConduct"` (see S1). Use `reactionDmg%` / `reactionCr` / `reactionCd` / `baseDmg%` / `elevated%` zones — not `dmg%` or DEF.
 
@@ -394,7 +391,7 @@ private readonly radianceOn =
 
 **Peak-model simplifications (acceptable wont-do):**
 - **Guaranteed procs:** Reconcile default combo counts with their own peak assumptions. If a modeled hit consumes enough resources to trigger a constellation proc, include that proc at the required constellation; an editable rotation does not justify omitting a guaranteed consequence of the modeled hit.
-- **Field / summon uptime:** Radiance effects scoped to a deployable (Qiqi Herald of Frost during E, Diona inside Q Drunken Mist) — peak model assumes deployable is active when the combo uses that ability; no runtime field-presence flag.
+- **Field / summon uptime and recipients:** Peak assumptions may keep the modeled deployable active, but never broaden its source-described recipients. Diona's buffs for characters inside her Q field use `teamOnField`, preserving any HP choice; field uptime does not grant them to every off-field teammate. Keep Qiqi's Herald-of-Frost activation condition distinct from a recipient restriction.
 - **Swap-order inheritance:** Cyno **Together We Rise** (C1 EM on swap, C2 SC stacks on TWR characters only) — `receiver: "team"` for SC buffs is an acceptable peak approximation when rotation assumes SC dealers are TWR-affected.
 - **Utility Radiance branches:** DR, energy restore, heal-on-proc — skip per U9 even when Radiance text replaces a combat-adjacent effect (e.g., Wriothesley C4 DR instead of heal-overflow ATK SPD).
 
@@ -596,7 +593,7 @@ When the review agent encounters an issue it cannot resolve by applying the rule
 These can be resolved using existing rules — do NOT create tracker items for:
 
 - HP-state conditions → OptionMap (see U9)
-- Enemy element affection → U12 team element check
+- Enemy element affection → U12 configured aura and team-element handling
 - Element absorption (buffs only) → U12 per-element buff iteration
 - Debuff applied and consumed by the same character → model as self buff or formula part
 - Flat damage caps → `ScalingBuff` `cap` parameter (see S6)

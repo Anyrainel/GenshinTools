@@ -8,7 +8,7 @@ Quicken) leave persistent gauges on enemies. Geo and Anemo do not form persisten
 Symmetric reactions are listed under both trigger directions.
 
 † = upgraded reaction when a Moonsign 5★ character is in the party.
-‡ = upgraded reaction when the triggering character is in a Radiance state (see Part 3).
+‡ = upgraded reaction enabled by a party converter and the required elements (see Part 3).
 
 ### Pyro (trigger)
 - **Hydro** aura → Vaporize (1.5×)
@@ -82,7 +82,7 @@ Symmetric reactions are listed under both trigger directions.
 - **Scaling**: character level + trigger character's EM
 
 ### StellarConduct *(Radiance upgrade of Superconduct)*
-- **Requires**: the triggering character is in the `辉映·星超导` Radiance state (see Part 3)
+- **Requires**: a party Stellar-Conduct converter and an eligible Cryo/Electro reaction (see Part 3); the triggering character need not be a Radiance carrier
 - **Type**: Transformative, but damage is dealt as a **direct hit** rather than a separate proc — see the Stellar Reactions notes in Part 3
 - **Effect**: replaces Superconduct entirely; the Physical RES shred is not carried over by the reaction itself
 
@@ -121,7 +121,7 @@ Symmetric reactions are listed under both trigger directions.
 - **Scaling**: character level + Anemo character's EM
 
 ### StellarSwirl *(Radiance upgrade of Cryo Swirl)*
-- **Requires**: the triggering character is in the `辉映·星扩散` Radiance state (see Part 3)
+- **Requires**: a party Stellar Swirl converter and an eligible Cryo Swirl (see Part 3); the triggering character need not be a Radiance carrier
 - **Upgrades Cryo Swirl only.** Pyro, Hydro and Electro swirls are unaffected and still produce ordinary Swirl
 - **Type**: deals reaction damage (an initial Anemo hit plus a delayed Cryo Vortex) and also supports direct talent-tagged Stellar Swirl damage
 
@@ -170,16 +170,18 @@ Symmetric reactions are listed under both trigger directions.
 
 ### Radiance (辉映) — Polestar Field
 
-Radiance is a **per-character combat state**, entered inside a 极星辉域 (Polestar Field). It is the Snezhnaya-era counterpart to Nightsoul's Blessing and Moonsign Gleam.
+Radiance is a **per-character combat state**, entered through the character's source-described paths, such as a 极星辉域 (Polestar Field) or a nearby party Stellar Swirl. It is the Snezhnaya-era counterpart to Nightsoul's Blessing and Moonsign Gleam.
 
 - Two variants: **辉映·星超导** (Radiance: Stellar-Conduct) and **辉映·星扩散** (Radiance: Stellar Swirl). Collectively they are **辉映·星烁** (Stellar Glimmer).
 - **It is a state, not a reaction trigger.** "This character is in Radiance" and "this character triggered a Stellar reaction" are different conditions, and game text distinguishes them.
-- **Capability is per character**, declared as a local option in that character's impl file — there is no whitelist constant, and none should be added. Roughly ten characters across Mondstadt, Liyue, Inazuma, Fontaine, Sumeru, Snezhnaya and the Traveler carry one.
-- Radiance text **replaces** the base mechanic rather than adding to it. The tell is ZH 「效果变更为」/「改为」 (EN "is changed to"), as opposed to 「提升」/「获得」 which adds.
+- **Capability is per character.** Keep carrier capabilities and state resolution centrally in the combat framework so character, weapon, and artifact implementations consume the same answer. A reaction enabler and a Radiance carrier are different capabilities; neither a broad faction label nor an arbitrary local option proves the latter.
+- **One state, fixed priority.** The current 辉映·星烁 glossary (e.g. Sandrone, Odette, Anastasya) says: 「角色同时只能受到一种辉映状态影响，且优先被辉映·星超导影响。」 Resolve the character's applicable state as **Stellar-Conduct > Stellar Swirl > none**, after checking its capabilities and activation paths. Feasibility of both paths does not create a choice of state.
+- **Combat options:** derive the applicable state through `TeamMeta` under the peak convention. Preserve only meaningful unresolved rotation/state choices under the [canonical combat option boundary](translator-rules.md#combat-option-boundary); Radiance does not require a blanket toggle or displace existing HP/playstyle choices. Mizuki is a Stellar Swirl carrier whose P4 grants eight seconds of the state after a nearby party Stellar Swirl.
+- Explicit replacement clauses such as ZH 「效果变更为」/「改为」/「转为」 (EN "is changed to") **replace** the named base mechanic. Additive clauses such as 「提升」/「获得」 add their stated effect; the Radiance heading alone does not imply replacement.
 
 ### Stellar Reactions
 
-- Upgraded versions of existing reactions, gated on the triggering character's Radiance state rather than on party composition alone:
+- Upgraded versions of existing reactions, gated centrally on a party converter and the required participating elements. Triggering these reactions does not require the trigger character to carry Radiance:
   - **StellarConduct**: Cryo + Electro (upgrades Superconduct)
   - **StellarSwirl**: Anemo on a Cryo aura (upgrades Cryo Swirl only)
 - **Enablers.** A party member who converts the base reaction into its Stellar form is required. The authoritative list is `STELLAR_ENABLERS` in `src/domain/combat/damage/constants.ts` — keyed per reaction, because enabling one does not imply the other (Vesna enables Stellar Swirl only).

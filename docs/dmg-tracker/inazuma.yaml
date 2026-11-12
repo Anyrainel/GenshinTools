@@ -355,21 +355,6 @@
     C6's Stellar-Conduct CRIT DMG buff carries triggers ["stellarConduct"] (origin
     unchanged at C6). The runtime gate (hasScReaction) is untouched. No
     "stellar-reaction" label was used - neither clause is a stellar umbrella clause.
-- id: mizuki-radiance-option
-  entity: yumemizuki_mizuki
-  rule: S1b
-  status: completed
-  category: bug
-  summary: >
-    Mizuki has no OptionDef and no Radiance handling at all, but her P4 states
-    "队伍中的角色在附近触发星扩散反应后的8秒内，梦见月瑞希将会进入辉映·星扩散状态".
-    She is a Radiance carrier (Stellar Swirl), not a Radiance-free 6.7 kit.
-  detail: >
-    Done. Registered @RegisterCharacter("yumemizuki_mizuki", mizukiOption) with the
-    S1b two-choice schema, label Radiance: Stellar Swirl, "off" first so it is the
-    default, "on" gated on tm.hasReaction("stellarSwirl") only. Exposed as
-    private readonly radianceOn. Her option slot was free, so nothing was displaced.
-    All nine sibling items landed in the same change.
 - id: mizuki-p4-stellar-hit
   entity: yumemizuki_mizuki
   rule: S1

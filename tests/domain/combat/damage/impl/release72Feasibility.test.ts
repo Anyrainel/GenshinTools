@@ -214,4 +214,46 @@ describe("official 7.2 combat feasibility", () => {
       })
     ).toBe(0);
   });
+
+  it("requires the wearer to carry Conduct Radiance in the same field-only team", () => {
+    const meta = new TeamMeta(["mitya", "barbara", "lisa"]);
+    expect(meta.hasPolestarField()).toBe(true);
+    expect(meta.hasReaction("stellarConduct")).toBe(false);
+    for (const [charId, reactionCd] of [
+      ["mitya", 0.36],
+      ["lisa", 0],
+    ] as const) {
+      const sheet = weaponSheet(
+        createWeapon("starsealed_edict", 1, charId, meta),
+        false
+      );
+      expect(sheet.get("em", null)).toBe(120);
+      expect(
+        sheet.get("reactionCd", {
+          element: "Electro",
+          ability: "skill",
+          reaction: "stellarConduct",
+        })
+      ).toBeCloseTo(reactionCd);
+    }
+  });
+
+  it("keeps Law EM without a Conduct rider for a Swirl-only carrier", () => {
+    const meta = new TeamMeta(["yumemizuki_mizuki", "vesna", "qiqi"]);
+    expect(meta.getRadianceState("yumemizuki_mizuki")).toBe("stellarSwirl");
+    const sheet = weaponSheet(
+      createWeapon("starsealed_edict", 1, "yumemizuki_mizuki", meta),
+      true
+    );
+    expect(sheet.get("em", null)).toBe(120);
+    for (const reaction of ["stellarConduct", "stellarSwirl"] as const) {
+      expect(
+        sheet.get("reactionCd", {
+          element: "Anemo",
+          ability: "skill",
+          reaction,
+        })
+      ).toBe(0);
+    }
+  });
 });

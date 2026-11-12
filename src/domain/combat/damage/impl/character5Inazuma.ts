@@ -9,24 +9,12 @@ import { CrossScalingBuff, ScalingBuff, StatBuff } from "../core/statBuff";
 import type { ComboTemplate, FormulaEntry, OptionDef } from "../types";
 import { cbs } from "./helpers";
 
-const mizukiOption = {
-  label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-  choices: [
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-    {
-      value: "on",
-      label: { zh: "开启", en: "On" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
-    },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("yumemizuki_mizuki", mizukiOption)
+@RegisterCharacter("yumemizuki_mizuki")
 class YumemizukiMizuki extends CharacterBase {
   // P4: Mizuki enters 辉映·星扩散 for 8s after a nearby party member triggers a
   // Stellar Swirl — she is a Stellar Swirl carrier, never a Stellar-Conduct one.
   private readonly radianceOn =
-    resolveOption(mizukiOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarSwirl";
 
   readonly buffs = (() => {
     const buffs: StatBuff[] = [
@@ -195,11 +183,9 @@ class YumemizukiMizuki extends CharacterBase {
     const canSwirl =
       this.teamMeta.hasReaction("swirl") ||
       this.teamMeta.hasReaction("stellarSwirl");
-    // The Swirl proc part itself keeps the narrow gate. The engine models
-    // Stellar reactions as carrying no proc damage (core/teamReaction.ts emits
-    // rx-stellarSwirl as a StellarFormula whose calc() returns 0), and expects
-    // all Stellar DPS to come from explicit StellarDirectFormula kit entries,
-    // which Mizuki has below. Leaving this part live on a superseded team would
+    // The ordinary Swirl proc keeps the narrow gate. TeamReaction generates
+    // Stellar Swirl's initial hit and Vortex separately from Mizuki's direct
+    // Stellar talent hits below. Leaving this part live on a superseded team would
     // collect the 扩散 buff values (E param2, C1 1100% EM, C6 fixed 30/100 CRIT)
     // for a reaction the same team has converted into the 星扩散 bucket.
     const swirlProc = this.teamMeta.hasReaction("swirl");
@@ -1692,22 +1678,10 @@ class Yoimiya extends CharacterBase {
   })();
 }
 
-const yaeMikoOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("yae_miko", yaeMikoOption)
+@RegisterCharacter("yae_miko")
 class YaeMiko extends CharacterBase {
   private readonly radianceOn =
-    resolveOption(yaeMikoOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
 
   private readonly hasScReaction =
     this.teamMeta.hasReaction("stellarConduct") ||

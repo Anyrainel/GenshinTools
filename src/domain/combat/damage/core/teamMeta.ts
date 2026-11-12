@@ -15,6 +15,8 @@ import {
 import { charInfo } from "@/generated/catalog/characterInfo";
 import {
   LUNAR_SUPERSEDES,
+  PHEC_ELEMENTS,
+  RADIANCE_CAPABILITIES,
   REACTION_AURA_TRIGGER,
   REACTION_ELEMENT_REQUIREMENTS,
   STELLAR_ENABLERS,
@@ -105,6 +107,21 @@ export class TeamMeta {
     return (
       this.characters.includes("mitya") || this.hasReaction("stellarConduct")
     );
+  }
+
+  /** Peak source-supported state; applicable Stellar-Conduct takes priority. */
+  getRadianceState(charId: string): StellarReactionType | null {
+    if (!this.characters.includes(charId)) return null;
+    const capabilities = RADIANCE_CAPABILITIES[charId];
+    if (!capabilities) return null;
+    if (capabilities.includes("stellarConduct") && this.hasPolestarField())
+      return "stellarConduct";
+    if (
+      capabilities.includes("stellarSwirl") &&
+      this.hasReaction("stellarSwirl")
+    )
+      return "stellarSwirl";
+    return null;
   }
 
   countByElement(element: Element): number {
@@ -204,9 +221,16 @@ export class TeamMeta {
   hasReaction(reaction: ReactionType, charId?: string): boolean {
     if (!this.meetsReactionRequirements(reaction, charId)) return false;
 
+    if (reaction === "swirl") {
+      return PHEC_ELEMENTS.some((element) => this.hasSwirl(element));
+    }
+
     const teamElements = Object.values(this.elements).filter(
       (e): e is Element => e != null
     );
+    if (this.enemyAura && !teamElements.includes(this.enemyAura)) {
+      teamElements.push(this.enemyAura);
+    }
 
     // Lunar reactions supersede base reactions when possible.
     const supersede = LUNAR_SUPERSEDES[reaction];
@@ -229,6 +253,21 @@ export class TeamMeta {
     }
 
     return true;
+  }
+
+  /** Ordinary Swirl availability for one aura element, after Stellar conversion. */
+  hasSwirl(element: Element): boolean {
+    if (!PHEC_ELEMENTS.includes(element)) return false;
+    const teamElements = Object.values(this.elements);
+    if (!teamElements.includes("Anemo")) return false;
+    if (this.enemyAura !== element && !teamElements.includes(element))
+      return false;
+    const supersede = STELLAR_SUPERSEDES.swirl;
+    return (
+      !supersede ||
+      !this.meetsReactionRequirements(supersede.stellar) ||
+      (supersede.survivalElements?.includes(element) ?? false)
+    );
   }
 
   /**

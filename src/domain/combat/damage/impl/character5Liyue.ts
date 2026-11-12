@@ -1542,37 +1542,13 @@ class Keqing extends CharacterBase {
   }
 }
 
-const qiqiOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
-  choices: [
-    {
-      value: "stellarConduct",
-      label: {
-        zh: "辉映·星超导 (极星辉域)",
-        en: "Radiance: Stellar-Conduct (Polestar Field)",
-      },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    {
-      value: "stellarSwirl",
-      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("qiqi", qiqiOption)
+@RegisterCharacter("qiqi")
 class Qiqi extends CharacterBase {
   // P4: Qiqi enters 辉映·星超导 inside a Polestar Field, or 辉映·星扩散 for 8s
   // after a nearby party member triggers a Stellar Swirl.
-  private readonly rState = resolveOption(
-    qiqiOption,
-    this.option,
-    this.teamMeta
-  );
+  private readonly rState = this.teamMeta.getRadianceState(this.charId);
 
-  private readonly radianceOn = this.rState !== "off";
+  private readonly radianceOn = this.rState !== null;
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [];

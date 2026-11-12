@@ -510,7 +510,6 @@ describe("released and beta weapon ID persistence", () => {
       ]);
       const config = state.configsByTeamId["stable-team"];
       expect(config.combatOptions).toEqual({
-        new_bough: "off",
         breezeborne_refrain: "on",
         starsealed_edict: "on",
       });
@@ -669,7 +668,7 @@ describe("released and beta weapon ID persistence", () => {
     teams[0].schemaVersion = 3;
     expect(
       teamFromCloud(teams).configsByTeamId["stable-team"].combatOptions
-    ).toMatchObject({ new_bough: "off", breezeborne_refrain: "on" });
+    ).toMatchObject({ breezeborne_refrain: "on" });
     const account = accountToCloud({
       accounts: {
         0: { id: 0, name: "Mine", lastUpdate: 100, data: accountData },
@@ -717,7 +716,7 @@ describe("released and beta weapon ID persistence", () => {
       "new_bough",
       "starsealed_edict",
     ]);
-    expect(teamToCloud(teamSnapshot())[0].schemaVersion).toBe(8);
+    expect(teamToCloud(teamSnapshot())[0].schemaVersion).toBe(9);
     expect(
       tiersToCloud({
         character: { ...tier, tierLists: {} },

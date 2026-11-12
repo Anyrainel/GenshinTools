@@ -31,11 +31,7 @@ beforeAll(() =>
   Promise.all([characterStatsResource.preload(), weaponStatsResource.preload()])
 );
 
-function danica(
-  constellation = 0,
-  mode = "battle-stellar",
-  ids = ["danica", "kaeya"]
-) {
+function danica(constellation = 0, mode = "battle", ids = ["danica", "kaeya"]) {
   return createCharacter("danica", 90, constellation, new TeamMeta(ids), {
     danica: mode,
   });
@@ -43,7 +39,7 @@ function danica(
 
 function anastasya(
   constellation = 0,
-  mode = "love-stellarConduct-sealed",
+  mode = "love-sealed",
   ids = ["anastasya", "kaeya", "fischl", "sucrose"]
 ) {
   return createCharacter("anastasya", 90, constellation, new TeamMeta(ids), {
@@ -93,21 +89,21 @@ describe("Danica 7.2 beta", () => {
     expect(
       battle.buffs.find((buff) => buff.source.origin === "P2")!.staticBuffs
     ).toEqual([{ key: "atkSpd%", value: 0.6 }]);
-    const defense = danica(0, "defense-stellar");
+    const defense = danica(0, "defense");
     expect(defense.formulaIds).toHaveProperty("danica-entry");
     expect(defense.formulaIds).not.toHaveProperty("danica-e2-first");
     expect(
       defense.getFormulaEntry("danica-coordinated")!.parts[0].offField
     ).toBe(true);
     expect(defense.combo["danica-coordinated"]).toBe(16);
-    const noField = danica(0, "defense-stellar", ["danica", "barbara"]);
+    const noField = danica(0, "defense", ["danica", "barbara"]);
     expect(noField.getFormulaEntry("danica-burst")!.parts).toHaveLength(3);
     expect(battle.getFormulaEntry("danica-burst")!.parts).toHaveLength(5);
   });
 
   it.each([
     ["battle", "fischl"],
-    ["battle-stellar", "kaeya"],
+    ["battle", "kaeya"],
   ])(
     "allows optional off-field coordinated attacks in %s with %s",
     (mode, teammate) => {
@@ -144,7 +140,7 @@ describe("Danica 7.2 beta", () => {
       90,
       0,
       new TeamMeta(["danica", "barbara"], {}, {}, "Cryo"),
-      { danica: "defense-stellar" }
+      { danica: "defense" }
     );
     expect(field.formulaIds).toHaveProperty("danica-entry");
     expect(field.formulaIds).not.toHaveProperty("danica-coordinated");
@@ -192,7 +188,7 @@ describe("Danica 7.2 beta", () => {
   });
 
   it("scales P3 by 0.7% per 100 ATK and caps team buffs", () => {
-    const character = danica(1, "defense-stellar");
+    const character = danica(1, "defense");
     const p3 = character.buffs.find(
       (buff) => buff instanceof ScalingBuff && buff.source.origin === "P3"
     )!;
@@ -266,7 +262,7 @@ describe("Danica 7.2 beta", () => {
       )
     ).toBe(true);
     expect(
-      danica(6, "defense-stellar").buffs.some(
+      danica(6, "defense").buffs.some(
         (buff) =>
           buff instanceof ScalingBuff &&
           ["reactionCr", "reactionCd"].includes(buff.outputKey)
@@ -399,7 +395,11 @@ describe("Anastasya 7.2 beta", () => {
   ])(
     "replaces only the final Crown and Honor hits under %s",
     (radiance, crownMultiplier) => {
-      const love = anastasya(0, `love-${radiance}-sealed`);
+      const ids =
+        radiance === "stellarSwirl"
+          ? ["anastasya", "kaeya", "sucrose"]
+          : ["anastasya", "kaeya", "fischl", "sucrose"];
+      const love = anastasya(0, "love-sealed", ids);
       const crown = love.getFormulaEntry("anastasya-crown")!.parts;
       expect(crown.map((part) => part.hits ?? 1)).toEqual([1, 1, 1]);
       expect(crown.map((part) => part.formula.tag.reaction)).toEqual([
@@ -413,7 +413,7 @@ describe("Anastasya 7.2 beta", () => {
       expect(
         love.buffs.find((buff) => buff.source.origin === "Q")?.staticBuffs
       ).toEqual([{ key: "reactionDmg%", value: 0.3 }]);
-      const honor = anastasya(0, `honor-${radiance}-sealed`);
+      const honor = anastasya(0, "honor-sealed", ids);
       expect(honor.getFormulaEntry("anastasya-honor-n1")!.parts).toHaveLength(
         1
       );
@@ -430,7 +430,7 @@ describe("Anastasya 7.2 beta", () => {
           .getFormulaEntry("anastasya-honor-n4")!
           .parts.every((part) => part.formula.tag.ability === "normal")
       ).toBe(true);
-      const off = anastasya(0, "honor-off-sealed");
+      const off = anastasya(0, "honor-sealed", ["anastasya", "kaeya"]);
       expect(
         off.getFormulaEntry("anastasya-honor-n1")!.parts[0].formula
       ).toBeInstanceOf(DirectFormula);
@@ -442,7 +442,7 @@ describe("Anastasya 7.2 beta", () => {
   );
 
   it("uses the current ordinary and Stellar rows without combining Doom hits", () => {
-    const character = anastasya(0, "honor-stellarConduct-sealed");
+    const character = anastasya(0, "honor-sealed");
     expect(
       character.getFormulaEntry("anastasya-e-hold")!.parts[0].formula
         .talentMultiplier
@@ -468,7 +468,7 @@ describe("Anastasya 7.2 beta", () => {
     const love0 = anastasya();
     expect(accolade(love0, "anastasya", "cd")).toBe(0);
     expect(accolade(love0, "fischl", "cd")).toBeCloseTo(0.16);
-    const honor0 = anastasya(0, "honor-stellarConduct-sealed");
+    const honor0 = anastasya(0, "honor-sealed");
     expect(accolade(honor0, "anastasya", "cd")).toBeCloseTo(0.48);
     expect(accolade(honor0, "kaeya", "cd")).toBe(0);
     const love1 = anastasya(1);
@@ -476,13 +476,13 @@ describe("Anastasya 7.2 beta", () => {
     expect(accolade(love1, "kaeya", "atk%")).toBeCloseTo(0.3);
     expect(accolade(love1, "fischl", "em")).toBe(120);
     expect(accolade(anastasya(4), "fischl", "em")).toBe(156);
-    const unsealed = anastasya(0, "love-off-unsealed");
+    const unsealed = anastasya(0, "love-unsealed");
     expect(accolade(unsealed, "anastasya", "cd")).toBeCloseTo(0.12);
     expect(accolade(unsealed, "fischl", "cd")).toBeCloseTo(0.12);
   });
 
   it("keeps C2's original-DMG bonus off E cast and removes C6 Honor Elevation before Doom", () => {
-    const character = anastasya(6, "honor-stellarConduct-sealed");
+    const character = anastasya(6, "honor-sealed");
     expect(
       character.getFormulaEntry("anastasya-e-hold")!.parts[0].bespokeBuffs
     ).toBeUndefined();
@@ -504,7 +504,7 @@ describe("Anastasya 7.2 beta", () => {
           .every((entry) => entry.key !== "elevated%")
       )
     ).toBe(true);
-    const low = anastasya(0, "honor-stellarConduct-sealed");
+    const low = anastasya(0, "honor-sealed");
     expect(
       low.rawComboDescriptor.find((line) => line.id === "anastasya-c6-doom")!
         .count
@@ -522,9 +522,9 @@ describe("Anastasya 7.2 beta", () => {
   it("validates every scoped buff and keeps quantified P2/P3 in separate zones", () => {
     for (const character of [
       danica(6),
-      danica(6, "defense-stellar"),
+      danica(6, "defense"),
       anastasya(6),
-      anastasya(6, "honor-stellarSwirl-sealed"),
+      anastasya(6, "honor-sealed", ["anastasya", "sucrose"]),
     ]) {
       for (const buff of [
         ...character.buffs,

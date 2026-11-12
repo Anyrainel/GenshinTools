@@ -63,8 +63,10 @@ describe("official 7.2 talent parameters", () => {
             "valeriy",
             90,
             constellation,
-            new TeamMeta(["valeriy", "mitya"]),
-            { valeriy: `${mode}-${charge}` }
+            new TeamMeta(
+              mode === "stellar" ? ["valeriy", "mitya"] : ["valeriy"]
+            ),
+            { valeriy: String(charge) }
           );
           const directive = character.buffs.find(
             (buff) => buff.source.origin === "A/P2"

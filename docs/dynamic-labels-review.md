@@ -1,5 +1,7 @@
 # 命座动态标签审查
 
+> 历史审查记录，保留当时的讨论与建议。当前战斗选项的适用范围以[统一规则](../.agents/skills/genshin-knowledge/translator-rules.md#combat-option-boundary)为准。
+
 本文档列出所有 formulaMap 中因命座而产生标签变动的情况，供逐行审查。
 
 ---

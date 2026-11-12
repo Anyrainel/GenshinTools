@@ -271,30 +271,6 @@
     comment. Each Steed's 2nd hit is a Lunar-Crystallize instance, so the count
     also drives that reaction's frequency. type-check passes.
 
-- id: qiqi-radiance-swirl-state
-  entity: qiqi
-  rule: S1b
-  status: completed
-  category: bug
-  summary: >
-    Qiqi's OptionDef offers only 辉映·星超导, but P4 says she enters 辉映·星超导 inside a
-    Polestar Field OR 辉映·星扩散 for 8s after a nearby party member triggers a Stellar
-    Swirl. On a Stellar-Swirl-only team (Vesna enabler) the "on" choice is unreachable,
-    so every 星烁 clause (P2, P4, C2) silently disappears, and P4's
-    「辉映·星扩散：冰元素扩散、星扩散反应伤害提升50%」 branch is not implemented at all.
-  detail: >
-    Implemented. qiqiOption reworked to the three-choice sandroneOption shape: label
-    辉映状态 / "Radiance State" with stellarConduct (when hasReaction("stellarConduct")),
-    stellarSwirl (when hasReaction("stellarSwirl")), and off. Class now holds
-    `rState` plus `radianceOn = rState !== "off"`. P4 split into two branches:
-    stellarConduct → reactions ["stellarConduct", "superconduct"], stellarSwirl →
-    reactions ["stellarSwirl"] only (bare "swirl" deliberately omitted, per the
-    settled decision shared with diona-stellar-swirl-state-missing; noted in a code
-    comment). Q's StellarDirectFormula part and the "·星超导" / "(SC)" label suffix
-    stay gated on rState === "stellarConduct"; C2's 星烁 clause applies in both states.
-    Landed together with qiqi-c2-radiance-replaces-base, qiqi-c6-stack-budget and
-    qiqi-c6-missing-stellar-swirl.
-
 - id: qiqi-c2-radiance-replaces-base
   entity: qiqi
   rule: S1b

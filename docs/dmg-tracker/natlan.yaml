@@ -266,9 +266,9 @@
   detail: >
     Closed as wont-do by maintainer decision: the item proposed an OptionMap
     redesign to pick the Armament form, but the bespokeBuffs route was taken
-    instead, so the item's prescription was not followed and Mavuika's single
-    option slot stays free. Below C6 the DEF shred is now a bespokeBuff on the
-    "mavuika-ring" part (receiver "team", which bespoke merging ignores — only
+    instead, so the item's prescription was not followed. Below C6 the DEF
+    shred is now a bespokeBuff on the "mavuika-ring" part (receiver "team",
+    which bespoke merging ignores — only
     the filter is consulted, so U6's receiver constraint does not bind). The
     selfOffField + other split is gone, as is the mavuika/C2 entry in
     CONSTRAINT_ALLOWLIST. From C6 the Flamestrider also summons a Scorching Ring

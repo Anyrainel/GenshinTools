@@ -89,11 +89,11 @@
     so this is standard U9 peak-damage treatment, not a double-count.
     The residual over-count is the teammate's damage during the 3-4s transfer
     ramp, which is short against a 20s+ rotation. Splitting into self + "other"
-    buffs with reduced counts would understate both sides, and per U11 the
-    per-entity OptionDef slot is already taken by odetteOption (the 3-way Radiance
-    selector), so user-selectable tiers are not available. No constellation >= 6
-    gate: C6 only removes the drain, it does not change the peak either side can
-    reach.
+    buffs with reduced counts would understate both sides' attainable peaks.
+    No constellation >= 6 gate: C6 only removes the drain, it does not change
+    the peak either side can reach. The transfer ramp remains an accepted peak
+    approximation; central automatic Radiance imposes no option-capacity limit
+    if an explicit transfer/uptime choice is added later under U9/U11.
 
 
 - id: alyosha-c6-precision-stellar-rider

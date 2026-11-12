@@ -6,7 +6,10 @@ import {
   weaponStatsResource,
 } from "@/domain/reference/stats";
 import "@/domain/combat/damage/index";
-import { createWeapon } from "@/domain/combat/damage/core/registry";
+import {
+  createWeapon,
+  getOptionDef,
+} from "@/domain/combat/damage/core/registry";
 import {
   getBuffInstanceKey,
   isBuffApplicable,
@@ -223,9 +226,8 @@ describe("Winter's Heavy Heart", () => {
       const buffs = createWeapon(
         "winters_heavy_heart",
         refinement,
-        "lisa",
-        new TeamMeta(["lisa", "odette", "qiqi", "fischl"]),
-        { winters_heavy_heart: "on" }
+        "yae_miko",
+        new TeamMeta(["yae_miko", "odette", "qiqi", "fischl"])
       ).buffs;
       expect(staticValue(buffs, "em")).toBe(
         4 * [20, 25, 30, 35, 40][refinement - 1]!
@@ -241,6 +243,95 @@ describe("Winter's Heavy Heart", () => {
       ).toEqual(["stellarConduct", "stellarSwirl"]);
     }
   );
+
+  it.each(["off", "on"])(
+    "derives the wielder's state despite legacy %s options",
+    (legacyOption) => {
+      const team = new TeamMeta(["yae_miko", "lisa", "mitya", "qiqi"]);
+      expect(getOptionDef("winters_heavy_heart")).toBeNull();
+      for (const [charId, em, atk, reactionDmg] of [
+        ["yae_miko", 80, 0, 0.24],
+        ["lisa", 24, 0.144, 0],
+      ] as const) {
+        const buffs = createWeapon("winters_heavy_heart", 1, charId, team, {
+          winters_heavy_heart: legacyOption,
+        }).buffs;
+        expect(staticValue(buffs, "em")).toBe(em);
+        expect(staticValue(buffs, "atk%")).toBeCloseTo(atk);
+        expect(staticValue(buffs, "reactionDmg%")).toBeCloseTo(reactionDmg);
+      }
+    }
+  );
+
+  it("uses the Swirl-only carrier's branch without granting it to a noncarrier", () => {
+    const team = new TeamMeta(["yumemizuki_mizuki", "vesna", "qiqi", "lisa"]);
+    expect(team.getRadianceState("yumemizuki_mizuki")).toBe("stellarSwirl");
+    for (const [charId, em, atk, reactionDmg] of [
+      ["yumemizuki_mizuki", 40, 0, 0.12],
+      ["lisa", 24, 0.048, 0],
+    ] as const) {
+      const buffs = createWeapon("winters_heavy_heart", 1, charId, team).buffs;
+      expect(staticValue(buffs, "em")).toBe(em);
+      expect(staticValue(buffs, "atk%")).toBeCloseTo(atk);
+      expect(staticValue(buffs, "reactionDmg%")).toBeCloseTo(reactionDmg);
+    }
+  });
+
+  it("uses a Burst-created field without a Cryo teammate", () => {
+    const team = new TeamMeta(["yae_miko", "mitya"]);
+    expect(team.hasReaction("stellarConduct")).toBe(false);
+    const buffs = createWeapon(
+      "winters_heavy_heart",
+      1,
+      "yae_miko",
+      team
+    ).buffs;
+    expect(staticValue(buffs, "em")).toBe(40);
+    expect(staticValue(buffs, "atk%")).toBe(0);
+    expect(staticValue(buffs, "reactionDmg%")).toBeCloseTo(0.12);
+  });
+
+  it("keeps the base composition stats in idle and replaces them in combat", () => {
+    const team = new TeamBuild(
+      [
+        ["yae_miko", "winters_heavy_heart"],
+        ["mitya", "favonius_codex"],
+        ["qiqi", "favonius_sword"],
+      ].map(([charId, weaponId]) => ({
+        charId,
+        weaponId,
+        charLevel: 90,
+        constellation: 0,
+        refinement: 1,
+        artifactSet: null,
+      }))
+    );
+    const base = team.charBuilds.yae_miko.baseStatSheet;
+    for (const sheet of Object.values(team.teamStats.getIdleStats().yae_miko)) {
+      expect(sheet.get("em", null) - base.get("em", null)).toBe(24);
+      expect(sheet.get("atk", null) - base.get("atk", null)).toBeCloseTo(
+        base.getRaw("baseAtk") * 0.096
+      );
+    }
+    const weaponKeys = new Set(
+      team.buffLedger.allBuffs
+        .filter(({ buff }) => buff.source.id === "winters_heavy_heart")
+        .map(({ buffKey }) => buffKey)
+    );
+    for (const onField of ["yae_miko", "mitya"]) {
+      const combat = team.getTeamStats({}, onField).yae_miko;
+      const withoutWeapon = team.getTeamStatsExcluding(
+        {},
+        onField,
+        undefined,
+        weaponKeys
+      ).yae_miko;
+      expect(combat.get("em", null) - withoutWeapon.get("em", null)).toBe(60);
+      expect(combat.get("atk", null)).toBeCloseTo(
+        withoutWeapon.get("atk", null)
+      );
+    }
+  });
 
   it("falls back to the base branch when Radiance is unavailable and ignores other elements", () => {
     const buffs = createWeapon(

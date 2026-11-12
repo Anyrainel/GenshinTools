@@ -140,18 +140,24 @@ beforeAll(async () => {
 function createC6Sandrone(
   radiance: "stellarConduct" | "stellarSwirl" | "off",
   // Electro teammate enables Stellar-Conduct, Anemo teammate enables Stellar Swirl
-  teammate = radiance === "stellarSwirl" ? "sucrose" : "fischl"
+  teammate = radiance === "off"
+    ? undefined
+    : radiance === "stellarSwirl"
+      ? "sucrose"
+      : "fischl"
 ) {
-  const teamMeta = new TeamMeta(["sandrone", teammate], { sandrone: 6 });
+  const teamMeta = new TeamMeta(["sandrone", ...(teammate ? [teammate] : [])], {
+    sandrone: 6,
+  });
   return createCharacter("sandrone", 90, 6, teamMeta, {
     sandrone: radiance,
   });
 }
 
 describe("Sandrone C6 Cluster Beam", () => {
-  it("provides the Polestar marker whenever the team can create the field, even with Radiance off", () => {
+  it("cannot suppress automatic Radiance or its Polestar marker with a legacy Off value", () => {
     const conduct = createC6Sandrone("stellarConduct");
-    const radianceOff = createC6Sandrone("off");
+    const radianceOff = createC6Sandrone("off", "fischl");
     const fieldBuff = conduct.buffs.find((buff) =>
       buff.staticBuffs.some((entry) => entry.key === "polestarField")
     );
@@ -168,6 +174,10 @@ describe("Sandrone C6 Cluster Beam", () => {
         buff.staticBuffs.some((entry) => entry.key === "polestarField")
       )
     ).toBe(true);
+    expect(
+      radianceOff.getFormulaEntry("sandrone-c6-cluster")?.parts[0].formula.tag
+        .reaction
+    ).toBe("stellarConduct");
   });
 
   it("Odette alone also provides the field marker on a Stellar-Conduct team", () => {

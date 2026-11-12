@@ -6,6 +6,7 @@ import {
 import type { TeamSetupConfig } from "@/domain/team/types";
 import { migrateCharacterBuffTriggerConfigs } from "@/stores/migration/characterBuffTriggers";
 import { migrateLegacyMityaBeaconConfigs } from "@/stores/migration/mityaBeacons";
+import { migrateRadianceSetupConfigs } from "@/stores/migration/radianceOptions";
 import { migrateReleasedTeamWeapons } from "@/stores/migration/releasedWeaponIds";
 import { migrateTeamAnalysisConfigs } from "@/stores/migration/teamAnalysis";
 import {
@@ -41,13 +42,15 @@ export function teamToCloud(
 ): CloudExportPartition<TeamCloudPayload>[] {
   snapshot = migrateReleasedTeamWeapons(snapshot);
   const configsByTeamId = compactTeamSetupConfigs(
-    migrateCharacterBuffTriggerConfigs(snapshot.configsByTeamId)
+    migrateRadianceSetupConfigs(
+      migrateCharacterBuffTriggerConfigs(snapshot.configsByTeamId)
+    )
   );
   return [
     {
       namespace: "teams",
       partitionKey: "all",
-      schemaVersion: 8,
+      schemaVersion: 9,
       conflictPolicy: "explicit-choice",
       isDefaultState: isDefaultTeamSnapshot(snapshot, configsByTeamId),
       payload: {
@@ -85,6 +88,9 @@ export function teamFromCloud(
   );
   if (partition && partition.schemaVersion < 8) {
     configsByTeamId = migrateLegacyMityaBeaconConfigs(configsByTeamId);
+  }
+  if (partition && partition.schemaVersion < 9) {
+    configsByTeamId = migrateRadianceSetupConfigs(configsByTeamId);
   }
   const restored = {
     activePresetId: current?.activePresetId ?? null,

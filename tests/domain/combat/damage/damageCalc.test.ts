@@ -149,6 +149,138 @@ describe("TeamMeta — Odette and stellarSwirl / stellarConduct", () => {
     // Since Pyro and Hydro are present, regular Swirl survives.
     expect(meta.hasReaction("swirl")).toBe(true);
   });
+
+  it("converts only Cryo Swirl while preserving character participation checks", () => {
+    const meta = new TeamMeta([
+      "odette",
+      "kaedehara_kazuha",
+      "bennett",
+      "xingqiu",
+    ]);
+
+    expect(meta.hasSwirl("Cryo")).toBe(false);
+    expect(meta.hasSwirl("Pyro")).toBe(true);
+    expect(meta.hasSwirl("Hydro")).toBe(true);
+    expect(meta.hasSwirl("Electro")).toBe(false);
+    expect(meta.hasReaction("swirl", "odette")).toBe(true);
+    expect(meta.hasReaction("swirl", "bennett")).toBe(true);
+    expect(meta.hasReaction("swirl", "not-in-team")).toBe(false);
+  });
+
+  it("keeps ordinary Cryo Swirl without a Stellar enabler", () => {
+    const meta = new TeamMeta(["kamisato_ayaka", "kaedehara_kazuha"]);
+
+    expect(meta.hasSwirl("Cryo")).toBe(true);
+    expect(meta.hasSwirl("Anemo")).toBe(false);
+    expect(new TeamMeta(["kamisato_ayaka"]).hasSwirl("Cryo")).toBe(false);
+  });
+
+  it("uses an enemy aura for ordinary Swirl availability", () => {
+    const meta = new TeamMeta(["kaedehara_kazuha"], {}, {}, "Cryo");
+
+    expect(meta.hasSwirl("Cryo")).toBe(true);
+    expect(meta.hasReaction("swirl")).toBe(true);
+    expect(meta.hasReaction("stellarSwirl")).toBe(false);
+  });
+
+  it("preserves ordinary Swirl supplied by an enemy aura on Stellar teams", () => {
+    const meta = new TeamMeta(["odette", "kaedehara_kazuha"], {}, {}, "Pyro");
+
+    expect(meta.hasReaction("stellarSwirl")).toBe(true);
+    expect(meta.hasReaction("swirl")).toBe(true);
+    expect(meta.hasSwirl("Pyro")).toBe(true);
+    expect(meta.hasSwirl("Cryo")).toBe(false);
+  });
+
+  it("converts enemy Cryo Swirl when a Stellar enabler is present", () => {
+    const meta = new TeamMeta(["vesna"], {}, {}, "Cryo");
+
+    expect(meta.hasReaction("stellarSwirl")).toBe(true);
+    expect(meta.hasReaction("swirl")).toBe(false);
+    expect(meta.hasSwirl("Cryo")).toBe(false);
+  });
+});
+
+describe("TeamMeta — Lunar Crystallize partial supersede", () => {
+  it("preserves ordinary Crystallize supplied by an enemy aura", () => {
+    const meta = new TeamMeta(["columbina", "zhongli"], {}, {}, "Pyro");
+
+    expect(meta.hasReaction("lunarCrystallize")).toBe(true);
+    expect(meta.hasReaction("crystallize")).toBe(true);
+  });
+
+  it("replaces ordinary Crystallize when only Hydro is available", () => {
+    const meta = new TeamMeta(["columbina", "zhongli"]);
+
+    expect(meta.hasReaction("lunarCrystallize")).toBe(true);
+    expect(meta.hasReaction("crystallize")).toBe(false);
+  });
+});
+
+describe("TeamResonance — Superconduct reaction debuff", () => {
+  it("grants the Physical RES debuff only after an available Superconduct", () => {
+    const meta = new TeamMeta(["kaeya", "fischl"]);
+    const debuff = new TeamResonance(meta).buffs.find(
+      (buff) => buff.source.id === "superconduct"
+    );
+
+    expect(debuff?.staticBuffs).toEqual([{ key: "resReduction%", value: 0.4 }]);
+    expect(debuff?.source.triggers).toEqual(["superconduct"]);
+    expect(debuff?.target.filter?.elements).toEqual(["Physical"]);
+  });
+
+  it("does not retain Superconduct's debuff after Stellar conversion", () => {
+    const meta = new TeamMeta(["sandrone", "fischl"]);
+
+    expect(meta.hasReaction("stellarConduct")).toBe(true);
+    expect(
+      new TeamResonance(meta).buffs.some(
+        (buff) => buff.source.id === "superconduct"
+      )
+    ).toBe(false);
+  });
+
+  it("allows an enemy aura to supply Superconduct's missing element", () => {
+    const meta = new TeamMeta(["fischl"], {}, {}, "Cryo");
+
+    expect(
+      new TeamResonance(meta).buffs.some(
+        (buff) => buff.source.id === "superconduct"
+      )
+    ).toBe(true);
+  });
+
+  it("keeps the reaction debuff in combat while excluding it from idle stats", () => {
+    const build = new TeamBuild([
+      {
+        charId: "kaeya",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "favonius_sword",
+        refinement: 1,
+        artifactSet: null,
+      },
+      {
+        charId: "fischl",
+        charLevel: 90,
+        constellation: 0,
+        weaponId: "favonius_warbow",
+        refinement: 1,
+        artifactSet: null,
+      },
+    ]);
+    const tag = {
+      element: "Physical",
+      ability: "normal",
+      reaction: "none",
+    } as const;
+    const idle = build.teamStats.getIdleStats();
+    const combat = build.getTeamStats({}, "kaeya");
+
+    expect(combat.kaeya!.get("resReduction%", tag)).toBe(0.4);
+    expect(idle.kaeya!.onField.get("resReduction%", tag)).toBe(0);
+    expect(idle.kaeya!.offField.get("resReduction%", tag)).toBe(0);
+  });
 });
 
 describe("TeamMeta — charLevels", () => {

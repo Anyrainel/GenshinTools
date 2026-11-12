@@ -132,14 +132,15 @@ export class TeamResonance implements IStatProvider {
       }
     }
 
-    // Superconduct: if team has both Cryo and Electro, -40% Physical RES
-    const teamElements = Object.values(teamMeta.elements).filter(
-      (el): el is Element => el !== undefined
-    );
-    if (teamElements.includes("Cryo") && teamElements.includes("Electro")) {
+    // Superconduct's reaction debuff is absent when Stellar-Conduct replaces it.
+    if (teamMeta.hasReaction("superconduct")) {
       buffs.push(
         new StatBuff(
-          { type: "teamResonance", id: "superconduct" },
+          {
+            type: "teamResonance",
+            id: "superconduct",
+            triggers: ["superconduct"],
+          },
           { receiver: "team", filter: { elements: ["Physical" as const] } },
           [{ key: "resReduction%", value: 0.4 }]
         )

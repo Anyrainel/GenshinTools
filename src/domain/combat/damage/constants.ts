@@ -168,11 +168,9 @@ export const LUNAR_SUPERSEDES: Partial<
 };
 
 /**
- * Stellar-Conduct supersedes transformative Superconduct when Sandrone is in
- * the party (Sandrone P3: party Superconduct procs become Stellar-Conduct).
- * hasReaction("superconduct") returns false in that case; only one transformative
- * Cryo+Electro proc exists. Cryo+Electro team resonance (Physical RES shred) is
- * unchanged — it is not gated by this map.
+ * Stellar conversion replaces the corresponding base reaction. Stellar-Conduct
+ * does not retain Superconduct's Physical RES debuff. Only Cryo Swirl is
+ * converted to Stellar Swirl; other swirlable elements remain ordinary Swirl.
  */
 export const STELLAR_SUPERSEDES: Partial<
   Record<
@@ -203,6 +201,31 @@ export const STELLAR_ENABLERS: Record<StellarReactionType, string[]> = {
     "anastasya",
   ],
   stellarSwirl: ["sandrone", "odette", "traveler_cryo", "vesna", "anastasya"],
+};
+
+/**
+ * Source-supported Radiance states for each carrier. These capabilities do not
+ * enable Stellar conversion; that party-wide mechanic is STELLAR_ENABLERS.
+ */
+export const RADIANCE_CAPABILITIES: Readonly<
+  Record<string, readonly StellarReactionType[]>
+> = {
+  alyosha: ["stellarConduct"],
+  anastasya: ["stellarConduct", "stellarSwirl"],
+  beidou: ["stellarConduct"],
+  cyno: ["stellarConduct"],
+  danica: ["stellarConduct"],
+  diona: ["stellarConduct", "stellarSwirl"],
+  mitya: ["stellarConduct"],
+  odette: ["stellarConduct", "stellarSwirl"],
+  qiqi: ["stellarConduct", "stellarSwirl"],
+  sandrone: ["stellarConduct", "stellarSwirl"],
+  traveler_cryo: ["stellarConduct", "stellarSwirl"],
+  valeriy: ["stellarConduct"],
+  vesna: ["stellarSwirl"],
+  wriothesley: ["stellarConduct"],
+  yae_miko: ["stellarConduct"],
+  yumemizuki_mizuki: ["stellarSwirl"],
 };
 
 /**

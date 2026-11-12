@@ -33,11 +33,14 @@ describe("released Vesna", () => {
   });
 
   it.each(["on", "off"])(
-    "keeps Lv. 1 ordinary and changes only the blade portions with Radiance %s",
+    "keeps Lv. 1 ordinary and derives the blade portions from Radiance availability %s",
     (radiance) => {
-      const character = createCharacter("vesna", 90, 6, team, {
-        vesna: radiance,
-      });
+      const character = createCharacter(
+        "vesna",
+        90,
+        6,
+        radiance === "on" ? team : new TeamMeta(["vesna"])
+      );
       const lv1 = character.getFormulaEntry("vesna-blade-pierce")?.parts;
       const lv2 = character.getFormulaEntry("vesna-blade-plunge")?.parts;
       const transpose = character.getFormulaEntry("vesna-c6-tread")?.parts;

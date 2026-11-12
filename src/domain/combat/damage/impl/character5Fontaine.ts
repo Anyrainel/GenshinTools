@@ -1184,22 +1184,10 @@ class Neuvillette extends CharacterBase {
   }
 }
 
-const wriothesleyOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("wriothesley", wriothesleyOption)
+@RegisterCharacter("wriothesley")
 class Wriothesley extends CharacterBase {
   private readonly radianceOn =
-    resolveOption(wriothesleyOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
 
   // Peak: 5 Prosecution Edict stacks during Chilling Penalty (P2 max)
   private readonly c2RadianceEnhanced =

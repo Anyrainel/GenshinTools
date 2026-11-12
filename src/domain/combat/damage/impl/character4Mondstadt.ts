@@ -475,22 +475,16 @@ class Razor extends CharacterBase {
 }
 
 const dionaOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
+  label: { zh: "场上角色生命值（C6）", en: "On-field HP (C6)" },
   choices: [
     {
-      value: "stellarConduct",
-      label: {
-        zh: "辉映·星超导 (极星辉域)",
-        en: "Radiance: Stellar-Conduct (Polestar Field)",
-      },
-      when: (tm) => tm.hasPolestarField(),
+      value: "above50",
+      label: { zh: "高于50%", en: "Above 50%" },
     },
     {
-      value: "stellarSwirl",
-      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
+      value: "below50",
+      label: { zh: "不高于50%", en: "50% or below" },
     },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
   ] as const,
 } satisfies OptionDef;
 
@@ -498,11 +492,9 @@ const dionaOption = {
 class Diona extends CharacterBase {
   // P4: 辉映·星超导 inside a Polestar Field, or 辉映·星扩散 for 8s after a
   // nearby party member triggers a Stellar Swirl.
-  private readonly rState = resolveOption(
-    dionaOption,
-    this.option,
-    this.teamMeta
-  );
+  private readonly rState = this.teamMeta.getRadianceState(this.charId);
+  private readonly highHp =
+    resolveOption(dionaOption, this.option) === "above50";
 
   // A4 fires on 星超导 / 超导 / 冰元素扩散 / 星扩散. Both swirl forms are needed:
   // STELLAR_SUPERSEDES turns hasReaction("swirl") false once an enabler is
@@ -525,8 +517,17 @@ class Diona extends CharacterBase {
           ),
         ]
       : []),
-    // C6: In Q field, HP > 50% → EM +200 (peak model)
+    // C6: The HP increase is unconditional; incoming healing at low HP is not
+    // an outgoing Healing Bonus and has no modeled offensive stat.
     ...(this.constellation >= 6
+      ? [
+          new StatBuff(cbs(this, "C6"), { receiver: "self" }, [
+            { key: "hp%", value: 0.25 },
+          ]),
+        ]
+      : []),
+    // C6: Characters in the Q field with HP > 50% gain EM +200.
+    ...(this.constellation >= 6 && this.highHp
       ? [
           new StatBuff(cbs(this, "C6", ["Q"]), { receiver: "teamOnField" }, [
             { key: "em", value: 200 },
@@ -540,7 +541,7 @@ class Diona extends CharacterBase {
           new StatBuff(
             cbs(this, "C6", ["Q"]),
             {
-              receiver: "team",
+              receiver: "teamOnField",
               filter: { reactions: ["stellarConduct", "superconduct"] },
             },
             [{ key: "reactionDmg%", value: 0.4 }]
@@ -554,7 +555,10 @@ class Diona extends CharacterBase {
       ? [
           new StatBuff(
             cbs(this, "C6", ["Q"]),
-            { receiver: "team", filter: { reactions: ["stellarSwirl"] } },
+            {
+              receiver: "teamOnField",
+              filter: { reactions: ["stellarSwirl"] },
+            },
             [{ key: "reactionDmg%", value: 0.4 }]
           ),
         ]

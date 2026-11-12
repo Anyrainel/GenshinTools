@@ -136,6 +136,7 @@ export function createArtifactHalfSet(
   return new Ctor(halfSetId, charId, teamMeta);
 }
 
+/** Unresolved combat choices; setup-derived eligibility and states live in TeamMeta. */
 const optionRegistry = new Map<string, OptionDef>();
 export function getOptionDef(entityId: string): OptionDef | null {
   if (entityId.startsWith("infusion:")) return getInfusionOptionDef();

@@ -11,37 +11,16 @@ const valeriyOption = {
   label: { zh: "攻斥指令·冲击势能", en: "Assault Order: Charge Consumed" },
   choices: [
     {
-      value: "stellar-100",
-      label: {
-        zh: "辉映·星超导 / 100点",
-        en: "Radiance: Stellar-Conduct / 100",
-      },
-      when: (tm) => tm.hasPolestarField(),
+      value: "100",
+      label: { zh: "100点", en: "100" },
     },
     {
-      value: "stellar-130",
-      label: {
-        zh: "辉映·星超导 / 130点（C4）",
-        en: "Radiance: Stellar-Conduct / 130 (C4)",
-      },
-      when: (tm) => tm.hasPolestarField(),
+      value: "130",
+      label: { zh: "130点（C4）", en: "130 (C4)" },
     },
     {
-      value: "stellar-40",
-      label: { zh: "辉映·星超导 / 40点", en: "Radiance: Stellar-Conduct / 40" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    {
-      value: "normal-100",
-      label: { zh: "无辉映 / 100点", en: "No Radiance / 100" },
-    },
-    {
-      value: "normal-130",
-      label: { zh: "无辉映 / 130点（C4）", en: "No Radiance / 130 (C4)" },
-    },
-    {
-      value: "normal-40",
-      label: { zh: "无辉映 / 40点", en: "No Radiance / 40" },
+      value: "40",
+      label: { zh: "40点", en: "40" },
     },
   ] as const,
 } satisfies OptionDef;
@@ -53,9 +32,10 @@ class Valeriy extends CharacterBase {
     this.option,
     this.teamMeta
   );
-  private readonly radianceOn = this.state.startsWith("stellar-");
+  private readonly radianceOn =
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
   private readonly charge = Math.min(
-    Number(this.state.split("-")[1]),
+    Number(this.state),
     this.constellation >= 4 ? 130 : 100
   );
 
@@ -225,22 +205,10 @@ class Valeriy extends CharacterBase {
   })();
 }
 
-const alyoshaOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("alyosha", alyoshaOption)
+@RegisterCharacter("alyosha")
 class Alyosha extends CharacterBase {
   private readonly radianceOn =
-    resolveOption(alyoshaOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
 
   readonly buffs = (() => {
     const isC6 = this.constellation >= 6;

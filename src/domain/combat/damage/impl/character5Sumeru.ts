@@ -748,22 +748,10 @@ class Nahida extends CharacterBase {
   }
 }
 
-const cynoOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("cyno", cynoOption)
+@RegisterCharacter("cyno")
 class Cyno extends CharacterBase {
   private readonly radianceOn =
-    resolveOption(cynoOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff | typeof ScalingBuff>[] = [
@@ -917,53 +905,38 @@ class Cyno extends CharacterBase {
           },
         ],
       },
-      // P1 Duststalker Bolts: 3 bolts per Judication (100% ATK, Electro skill DMG)
+      // P1: Judication fires three bolts; Radiance replaces them with Starsame.
       "cyno-p1-bolts": {
-        label: { zh: "P1渡荒之雷", en: "P1 Duststalker Bolts" },
-        when: !this.radianceOn,
+        label: this.radianceOn
+          ? { zh: "P1渡荒之雷·星偕", en: "P1 Starsame Bolts" }
+          : { zh: "P1渡荒之雷", en: "P1 Duststalker Bolts" },
         parts: [
           {
-            formula: new DirectFormula(1.0, eBaseTag),
+            formula: this.radianceOn
+              ? new StellarDirectFormula(2.0, scSkillTag, "atk")
+              : new DirectFormula(1.0, eBaseTag),
             hits: 3,
-            bespokeBuffs: [duststalkerEmScaling],
-          },
-        ],
-      },
-      // P1 Radiance: 3 Duststalker Bolts - Starsame (200% ATK, Stellar-Conduct skill DMG)
-      "cyno-p1-starsame": {
-        label: { zh: "P1渡荒之雷·星偕", en: "P1 Starsame Bolts" },
-        when: this.radianceOn,
-        parts: [
-          {
-            formula: new StellarDirectFormula(2.0, scSkillTag, "atk"),
-            hits: 3,
-            bespokeBuffs: [starsameEmScaling],
+            bespokeBuffs: [
+              this.radianceOn ? starsameEmScaling : duststalkerEmScaling,
+            ],
           },
         ],
       },
       // C6 "Day of the Jackal": Each Normal ATG fires an extra Duststalker Bolt
       "cyno-c6-bolts": {
-        label: { zh: "渡荒之雷", en: "Duststalker Bolts" },
+        label: this.radianceOn
+          ? { zh: "渡荒之雷·星偕", en: "Starsame Bolts" }
+          : { zh: "渡荒之雷", en: "Duststalker Bolts" },
         minC: 6,
-        when: !this.radianceOn,
         parts: [
           {
-            formula: new DirectFormula(1.0, eBaseTag),
+            formula: this.radianceOn
+              ? new StellarDirectFormula(2.0, scSkillTag, "atk")
+              : new DirectFormula(1.0, eBaseTag),
             hits: 8,
-            bespokeBuffs: [duststalkerEmScaling],
-          },
-        ],
-      },
-      // C6 Radiance: Day of the Jackal fires Starsame bolts under Together We Rise
-      "cyno-c6-starsame": {
-        label: { zh: "渡荒之雷·星偕", en: "Starsame Bolts" },
-        minC: 6,
-        when: this.radianceOn,
-        parts: [
-          {
-            formula: new StellarDirectFormula(2.0, scSkillTag, "atk"),
-            hits: 8,
-            bespokeBuffs: [starsameEmScaling],
+            bespokeBuffs: [
+              this.radianceOn ? starsameEmScaling : duststalkerEmScaling,
+            ],
           },
         ],
       },
@@ -975,12 +948,13 @@ class Cyno extends CharacterBase {
     return [
       { id: "cyno-combo", count: 6 },
       {
-        id: this.radianceOn ? "cyno-p1-starsame" : "cyno-p1-bolts",
+        id: "cyno-p1-bolts",
         count: 6,
       },
       {
-        id: this.radianceOn ? "cyno-c6-starsame" : "cyno-c6-bolts",
-        count: 1,
+        id: "cyno-c6-bolts",
+        count: 0,
+        bonus: [{ minC: 6, delta: 1 }],
       },
     ];
   }

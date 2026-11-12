@@ -300,7 +300,7 @@ export class TeamReaction implements IFormulaProvider {
     if (teamMeta.hasReaction("swirl")) {
       const anemoChars = teamElementChars.get("Anemo") ?? [];
       for (const swirlEl of PHEC_ELEMENTS) {
-        if (!teamElementChars.has(swirlEl)) continue;
+        if (!teamMeta.hasSwirl(swirlEl)) continue;
         const baseId = `rx-swirl-${swirlEl}`;
         const elLabel = i18nAppData.elements[swirlEl];
         const swirlBase = i18nAppData.reactions.swirl;

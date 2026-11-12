@@ -34,7 +34,10 @@ class StarsealedEdict extends WeaponBase {
     }
     // Radiance can come from Mitya's Q-created field without a Cryo teammate;
     // the Law stacks still require an actual party reaction.
-    if (canReact && this.teamMeta.hasPolestarField()) {
+    if (
+      canReact &&
+      this.teamMeta.getRadianceState(this.charId) === "stellarConduct"
+    ) {
       buffs.push(
         new StatBuff(
           wbs(this, ["E", "elemental-reaction"]),

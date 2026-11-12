@@ -826,22 +826,10 @@ class Yanfei extends CharacterBase {
   }
 }
 
-const beidouOption = {
-  label: { zh: "辉映·星超导", en: "Radiance: Stellar-Conduct" },
-  choices: [
-    {
-      value: "on",
-      label: { zh: "开启 (极星辉域)", en: "On (Polestar Field)" },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("beidou", beidouOption)
+@RegisterCharacter("beidou")
 class Beidou extends CharacterBase {
   private readonly radianceOn =
-    resolveOption(beidouOption, this.option, this.teamMeta) === "on";
+    this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
 
   readonly buffs = (() => {
     const buffs: InstanceType<typeof StatBuff>[] = [

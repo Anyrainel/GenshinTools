@@ -1126,33 +1126,9 @@ class TravelerPyro extends CharacterBase {
 // P4 cross-resonance: Cryo resonance -> self +20% CRIT DMG (all 7 elements)
 // P3 makes the Traveler a Stellar-Conduct / Stellar Swirl enabler (see TeamMeta)
 // and enters Radiance: Stellar-Conduct (Polestar Field) or Radiance: Stellar Swirl.
-const travelerCryoOption = {
-  label: { zh: "辉映状态", en: "Radiance State" },
-  choices: [
-    {
-      value: "stellarConduct",
-      label: {
-        zh: "辉映·星超导 (极星辉域)",
-        en: "Radiance: Stellar-Conduct (Polestar Field)",
-      },
-      when: (tm) => tm.hasPolestarField(),
-    },
-    {
-      value: "stellarSwirl",
-      label: { zh: "辉映·星扩散", en: "Radiance: Stellar Swirl" },
-      when: (tm) => tm.hasReaction("stellarSwirl"),
-    },
-    { value: "off", label: { zh: "关闭", en: "Off" } },
-  ] as const,
-} satisfies OptionDef;
-
-@RegisterCharacter("traveler_cryo", travelerCryoOption)
+@RegisterCharacter("traveler_cryo")
 class TravelerCryo extends CharacterBase {
-  private readonly rState = resolveOption(
-    travelerCryoOption,
-    this.option,
-    this.teamMeta
-  );
+  private readonly rState = this.teamMeta.getRadianceState(this.charId);
 
   // P1 only converts/boosts NA/CA/Plunge inside Radiance: Stellar-Conduct.
   private readonly scRadiance = this.rState === "stellarConduct";
@@ -1161,7 +1137,7 @@ class TravelerCryo extends CharacterBase {
   // only when a nearby party member deals Stellar-Conduct or Stellar Swirl DMG.
   // P3 converts the party's Superconduct/Cryo Swirl into those stellar variants,
   // so any Electro or Anemo teammate satisfies this — deliberately wider than
-  // the Radiance option (Polestar Field, or 8s after a Stellar Swirl), which
+  // Radiance entry (Polestar Field, or 8s after a Stellar Swirl), which
   // gates the Traveler's own state rather than the party's reactions.
   private readonly hasStellarGlimmer =
     this.teamMeta.hasReaction("stellarConduct") ||
@@ -1478,8 +1454,8 @@ class TravelerCryo extends CharacterBase {
   protected override get comboDescriptor(): ComboTemplate {
     // The ice crystal count depends on the Radiance state, which a
     // ConstellationDelta cannot express — combo deltas resolve against
-    // constellation only. Both modes are modelled by branching the descriptor
-    // on the already-resolved option, so each selection reports its own count.
+    // constellation only. Branch the descriptor on the centrally resolved
+    // Radiance state so each applicable state reports its own count.
     //
     // Radiance: Stellar-Conduct replaces the timer with a coordinated attack on
     // every NA/CA/Plunge hit (once per 0.2s). The Traveler's sword cadence is

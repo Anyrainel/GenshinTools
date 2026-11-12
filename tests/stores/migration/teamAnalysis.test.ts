@@ -196,7 +196,7 @@ describe("team analysis persistence boundaries", () => {
     ).toHaveLength(1);
     expect(
       JSON.parse(localStorage.getItem("team-builder-storage")!).version
-    ).toBe(26);
+    ).toBe(27);
   });
   it("uses the same transform for old cloud snapshots and exports only the new semantics", () => {
     const old = fixture();
@@ -216,7 +216,7 @@ describe("team analysis persistence boundaries", () => {
     );
     expect(investment?.legacyInputs?.enemyAura).toBe("Cryo");
     const exported = teamToCloud(restored)[0];
-    expect(exported.schemaVersion).toBe(8);
+    expect(exported.schemaVersion).toBe(9);
     expect(
       teamFromCloud([exported]).configsByTeamId["custom-team"].investment
     ).toEqual(investment);

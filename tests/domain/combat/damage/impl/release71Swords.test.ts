@@ -1,7 +1,10 @@
 import "@/providers/reference/statLoaders";
 import { beforeAll, describe, expect, it } from "vitest";
 import type { WeaponBase } from "@/domain/combat/damage/core/implModel";
-import { createWeapon } from "@/domain/combat/damage/core/registry";
+import {
+  createWeapon,
+  getOptionDef,
+} from "@/domain/combat/damage/core/registry";
 import { StatSheet } from "@/domain/combat/damage/core/statSheet";
 import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
 import type { StatKey } from "@/domain/enums";
@@ -85,14 +88,12 @@ describe("7.1 released swords", () => {
   ])(
     "New Bough R%i replaces EM with Stellar damage in Radiance",
     (refinement, atk, em, radianceAtk, reactionDmg) => {
-      const team = new TeamMeta(["vesna", "qiqi"]);
-      const base = createWeapon("new_bough", refinement, "qiqi", team);
+      const team = new TeamMeta(["vesna", "qiqi", "kaeya"]);
+      const base = createWeapon("new_bough", refinement, "kaeya", team);
       expect(passiveValue(base, "atk%")).toBeCloseTo(atk);
       expect(passiveValue(base, "em")).toBe(em);
       expect(passiveValue(base, "reactionDmg%")).toBe(0);
-      const radiance = createWeapon("new_bough", refinement, "qiqi", team, {
-        new_bough: "on",
-      });
+      const radiance = createWeapon("new_bough", refinement, "qiqi", team);
       expect(passiveValue(radiance, "atk%")).toBeCloseTo(radianceAtk);
       expect(passiveValue(radiance, "em")).toBe(0);
       for (const reaction of ["stellarConduct", "stellarSwirl"] as const) {
@@ -111,6 +112,25 @@ describe("7.1 released swords", () => {
           reaction: "superconduct",
         })
       ).toBe(0);
+    }
+  );
+
+  it.each(["off", "on"])(
+    "New Bough derives the wielder's state despite legacy %s options",
+    (legacyOption) => {
+      const team = new TeamMeta(["vesna", "qiqi", "kaeya"]);
+      expect(getOptionDef("new_bough")).toBeNull();
+      for (const [charId, atk, em, reactionDmg] of [
+        ["qiqi", 0.18, 0, 0.24],
+        ["kaeya", 0.12, 60, 0],
+      ] as const) {
+        const weapon = createWeapon("new_bough", 1, charId, team, {
+          new_bough: legacyOption,
+        });
+        expect(passiveValue(weapon, "atk%")).toBeCloseTo(atk);
+        expect(passiveValue(weapon, "em")).toBe(em);
+        expect(passiveValue(weapon, "reactionDmg%")).toBeCloseTo(reactionDmg);
+      }
     }
   );
 

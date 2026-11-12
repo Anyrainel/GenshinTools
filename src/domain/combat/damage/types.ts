@@ -29,7 +29,7 @@ export type ReactionRequirement = {
   readonly requiredElements: Element[][];
   /** Additional constraint: at least one participant must be a 5★ Moonsign faction member */
   readonly requiresMoonsign5StarParticipant?: boolean;
-  /** Additional constraint: Sandrone must be in the party (enables Stellar-Conduct) */
+  /** Additional constraint: a conversion enabler for this Stellar reaction must be in the party. */
   readonly requiresStellarConductEnabler?: boolean;
   /** Additional constraint: at least one team member (doesn't have to be the participants) must be a Geo or Claymore */
   readonly requiresGeoOrClaymore?: boolean;
@@ -163,6 +163,9 @@ export type OptionEntry = {
  * Declarative option schema for a provider (character, weapon, or artifact set).
  * Defines a single select control with labeled choices.
  * UI renders as a toggle (2 choices) or dropdown (3+).
+ * Reserve choices for unresolved combat conditions or meaningful playstyles;
+ * derive setup-determined states such as Radiance through TeamMeta instead.
+ * Compose independent unresolved dimensions rather than displacing one.
  */
 export type OptionDef = {
   label: I18nLabel;
@@ -174,7 +177,7 @@ export type OptionDef = {
  */
 export type InferOption<D extends OptionDef> = D["choices"][number]["value"];
 /**
- * User-selected combat options, keyed by provider ID (charId or weaponId).
+ * User-selected combat options, keyed by provider ID (character, weapon, or set).
  * Each value is the selected option string for that provider.
  * Providers with no entry get `""` → falls back to first enabled choice via `resolveOption()`.
  */
