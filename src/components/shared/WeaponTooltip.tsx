@@ -6,12 +6,12 @@ import {
   getWeaponStatsAt90,
   weaponStatsResource,
 } from "@/domain/reference/stats";
-import { useWeaponText } from "@/hooks/useGameText";
 import { useResource } from "@/hooks/useResource";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
 import { cn } from "@/lib/utils";
 import { BetaBadge } from "./BetaBadge";
 import { getRarityColor } from "./colors";
+import { WeaponEffect } from "./EquipmentEffects";
 import { ItemIcon } from "./ItemIcon";
 
 interface WeaponTooltipProps {
@@ -28,7 +28,6 @@ export function WeaponTooltip({
   className,
 }: WeaponTooltipProps) {
   const { t } = useLanguage();
-  useWeaponText();
   const weaponStats = useResource(weaponStatsResource);
   const weapon = weaponsById[weaponId];
 
@@ -41,7 +40,6 @@ export function WeaponTooltip({
     : null;
 
   const name = t.weapon(weapon.id);
-  const effectHtml = t.weaponEffect(weapon.id, inventoryWeapon?.refinement);
   const statName = meta.secondaryStat != null ? t.stat(meta.secondaryStat) : "";
   const weaponType = meta.type != null ? t.weaponType(meta.type) : "";
 
@@ -138,13 +136,11 @@ export function WeaponTooltip({
 
       {/* Content */}
       <div className="p-4 space-y-3 bg-slate-950/95">
-        {effectHtml && (
-          <div
-            className="text-sm text-slate-300 leading-relaxed"
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: Weapon effect HTML from game data pipeline
-            dangerouslySetInnerHTML={{ __html: effectHtml }}
-          />
-        )}
+        <WeaponEffect
+          weaponId={weapon.id}
+          refinement={inventoryWeapon?.refinement}
+          className="text-sm text-slate-300"
+        />
       </div>
     </div>
   );

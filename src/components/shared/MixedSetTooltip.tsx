@@ -7,6 +7,7 @@ import {
 } from "@/domain/reference/catalog";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
 import { cn } from "@/lib/utils";
+import { ArtifactHalfSetEffect } from "./EquipmentEffects";
 
 type MixedSetTooltipProps =
   | { id1: string | number; id2: string | number }
@@ -32,19 +33,17 @@ export function MixedSetTooltip(props: MixedSetTooltipProps) {
   if (!half1 || !half2) return null;
 
   const renderHalf = (half: ArtifactHalfSet) => {
-    // Effect name is the effect description
-    const effect = t.artifactHalfSet(half.id);
-
     return (
       <div className="space-y-1.5">
-        <div className="text-sm text-slate-300 leading-relaxed">
-          <span className="text-slate-400 font-medium mr-1">[2]</span>
-          {effect}
-        </div>
+        <ArtifactHalfSetEffect
+          halfSetId={half.id}
+          className="text-sm text-slate-300"
+          labelClassName="text-slate-400"
+        />
         <div className="flex gap-1.5 flex-wrap">
           {half.setIds.map((sid: string) => {
             const art = artifactsById[sid];
-            if (!art || art.rarity !== 5) return null;
+            if (art?.rarity !== 5) return null;
             return (
               <div
                 key={sid}

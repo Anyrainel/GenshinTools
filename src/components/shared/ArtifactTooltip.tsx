@@ -1,8 +1,8 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { artifactsById } from "@/domain/reference/catalog";
-import { useArtifactText } from "@/hooks/useGameText";
 import { cn } from "@/lib/utils";
 import { getRarityColor } from "./colors";
+import { ArtifactSetEffects } from "./EquipmentEffects";
 
 interface ArtifactTooltipProps {
   setId: string;
@@ -14,13 +14,11 @@ export function ArtifactTooltip({
   hideFourPieceEffect,
 }: ArtifactTooltipProps) {
   const { t } = useLanguage();
-  useArtifactText();
   const artifact = artifactsById[setId];
 
   if (!artifact) return null;
 
   const name = t.artifact(artifact.id);
-  const effects = t.artifactEffects(artifact.id);
 
   return (
     <div className="w-80 bg-slate-900 border border-slate-700 rounded-lg overflow-hidden shadow-xl text-slate-100 select-none">
@@ -46,30 +44,12 @@ export function ArtifactTooltip({
 
       {/* Content */}
       <div className="p-3 space-y-3 bg-slate-900/95">
-        <div className="text-sm text-slate-300 leading-relaxed">
-          <span className="text-slate-400 font-medium mr-1">[2]</span>
-          {effects[0] ? (
-            <span
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: Artifact effect HTML from game data pipeline
-              dangerouslySetInnerHTML={{ __html: effects[0] }}
-            />
-          ) : (
-            "???"
-          )}
-        </div>
-        {!hideFourPieceEffect && (
-          <div className="text-sm text-slate-300 leading-relaxed">
-            <span className="text-slate-400 font-medium mr-1">[4]</span>
-            {effects[1] ? (
-              <span
-                // biome-ignore lint/security/noDangerouslySetInnerHtml: Artifact effect HTML from game data pipeline
-                dangerouslySetInnerHTML={{ __html: effects[1] }}
-              />
-            ) : (
-              "???"
-            )}
-          </div>
-        )}
+        <ArtifactSetEffects
+          setId={artifact.id}
+          hideFourPieceEffect={hideFourPieceEffect}
+          className="text-sm text-slate-300"
+          labelClassName="text-slate-400"
+        />
       </div>
     </div>
   );

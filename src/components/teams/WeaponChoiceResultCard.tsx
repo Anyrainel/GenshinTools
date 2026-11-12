@@ -1,6 +1,12 @@
 import { ArrowRight, Loader2, Play } from "lucide-react";
 import { type ReactNode, useCallback, useId, useState } from "react";
+import {
+  ArtifactHalfSetEffect,
+  ArtifactSetEffects,
+  WeaponEffect,
+} from "@/components/shared/EquipmentEffects";
 import { ItemIcon } from "@/components/shared/ItemIcon";
+import { PinnedHoverCard } from "@/components/shared/PinnedHoverCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,11 +22,6 @@ import {
   OptionButtonCell,
   OptionButtonRow,
 } from "@/components/ui/option-button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { useMediaQuery } from "@/components/ui/useMediaQuery";
 import type { useLanguage } from "@/contexts/LanguageContext";
@@ -357,6 +358,26 @@ function WeaponDetailContent({
         ) : null}
       </div>
 
+      <div className="space-y-3 border-t border-border pt-1.5">
+        {entry.type === "artifact" ? (
+          entry.artifactSet.type === "4pc" ? (
+            <ArtifactSetEffects setId={entry.artifactSet.setId} />
+          ) : (
+            entry.artifactSet.halfSetIds.map((halfSetId, index) => (
+              <ArtifactHalfSetEffect
+                key={`${halfSetId}-${index}`}
+                halfSetId={halfSetId}
+              />
+            ))
+          )
+        ) : (
+          <WeaponEffect
+            weaponId={entry.weaponId}
+            refinement={entry.refinement}
+          />
+        )}
+      </div>
+
       {/* Total damage */}
       {entry.type === "artifact" && (
         <ChoiceCombatOptions options={entry.combatOptions} t={t} />
@@ -504,19 +525,16 @@ function WeaponEntryRow({
     }
   }
 
-  const hasDetail = !!(entry.mainStats || entry.substatRolls || onApply);
-
   const row = (
     <button
       type="button"
-      disabled={!hasDetail}
       aria-label={detailLabel}
       className={cn(
         "flex w-full items-center gap-1 px-1 py-1.5 text-left text-xs md:text-sm lg:gap-1.5 lg:px-2 lg:text-xs xl:text-sm focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary",
         isTop
           ? "bg-primary/10 border border-primary/30"
           : "border border-transparent",
-        hasDetail && "cursor-pointer hover:bg-accent"
+        "cursor-pointer hover:bg-accent"
       )}
     >
       <span className="w-4 lg:w-5 text-right text-muted-foreground font-mono shrink-0">
@@ -536,8 +554,6 @@ function WeaponEntryRow({
     </button>
   );
 
-  if (!hasDetail) return row;
-
   // Mobile: tap to open drawer
   if (isMobile) {
     return (
@@ -548,7 +564,7 @@ function WeaponEntryRow({
           <DrawerDescription className="sr-only">
             {detailLabel}
           </DrawerDescription>
-          <div className="p-4 pt-2 safe-area-bottom max-w-sm mx-auto">
+          <div className="p-4 pt-2 safe-area-bottom max-w-sm mx-auto w-full max-h-[80vh] overflow-y-auto">
             <WeaponDetailContent
               entry={entry}
               characters={characters}
@@ -563,14 +579,12 @@ function WeaponEntryRow({
     );
   }
 
-  // Desktop: explicit click / keyboard activation, matching the mobile drawer.
+  // Desktop: hover to preview; click to keep the details open.
   return (
-    <Popover>
-      <PopoverTrigger asChild>{row}</PopoverTrigger>
-      <PopoverContent
-        side="right"
-        className="w-64 p-3 border-border bg-popover"
-      >
+    <PinnedHoverCard
+      side="right"
+      className="w-80 max-h-[var(--radix-popover-content-available-height)] overflow-y-auto p-3 border-border bg-popover"
+      content={
         <WeaponDetailContent
           entry={entry}
           characters={characters}
@@ -579,8 +593,10 @@ function WeaponEntryRow({
           t={t}
           onApply={onApply}
         />
-      </PopoverContent>
-    </Popover>
+      }
+    >
+      {row}
+    </PinnedHoverCard>
   );
 }
 
