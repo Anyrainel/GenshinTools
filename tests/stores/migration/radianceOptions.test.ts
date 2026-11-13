@@ -7,6 +7,7 @@ import {
   StatBuff,
 } from "@/domain/combat/damage/core/statBuff";
 import { TeamMeta } from "@/domain/combat/damage/core/teamMeta";
+import { TeamResonance } from "@/domain/combat/damage/core/teamResonance";
 import {
   characterStatsResource,
   weaponStatsResource,
@@ -51,7 +52,7 @@ const oldSuperconduct = getBuffInstanceKey(
     { receiver: "team", filter: { elements: ["Physical"] } },
     [{ key: "resReduction%", value: 0.4 }]
   ),
-  "team"
+  "resonance"
 );
 const currentSuperconduct = getBuffInstanceKey(
   new StatBuff(
@@ -63,7 +64,19 @@ const currentSuperconduct = getBuffInstanceKey(
     { receiver: "team", filter: { elements: ["Physical"] } },
     [{ key: "resReduction%", value: 0.4 }]
   ),
-  "team"
+  "resonance"
+);
+const currentPolestarField = getBuffInstanceKey(
+  new StatBuff(
+    {
+      type: "teamResonance",
+      id: "stellarConduct",
+      triggers: ["polestar-field"],
+    },
+    { receiver: "team", filter: { elements: ["Physical"] } },
+    [{ key: "resReduction%", value: 0.4 }]
+  ),
+  "resonance"
 );
 
 function fixture() {
@@ -169,6 +182,7 @@ function expectMigrated(config: TeamSetupConfig) {
   expect(config.damage?.combo?.buffOverrides?.[0]).toEqual({
     [currentDiona]: { 0: 0 },
     [currentSuperconduct]: { 0: 0.25 },
+    [currentPolestarField]: { 0: 0.25 },
     opaque: { 0: 0.75 },
   });
   expect(config.investment?.legacyCountOverrides).toEqual({
@@ -256,6 +270,8 @@ describe("automatic Radiance persistence migration", () => {
   it("keeps explicit current identities and count overrides when old aliases collide", () => {
     const config = fixture().configsByTeamId.saved;
     config.damage!.combo!.buffOverrides![0][currentDiona] = { 0: 0.5 };
+    config.damage!.combo!.buffOverrides![0][currentSuperconduct] = { 0: 0.75 };
+    config.damage!.combo!.buffOverrides![0][currentPolestarField] = { 0: 0 };
     config.investment!.legacyCountOverrides!["cyno|6|cyno-c6-bolts:0"] = 9;
     config.investment!.absoluteCountTargets!.push({
       charId: "cyno",
@@ -267,6 +283,15 @@ describe("automatic Radiance persistence migration", () => {
     expect(migrated.damage?.combo?.buffOverrides?.[0][currentDiona]).toEqual({
       0: 0.5,
     });
+    expect(
+      migrated.damage?.combo?.buffOverrides?.[0][currentSuperconduct]
+    ).toEqual({ 0: 0.75 });
+    expect(
+      migrated.damage?.combo?.buffOverrides?.[0][currentPolestarField]
+    ).toEqual({ 0: 0 });
+    expect(migrated.damage?.combo?.buffOverrides?.[0]).not.toHaveProperty(
+      oldSuperconduct
+    );
     expect(migrated.investment?.legacyCountOverrides).toEqual({
       "cyno|6|cyno-c6-bolts:0": 9,
     });
@@ -278,6 +303,51 @@ describe("automatic Radiance persistence migration", () => {
         count: 11,
       },
     ]);
+  });
+
+  it("matches the field-only Mitya debuff identity without loading a saved team preset", () => {
+    const migrated = migrateRadianceSetupConfigs(fixture().configsByTeamId);
+    const field = new TeamResonance(new TeamMeta(["mitya"])).buffs.find(
+      (buff) => buff.source.id === "stellarConduct"
+    );
+
+    expect(field).toBeDefined();
+    expect(getBuffInstanceKey(field!, "resonance")).toBe(currentPolestarField);
+    expect(
+      migrated.saved.damage?.combo?.buffOverrides?.[0][
+        getBuffInstanceKey(field!, "resonance")
+      ]
+    ).toEqual({ 0: 0.25 });
+  });
+
+  it("does not recreate a removed field override from a current Superconduct key", async () => {
+    const current = fixture();
+    current.configsByTeamId.saved = migrateRadianceSetupConfigs(
+      current.configsByTeamId
+    ).saved;
+    const overrides =
+      current.configsByTeamId.saved.damage!.combo!.buffOverrides![0];
+    delete overrides[currentPolestarField];
+
+    const repeated = migrateRadianceSetupConfigs(current.configsByTeamId);
+    expect(repeated).toEqual(current.configsByTeamId);
+    localStorage.setItem(
+      "team-builder-storage",
+      JSON.stringify({ version: 27, state: current })
+    );
+    await useTeamStore.persist.rehydrate();
+    const hydrated = useTeamStore.getState().configsByTeamId.saved;
+    expect(hydrated.damage?.combo?.buffOverrides?.[0]).not.toHaveProperty(
+      currentPolestarField
+    );
+    expect(
+      hydrated.damage?.combo?.buffOverrides?.[0][currentSuperconduct]
+    ).toEqual({ 0: 0.25 });
+    const exported = teamToCloud(current);
+    expect(
+      exported[0].payload.configsByTeamId.saved.damage?.combo
+        ?.buffOverrides?.[0]
+    ).not.toHaveProperty(currentPolestarField);
   });
 
   it("invalidates v10 derived results through public hydration", async () => {

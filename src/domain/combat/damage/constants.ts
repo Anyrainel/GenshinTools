@@ -169,8 +169,8 @@ export const LUNAR_SUPERSEDES: Partial<
 
 /**
  * Stellar conversion replaces the corresponding base reaction. Stellar-Conduct
- * does not retain Superconduct's Physical RES debuff. Only Cryo Swirl is
- * converted to Stellar Swirl; other swirlable elements remain ordinary Swirl.
+ * creates a Polestar Field whose Physical RES debuff replaces Superconduct's.
+ * Only Cryo Swirl converts; other swirlable elements remain ordinary Swirl.
  */
 export const STELLAR_SUPERSEDES: Partial<
   Record<

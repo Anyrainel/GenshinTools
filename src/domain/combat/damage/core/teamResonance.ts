@@ -132,14 +132,17 @@ export class TeamResonance implements IStatProvider {
       }
     }
 
-    // Superconduct's reaction debuff is absent when Stellar-Conduct replaces it.
-    if (teamMeta.hasReaction("superconduct")) {
+    // Tutorial 390 and ConfigAbility_Team's StarSuperconductor_Debuff: a
+    // Polestar Field lowers Physical RES by 40% and replaces the ordinary
+    // Superconduct debuff. A burst-created field has the same effect.
+    const hasPolestarField = teamMeta.hasPolestarField();
+    if (hasPolestarField || teamMeta.hasReaction("superconduct")) {
       buffs.push(
         new StatBuff(
           {
             type: "teamResonance",
-            id: "superconduct",
-            triggers: ["superconduct"],
+            id: hasPolestarField ? "stellarConduct" : "superconduct",
+            triggers: [hasPolestarField ? "polestar-field" : "superconduct"],
           },
           { receiver: "team", filter: { elements: ["Physical" as const] } },
           [{ key: "resReduction%", value: 0.4 }]

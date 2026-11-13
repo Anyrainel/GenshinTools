@@ -1,7 +1,7 @@
 {
   "version": 1,
   "seed": 3735928559,
-  "generatedAt": "2026-11-12T19:48:42.436Z",
+  "generatedAt": "2026-11-13T01:08:23.220Z",
   "teams": {
     "ZlC6qUeyOYU470wZ0O": {
       "teamName": "mitya / valeriy / odette / sucrose",
@@ -31,7 +31,7 @@
         }
       },
       "failReasons": {},
-      "damage": 10097813.7039,
+      "damage": 10133916.7195,
       "comboResult": {
         "lineDamages": [
           {
@@ -75,20 +75,20 @@
             "total": 0
           },
           {
-            "perHit": 6454.5865,
-            "total": 12909.1731
+            "perHit": 8247.5272,
+            "total": 16495.0545
           },
           {
-            "perHit": 6036.1455,
-            "total": 12072.291
+            "perHit": 7712.8526,
+            "total": 15425.7052
           },
           {
             "perHit": 43803.0242,
             "total": 87606.0483
           },
           {
-            "perHit": 9611.7593,
-            "total": 19223.5187
+            "perHit": 12281.6925,
+            "total": 24563.385
           },
           {
             "perHit": 19522.8944,
@@ -107,16 +107,16 @@
             "total": 0
           },
           {
-            "perHit": 23986.7389,
-            "total": 47973.4777
+            "perHit": 30649.7219,
+            "total": 61299.4438
           },
           {
-            "perHit": 7599.3661,
-            "total": 15198.7322
+            "perHit": 9710.3011,
+            "total": 19420.6022
           },
           {
-            "perHit": 11296.8319,
-            "total": 22593.6637
+            "perHit": 14434.8407,
+            "total": 28869.6814
           },
           {
             "perHit": 16805.2737,
@@ -171,7 +171,7 @@
             "total": 15988.9635
           }
         ],
-        "totalDamage": 10097813.7039
+        "totalDamage": 10133916.7195
       },
       "artifacts": {
         "mitya": {
@@ -416,7 +416,7 @@
         }
       },
       "display": {
-        "totalDamage": 10097813.7039,
+        "totalDamage": 10133916.7195,
         "partsByFormula": {
           "mitya.mitya-normal": [
             {
@@ -488,21 +488,21 @@
           ],
           "valeriy.valeriy-normal": [
             {
-              "damage": 1955.3793,
+              "damage": 2498.5403,
               "template": "direct"
             },
             {
-              "damage": 1765.2878,
+              "damage": 2255.6456,
               "template": "direct"
             },
             {
-              "damage": 2733.9194,
+              "damage": 3493.3414,
               "template": "direct"
             }
           ],
           "valeriy.valeriy-charge": [
             {
-              "damage": 6036.1455,
+              "damage": 7712.8526,
               "template": "direct"
             }
           ],
@@ -514,7 +514,7 @@
           ],
           "valeriy.valeriy-plunge-high": [
             {
-              "damage": 9611.7593,
+              "damage": 12281.6925,
               "template": "direct"
             }
           ],
@@ -544,39 +544,39 @@
           ],
           "odette.odette-normal": [
             {
-              "damage": 3668.8084,
+              "damage": 4687.9219,
               "template": "direct"
             },
             {
-              "damage": 3644.2885,
+              "damage": 4656.5908,
               "template": "direct"
             },
             {
-              "damage": 2307.1894,
+              "damage": 2948.0754,
               "template": "direct"
             },
             {
-              "damage": 2708.1488,
+              "damage": 3460.4123,
               "template": "direct"
             },
             {
-              "damage": 5275.9314,
+              "damage": 6741.4679,
               "template": "direct"
             },
             {
-              "damage": 6382.3723,
+              "damage": 8155.2535,
               "template": "direct"
             }
           ],
           "odette.odette-charge": [
             {
-              "damage": 7599.3661,
+              "damage": 9710.3011,
               "template": "direct"
             }
           ],
           "odette.odette-plunge-high": [
             {
-              "damage": 11296.8319,
+              "damage": 14434.8407,
               "template": "direct"
             }
           ],
@@ -686,6 +686,19 @@
           ]
         },
         "activeBuffs": [
+          {
+            "source": {
+              "type": "teamResonance",
+              "id": "stellarConduct"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.4
+              }
+            ],
+            "providerCharId": "resonance"
+          },
           {
             "source": {
               "type": "character",
@@ -1354,7 +1367,7 @@
           "odette": {
             "atk": 0.0033,
             "atk%": 0.0108,
-            "em": 0.0058,
+            "em": 0.0057,
             "cr": 0.0176,
             "cd": 0.0115
           },
@@ -2906,16 +2919,16 @@
         }
       },
       "failReasons": {},
-      "damage": 29111617.0917,
+      "damage": 29170474.7532,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 29568.6374,
-            "total": 59137.2749
+            "perHit": 37782.1478,
+            "total": 75564.2957
           },
           {
-            "perHit": 22365.425,
-            "total": 44730.8499
+            "perHit": 28578.043,
+            "total": 57156.086
           },
           {
             "perHit": 9235.1084,
@@ -2990,16 +3003,16 @@
             "total": 0
           },
           {
-            "perHit": 30210.5534,
-            "total": 60421.1068
+            "perHit": 38602.3738,
+            "total": 77204.7475
           },
           {
-            "perHit": 9571.1658,
-            "total": 19142.3316
+            "perHit": 12229.823,
+            "total": 24459.6459
           },
           {
-            "perHit": 14228.0092,
-            "total": 28456.0185
+            "perHit": 18180.234,
+            "total": 36360.468
           },
           {
             "perHit": 18520.0057,
@@ -3058,7 +3071,7 @@
             "total": 0
           }
         ],
-        "totalDamage": 29111617.0917
+        "totalDamage": 29170474.7532
       },
       "artifacts": {
         "sandrone": {
@@ -3305,25 +3318,25 @@
         }
       },
       "display": {
-        "totalDamage": 29111617.0917,
+        "totalDamage": 29170474.7532,
         "partsByFormula": {
           "sandrone.sandrone-normal": [
             {
-              "damage": 9158.761,
+              "damage": 11702.8613,
               "template": "direct"
             },
             {
-              "damage": 8067.5174,
+              "damage": 10308.4944,
               "template": "direct"
             },
             {
-              "damage": 12342.359,
+              "damage": 15770.7921,
               "template": "direct"
             }
           ],
           "sandrone.sandrone-plunge-high": [
             {
-              "damage": 22365.425,
+              "damage": 28578.043,
               "template": "direct"
             }
           ],
@@ -3459,39 +3472,39 @@
           ],
           "odette.odette-normal": [
             {
-              "damage": 4620.7504,
+              "damage": 5904.2922,
               "template": "direct"
             },
             {
-              "damage": 4589.8683,
+              "damage": 5864.8317,
               "template": "direct"
             },
             {
-              "damage": 2905.8335,
+              "damage": 3713.0095,
               "template": "direct"
             },
             {
-              "damage": 3410.8294,
+              "damage": 4358.282,
               "template": "direct"
             },
             {
-              "damage": 6644.8719,
+              "damage": 8490.6696,
               "template": "direct"
             },
             {
-              "damage": 8038.3999,
+              "damage": 10271.2888,
               "template": "direct"
             }
           ],
           "odette.odette-charge": [
             {
-              "damage": 9571.1658,
+              "damage": 12229.823,
               "template": "direct"
             }
           ],
           "odette.odette-plunge-high": [
             {
-              "damage": 14228.0092,
+              "damage": 18180.234,
               "template": "direct"
             }
           ],
@@ -3614,6 +3627,19 @@
               {
                 "key": "cr",
                 "value": 0.15
+              }
+            ],
+            "providerCharId": "resonance"
+          },
+          {
+            "source": {
+              "type": "teamResonance",
+              "id": "stellarConduct"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.4
               }
             ],
             "providerCharId": "resonance"
@@ -4540,16 +4566,16 @@
         }
       },
       "failReasons": {},
-      "damage": 33234530.879,
+      "damage": 33313222.1146,
       "comboResult": {
         "lineDamages": [
           {
-            "perHit": 37684.1118,
-            "total": 75368.2236
+            "perHit": 48151.9207,
+            "total": 96303.8413
           },
           {
-            "perHit": 28503.8895,
-            "total": 57007.779
+            "perHit": 36421.6366,
+            "total": 72843.2732
           },
           {
             "perHit": 35524.5143,
@@ -4612,16 +4638,16 @@
             "total": 17265.7603
           },
           {
-            "perHit": 42206.7341,
-            "total": 84413.4681
+            "perHit": 53930.8269,
+            "total": 107861.6537
           },
           {
-            "perHit": 13371.7395,
-            "total": 26743.479
+            "perHit": 17086.1116,
+            "total": 34172.2231
           },
           {
-            "perHit": 19877.7491,
-            "total": 39755.4983
+            "perHit": 25399.3461,
+            "total": 50798.6923
           },
           {
             "perHit": 60778.9581,
@@ -4684,7 +4710,7 @@
             "total": 0
           }
         ],
-        "totalDamage": 33234530.879
+        "totalDamage": 33313222.1146
       },
       "artifacts": {
         "sandrone": {
@@ -4930,25 +4956,25 @@
         }
       },
       "display": {
-        "totalDamage": 33234530.879,
+        "totalDamage": 33313222.1146,
         "partsByFormula": {
           "sandrone.sandrone-normal": [
             {
-              "damage": 11672.4951,
+              "damage": 14914.8548,
               "template": "direct"
             },
             {
-              "damage": 10281.7463,
+              "damage": 13137.7869,
               "template": "direct"
             },
             {
-              "damage": 15729.8705,
+              "damage": 20099.279,
               "template": "direct"
             }
           ],
           "sandrone.sandrone-plunge-high": [
             {
-              "damage": 28503.8895,
+              "damage": 36421.6366,
               "template": "direct"
             }
           ],
@@ -5070,39 +5096,39 @@
           ],
           "odette.odette-normal": [
             {
-              "damage": 6455.5846,
+              "damage": 8248.8026,
               "template": "direct"
             },
             {
-              "damage": 6412.4396,
+              "damage": 8193.6728,
               "template": "direct"
             },
             {
-              "damage": 4059.6986,
+              "damage": 5187.3927,
               "template": "direct"
             },
             {
-              "damage": 4765.2212,
+              "damage": 6088.8937,
               "template": "direct"
             },
             {
-              "damage": 9283.4559,
+              "damage": 11862.1937,
               "template": "direct"
             },
             {
-              "damage": 11230.3341,
+              "damage": 14349.8713,
               "template": "direct"
             }
           ],
           "odette.odette-charge": [
             {
-              "damage": 13371.7395,
+              "damage": 17086.1116,
               "template": "direct"
             }
           ],
           "odette.odette-plunge-high": [
             {
-              "damage": 19877.7491,
+              "damage": 25399.3461,
               "template": "direct"
             }
           ],
@@ -5231,6 +5257,19 @@
               {
                 "key": "cr",
                 "value": 0.15
+              }
+            ],
+            "providerCharId": "resonance"
+          },
+          {
+            "source": {
+              "type": "teamResonance",
+              "id": "stellarConduct"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.4
               }
             ],
             "providerCharId": "resonance"
@@ -6090,7 +6129,7 @@
           "sandrone": {
             "atk": 0.0015,
             "atk%": 0.0049,
-            "em": 0.0034,
+            "em": 0.0033,
             "cr": 0.0044,
             "cd": 0.0079
           },
@@ -91934,7 +91973,7 @@
         }
       },
       "failReasons": {},
-      "damage": 17125108.7421,
+      "damage": 17216421.0416,
       "comboResult": {
         "lineDamages": [
           {
@@ -91970,16 +92009,16 @@
             "total": 0
           },
           {
-            "perHit": 70114.9858,
-            "total": 140229.9715
+            "perHit": 89591.3707,
+            "total": 179182.7414
           },
           {
-            "perHit": 17768.8608,
-            "total": 35537.7217
+            "perHit": 22704.6555,
+            "total": 45409.311
           },
           {
-            "perHit": 24013.8472,
-            "total": 48027.6945
+            "perHit": 30684.3604,
+            "total": 61368.7207
           },
           {
             "perHit": 37605.6564,
@@ -92018,32 +92057,32 @@
             "total": 0
           },
           {
-            "perHit": 22687.4878,
-            "total": 45374.9756
+            "perHit": 29462.2415,
+            "total": 58924.4829
           },
           {
-            "perHit": 7563.7771,
-            "total": 15127.5543
+            "perHit": 9795.9489,
+            "total": 19591.8979
           },
           {
-            "perHit": 9884.1436,
-            "total": 19768.2871
+            "perHit": 12788.9149,
+            "total": 25577.8299
           },
           {
-            "perHit": 54397.538,
-            "total": 108795.076
+            "perHit": 54912.2352,
+            "total": 109824.4704
           },
           {
-            "perHit": 67996.9225,
-            "total": 135993.845
+            "perHit": 68640.294,
+            "total": 137280.588
           },
           {
-            "perHit": 122985.4813,
-            "total": 245970.9626
+            "perHit": 123885.8954,
+            "total": 247771.7907
           },
           {
-            "perHit": 82400.2725,
-            "total": 164800.545
+            "perHit": 83003.5499,
+            "total": 166007.0998
           },
           {
             "perHit": 0,
@@ -92066,7 +92105,7 @@
             "total": 134333.4618
           }
         ],
-        "totalDamage": 17125108.7421
+        "totalDamage": 17216421.0416
       },
       "artifacts": {
         "traveler_cryo": {
@@ -92179,8 +92218,8 @@
             "mainStat": "hp",
             "substats": {
               "er": 22.02,
-              "cd": 13.21,
-              "cr": 3.31,
+              "cr": 6.61,
+              "cd": 6.6,
               "atk%": 4.96
             }
           },
@@ -92189,8 +92228,8 @@
             "mainStat": "atk",
             "substats": {
               "atk%": 19.82,
-              "cr": 6.61,
-              "cd": 6.6,
+              "cd": 13.21,
+              "cr": 3.31,
               "hp%": 4.96
             }
           },
@@ -92198,9 +92237,9 @@
             "setKey": "generated",
             "mainStat": "er",
             "substats": {
-              "atk%": 19.82,
+              "atk%": 14.87,
               "cd": 13.21,
-              "cr": 3.31,
+              "cr": 6.61,
               "atk": 16.54
             }
           },
@@ -92208,8 +92247,8 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 6.61,
-              "cd": 26.42,
+              "cr": 9.92,
+              "cd": 19.81,
               "atk": 16.54,
               "hp%": 4.96
             }
@@ -92218,8 +92257,8 @@
             "setKey": "generated",
             "mainStat": "atk%",
             "substats": {
-              "cr": 16.53,
-              "cd": 6.6,
+              "cr": 13.22,
+              "cd": 13.21,
               "atk": 16.54,
               "hp%": 4.96
             }
@@ -92298,8 +92337,8 @@
         "alyosha": {
           "hp": 4780,
           "er": 0.7382,
+          "cr": 0.3967,
           "cd": 0.6604,
-          "cr": 0.3637,
           "atk": 361
         },
         "xilonen": {
@@ -92312,7 +92351,7 @@
         }
       },
       "display": {
-        "totalDamage": 17125108.7421,
+        "totalDamage": 17216421.0416,
         "partsByFormula": {
           "traveler_cryo.traveler-cryo-normal": [
             {
@@ -92389,39 +92428,39 @@
           ],
           "odette.odette-normal": [
             {
-              "damage": 11130.1844,
+              "damage": 14221.9023,
               "template": "direct"
             },
             {
-              "damage": 11088.7704,
+              "damage": 14168.9844,
               "template": "direct"
             },
             {
-              "damage": 8830.4222,
+              "damage": 11283.3172,
               "template": "direct"
             },
             {
-              "damage": 9507.6389,
+              "damage": 12148.6497,
               "template": "direct"
             },
             {
-              "damage": 13844.6006,
+              "damage": 17690.323,
               "template": "direct"
             },
             {
-              "damage": 15713.3693,
+              "damage": 20078.1942,
               "template": "direct"
             }
           ],
           "odette.odette-charge": [
             {
-              "damage": 17768.8608,
+              "damage": 22704.6555,
               "template": "direct"
             }
           ],
           "odette.odette-plunge-high": [
             {
-              "damage": 24013.8472,
+              "damage": 30684.3604,
               "template": "direct"
             }
           ],
@@ -92494,60 +92533,60 @@
           ],
           "alyosha.alyosha-na": [
             {
-              "damage": 4548.9825,
+              "damage": 5907.2623,
               "template": "direct"
             },
             {
-              "damage": 4565.3895,
+              "damage": 5928.4253,
               "template": "direct"
             },
             {
-              "damage": 3900.9042,
+              "damage": 5071.327,
               "template": "direct"
             },
             {
-              "damage": 3786.0549,
+              "damage": 4923.1865,
               "template": "direct"
             },
             {
-              "damage": 5886.1567,
+              "damage": 7632.0403,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-charge": [
             {
-              "damage": 7563.7771,
+              "damage": 9795.9489,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-plunge-high": [
             {
-              "damage": 9884.1436,
+              "damage": 12788.9149,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-e-press": [
             {
-              "damage": 54397.538,
+              "damage": 54912.2352,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-e-hold": [
             {
-              "damage": 67996.9225,
+              "damage": 68640.294,
               "template": "direct"
             }
           ],
           "alyosha.alyosha-q-field": [
             {
-              "damage": 12298.5481,
+              "damage": 12388.5895,
               "template": "direct",
               "hits": 10
             }
           ],
           "alyosha.alyosha-q-tugarin": [
             {
-              "damage": 8240.0272,
+              "damage": 8300.355,
               "template": "direct",
               "hits": 10
             }
@@ -92609,6 +92648,19 @@
               {
                 "key": "cr",
                 "value": 0.15
+              }
+            ],
+            "providerCharId": "resonance"
+          },
+          {
+            "source": {
+              "type": "teamResonance",
+              "id": "stellarConduct"
+            },
+            "entries": [
+              {
+                "key": "resReduction%",
+                "value": 0.4
               }
             ],
             "providerCharId": "resonance"
@@ -93242,19 +93294,19 @@
           "alyosha": {
             "onField": {
               "er": 2.3112,
-              "cr": 0.5637,
+              "cr": 0.5967,
               "cd": 1.1604,
               "em": 220,
               "hp": 19473,
-              "atk": 3323,
+              "atk": 3278,
               "def": 752
             },
             "offField": {
               "er": 2.3112,
-              "cr": 0.5637,
+              "cr": 0.5967,
               "cd": 1.1604,
               "hp": 19473,
-              "atk": 2873,
+              "atk": 2829,
               "def": 752
             }
           },
@@ -93353,11 +93405,11 @@
           },
           "alyosha": {
             "onField": {
-              "atk": 3323,
+              "atk": 3278,
               "hp": 19473,
               "def": 752,
               "em": 220,
-              "cr": 0.5637,
+              "cr": 0.5967,
               "cd": 1.1604,
               "er": 2.3112,
               "dmg%": 1.212,
@@ -93366,10 +93418,10 @@
               "polestarField": 2
             },
             "offField": {
-              "atk": 2873,
+              "atk": 2829,
               "hp": 19473,
               "def": 752,
-              "cr": 0.5637,
+              "cr": 0.5967,
               "cd": 1.1604,
               "er": 2.3112,
               "dmg%": 1.212,
@@ -93413,7 +93465,7 @@
           "odette": {
             "atk": 0.0025,
             "atk%": 0.0083,
-            "em": 0.0063,
+            "em": 0.0062,
             "cr": 0.0016,
             "cd": 0.0084
           },

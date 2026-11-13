@@ -84,7 +84,8 @@ Symmetric reactions are listed under both trigger directions.
 ### StellarConduct *(Radiance upgrade of Superconduct)*
 - **Requires**: a party Stellar-Conduct converter and an eligible Cryo/Electro reaction (see Part 3); the triggering character need not be a Radiance carrier
 - **Type**: Transformative, but damage is dealt as a **direct hit** rather than a separate proc — see the Stellar Reactions notes in Part 3
-- **Effect**: replaces Superconduct entirely; the Physical RES shred is not carried over by the reaction itself
+- **Effect**: creates a Polestar Field. All characters in the field receive Cryo/Electro DMG Bonus; eligible characters additionally enter Radiance: Stellar-Conduct. Enemies in the field lose 40% Physical RES, including in a field created directly by a talent. This replaces the ordinary Superconduct debuff rather than stacking with it.
+- **Source**: game tutorial 390, pages 1–2; `ConfigAbility_Team.json`, `StarSuperconductor_Debuff` (`Actor_PhysicalSubHurtDelta: -0.4`, removes the ordinary Superconduct modifier).
 
 ### Frozen
 - **Trigger**: Hydro ↔ Cryo (either direction)

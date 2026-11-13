@@ -183,9 +183,26 @@ function migrateBuffs(buffs: BuffActivationMap): BuffActivationMap {
       identity[2] === "resReduction%:0.4" &&
       identity[1] === ["team", "", "", "", "", "Physical", ""].join("\u0000")
     ) {
-      // Superconduct is a combat reaction debuff, not an idle resonance.
-      source[7] = "superconduct";
-      identity[0] = source.join("\u0000");
+      // Before v27, one untriggered Cryo/Electro debuff identity represented
+      // both ordinary Superconduct and Polestar Fields. Retain authored hit
+      // counts for either combat source. Only expand this old identity: a
+      // current ordinary override must not recreate a deleted field override
+      // when the shared transform runs again during hydration/import/export.
+      for (const [id, trigger] of [
+        ["superconduct", "superconduct"],
+        ["stellarConduct", "polestar-field"],
+      ]) {
+        const currentSource = [...source];
+        currentSource[1] = id;
+        currentSource[7] = trigger;
+        const currentIdentity = [...identity];
+        currentIdentity[0] = currentSource.join("\u0000");
+        const current =
+          key.slice(0, separator + 1) + currentIdentity.join("\u0002");
+        if (!(current in buffs)) next[current] = activation;
+      }
+      delete next[key];
+      continue;
     } else {
       continue;
     }

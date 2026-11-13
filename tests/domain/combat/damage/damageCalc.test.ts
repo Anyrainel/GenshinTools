@@ -217,8 +217,8 @@ describe("TeamMeta — Lunar Crystallize partial supersede", () => {
   });
 });
 
-describe("TeamResonance — Superconduct reaction debuff", () => {
-  it("grants the Physical RES debuff only after an available Superconduct", () => {
+describe("TeamResonance — Superconduct and Polestar Field debuffs", () => {
+  it("labels the ordinary Superconduct Physical RES debuff by its reaction", () => {
     const meta = new TeamMeta(["kaeya", "fischl"]);
     const debuff = new TeamResonance(meta).buffs.find(
       (buff) => buff.source.id === "superconduct"
@@ -229,15 +229,38 @@ describe("TeamResonance — Superconduct reaction debuff", () => {
     expect(debuff?.target.filter?.elements).toEqual(["Physical"]);
   });
 
-  it("does not retain Superconduct's debuff after Stellar conversion", () => {
+  it("replaces Superconduct with the field's 40% Physical RES debuff", () => {
     const meta = new TeamMeta(["sandrone", "fischl"]);
+    const debuffs = new TeamResonance(meta).buffs.filter((buff) =>
+      buff.target.filter?.elements?.includes("Physical")
+    );
 
     expect(meta.hasReaction("stellarConduct")).toBe(true);
-    expect(
-      new TeamResonance(meta).buffs.some(
-        (buff) => buff.source.id === "superconduct"
-      )
-    ).toBe(false);
+    expect(debuffs).toHaveLength(1);
+    expect(debuffs[0].source).toEqual({
+      type: "teamResonance",
+      id: "stellarConduct",
+      triggers: ["polestar-field"],
+    });
+    expect(debuffs[0].staticBuffs).toEqual([
+      { key: "resReduction%", value: 0.4 },
+    ]);
+  });
+
+  it("grants field Physical RES reduction without a Stellar-Conduct reaction", () => {
+    const meta = new TeamMeta(["mitya"]);
+    const debuffs = new TeamResonance(meta).buffs.filter((buff) =>
+      buff.target.filter?.elements?.includes("Physical")
+    );
+
+    expect(meta.hasReaction("stellarConduct")).toBe(false);
+    expect(meta.hasReaction("superconduct")).toBe(false);
+    expect(debuffs).toHaveLength(1);
+    expect(debuffs[0].source.id).toBe("stellarConduct");
+    expect(debuffs[0].source.triggers).toEqual(["polestar-field"]);
+    expect(debuffs[0].staticBuffs).toEqual([
+      { key: "resReduction%", value: 0.4 },
+    ]);
   });
 
   it("allows an enemy aura to supply Superconduct's missing element", () => {
@@ -250,37 +273,43 @@ describe("TeamResonance — Superconduct reaction debuff", () => {
     ).toBe(true);
   });
 
-  it("keeps the reaction debuff in combat while excluding it from idle stats", () => {
-    const build = new TeamBuild([
-      {
-        charId: "kaeya",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "favonius_sword",
-        refinement: 1,
-        artifactSet: null,
-      },
-      {
-        charId: "fischl",
-        charLevel: 90,
-        constellation: 0,
-        weaponId: "favonius_warbow",
-        refinement: 1,
-        artifactSet: null,
-      },
-    ]);
-    const tag = {
-      element: "Physical",
-      ability: "normal",
-      reaction: "none",
-    } as const;
-    const idle = build.teamStats.getIdleStats();
-    const combat = build.getTeamStats({}, "kaeya");
+  it.each([
+    { charId: "kaeya", weaponId: "favonius_sword" },
+    { charId: "mitya", weaponId: "starsealed_edict" },
+  ])(
+    "keeps $charId's team's debuff in combat and out of idle stats",
+    ({ charId, weaponId }) => {
+      const build = new TeamBuild([
+        {
+          charId,
+          charLevel: 90,
+          constellation: 0,
+          weaponId,
+          refinement: 1,
+          artifactSet: null,
+        },
+        {
+          charId: "fischl",
+          charLevel: 90,
+          constellation: 0,
+          weaponId: "favonius_warbow",
+          refinement: 1,
+          artifactSet: null,
+        },
+      ]);
+      const tag = {
+        element: "Physical",
+        ability: "normal",
+        reaction: "none",
+      } as const;
+      const idle = build.teamStats.getIdleStats();
+      const combat = build.getTeamStats({}, charId);
 
-    expect(combat.kaeya!.get("resReduction%", tag)).toBe(0.4);
-    expect(idle.kaeya!.onField.get("resReduction%", tag)).toBe(0);
-    expect(idle.kaeya!.offField.get("resReduction%", tag)).toBe(0);
-  });
+      expect(combat[charId]!.get("resReduction%", tag)).toBe(0.4);
+      expect(idle[charId]!.onField.get("resReduction%", tag)).toBe(0);
+      expect(idle[charId]!.offField.get("resReduction%", tag)).toBe(0);
+    }
+  );
 });
 
 describe("TeamMeta — charLevels", () => {

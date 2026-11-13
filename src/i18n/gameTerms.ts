@@ -254,6 +254,8 @@ export const i18nAppData = {
     cryo: { en: "Shattering Ice", zh: "粉碎之冰" },
     geo: { en: "Enduring Rock", zh: "坚定之岩" },
     dendro: { en: "Sprawling Canopy", zh: "蔓生之草" },
+    superconduct: { en: "Superconduct", zh: "超导" },
+    stellarConduct: { en: "Polestar Field", zh: "极星辉域" },
     unique: { en: "Protective Canopy", zh: "交织之护" },
     gleam: { en: "Moonsign", zh: "月兆" },
   },
