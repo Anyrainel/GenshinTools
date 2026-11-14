@@ -94,7 +94,9 @@ test("sort options keep a visible selection when tooltips open and close", async
     await page.mouse.move(0, 0, { steps: 5 });
     if (!isMobile) {
       await selected.hover();
-      await expect(page.getByRole("tooltip")).toHaveText(name);
+      await expect(page.getByRole("tooltip", { name, exact: true })).toHaveText(
+        name
+      );
       await expect(selected).toHaveAttribute("data-state", "on");
       await page.mouse.move(0, 0, { steps: 5 });
     }
