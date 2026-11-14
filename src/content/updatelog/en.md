@@ -3,6 +3,21 @@
 - P1: Better graduation celebration effects
 - TODO: Manage artifact stars with customizable options
 
+## 2026-11-14
+
+### features
+- Added continuous sync with updated GGScanner builds: turn it on in Accounts to automatically update the matching UID profile without repeated confirmation, including after reconnecting.
+- Added Mitya, Valeriy and Starsealed Edict, plus beta data and damage calculations for Anastasya, Danica and new equipment.
+- Build Evaluation now supports combined filters for set categories, character priority and completion scores.
+- Weapon and artifact comparisons now show equipment effects in hover previews; click to keep details open.
+- Updated build, team and character priority presets.
+- Cloud backups can now replace newer local data after explicit confirmation.
+
+### fixes
+- Fixed optimization results ignoring minimum Energy Recharge or CRIT Rate requirements; unmet requirements are now shown clearly.
+- Improved four-star artifact handling in Artifact Triage.
+- Corrected activation conditions and damage results for several character, weapon and artifact effects.
+
 ## 2026-10-21
 
 ### features
