@@ -1,5 +1,7 @@
 // Without SWC, dependency-cruiser silently falls back to a JavaScript parser
 // that misreads TypeScript-only imports. Surface the native parser error first.
+// SWC stays on the last pre-carrier release: Cloudflare's build filesystem
+// cannot satisfy the compressed addon's cache-ancestor permission checks.
 try {
   require("@swc/core").parseFileSync(__filename, { syntax: "ecmascript" });
 } catch (error) {
