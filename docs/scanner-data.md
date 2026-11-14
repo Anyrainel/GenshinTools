@@ -21,35 +21,38 @@ Normal publishing is a validated Git push; no manual deployment is required.
 
 ## Continuous inventory sync
 
-The account import menu offers an explicit background inventory sync toggle. An
-app-scoped, memory-only session keeps polling after the import dialog closes and
-while navigating between site pages. A compact global status bar exposes review,
-details and an immediate turn-off action without opening a blocking dialog. It polls
+Account management contains the website's single continuous-sync toggle, one short
+mode description, and a visible port input (8765 by default). There is no separate
+start button or per-snapshot confirmation. An app-scoped session keeps polling after
+account management closes and while navigating between site pages. A compact global
+status bar shows the connection, latest receipt time and destination account. It polls
 the same loopback manager address and configurable port using `GET /continuous`
 every three seconds after the previous request finishes. Disabling the feature,
-changing the port/profile, or closing/reloading the tab cancels the request and
-discards late responses. The setting is deliberately not persisted across tab sessions.
+changing the port, or closing/reloading the tab cancels the request and discards late
+responses. Global enablement and the port are persisted only on this device, outside
+account exports and cloud backups, and resume automatically after a page reload.
 
 The scanner's `{ sessionId, revision, updatedAt, data }` wrapper contains a normal
 GOOD v3 export; `updatedAt` is Unix milliseconds. Identical content is not imported
-again, and lower revisions in an approved session are ignored. Supplied inventory
+again, and lower revisions in the same scanner session are ignored. Supplied inventory
 sections replace their previous section through GOOD conversion and
 `applyAccountImport`, preserving omitted sections, character talents and optional
 metadata for matching artifacts. Identical physical items retain their multiplicity;
 this is not an append-only inventory merge. Optional achievements use the existing
 profile-scoped achievement import and never gate inventory readiness.
 
-Snapshots do not include an account UID. The user must select/import a profile and
-explicitly confirm the target before the first update. Changing profiles, scanner
-sessions, replacing data in the same profile through another import, connection
-loss, or `continuous_capture_no_data` requires confirmation
-again. A login transition occurring entirely between polls cannot be identified
-reliably without a UID or account-generation token from the scanner; users must
-disable sync before switching game accounts. No automatic profile creation or
-cross-profile merge occurs.
+Successful packet captures include verified account identity in GOOD `metadata.uid`.
+Identified snapshots always update the matching UID profile, creating it if necessary.
+Anonymous data always updates the unbound Default profile (ID 0), creating Default
+if necessary. The currently viewed profile never chooses the import destination.
+Identified captures do not promote or merge an anonymous Default automatically.
+Malformed supplied identity is rejected rather than treated as absent. New scanner
+sessions, login gaps and lost connections recover automatically without approval.
+The scanner clears identity and inventory together on login changes; both its
+one-time and continuous packet exports require verified identity.
 
-The scanner currently publishes the latest successfully decoded baseline and full
-item-record updates. Deletion-only and some scalar-only lock/equipment notification
+The scanner publishes the latest successfully decoded baseline, full item-record
+updates and confirmed inventory removals. Some scalar-only lock/equipment notification
 shapes are not decoded yet. Re-login refreshes the baseline; the UI must not promise
 immediate synchronization of every game edit. Disabled capture, waiting for a
 baseline, capture failures with diagnostics, older unsupported scanners, invalid

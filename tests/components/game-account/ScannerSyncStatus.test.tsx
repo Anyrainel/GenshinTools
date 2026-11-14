@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AccountManagerDialog } from "@/components/game-account/AccountManagerDialog";
 import { ContinuousInventorySync } from "@/components/game-account/ContinuousInventorySync";
 import { ScannerSyncStatus } from "@/components/game-account/ScannerSyncStatus";
 import { ScannerSyncProvider } from "@/contexts/ScannerSyncContext";
@@ -64,7 +65,7 @@ beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date("2026-11-12T00:00:00Z"));
   vi.clearAllMocks();
-  useScannerSyncStore.setState({ enabledProfileId: null, port: 8765 });
+  useScannerSyncStore.setState({ enabled: false, port: 8765 });
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
@@ -76,52 +77,103 @@ beforeEach(() => {
       },
     },
   });
+  vi.mocked(applyAccountImport).mockImplementation(
+    ({ accountId, data, name }) => {
+      useAccountStore.getState().addOrUpdateAccount(accountId, { data, name });
+      return {};
+    }
+  );
   vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
 });
 afterEach(() => vi.useRealTimers());
 
 describe("scanner sync controls", () => {
+  it("enables polling directly from account management without opening another dialog", async () => {
+    const onClose = vi.fn();
+    render(
+      <ScannerSyncProvider>
+        <AccountManagerDialog
+          isOpen
+          onClose={onClose}
+          pendingImport={null}
+          onResolveImport={vi.fn()}
+        />
+      </ScannerSyncProvider>
+    );
+    const dialog = screen.getByRole("dialog");
+    const toggle = within(dialog).getByRole("switch", {
+      name: "continuous.title",
+    });
+    expect(toggle).not.toBeChecked();
+    expect(
+      within(dialog).getByRole("textbox", { name: "manager.port" })
+    ).toHaveValue("8765");
+    expect(within(dialog).getByText("continuous.description")).toBeVisible();
+    expect(fetchContinuous).not.toHaveBeenCalled();
+
+    fireEvent.click(toggle);
+    expect(fetchContinuous).toHaveBeenCalledWith(8765, expect.any(AbortSignal));
+    await flush();
+    expect(toggle).toBeChecked();
+    expect(applyAccountImport).toHaveBeenCalledWith(
+      expect.objectContaining({ accountId: 0 })
+    );
+    expect(onClose).not.toHaveBeenCalled();
+    expect(screen.getAllByRole("dialog")).toHaveLength(1);
+    expect(within(dialog).getAllByRole("switch")).toHaveLength(1);
+    expect(
+      screen.queryByRole("button", { name: "continuous.start" })
+    ).not.toBeInTheDocument();
+  });
+
   it("commits an edited port when starting without blurring the input", async () => {
     render(<App />);
     const port = screen.getByRole("textbox", { name: "manager.port" });
     expect(port).toBeEnabled();
+    expect(port).toHaveValue("8765");
     fireEvent.change(port, { target: { value: "9876" } });
     expect(fetchContinuous).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
+    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     await flush();
     expect(fetchContinuous).toHaveBeenCalledWith(9876, expect.any(AbortSignal));
     expect(port).toBeDisabled();
   });
 
-  it("shows a global status control without automatically opening a dialog, and stops directly", async () => {
+  it("keeps status informational and stops only through the settings toggle", async () => {
     const view = render(<App />);
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
+    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     await flush();
     const bar = screen.getByRole("region", { name: "continuous.title" });
     expect(within(bar).getByRole("status")).toHaveTextContent(
       "Last sync: 0s ago"
     );
     expect(bar).toHaveTextContent("Port 8765");
-    expect(within(bar).getAllByRole("button")).toHaveLength(1);
+    expect(within(bar).queryByRole("button")).not.toBeInTheDocument();
+    expect(within(bar).queryByRole("switch")).not.toBeInTheDocument();
     expect(bar.firstElementChild).toHaveClass("justify-center", "flex-wrap");
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Page action" })).toBeEnabled();
 
     view.rerender(<App showImport={false} />);
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole("button", { name: "continuous.stop" }));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(3000);
+    });
+    expect(fetchContinuous).toHaveBeenCalledTimes(2);
+    view.rerender(<App />);
+    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
     await act(async () => {
       await vi.advanceTimersByTimeAsync(3000);
     });
-    expect(fetchContinuous).toHaveBeenCalledTimes(1);
+    expect(fetchContinuous).toHaveBeenCalledTimes(2);
     expect(applyAccountImport).toHaveBeenCalledTimes(1);
   });
 
   it("keeps fast requests visible, holds slow requests, and fades after each response", async () => {
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
+    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     await flush();
     const bar = screen.getByRole("region", { name: "continuous.title" });
     expect(bar).toHaveAttribute("data-requesting", "false");
@@ -157,7 +209,7 @@ describe("scanner sync controls", () => {
 
   it("ticks seconds and minutes since the last successful receipt while showing failures", async () => {
     render(<App />);
-    fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
+    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     await flush();
     const bar = screen.getByRole("region", { name: "continuous.title" });
     vi.mocked(fetchContinuous).mockRejectedValue(
@@ -172,9 +224,7 @@ describe("scanner sync controls", () => {
       await vi.advanceTimersByTimeAsync(55000);
     });
     expect(bar).toHaveTextContent("Last sync: 1m ago");
-    fireEvent.click(
-      within(bar).getByRole("button", { name: "continuous.stop" })
-    );
+    fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
     expect(screen.queryByRole("region")).not.toBeInTheDocument();
   });
 
@@ -189,7 +239,7 @@ describe("scanner sync controls", () => {
         new ArtifactManagerError(Number(status), JSON.stringify({ error }))
       );
       render(<App />);
-      fireEvent.click(screen.getByRole("button", { name: "continuous.start" }));
+      fireEvent.click(screen.getByRole("switch", { name: "continuous.title" }));
       await flush();
       const bar = screen.getByRole("region", { name: "continuous.title" });
       expect(bar).toHaveTextContent(String(key));

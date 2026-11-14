@@ -34,8 +34,13 @@ function Controls() {
   const s = useScannerSync()!;
   return (
     <>
-      <button type="button" onClick={() => s.setEnabled(true)}>
-        Enable
+      <button
+        type="button"
+        role="switch"
+        aria-checked={s.enabled}
+        onClick={() => s.setEnabled(!s.enabled)}
+      >
+        Continuous sync
       </button>
       <input
         aria-label="Port"
@@ -51,10 +56,7 @@ function Status() {
   return (
     <>
       <output>{s.enabled ? s.sync.status : "off"}</output>
-      <span>{s.account?.name}</span>
-      <button type="button" onClick={() => s.setEnabled(false)}>
-        Turn off
-      </button>
+      <span>{s.syncedAccount?.name}</span>
     </>
   );
 }
@@ -85,7 +87,7 @@ const tick = async () => {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
-  useScannerSyncStore.setState({ enabledProfileId: null, port: 8765 });
+  useScannerSyncStore.setState({ enabled: false, port: 8765 });
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
@@ -103,10 +105,16 @@ beforeEach(() => {
       },
     },
   });
+  vi.mocked(applyAccountImport).mockImplementation(
+    ({ accountId, data, name }) => {
+      useAccountStore.getState().addOrUpdateAccount(accountId, { data, name });
+      return {};
+    }
+  );
   vi.mocked(fetchContinuous).mockResolvedValue(snapshot);
 });
 afterEach(() => vi.useRealTimers());
-describe("profile-scoped scanner preference", () => {
+describe("global scanner preference", () => {
   it.each([false, true])(
     "starts in an empty workspace without an import (identified: %s)",
     async (identified) => {
@@ -117,53 +125,69 @@ describe("profile-scoped scanner preference", () => {
           data: { ...snapshot.data, metadata: { uid: "800000003" } },
         });
       const view = render(<App />);
-      fireEvent.click(screen.getByText("Enable"));
-      await flush();
-      expect(useScannerSyncStore.getState().enabledProfileId).toBe(0);
-      expect(useAccountStore.getState().accounts[0]?.name).toBe(
-        "Default Account"
+      fireEvent.click(screen.getByRole("switch", { name: "Continuous sync" }));
+      expect(fetchContinuous).toHaveBeenCalledWith(
+        8765,
+        expect.any(AbortSignal)
       );
+      await flush();
+      const accountId = identified ? 800000003 : 0;
+      expect(useScannerSyncStore.getState().enabled).toBe(true);
+      expect(Object.keys(useAccountStore.getState().accounts)).toEqual([
+        String(accountId),
+      ]);
       expect(applyAccountImport).toHaveBeenCalledWith(
-        expect.objectContaining({
-          accountId: 0,
-          ...(identified ? { promoteToId: 800000003 } : {}),
-        })
+        expect.objectContaining({ accountId })
+      );
+      expect(vi.mocked(applyAccountImport).mock.calls[0][0]).not.toHaveProperty(
+        "promoteToId"
       );
       expect(screen.getByRole("status")).toHaveTextContent("synced");
       view.unmount();
     }
   );
-  it("keeps the selected target across closed imports, routes and active profile changes", async () => {
+  it("keeps polling across closed controls, routes, active profile changes and profile deletion", async () => {
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      data: { ...snapshot.data, metadata: { uid: "123456789" } },
+    });
     const view = render(<App />);
-    fireEvent.click(screen.getByText("Enable"));
+    fireEvent.click(screen.getByRole("switch", { name: "Continuous sync" }));
     await flush();
     expect(screen.getByRole("status")).toHaveTextContent("synced");
+    const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
     view.rerender(<App showImport={false} route="archive" />);
-    act(() => useAccountStore.getState().setActiveAccount(987654321));
+    act(() => {
+      useAccountStore.getState().setActiveAccount(987654321);
+      useAccountStore.getState().deleteAccount(123456789);
+    });
+    expect(useScannerSyncStore.getState().enabled).toBe(true);
+    expect(signal.aborted).toBe(false);
     await tick();
-    expect(screen.getByText("First")).toBeVisible();
-    expect(useScannerSyncStore.getState().enabledProfileId).toBe(123456789);
-    fireEvent.click(screen.getByText("Turn off"));
+    expect(fetchContinuous).toHaveBeenCalledTimes(2);
+    expect(useAccountStore.getState().accounts[123456789]).toBeDefined();
+    expect(useAccountStore.getState().activeAccountId).toBe(987654321);
+    expect(useScannerSyncStore.getState().enabled).toBe(true);
+    view.rerender(<App />);
+    fireEvent.click(screen.getByRole("switch", { name: "Continuous sync" }));
+    expect(signal.aborted).toBe(true);
     await tick();
     expect(screen.getByRole("status")).toHaveTextContent("off");
-    view.rerender(<App />);
-    fireEvent.click(screen.getByText("Enable"));
-    await flush();
-    expect(useScannerSyncStore.getState().enabledProfileId).toBe(987654321);
+    expect(fetchContinuous).toHaveBeenCalledTimes(2);
     view.unmount();
   });
-  it("restores the same profile and custom port after the app remounts", async () => {
+  it("restores global enablement and the custom port after the app remounts", async () => {
     const view = render(<App />);
     fireEvent.change(screen.getByRole("textbox", { name: "Port" }), {
       target: { value: "9123" },
     });
     fireEvent.blur(screen.getByRole("textbox", { name: "Port" }));
-    fireEvent.click(screen.getByText("Enable"));
+    fireEvent.click(screen.getByRole("switch", { name: "Continuous sync" }));
     await flush();
     view.unmount();
     render(<App />);
     await flush();
-    expect(useScannerSyncStore.getState().enabledProfileId).toBe(123456789);
+    expect(useScannerSyncStore.getState().enabled).toBe(true);
     expect(fetchContinuous).toHaveBeenLastCalledWith(
       9123,
       expect.any(AbortSignal)
@@ -179,10 +203,12 @@ describe("profile-scoped scanner preference", () => {
         })
     );
     const view = render(<App />);
-    fireEvent.click(screen.getByText("Enable"));
+    fireEvent.click(screen.getByRole("switch", { name: "Continuous sync" }));
     const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
     view.rerender(<App showImport={false} />);
-    fireEvent.click(screen.getByText("Turn off"));
+    expect(signal.aborted).toBe(false);
+    view.rerender(<App />);
+    fireEvent.click(screen.getByRole("switch", { name: "Continuous sync" }));
     expect(signal.aborted).toBe(true);
     await act(async () => resolve(snapshot));
     await tick();

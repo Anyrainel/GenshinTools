@@ -1,6 +1,5 @@
-import { Power, Radio, TriangleAlert } from "lucide-react";
+import { Radio, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useScannerSync } from "@/contexts/ScannerSyncContext";
 import { cn } from "@/lib/utils";
@@ -30,8 +29,7 @@ export function ScannerSyncStatus() {
   }, [enabled, sync?.isRequesting, sync?.requestStartedAt]);
 
   if (!session || !enabled) return null;
-  const { account, syncedAccount, setEnabled, port } = session;
-  const target = syncedAccount ?? account;
+  const { syncedAccount, port } = session;
   const attention = !["off", "connecting", "waiting", "synced"].includes(
     session.sync.status
   );
@@ -90,12 +88,10 @@ export function ScannerSyncStatus() {
             </time>
           )}
           {statusText && <span className="break-words">{statusText}</span>}
-          {target && <span className="break-all">{target.name}</span>}
+          {syncedAccount && (
+            <span className="break-all">{syncedAccount.name}</span>
+          )}
         </div>
-        <Button variant="ghost" size="sm" onClick={() => setEnabled(false)}>
-          <Power className="h-4 w-4" aria-hidden />
-          {t.ui("continuous.stop")}
-        </Button>
       </div>
     </section>
   );

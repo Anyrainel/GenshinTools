@@ -154,13 +154,6 @@
       "sha256": "13ccc9b0fe4248e622f83a1d3b2f0566b72b5e04162d7d0c8db8945ecc71b55f"
     },
     {
-      "name": "switch",
-      "path": "src/components/ui/switch.tsx",
-      "source": "https://ui.shadcn.com/r/styles/new-york-v4/switch.json",
-      "upstreamSha256": "743676f33f823ffa8008bbd5eb94cb68e227599447d60e132a202291a395f8e4",
-      "sha256": "62bd507d11a7abe5d0fc0b0bb805c794dcff5f75cff8c63e7dd58aec763d9cf5"
-    },
-    {
       "name": "table",
       "path": "src/components/ui/table.tsx",
       "source": "https://ui.shadcn.com/r/styles/new-york-v4/table.json",
@@ -204,6 +197,13 @@
     }
   ],
   "customizedComponents": [
+    {
+      "name": "switch",
+      "path": "src/components/ui/switch.tsx",
+      "source": "https://ui.shadcn.com/r/styles/new-york-v4/switch.json",
+      "upstreamSha256": "743676f33f823ffa8008bbd5eb94cb68e227599447d60e132a202291a395f8e4",
+      "documentation": "docs/shadcn-customizations.md"
+    },
     {
       "name": "select",
       "path": "src/components/ui/select.tsx",

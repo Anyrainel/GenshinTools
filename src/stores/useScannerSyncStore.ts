@@ -4,39 +4,35 @@ import { migrateScannerSyncPreferences } from "./migration/scannerSync";
 import { PersistedScannerSyncSchema } from "./schemas";
 
 interface ScannerSyncPreferences {
-  enabledProfileId: number | null;
+  enabled: boolean;
   port: number;
-  setEnabledProfileId: (profileId: number | null) => void;
+  setEnabled: (enabled: boolean) => void;
   setPort: (port: number) => void;
-  moveProfile: (sourceId: number, targetId: number) => void;
 }
 
-const defaults = { enabledProfileId: null, port: 8765 };
+const defaults = { enabled: false, port: 8765 };
 
 /** Device-local opt-in. It is deliberately excluded from account/cloud backups. */
 export const useScannerSyncStore = create<ScannerSyncPreferences>()(
   persist(
     (set) => ({
       ...defaults,
-      setEnabledProfileId: (enabledProfileId) => set({ enabledProfileId }),
+      setEnabled: (enabled) => set({ enabled }),
       setPort: (port) => set({ port }),
-      moveProfile: (sourceId, targetId) =>
-        set((state) =>
-          state.enabledProfileId === sourceId
-            ? { enabledProfileId: targetId }
-            : state
-        ),
     }),
     {
       name: "genshin-scanner-sync-storage",
       version: 1,
       partialize: (state) => ({
-        enabledProfileId: state.enabledProfileId,
+        enabled: state.enabled,
         port: state.port,
       }),
       migrate: migrateScannerSyncPreferences,
       merge: (persisted, current) => {
-        const parsed = PersistedScannerSyncSchema.safeParse(persisted);
+        // The earlier unpublished v1 stored a selected fallback profile.
+        const parsed = PersistedScannerSyncSchema.safeParse(
+          migrateScannerSyncPreferences(persisted)
+        );
         return { ...current, ...(parsed.success ? parsed.data : defaults) };
       },
     }

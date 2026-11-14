@@ -15,7 +15,6 @@ import { toast } from "sonner";
 import { BuildsDefaultPresetPrompt } from "@/components/builds/BuildsDefaultPresetPrompt";
 import { AccountImportControl } from "@/components/game-account/AccountImportControl";
 import { AccountManagerDialog } from "@/components/game-account/AccountManagerDialog";
-import { ContinuousInventorySyncDialog } from "@/components/game-account/ContinuousInventorySyncDialog";
 import { ScoreChangeAnnouncement } from "@/components/game-account/ScoreChangeAnnouncement";
 import type { ActionConfig } from "@/components/layout/AppBar";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -199,7 +198,6 @@ export default function AccountDataPage() {
     null
   );
   const [isAccountManagerOpen, setIsAccountManagerOpen] = useState(false);
-  const [isContinuousSyncOpen, setIsContinuousSyncOpen] = useState(false);
 
   useEffect(() => {
     // Detect old data format (missing extraWeapons or missing talents) and clear it
@@ -632,11 +630,6 @@ export default function AccountDataPage() {
         pendingImport={pendingImport}
         onResolveImport={handleResolveImport}
         onOpenImportControl={() => importRef.current?.open()}
-        onOpenContinuousSync={() => setIsContinuousSyncOpen(true)}
-      />
-      <ContinuousInventorySyncDialog
-        open={isContinuousSyncOpen}
-        onOpenChange={setIsContinuousSyncOpen}
       />
 
       {/* Conversion Warnings - visible on all tabs */}

@@ -12,4 +12,11 @@
 
 文件：`src/components/ui/select.tsx`。Trigger 的 `size` 使用普通 `h-9` / `h-8`，移除 `data-size` 条件高度，允许调用处的紧凑高度正常生效；其余行为保留原版。
 
-更新时审查并重新应用以上差异，不直接覆盖。Card、Select 在 stock 清单中登记为自定义组件，仍接受普通 UI 样式检查；其他原版组件继续校验源码哈希。
+## Switch · 2026-11-13
+
+文件：`src/components/ui/switch.tsx`。应用通过主题变量切换深色配色，不设置 `.dark` 类，因此不依赖 `dark:` 变体提供对比度。
+
+- 关闭时使用 `bg-foreground/40` 灰色轨道，滑块始终使用 `bg-primary-foreground` 浅色；开启时保留 `bg-primary` 轨道。
+- 禁用时透明度由 50% 调整为 75%，保留轨道与滑块的轮廓和对比。
+
+更新时审查并重新应用以上差异，不直接覆盖。Card、Select、Switch 在 stock 清单中登记为自定义组件，仍接受普通 UI 样式检查；其他原版组件继续校验源码哈希。

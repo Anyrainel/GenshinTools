@@ -1,9 +1,19 @@
-/** Legacy global enablement did not identify a destination profile. Never restore it. */
+/**
+ * Earlier preferences used { enabled, port } (v0), then the unpublished v1 used
+ * { enabledProfileId: number | null, port }. Sync is now global: keep the opt-in
+ * and port, but never restore a selected UID as the destination of anonymous data.
+ */
 export function migrateScannerSyncPreferences(state: unknown) {
-  const port =
-    state && typeof state === "object" && "port" in state ? state.port : 8765;
+  const saved = state && typeof state === "object" ? state : {};
+  const port = "port" in saved ? saved.port : 8765;
   return {
-    enabledProfileId: null,
+    enabled:
+      "enabled" in saved && typeof saved.enabled === "boolean"
+        ? saved.enabled
+        : "enabledProfileId" in saved &&
+          typeof saved.enabledProfileId === "number" &&
+          Number.isSafeInteger(saved.enabledProfileId) &&
+          saved.enabledProfileId >= 0,
     port:
       typeof port === "number" &&
       Number.isInteger(port) &&

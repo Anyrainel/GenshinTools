@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile";
 import type { AccountData } from "@/domain/models";
 import {
   ArtifactManagerError,
@@ -7,7 +8,6 @@ import {
 import { readGOODIdentity } from "@/providers/scanner/formats/goodIdentity";
 import { prepareContinuousImport } from "@/services/game-account/continuousImport";
 import { identifiedAccountName } from "@/services/game-account/goodIdentity";
-import { resolveIdentifiedImportTarget } from "@/services/game-account/importRouting";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
 
@@ -31,20 +31,17 @@ interface ContinuousState {
   updatedAt?: number;
   warnings?: number;
   targetProfileId?: number;
-  routing?: "uid" | "profile";
+  routing?: "uid" | "default";
 }
 
-/** Enabling authorizes the chosen fallback profile and automatic routing of detected UIDs. */
-export function useContinuousInventorySync(
-  fallbackProfileId: number | null,
-  port: number
-) {
+/** Identified captures update their UID profile; anonymous captures only update Default. */
+export function useContinuousInventorySync(enabled: boolean, port: number) {
   const [state, setState] = useState<ContinuousState>({
     status: "off",
     isRequesting: false,
   });
   useEffect(() => {
-    if (fallbackProfileId === null) {
+    if (!enabled) {
       setState({ status: "off", isRequesting: false });
       return;
     }
@@ -79,13 +76,10 @@ export function useContinuousInventorySync(
         };
         const identity = readGOODIdentity(snapshot.data);
         const accounts = useAccountStore.getState().accounts;
-        const target = identity
-          ? resolveIdentifiedImportTarget(accounts, identity.uid)
-          : { accountId: fallbackProfileId };
-        const profileId = target.promoteToId ?? target.accountId;
-        const account = accounts[target.accountId];
-        if (!identity && !account)
-          throw new Error("The selected sync profile no longer exists.");
+        const profileId = identity
+          ? Number(identity.uid)
+          : DEFAULT_ACCOUNT_PROFILE_ID;
+        const account = accounts[profileId];
         const content = JSON.stringify(snapshot.data);
         if (
           imported?.profileId !== profileId ||
@@ -99,16 +93,13 @@ export function useContinuousInventorySync(
           };
           const result = prepareContinuousImport(snapshot.data, existing);
           applyAccountImport({
-            accountId: target.accountId,
+            accountId: profileId,
             data: result.data,
             artifactIdMap: result.artifactIdMap,
             earnedAchievementIds: result.earnedAchievementIds,
-            ...(target.promoteToId !== undefined
-              ? { promoteToId: target.promoteToId }
-              : {}),
-            ...(identity
-              ? { name: identifiedAccountName(account, identity) }
-              : {}),
+            name: identity
+              ? identifiedAccountName(account, identity)
+              : (account?.name ?? "Default Account"),
           });
           imported = {
             profileId,
@@ -123,7 +114,7 @@ export function useContinuousInventorySync(
             updatedAt: snapshot.updatedAt,
             warnings: result.warnings.length,
             targetProfileId: profileId,
-            routing: identity ? "uid" : "profile",
+            routing: identity ? "uid" : "default",
           }));
         } else
           setState((previous) => ({
@@ -133,7 +124,7 @@ export function useContinuousInventorySync(
             lastSyncedAt: receivedAt,
             updatedAt: snapshot.updatedAt,
             targetProfileId: profileId,
-            routing: identity ? "uid" : "profile",
+            routing: identity ? "uid" : "default",
           }));
       } catch (error) {
         if (disposed) return;
@@ -187,6 +178,6 @@ export function useContinuousInventorySync(
       controller.abort();
       clearTimeout(timer);
     };
-  }, [fallbackProfileId, port]);
+  }, [enabled, port]);
   return state;
 }

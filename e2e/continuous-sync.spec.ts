@@ -3,13 +3,14 @@ import fixture from "../tests/fixtures/goodscanner-v3.json" with {
   type: "json",
 };
 
-test("continuous scanner sync starts from account management and survives browsing; global stop ends it", async ({
+test("one account-management toggle controls continuous sync with deterministic UID routing", async ({
   page,
 }, testInfo) => {
   if (testInfo.project.name === "mobile")
     await page.setViewportSize({ width: 320, height: 720 });
   await page.addInitScript(() => {
-    localStorage.setItem("app_language", "en");
+    if (!localStorage.getItem("app_language"))
+      localStorage.setItem("app_language", "en");
     localStorage.setItem(
       "greeting-storage",
       JSON.stringify({
@@ -39,7 +40,7 @@ test("continuous scanner sync starts from account management and survives browsi
   });
   let revision = 1;
   let sessionId = "background-test";
-  let detectedUid: string | undefined;
+  let detectedUid: string | undefined = "600000001";
   let level = 20;
   let polls = 0;
   await page.route("http://127.0.0.1:8765/continuous", async (route) => {
@@ -51,9 +52,9 @@ test("continuous scanner sync starts from account management and survives browsi
         updatedAt: 1793900000000 + revision,
         data: {
           ...fixture,
-          ...(detectedUid
-            ? { metadata: { uid: detectedUid, nickname: "Detected alt" } }
-            : {}),
+          metadata: detectedUid
+            ? { uid: detectedUid, nickname: "Detected alt" }
+            : undefined,
           characters: fixture.characters.map((character) => ({
             ...character,
             level,
@@ -69,6 +70,7 @@ test("continuous scanner sync starts from account management and survives browsi
   });
   // The unrelated first-use build prompt is dismissed through its public action.
   await preset.getByRole("button", { name: "Got it", exact: true }).click();
+  await expect(page.getByText("Preset loaded", { exact: true })).toHaveCount(0);
   if (testInfo.project.name === "mobile") {
     await page.getByRole("button", { name: "More", exact: true }).click();
     await page.getByRole("menuitem", { name: "Accounts", exact: true }).click();
@@ -79,27 +81,39 @@ test("continuous scanner sync starts from account management and survives browsi
     name: "Manage Profiles",
     exact: true,
   });
-  const syncButton = manager.getByRole("button", {
-    name: /^Continuous Sync \(Capture\)/,
-  });
-  await expect(syncButton.getByText("New", { exact: true })).toBeVisible();
-  await syncButton.click();
-  const dialog = page.getByRole("dialog", {
+  const syncToggle = manager.getByRole("switch", {
     name: "Continuous Sync (Capture)",
-    exact: true,
   });
+  await expect(syncToggle).not.toBeChecked();
   await expect(
-    dialog.getByRole("textbox", { name: "Port", exact: true })
+    manager.getByRole("textbox", { name: "Port", exact: true })
+  ).toHaveValue("8765");
+  await expect(
+    manager.getByRole("textbox", { name: "Port", exact: true })
   ).toBeVisible();
+  await expect(
+    manager.getByText(/Automatically sync GGScanner inventory/)
+  ).toBeVisible();
+  await expect(
+    manager.getByRole("button", { name: "Start sync", exact: true })
+  ).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath("sync-settings-off.png"),
+    animations: "disabled",
+  });
   expect(polls).toBe(0);
-  await dialog.getByRole("button", { name: "Start sync", exact: true }).click();
+  await syncToggle.click();
   const status = page.getByRole("region", {
     name: "Continuous Sync (Capture)",
   });
   await expect(status).toContainText(/Last sync: \d+[sm] ago/);
   await expect(status).toContainText("Port 8765");
-  await expect(status.getByRole("button")).toHaveCount(1);
-  await dialog.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(status.getByRole("button")).toHaveCount(0);
+  await page.screenshot({
+    path: testInfo.outputPath("sync-settings.png"),
+    animations: "disabled",
+  });
+  await manager.getByRole("button", { name: "Close", exact: true }).click();
   await expect(
     status.getByRole("status").getByText(/Last sync: \d+[sm] ago/)
   ).toBeVisible();
@@ -145,10 +159,10 @@ test("continuous scanner sync starts from account management and survives browsi
     await page.evaluate(
       () =>
         JSON.parse(localStorage.getItem("genshin-scanner-sync-storage")!).state
-          .enabledProfileId
+          .enabled
     )
-  ).toBe(600000001);
-  // A new scanner login without identity still uses the saved fallback, without a prompt.
+  ).toBe(true);
+  // An unidentified capture creates Default, leaving both UID profiles untouched.
   detectedUid = undefined;
   sessionId = "next-login";
   revision = 1;
@@ -162,16 +176,60 @@ test("continuous scanner sync starts from account management and survives browsi
         return [
           accounts["600000001"].data.characters[0]?.level,
           accounts["700000002"]?.data.characters[0]?.level,
+          accounts["0"]?.data.characters[0]?.level,
         ];
       })
     )
-    .toEqual([23, 22]);
+    .toEqual([21, 22, 23]);
   await expect(page.getByRole("dialog")).toHaveCount(0);
-  await status.getByRole("button", { name: "Turn off", exact: true }).click();
+  await page.goto("/account-data/inventory");
+  if (testInfo.project.name === "mobile") {
+    await page.getByRole("button", { name: "More", exact: true }).click();
+    await page.getByRole("menuitem", { name: "Accounts", exact: true }).click();
+  } else {
+    await page.getByRole("button", { name: "Accounts", exact: true }).click();
+  }
+  await manager
+    .getByRole("switch", { name: "Continuous Sync (Capture)" })
+    .click();
   await expect(status).toHaveCount(0);
   const stoppedAt = polls;
   await page.waitForTimeout(3300);
   expect(polls).toBe(stoppedAt);
   await page.reload();
   await expect(status).toHaveCount(0);
+  await page.evaluate(() => {
+    localStorage.setItem("app_language", "zh");
+    localStorage.setItem("app_theme", "liyue");
+  });
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "liyue");
+  if (testInfo.project.name === "mobile") {
+    await page.getByRole("button", { name: "更多", exact: true }).click();
+    await page.getByRole("menuitem", { name: "账号管理", exact: true }).click();
+  } else {
+    await page.getByRole("button", { name: "账号管理", exact: true }).click();
+  }
+  const chineseManager = page.getByRole("dialog", {
+    name: "管理账号配置",
+    exact: true,
+  });
+  await expect(
+    chineseManager.getByRole("switch", { name: "持续同步（抓包）" })
+  ).not.toBeChecked();
+  await expect(
+    chineseManager.getByRole("textbox", { name: "端口", exact: true })
+  ).toBeVisible();
+  await expect(
+    chineseManager.getByText(/自动同步 GGScanner 库存/)
+  ).toBeVisible();
+  expect(
+    await chineseManager.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth
+    )
+  ).toBe(true);
+  await page.screenshot({
+    path: testInfo.outputPath("sync-settings-zh-liyue.png"),
+    animations: "disabled",
+  });
 });

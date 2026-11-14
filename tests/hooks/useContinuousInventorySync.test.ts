@@ -8,7 +8,6 @@ import {
 } from "@/providers/scanner/companion/client";
 import { applyAccountImport } from "@/stores/applyAccountImport";
 import { useAccountStore } from "@/stores/useAccountStore";
-import { useScannerSyncStore } from "@/stores/useScannerSyncStore";
 
 vi.mock("@/providers/scanner/companion/client", async (original) => ({
   ...(await original<typeof import("@/providers/scanner/companion/client")>()),
@@ -24,6 +23,7 @@ const snapshot: ContinuousSnapshot = {
     format: "GOOD",
     version: 3,
     source: "GGScanner",
+    metadata: { uid: "123456789" },
     characters: [],
     weapons: [],
     artifacts: [],
@@ -42,7 +42,6 @@ const tick = async () => {
 beforeEach(() => {
   vi.useFakeTimers();
   vi.clearAllMocks();
-  useScannerSyncStore.setState({ enabledProfileId: null, port: 8765 });
   useAccountStore.setState({
     activeAccountId: 123456789,
     accounts: {
@@ -99,7 +98,7 @@ describe("hands-off continuous inventory", () => {
       },
     };
     vi.mocked(fetchContinuous).mockResolvedValue(initial);
-    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     await flush();
     const account = () => useAccountStore.getState().accounts[123456789]!.data!;
     expect(account().characters[0]!.artifacts.flower?.level).toBe(0);
@@ -155,7 +154,7 @@ describe("hands-off continuous inventory", () => {
           resolve = done;
         })
     );
-    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     expect(view.result.current.isRequesting).toBe(true);
     expect(view.result.current.requestStartedAt).toBe(startedAt);
     expect(view.result.current.lastSyncedAt).toBeUndefined();
@@ -188,11 +187,11 @@ describe("hands-off continuous inventory", () => {
 
   it("requires opt-in once, applies immediately, and deduplicates unchanged data", async () => {
     const view = renderHook(
-      ({ profile }) => useContinuousInventorySync(profile, 8765),
-      { initialProps: { profile: null as number | null } }
+      ({ enabled }) => useContinuousInventorySync(enabled, 8765),
+      { initialProps: { enabled: false } }
     );
     expect(fetchContinuous).not.toHaveBeenCalled();
-    view.rerender({ profile: 123456789 });
+    view.rerender({ enabled: true });
     await flush();
     expect(view.result.current.status).toBe("synced");
     expect(applyAccountImport).toHaveBeenCalledTimes(1);
@@ -201,27 +200,54 @@ describe("hands-off continuous inventory", () => {
     expect(applyAccountImport).toHaveBeenCalledTimes(1);
     view.unmount();
   });
-  it("keeps writing unknown captures to the enabled profile when the active profile changes", async () => {
-    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+  it("creates Default for UID-less captures without changing the viewed UID profile", async () => {
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      data: { ...snapshot.data, metadata: undefined },
+    });
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     await flush();
+    expect(useAccountStore.getState().accounts[0]?.name).toBe(
+      "Default Account"
+    );
+    expect(useAccountStore.getState().activeAccountId).toBe(123456789);
     act(() => useAccountStore.getState().setActiveAccount(987654321));
     vi.mocked(fetchContinuous).mockResolvedValue({
       ...snapshot,
       revision: 2,
-      data: { ...snapshot.data, achievements: [81006] },
+      data: { ...snapshot.data, metadata: undefined, achievements: [81006] },
     });
     await tick();
     expect(applyAccountImport).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        accountId: 123456789,
+        accountId: 0,
         earnedAchievementIds: [81006],
       })
     );
-    expect(view.result.current.routing).toBe("profile");
+    expect(view.result.current.routing).toBe("default");
+    expect(useAccountStore.getState().activeAccountId).toBe(987654321);
     view.unmount();
   });
-  it("routes detected UIDs to existing or new profiles rather than the fallback", async () => {
-    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+  it("updates an existing Default without overwriting a known UID profile", async () => {
+    useAccountStore.getState().addOrUpdateAccount(0, {
+      name: "Anonymous inventory",
+      data: data(),
+    });
+    const knownAccount = useAccountStore.getState().accounts[123456789];
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      data: { ...snapshot.data, metadata: undefined, achievements: [81006] },
+    });
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
+    await flush();
+    expect(applyAccountImport).toHaveBeenCalledWith(
+      expect.objectContaining({ accountId: 0, name: "Anonymous inventory" })
+    );
+    expect(useAccountStore.getState().accounts[123456789]).toBe(knownAccount);
+    view.unmount();
+  });
+  it("routes detected UIDs to existing or new profiles regardless of the viewed account", async () => {
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     vi.mocked(fetchContinuous).mockResolvedValue({
       ...snapshot,
       revision: 2,
@@ -247,7 +273,7 @@ describe("hands-off continuous inventory", () => {
     expect(view.result.current.targetProfileId).toBe(800000003);
     view.unmount();
   });
-  it("automatically binds the default when an identified UID has no matching profile", async () => {
+  it("creates the identified UID profile separately from an anonymous Default", async () => {
     useAccountStore.setState({
       activeAccountId: 0,
       accounts: {
@@ -261,19 +287,33 @@ describe("hands-off continuous inventory", () => {
         metadata: { uid: "800000003", nickname: "Player" },
       },
     });
-    const view = renderHook(() => useContinuousInventorySync(0, 8765));
+    const originalDefault = useAccountStore.getState().accounts[0];
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     await flush();
     expect(applyAccountImport).toHaveBeenCalledWith(
       expect.objectContaining({
-        accountId: 0,
-        promoteToId: 800000003,
+        accountId: 800000003,
         name: "Player",
       })
     );
+    expect(useAccountStore.getState().accounts[0]).toBe(originalDefault);
+    expect(useAccountStore.getState().activeAccountId).toBe(0);
+    view.unmount();
+  });
+  it("rejects a malformed supplied UID rather than routing it to Default", async () => {
+    vi.mocked(fetchContinuous).mockResolvedValue({
+      ...snapshot,
+      data: { ...snapshot.data, metadata: { uid: "invalid" } },
+    });
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
+    await flush();
+    expect(view.result.current.status).toBe("invalid");
+    expect(applyAccountImport).not.toHaveBeenCalled();
+    expect(useAccountStore.getState().accounts[0]).toBeUndefined();
     view.unmount();
   });
   it("reapplies the current capture after a separate local import without another prompt", async () => {
-    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     await flush();
     act(() =>
       useAccountStore.getState().addOrUpdateAccount(123456789, { data: data() })
@@ -284,7 +324,7 @@ describe("hands-off continuous inventory", () => {
     view.unmount();
   });
   it("ignores old revisions after a newer unchanged snapshot", async () => {
-    const view = renderHook(() => useContinuousInventorySync(123456789, 8765));
+    const view = renderHook(() => useContinuousInventorySync(true, 8765));
     await flush();
     vi.mocked(fetchContinuous).mockResolvedValue({ ...snapshot, revision: 5 });
     await tick();
@@ -300,9 +340,7 @@ describe("hands-off continuous inventory", () => {
   it.each(["restart", "login", "network"])(
     "resumes automatically after %s",
     async (cause) => {
-      const view = renderHook(() =>
-        useContinuousInventorySync(123456789, 8765)
-      );
+      const view = renderHook(() => useContinuousInventorySync(true, 8765));
       await flush();
       if (cause === "restart")
         vi.mocked(fetchContinuous).mockResolvedValue({
@@ -350,9 +388,7 @@ describe("hands-off continuous inventory", () => {
           JSON.stringify({ error, details: "diagnostic" })
         )
       );
-      const view = renderHook(() =>
-        useContinuousInventorySync(123456789, 9123)
-      );
+      const view = renderHook(() => useContinuousInventorySync(true, 9123));
       await flush();
       expect(view.result.current.status).toBe(expected);
       expect(view.result.current.details).toBe("diagnostic");
@@ -365,7 +401,7 @@ describe("hands-off continuous inventory", () => {
       view.unmount();
     }
   );
-  it("aborts pending work on disable/port/target changes and ignores late responses", async () => {
+  it("aborts pending work on disable/port changes and ignores late responses", async () => {
     let resolve!: (value: ContinuousSnapshot) => void;
     vi.mocked(fetchContinuous).mockImplementationOnce(
       () =>
@@ -374,22 +410,22 @@ describe("hands-off continuous inventory", () => {
         })
     );
     const view = renderHook(
-      ({ profile, port }) => useContinuousInventorySync(profile, port),
-      { initialProps: { profile: 123456789 as number | null, port: 8765 } }
+      ({ enabled, port }) => useContinuousInventorySync(enabled, port),
+      { initialProps: { enabled: true, port: 8765 } }
     );
     const signal = vi.mocked(fetchContinuous).mock.calls[0][1]!;
     expect(view.result.current.isRequesting).toBe(true);
     expect(view.result.current.requestStartedAt).toBe(Date.now());
-    view.rerender({ profile: null, port: 8765 });
+    view.rerender({ enabled: false, port: 8765 });
     expect(signal.aborted).toBe(true);
     expect(view.result.current).toEqual({ status: "off", isRequesting: false });
     await act(async () => resolve(snapshot));
     expect(applyAccountImport).not.toHaveBeenCalled();
     expect(view.result.current).toEqual({ status: "off", isRequesting: false });
-    view.rerender({ profile: 987654321, port: 9123 });
+    view.rerender({ enabled: true, port: 9123 });
     await flush();
     expect(applyAccountImport).toHaveBeenLastCalledWith(
-      expect.objectContaining({ accountId: 987654321 })
+      expect.objectContaining({ accountId: 123456789 })
     );
     expect(fetchContinuous).toHaveBeenLastCalledWith(
       9123,

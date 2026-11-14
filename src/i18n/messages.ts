@@ -4,19 +4,14 @@ export const i18nUiData = {
     lastSyncSeconds: { en: "Last sync: {0}s ago", zh: "上次同步：{0}秒前" },
     lastSyncMinutes: { en: "Last sync: {0}m ago", zh: "上次同步：{0}分钟前" },
     title: { en: "Continuous Sync (Capture)", zh: "持续同步（抓包）" },
-    newBadge: { en: "New", zh: "新功能" },
-    start: { en: "Start sync", zh: "开启同步" },
-    details: { en: "Details", zh: "详情" },
-    stop: { en: "Turn off", zh: "关闭同步" },
-    off: { en: "Off", zh: "未启用" },
+    description: {
+      en: "Automatically sync GGScanner inventory to its UID profile, or Default if no UID is available.",
+      zh: "自动同步 GGScanner 库存：有 UID 时更新对应档案，无 UID 时更新默认档案。",
+    },
     connecting: { en: "Connecting to scanner…", zh: "正在连接扫描器…" },
     waiting: {
       en: "Waiting for inventory. Log into Genshin after starting the scanner server.",
       zh: "等待库存数据。请先启动扫描器服务，再登录原神。",
-    },
-    synced: {
-      en: "Syncing inventory every few seconds",
-      zh: "正在每隔几秒同步库存",
     },
     disabled: {
       en: "Enable Continuous Sync (Capture) in GGScanner Manager, then restart its server.",
@@ -35,19 +30,9 @@ export const i18nUiData = {
       zh: "连接中断或被拦截。请检查端口、扫描器服务和浏览器本地网络权限。正在重试…",
     },
     invalid: {
-      en: "Inventory could not be imported. Check the diagnostics and update the scanner. Retrying…",
-      zh: "无法导入库存。请检查诊断信息并更新扫描器。正在重试…",
+      en: "Inventory could not be imported. Update GGScanner and restart its server. Retrying…",
+      zh: "无法导入库存。请更新 GGScanner 并重启服务。正在重试…",
     },
-    target: {
-      en: "Without a detected UID, captures update {0}. Detected UIDs sync to their matching profile automatically.",
-      zh: "未检测到 UID 时，抓包数据会写入「{0}」；检测到 UID 时会自动同步至对应档案。",
-    },
-    routed: { en: "Detected account: {0}", zh: "已识别账号：{0}" },
-    limits: {
-      en: "This profile’s sync setting is saved on this device and resumes automatically until turned off. Some deletions and lock/equipment-only edits are not captured yet; log in again for a fresh inventory. Missing sections and achievements are preserved.",
-      zh: "此档案的同步设置会保存在当前设备，重新打开页面后自动继续，直到关闭同步。部分删除及仅修改锁定、装备状态的操作暂不支持，重新登录可刷新完整库存。未提供的数据分类和成就会保留。",
-    },
-    updated: { en: "Scanner snapshot: {0}", zh: "扫描器快照时间：{0}" },
   },
   charactersMode: {
     replace: { en: "Replace characters", zh: "替换角色" },

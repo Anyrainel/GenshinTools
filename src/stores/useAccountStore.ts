@@ -12,7 +12,6 @@ import { migrateReleasedAccountWeapons } from "./migration/releasedWeaponIds";
 import { PersistedAccountStoreSchema } from "./schemas";
 import { useAccountScoreCacheStore } from "./useAccountScoreCacheStore";
 import { useAchievementStore } from "./useAchievementStore";
-import { useScannerSyncStore } from "./useScannerSyncStore";
 
 interface AccountStore {
   accounts: Record<AccountProfileId, AccountState>;
@@ -80,7 +79,6 @@ export const useAccountStore = create<AccountStore>()(
             .getState()
             .renameProfileCache(currentId, newId);
           useAchievementStore.getState().renameProfile(currentId, newId);
-          useScannerSyncStore.getState().moveProfile(currentId, newId);
 
           return {
             accounts: newAccounts,
@@ -97,8 +95,6 @@ export const useAccountStore = create<AccountStore>()(
           delete newAccounts[id];
           useAccountScoreCacheStore.getState().deleteProfileCache(id);
           useAchievementStore.getState().deleteProfile(id);
-          if (useScannerSyncStore.getState().enabledProfileId === id)
-            useScannerSyncStore.getState().setEnabledProfileId(null);
 
           let newActive = state.activeAccountId;
           if (newActive === id) {
@@ -112,7 +108,6 @@ export const useAccountStore = create<AccountStore>()(
       clearAccounts: () => {
         useAccountScoreCacheStore.getState().clearAllScores();
         useAchievementStore.getState().clearAll();
-        useScannerSyncStore.getState().setEnabledProfileId(null);
         set({ accounts: {}, activeAccountId: null });
       },
     }),

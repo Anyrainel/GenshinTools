@@ -1,6 +1,7 @@
-import { Check, Edit2, Plus, Radio, Trash2, User } from "lucide-react";
+import { Check, Edit2, Plus, Trash2, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ContinuousInventorySync } from "@/components/game-account/ContinuousInventorySync";
 import { ImportIcon } from "@/components/shared/importExportIcons";
 import {
   AlertDialog,
@@ -12,7 +13,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -43,7 +43,6 @@ interface AccountManagerDialogProps {
     renamedName?: string
   ) => void;
   onOpenImportControl?: () => void;
-  onOpenContinuousSync?: () => void;
 }
 
 export function AccountManagerDialog({
@@ -52,7 +51,6 @@ export function AccountManagerDialog({
   pendingImport,
   onResolveImport,
   onOpenImportControl,
-  onOpenContinuousSync,
 }: AccountManagerDialogProps) {
   const { t } = useLanguage();
   const accounts = useAccountStore((s) => s.accounts);
@@ -168,7 +166,10 @@ export function AccountManagerDialog({
 
   return (
     <ResponsiveDialog open={isOpen} onOpenChange={(v) => !v && onClose()}>
-      <ResponsiveDialogContent className="md:max-w-md">
+      <ResponsiveDialogContent
+        className="md:max-w-md"
+        closeLabel={t.ui("manager.close")}
+      >
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {isImportMode
@@ -404,21 +405,7 @@ export function AccountManagerDialog({
               {t.ui("accountData.addProfile")}
             </Button>
           )}
-          {!isImportMode && onOpenContinuousSync && (
-            <Button
-              className="h-auto min-h-12 w-full gap-2 whitespace-normal bg-golden py-3 text-golden-foreground hover:bg-golden/90 focus-visible:ring-golden/50"
-              onClick={() => {
-                onClose();
-                onOpenContinuousSync();
-              }}
-            >
-              <Radio className="h-4 w-4" aria-hidden />
-              {t.ui("continuous.title")}
-              <Badge className="bg-golden-foreground/10 text-golden-foreground">
-                {t.ui("continuous.newBadge")}
-              </Badge>
-            </Button>
-          )}
+          {!isImportMode && <ContinuousInventorySync />}
         </div>
 
         {isImportMode && (
