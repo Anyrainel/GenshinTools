@@ -7,6 +7,46 @@ import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 
+test("dependency validation reports an unavailable native parser before checking rules", () => {
+  const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const cwd = mkdtempSync(path.join(tmpdir(), "genshintools-parser-"));
+  const preload = path.join(cwd, "unavailable-parser.cjs");
+  try {
+    writeFileSync(
+      preload,
+      `const Module = require("node:module");
+const load = Module._load;
+Module._load = function(name, ...args) {
+  if (name === "@swc/core") {
+    throw new Error("Native SWC parser unavailable", {
+      cause: new Error("SWC native cache unavailable"),
+    });
+  }
+  return load.call(this, name, ...args);
+};
+`
+    );
+    const result = spawnSync(
+      process.execPath,
+      [
+        "--require",
+        preload,
+        path.join(root, "node_modules/dependency-cruiser/bin/dependency-cruiser.mjs"),
+        "src",
+        "--config",
+        ".dependency-cruiser.cjs",
+      ],
+      { cwd: root, encoding: "utf8" }
+    );
+    assert.notEqual(result.status, 0);
+    assert.match(result.stderr, /Native SWC parser unavailable/);
+    assert.match(result.stderr, /SWC native cache unavailable/);
+    assert.doesNotMatch(result.stderr, /dependency violations/);
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
+});
+
 test("dependency-cruiser rejects representative forbidden imports", () => {
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
   const config = structuredClone(

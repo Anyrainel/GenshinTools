@@ -112,7 +112,7 @@
     "@cloudflare/vitest-plugin": "1.4.0",
     "@msw/cloudflare": "0.2.0",
     "@playwright/test": "1.64.0",
-    "@swc/core": "1.16.18",
+    "@swc/core": "1.16.22",
     "@tailwindcss/vite": "4.3.3",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",

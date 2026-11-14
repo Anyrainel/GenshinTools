@@ -1,3 +1,16 @@
+// Without SWC, dependency-cruiser silently falls back to a JavaScript parser
+// that misreads TypeScript-only imports. Surface the native parser error first.
+try {
+  require("@swc/core").parseFileSync(__filename, { syntax: "ecmascript" });
+} catch (error) {
+  // The CLI otherwise prints only error.message, hiding native loader causes.
+  console.error(
+    "Could not initialize the TypeScript dependency parser:",
+    error
+  );
+  throw error;
+}
+
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [
