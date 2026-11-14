@@ -796,7 +796,7 @@ test.describe("account cloud backup E2E", () => {
         .getByRole("button", { name: "Upload" })
         .click();
       await expect
-        .poll(() => teamAuthorFromHead(page))
+        .poll(() => teamAuthorFromHead(secondPage))
         .toBe("Team author local");
     } finally {
       await secondContext.close();
@@ -1158,16 +1158,9 @@ async function previewManualPlan(
 }
 
 async function teamAuthorFromHead(page: Page): Promise<string | null> {
-  const partitions = (await page.evaluate(() =>
-    window.__ggE2E.readCloudPartitions()
-  )) as Array<{
-    namespace: string;
-    payload: { author?: string };
-  }>;
-  return (
-    partitions.find((partition) => partition.namespace === "teams")?.payload
-      .author ?? null
-  );
+  const payloads = await readCloudPayloadsByPartition(page);
+  const teams = payloads["teams/all"] as { author?: string } | undefined;
+  return teams?.author ?? null;
 }
 
 async function clickBackupAndWaitForHeads(
