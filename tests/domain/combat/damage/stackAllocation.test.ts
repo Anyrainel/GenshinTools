@@ -135,6 +135,7 @@ function makePartEvals(
     stats: postStats,
     charLevel,
     hits: p.hits ?? 1,
+    canReceiveBuff: () => true,
   }));
 }
 
@@ -151,10 +152,32 @@ function makePartEvalsWithStats(
     stats: statsPerPart[i],
     charLevel,
     hits: p.hits ?? 1,
+    canReceiveBuff: () => true,
   }));
 }
 
 describe("computeDefaultActivation", () => {
+  it("does not spend a buff budget on ineligible higher-multiplier parts", () => {
+    const parts = makeParts([
+      { multi: 5, hits: 1 },
+      { multi: 1, hits: 2 },
+    ]);
+    const buff = makeBuffInfo(1);
+    const evals = makePartEvals(
+      parts,
+      new StatSheet([{ key: "baseAtk", value: 800 }])
+    );
+    evals[0].canReceiveBuff = () => false;
+    const single = computeDefaultActivation(evals, [buff], ctx);
+    expect(single[buff.buffKey]).toEqual({ 0: 0, 1: 1 });
+    const combo = computeComboDefaultActivation(
+      [{ partEvals: evals, lineCount: 2 }],
+      [buff],
+      ctx
+    );
+    expect(combo[0][buff.buffKey]).toEqual({ 0: 0, 1: 0.5 });
+  });
+
   it("allocates stacks greedily to highest-damage parts first", () => {
     // 3 parts: high-damage (2 hits), medium (5 hits), low (3 hits)
     // Budget = 5 stacks

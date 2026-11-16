@@ -23,6 +23,7 @@ export type FormulaPartEval = {
   stats: StatSheet;
   charLevel: number;
   hits: number;
+  canReceiveBuff: (buffKey: string) => boolean;
 };
 
 export type StackLimitedBuffInfo = {
@@ -87,7 +88,7 @@ export function computeDefaultActivation(
 
     const gains: GainEntry[] = [];
     for (let idx = 0; idx < partEvals.length; idx++) {
-      if (mults[idx] > 0) {
+      if (mults[idx] > 0 && partEvals[idx].canReceiveBuff(bKey)) {
         gains.push({
           idx,
           marginalPerHit: mults[idx],
@@ -209,7 +210,7 @@ export function computeComboDefaultActivation(
         const totalAvailable = h * lineCount;
         totalHitsAllLines += totalAvailable;
 
-        if (mults[partIdx] > 0) {
+        if (mults[partIdx] > 0 && partEvals[partIdx].canReceiveBuff(bKey)) {
           gains.push({
             idx: lineIdx * maxParts + partIdx,
             marginalPerHit: mults[partIdx],

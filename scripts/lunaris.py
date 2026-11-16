@@ -224,8 +224,6 @@ def fetch_json(url: str) -> dict:
 
 
 def download_icon(url: str, dest: Path) -> None:
-    if dest.exists():
-        return
     dest.parent.mkdir(parents=True, exist_ok=True)
     print(f"  Downloading icon -> {dest.relative_to(PROJECT_ROOT)}")
     resp = requests.get(url, timeout=30)
@@ -1167,6 +1165,14 @@ def main() -> None:
     artifactlist = fetch_json(f"{API_BASE}/{version}/artifactlist.json")
     print(f"  Lunaris has {len(artifactlist)} artifact sets")
 
+    for label, catalog in (
+        ("characters", charlist),
+        ("weapons", weaponlist),
+        ("artifacts", artifactlist),
+    ):
+        if not isinstance(catalog, dict) or not catalog:
+            raise ValueError(f"Empty or invalid {label} catalog; preserving existing beta outputs")
+
     # Find unreleased entries (anything in lunaris but not in resources.ts).
     unreleased_chars = find_unreleased_characters(charlist, obtainable_chars)
     unreleased_weapons = find_unreleased_weapons(weaponlist, obtainable_weapons)
@@ -1183,6 +1189,9 @@ def main() -> None:
     print(f"Found {len(unreleased_artifacts)} unreleased artifact sets:")
     for num_id, derived_id, meta in unreleased_artifacts:
         print(f"  {meta.get('enName', '?')} ({num_id} -> {derived_id})")
+
+    # Do not replace complete local data with a partial fetch after any entity fails.
+    failed_entities: list[str] = []
 
     # Scrape characters
     char_en_data: dict = {}
@@ -1214,8 +1223,10 @@ def main() -> None:
                     download_icon(icon_url, icon_dest)
 
             except requests.HTTPError as e:
+                failed_entities.append(f"character {num_id}: {e}")
                 print(f"    ERROR fetching {num_id}: {e}")
             except Exception as e:
+                failed_entities.append(f"character {num_id}: {e}")
                 print(f"    ERROR processing {num_id}: {e}")
 
     # Scrape weapons
@@ -1256,8 +1267,10 @@ def main() -> None:
                     download_icon(icon_url, icon_dest)
 
             except requests.HTTPError as e:
+                failed_entities.append(f"weapon {num_id}: {e}")
                 print(f"    ERROR fetching {num_id}: {e}")
             except Exception as e:
+                failed_entities.append(f"weapon {num_id}: {e}")
                 print(f"    ERROR processing {num_id}: {e}")
 
     # Scrape artifact sets. Two cases share the loop:
@@ -1321,9 +1334,16 @@ def main() -> None:
                         print(f"    WARN icon missing for {aid} {slot}: {e}")
 
             except requests.HTTPError as e:
+                failed_entities.append(f"artifact {num_id}: {e}")
                 print(f"    ERROR fetching {num_id}: {e}")
             except Exception as e:
+                failed_entities.append(f"artifact {num_id}: {e}")
                 print(f"    ERROR processing {num_id}: {e}")
+
+    if failed_entities:
+        raise RuntimeError(
+            "Beta refresh incomplete; preserving existing outputs:\n" + "\n".join(failed_entities)
+        )
 
     # Resolve every visible beta set before writing outputs. An unknown 2pc
     # effect must fail loudly rather than leave scoring/filter mappings absent.

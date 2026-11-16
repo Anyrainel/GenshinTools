@@ -15,7 +15,7 @@ from models import (
     WeaponSource,
 )
 
-SKIP_EXISTING_IMAGES = True
+SKIP_EXISTING_IMAGES = False
 VALID_ELEMENTS: set[str] = {
     "Pyro",
     "Hydro",
@@ -111,6 +111,7 @@ def download_image(
     skip_existing: bool = SKIP_EXISTING_IMAGES,
     *,
     lossless: bool = False,
+    validate_only: bool = False,
 ) -> bool:
     """Download an image from URL and save as WebP"""
     if skip_existing and os.path.exists(filepath):
@@ -120,14 +121,25 @@ def download_image(
         response = requests.get(url, timeout=30)
         response.raise_for_status()
 
-        os.makedirs(os.path.dirname(filepath), exist_ok=True)
-
         from io import BytesIO
 
         from PIL import Image
 
-        img = Image.open(BytesIO(response.content))
-        img.save(filepath, "WEBP", quality=90, lossless=lossless)
+        # Decode and encode completely before opening the existing asset for writing.
+        # Failed/empty upstream responses must preserve the last valid local image.
+        encoded = BytesIO()
+        with Image.open(BytesIO(response.content)) as img:
+            img.save(encoded, "WEBP", quality=90, lossless=lossless)
+            if validate_only:
+                return True
+            if os.path.exists(filepath):
+                with Image.open(filepath) as existing:
+                    if img.width < existing.width or img.height < existing.height:
+                        print(f"Keeping higher-resolution local artwork: {filepath} ({url})")
+                        return True
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, "wb") as output:
+            output.write(encoded.getvalue())
         return True
     except Exception as e:
         raise RuntimeError(f"Failed to download image {url}: {e}") from e
@@ -148,12 +160,25 @@ class HoyolabAssetManager:
     @staticmethod
     def download_artifact_assets(artifact: ArtifactSource, project_root: str) -> None:
         """Download all artifact slot images"""
+        from PIL import Image
+
         id = generate_id(artifact.name)
         for slot, suffix in ARTIFACT_SUFFIX.items():
             url = artifact.image_urls.get(slot)
             if url:
                 filename = os.path.join(project_root, "public", "artifact", f"{id}{suffix}.webp")
-                download_image(url, filename)
+                # Card images have no slot labels and their order varies by set.
+                if not os.path.isfile(filename):
+                    raise RuntimeError(
+                        f"Cannot acquire artifact slot without reliable identity: {filename}"
+                    )
+                with Image.open(filename) as existing:
+                    existing.verify()
+                download_image(url, filename, skip_existing=False, validate_only=True)
+                print(
+                    "Verified live artifact thumbnail; preserving local slot artwork "
+                    f"(upstream slot identity unavailable): {filename}"
+                )
 
     @staticmethod
     def download_weapon_assets(weapon: WeaponSource, project_root: str) -> bool:

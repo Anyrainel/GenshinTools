@@ -34,6 +34,11 @@ const danicaOption = {
       label: { zh: "女仆·御前护卫", en: "Defense Maid" },
       when: (tm) => tm.characters.length >= 2,
     },
+    {
+      value: "opener",
+      label: { zh: "C2战斗开场", en: "C2 Combat Opener" },
+      when: (tm) => (tm.constellations.danica ?? 0) >= 2,
+    },
   ] as const,
 } satisfies OptionDef;
 
@@ -45,6 +50,7 @@ class Danica extends CharacterBase {
     this.teamMeta
   );
   private readonly defense = this.state === "defense";
+  private readonly opening = this.state === "opener";
   private readonly radianceOn =
     this.teamMeta.getRadianceState(this.charId) === "stellarConduct";
   private readonly hasCoordinatedTrigger = Object.entries(
@@ -109,7 +115,7 @@ class Danica extends CharacterBase {
         )
       );
       if (this.defense) {
-        const c1 = this.constellation >= 1 ? 1.8 : 1;
+        const c1 = this.constellation >= 1 ? 2 : 1;
         buffs.push(
           new ScalingBuff(
             cbs(this, "Q", ["E", "Q"]),
@@ -124,14 +130,14 @@ class Danica extends CharacterBase {
       }
     }
     if (this.constellation >= 2) {
-      // Every character owns seven Toast stacks. Battle Maid consumes her own
-      // whole pool at once; its first-hit and guaranteed refund bonuses are
-      // attached to the corresponding E2 entries below instead.
+      // 7.2.52 ZH grants ten stacks per character. Cleaner's two-stack
+      // consumption is budgeted across its Purge and Burst entries below.
       for (const charId of this.teamMeta.characters) {
-        if (!this.defense && charId === this.charId) continue;
+        const cleaner = !this.defense && charId === this.charId;
+        if (cleaner && this.opening) continue;
         buffs.push(
           new ScalingBuff(
-            { ...cbs(this, "C2", ["E"]), maxStacks: 7 },
+            { ...cbs(this, "C2", ["E"]), maxStacks: cleaner ? 5 : 10 },
             {
               receiver: "team",
               charId,
@@ -140,7 +146,7 @@ class Danica extends CharacterBase {
             [],
             "atk",
             "baseDmg",
-            1
+            cleaner ? 3.5 : 0.8
           )
         );
       }
@@ -154,7 +160,7 @@ class Danica extends CharacterBase {
             receiver: "team",
             filter: { reactions: ["stellarConduct"] },
           },
-          [{ key: "elevated%", value: 0.2 }]
+          [{ key: "elevated%", value: 0.15 }]
         )
       );
       if (this.defense) {
@@ -172,34 +178,17 @@ class Danica extends CharacterBase {
             0.4
           )
         );
-      } else {
-        // Persistent E2 CRIT bonuses must not share the one-use C2 Toast
-        // bespoke overlay: its hit limit would also cut off these bonuses.
-        for (const [key, scale, cap] of [
-          ["reactionCr", 0.00005, 0.1],
-          ["reactionCd", 0.0005, 1],
-        ] as const) {
-          buffs.push(
-            new ScalingBuff(
-              cbs(this, "C6", ["E"]),
-              {
-                receiver: "selfOnField",
-                filter: { abilities: ["skill"], reactions: ["stellarConduct"] },
-              },
-              [],
-              "atk",
-              key,
-              scale,
-              cap
-            )
-          );
-        }
       }
     }
     return buffs;
   })();
 
   protected override get comboDescriptor(): ComboTemplate {
+    if (this.opening)
+      return [
+        { id: "danica-c2-entry", count: 1 },
+        { id: "danica-c2-purge", count: 1 },
+      ];
     if (this.defense)
       return [
         { id: "danica-skill", count: 1 },
@@ -256,6 +245,34 @@ class Danica extends CharacterBase {
       reaction: "none",
     };
     const battleBuffs: StatBuff[] = [];
+    // Only Purge receives C6 CRIT, even when opening Protect is selected
+    // alongside a Cleaner rotation. These buffs have no Toast stack limit.
+    const purgeCrit =
+      this.constellation >= 6 && !this.defense
+        ? (
+            [
+              ["reactionCr", 0.00005, 0.1],
+              ["reactionCd", 0.0005, 1],
+            ] as const
+          ).map(
+            ([key, scale, cap]) =>
+              new ScalingBuff(
+                cbs(this, "C6", ["E"]),
+                {
+                  receiver: "selfOnField",
+                  filter: {
+                    abilities: ["skill"],
+                    reactions: ["stellarConduct"],
+                  },
+                },
+                [],
+                "atk",
+                key,
+                scale,
+                cap
+              )
+          )
+        : [];
     if (this.radianceOn)
       battleBuffs.push(
         new StatBuff(
@@ -270,38 +287,6 @@ class Danica extends CharacterBase {
         )
       );
     // Per-part scopes keep Q's damage bonus exclusive to On-Field E2.
-    const firstToast =
-      this.constellation >= 2
-        ? [
-            new ScalingBuff(
-              {
-                ...cbs(this, "C2", ["E"]),
-                maxStacks: 1,
-              },
-              { receiver: "self", filter: { reactions: ["stellarConduct"] } },
-              [],
-              "atk",
-              "baseDmg",
-              7 * 1.5
-            ),
-          ]
-        : [];
-    const refundToast =
-      this.constellation >= 2
-        ? [
-            new ScalingBuff(
-              {
-                ...cbs(this, "C2", ["E"]),
-                maxStacks: 1,
-              },
-              { receiver: "self", filter: { reactions: ["stellarConduct"] } },
-              [],
-              "atk",
-              "baseDmg",
-              1.5
-            ),
-          ]
-        : [];
     return {
       // The active Anchor replaces NAs and prevents CA/plunge. Keep these
       // base actions for use outside the Anchor window.
@@ -360,25 +345,21 @@ class Danica extends CharacterBase {
       },
       "danica-e2-first": {
         label: { zh: "荡除之志·首次", en: "On-Field E2 (First)" },
-        when: !this.defense,
+        when: !this.defense && !this.opening,
         parts: [
           {
             formula: new StellarDirectFormula(this.param("E", 3), stellarSkill),
-            bespokeBuffs: [...battleBuffs, ...firstToast],
+            bespokeBuffs: [...battleBuffs, ...purgeCrit],
           },
         ],
       },
       "danica-e2-battle": {
         label: { zh: "荡除之志·后续", en: "On-Field E2 (Later)" },
-        when: !this.defense,
+        when: !this.defense && !this.opening,
         parts: [
           {
             formula: new StellarDirectFormula(this.param("E", 3), stellarSkill),
-            bespokeBuffs: [
-              ...battleBuffs,
-              // In Radiance the intervening Q consumes the one-stack refund.
-              ...(!this.radianceOn ? refundToast : []),
-            ],
+            bespokeBuffs: [...battleBuffs, ...purgeCrit],
           },
         ],
       },
@@ -390,6 +371,59 @@ class Danica extends CharacterBase {
           {
             formula: new DirectFormula(this.param("E", 4), skill),
             offField: true,
+          },
+        ],
+      },
+      // Optional once-per-combat opener. These are separate actions from the
+      // ordinary Purge; existing authored rotations keep their action units.
+      "danica-c2-entry": {
+        label: { zh: "C2开场·护持之志", en: "C2 Combat Entry: Protect" },
+        minC: 2,
+        when: this.opening,
+        parts: [
+          {
+            formula: new StellarDirectFormula(this.param("E", 2), stellarSkill),
+            // Defense's regular pool already supplies ordinary one-stack Toast.
+            bespokeBuffs: !this.defense
+              ? [
+                  new ScalingBuff(
+                    cbs(this, "C2", ["E"]),
+                    {
+                      receiver: "self",
+                      filter: { reactions: ["stellarConduct"] },
+                    },
+                    [],
+                    "atk",
+                    "baseDmg",
+                    0.8
+                  ),
+                ]
+              : [],
+          },
+        ],
+      },
+      "danica-c2-purge": {
+        label: { zh: "C2清扫御令·荡除之志", en: "C2 Cleaning Order: Purge" },
+        minC: 2,
+        when: this.opening,
+        parts: [
+          {
+            formula: new StellarDirectFormula(this.param("E", 3), stellarSkill),
+            bespokeBuffs: [
+              ...purgeCrit,
+              // This once-per-combat long-press Purge explicitly resets Toast.
+              new ScalingBuff(
+                cbs(this, "C2", ["E"]),
+                { receiver: "self", filter: { reactions: ["stellarConduct"] } },
+                [],
+                "atk",
+                "baseDmg",
+                3.5
+              ),
+              new StatBuff(cbs(this, "C2", ["E"]), { receiver: "self" }, [
+                { key: "baseDmg%", value: 0.5 },
+              ]),
+            ],
           },
         ],
       },
@@ -419,9 +453,6 @@ class Danica extends CharacterBase {
                   ...burst,
                   reaction: "stellarConduct",
                 }),
-                ...(!this.defense && param === 2
-                  ? { bespokeBuffs: refundToast }
-                  : {}),
               }))
             : []),
         ],
@@ -480,7 +511,7 @@ class Anastasya extends CharacterBase {
           receiver: "team",
           filter: { reactions: ["stellarSwirl"] },
         },
-        [{ key: "reactionCoeff%", value: 0.15 }]
+        [{ key: "reactionCoeff%", value: 0.1 }]
       ),
     ];
     if (this.teamMeta.hasPolestarField())
@@ -495,14 +526,14 @@ class Anastasya extends CharacterBase {
         )
       );
     // P2 raises newly created Vortices to level 2, which the reaction engine
-    // already uses for peak damage. 7.2.51 gives no Polestar enhancement value.
+    // already uses for peak damage. 7.2.52 still gives no Polestar enhancement value.
     const count = this.teamMeta.characters.length;
     for (const charId of this.teamMeta.characters) {
       const isSelf = charId === this.charId;
       const donor = this.sealed && (this.love ? isSelf : !isSelf);
       let accolades = donor && this.constellation < 1 ? 0 : 1;
       if (this.sealed && this.love && !isSelf)
-        accolades += (this.constellation >= 1 ? 3 : 1) / (count - 1);
+        accolades += this.constellation >= 1 ? 3 : 1 / (count - 1);
       if (this.sealed && !this.love && isSelf) accolades += count - 1;
       if (accolades === 0) continue;
       const magnitude = accolades * this.accoladeScale;
@@ -566,7 +597,7 @@ class Anastasya extends CharacterBase {
               receiver: "team",
               filter: { reactions: ["stellarConduct", "stellarSwirl"] },
             },
-            [{ key: "reactionCd", value: 0.6 }]
+            [{ key: "reactionCd", value: 0.5 }]
           )
         );
     }
@@ -657,8 +688,8 @@ class Anastasya extends CharacterBase {
             ),
           ]
         : [];
-    // Honor's C6 Elevation expires when the other characters are unsealed,
-    // before the regular Doom sequence. C2's original-DMG bonus persists.
+    // 7.2.52 ZH places Honor's Elevation after the seal-expiry clause;
+    // it lasts through the ordinary Doom sequence as well.
     const normalBuffs = [...c2Honor, ...c6Honor];
     const c6Accolades =
       this.constellation >= 6 && !this.sealed
@@ -836,7 +867,7 @@ class Anastasya extends CharacterBase {
           {
             formula: new DirectFormula(this.param("Q", 9), skill),
             hits: 5,
-            bespokeBuffs: c2Honor,
+            bespokeBuffs: normalBuffs,
           },
           {
             formula: new StellarDirectFormula(
@@ -846,7 +877,7 @@ class Anastasya extends CharacterBase {
               ),
               stellarSkill
             ),
-            bespokeBuffs: c2Honor,
+            bespokeBuffs: normalBuffs,
           },
         ],
       },
@@ -862,7 +893,7 @@ class Anastasya extends CharacterBase {
               ),
               stellarSkill
             ),
-            bespokeBuffs: c2Honor,
+            bespokeBuffs: normalBuffs,
           },
         ],
       },
@@ -878,7 +909,7 @@ class Anastasya extends CharacterBase {
               ),
               stellarSkill
             ),
-            bespokeBuffs: c2Honor,
+            bespokeBuffs: normalBuffs,
           },
         ],
       },
@@ -895,7 +926,7 @@ class Anastasya extends CharacterBase {
             offField: true,
             bespokeBuffs: [
               new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
-                { key: "baseDmg%", value: 1.5 },
+                { key: "baseDmg%", value: 1 },
               ]),
             ],
           },
@@ -918,7 +949,7 @@ class Anastasya extends CharacterBase {
               ...normalBuffs,
               ...c6Accolades,
               new StatBuff(cbs(this, "C6", ["E"]), { receiver: "self" }, [
-                { key: "baseDmg%", value: 1 },
+                { key: "baseDmg%", value: 1.5 },
               ]),
             ],
           },

@@ -32,9 +32,15 @@ beforeAll(() =>
 );
 
 function danica(constellation = 0, mode = "battle", ids = ["danica", "kaeya"]) {
-  return createCharacter("danica", 90, constellation, new TeamMeta(ids), {
-    danica: mode,
-  });
+  return createCharacter(
+    "danica",
+    90,
+    constellation,
+    new TeamMeta(ids, { danica: constellation }),
+    {
+      danica: mode,
+    }
+  );
 }
 
 function anastasya(
@@ -210,31 +216,57 @@ describe("Danica 7.2 beta", () => {
       q.dynamicBuffs(new StatSheet([{ key: "baseAtk", value: 10000 }]), [
         atk2000,
       ])[0]
-    ).toEqual({ key: "atk", value: 900 });
+    ).toEqual({ key: "atk", value: 800 });
+  });
+
+  it("exposes the once-per-combat C2 opener without changing ordinary Purge units", () => {
+    expect(danica(0).formulaIds).not.toHaveProperty("danica-c2-purge");
+    const character = danica(2, "opener");
+    const opener = character.getFormulaEntry("danica-c2-purge")!.parts[0];
+    const ordinary = danica(2).getFormulaEntry("danica-e2-first")!.parts[0];
+    expect(opener.formula.talentMultiplier).toBe(
+      ordinary.formula.talentMultiplier
+    );
+    expect(
+      opener.bespokeBuffs!.flatMap((buff) => buff.staticBuffs)
+    ).toContainEqual({
+      key: "baseDmg%",
+      value: 0.5,
+    });
+    expect(danica(2, "defense").formulaIds).not.toHaveProperty(
+      "danica-c2-entry"
+    );
+    expect(character.combo["danica-c2-purge"]).toBe(1);
+    expect(danica(0, "opener").formulaIds).not.toHaveProperty(
+      "danica-c2-purge"
+    );
+    const pools = danica(2, "defense").buffs.filter(
+      (buff) => buff.source.origin === "C2"
+    );
+    expect(pools).toHaveLength(2);
+    expect(pools.every((buff) => buff.source.maxStacks === 10)).toBe(true);
+    expect(pools[0].dynamicBuffs(atk2000, [atk2000])).toEqual([
+      { key: "baseDmg", value: 1600 },
+    ]);
   });
 
   it("limits individual Toast pools and scopes battle CRIT bonuses to E2", () => {
     const character = danica(6);
     const toast = character.buffs.filter((buff) => buff.source.origin === "C2");
-    expect(toast).toHaveLength(1);
-    expect(toast[0].target.charId).toBe("kaeya");
-    expect(toast[0].source.maxStacks).toBe(7);
+    expect(toast).toHaveLength(2);
+    const ownToast = toast.find((buff) => buff.target.charId === "danica")!;
+    expect(ownToast.source.maxStacks).toBe(5);
+    expect(
+      toast.find((buff) => buff.target.charId === "kaeya")!.source.maxStacks
+    ).toBe(10);
     const first =
       character.getFormulaEntry("danica-e2-first")!.parts[0].bespokeBuffs!;
     const next =
       character.getFormulaEntry("danica-e2-battle")!.parts[0].bespokeBuffs!;
-    expect(
-      first
-        .find((buff) => buff.source.origin === "C2")!
-        .dynamicBuffs(atk2000, [atk2000])
-    ).toEqual([{ key: "baseDmg", value: 21000 }]);
-    expect(
-      character
-        .getFormulaEntry("danica-burst")!
-        .parts[3].bespokeBuffs!.find((buff) => buff.source.origin === "C2")!
-        .dynamicBuffs(atk2000, [atk2000])
-    ).toEqual([{ key: "baseDmg", value: 3000 }]);
-    const persistentCrit = character.buffs.filter(
+    expect(ownToast.dynamicBuffs(atk2000, [atk2000])).toEqual([
+      { key: "baseDmg", value: 7000 },
+    ]);
+    const persistentCrit = first.filter(
       (buff) => buff instanceof ScalingBuff && buff.source.origin === "C6"
     );
     expect(
@@ -279,10 +311,96 @@ describe("Danica 7.2 beta", () => {
     ).toBe(true);
     expect(
       character.buffs.find((buff) => buff.source.origin === "C6")!.staticBuffs
-    ).toEqual([{ key: "elevated%", value: 0.2 }]);
+    ).toEqual([{ key: "elevated%", value: 0.15 }]);
   });
 
-  it("retains C6 CRIT on all four later E2 casts while refunding Toast exactly once in numeric and compiled combos", () => {
+  it.each([2, 6])(
+    "calculates C%s opening Protect and Purge in their own phases",
+    (constellation) => {
+      const context: CalcContext = {
+        enemyLevel: 100,
+        enemyRes: 0.1,
+        rollMultiplier: 1,
+        substatBudget: "8_6",
+      };
+      const build = new TeamBuild(
+        [
+          {
+            charId: "danica",
+            charLevel: 90,
+            constellation,
+            weaponId: "favonius_greatsword",
+            refinement: 1,
+            artifactSet: null,
+          },
+        ],
+        { danica: "opener" }
+      );
+      const sheets = { danica: new StatSheet([]) };
+      build.teamStats.setArtifacts(sheets, context);
+      const stats = build.teamStats.getPostStats("danica", "danica");
+      const attack = stats.get("atk", null);
+      const protect =
+        build.catalog.formulaIndex.get("danica-c2-entry")!.parts[0];
+      const purge = build.catalog.formulaIndex.get("danica-c2-purge")!.parts[0];
+      expect(
+        protect.bespokeBuffs!.some((buff) => buff.source.origin === "C6")
+      ).toBe(false);
+      const expected =
+        protect.formula.calc(
+          stats.merge(new StatSheet([{ key: "baseDmg", value: attack * 0.8 }])),
+          90,
+          context
+        ) +
+        purge.formula.calc(
+          stats.merge(
+            new StatSheet([
+              { key: "baseDmg", value: attack * 3.5 },
+              { key: "baseDmg%", value: 0.5 },
+              {
+                key: "reactionCr",
+                value: constellation >= 6 ? Math.min(attack * 0.00005, 0.1) : 0,
+              },
+              {
+                key: "reactionCd",
+                value: constellation >= 6 ? Math.min(attack * 0.0005, 1) : 0,
+              },
+            ])
+          ),
+          90,
+          context
+        );
+      const combo = singleFormulaCombo("danica", "danica-c2-entry");
+      combo.lines.push({
+        charId: "danica",
+        formulaId: "danica-c2-purge",
+        count: 1,
+      });
+      const numeric = build.getComboDamageResult(
+        combo,
+        sheets,
+        context
+      ).totalDamage;
+      const compiled = compileComboTeamDamage(
+        build,
+        combo,
+        "danica",
+        sheets,
+        context
+      );
+      const vars = new Float64Array(compiled.numVars);
+      fillVarsFromSheet(
+        sheets.danica,
+        compiled.varMapping,
+        compiled.charIdxMap!.get("danica")!,
+        vars
+      );
+      expect(numeric).toBeCloseTo(expected, 6);
+      expect(compiled.evaluate(vars)).toBeCloseTo(expected, 6);
+    }
+  );
+
+  it("shares ten Toast across five double-stack hits while retaining C6 CRIT in numeric and compiled combos", () => {
     const context: CalcContext = {
       enemyLevel: 100,
       enemyRes: 0.1,
@@ -299,10 +417,18 @@ describe("Danica 7.2 beta", () => {
           refinement: 1,
           artifactSet: null,
         },
+        {
+          charId: "kaeya",
+          charLevel: 90,
+          constellation: 0,
+          weaponId: "favonius_sword",
+          refinement: 1,
+          artifactSet: null,
+        },
       ],
       { danica: "battle" }
     );
-    const empty = { danica: new StatSheet([]) };
+    const empty = { danica: new StatSheet([]), kaeya: new StatSheet([]) };
     build.teamStats.setArtifacts(empty, context);
     const baseAtk = build.teamStats
       .getPostStats("danica", "danica")
@@ -312,17 +438,17 @@ describe("Danica 7.2 beta", () => {
         { key: "atk", value: 2000 - baseAtk },
         { key: "cr", value: 0.15 },
       ]),
+      kaeya: new StatSheet([]),
     };
     build.teamStats.setArtifacts(sheets, context);
-    const c6Crit = build.buffLedger.allBuffs.filter(
+    const ownToast = build.buffLedger.allBuffs.filter(
       ({ buff }) =>
         buff.source.id === "danica" &&
-        buff.source.origin === "C6" &&
-        buff instanceof ScalingBuff &&
-        ["reactionCr", "reactionCd"].includes(buff.outputKey)
+        buff.source.origin === "C2" &&
+        buff.target.charId === "danica"
     );
     const excluded = new Set(
-      c6Crit.map(({ buff, providerCharId }) =>
+      ownToast.map(({ buff, providerCharId }) =>
         getBuffInstanceKey(buff, providerCharId)
       )
     );
@@ -331,33 +457,45 @@ describe("Danica 7.2 beta", () => {
     const tag = entry.parts[0].formula.tag;
     expect(base.get("atk", tag)).toBeCloseTo(2000);
     expect(base.get("cr", tag)).toBeCloseTo(0.2);
-    // Independent source reference: every cast receives +10% CR and +100% CD;
-    // only one consumes the one-stack refund worth 150% of 2000 ATK.
+    // 7.2.52 ZH: ten Toast pay for five double-stack hits, each receiving a
+    // single 350% ATK bonus. C6 CRIT persists after that budget is exhausted.
     const crit = base.merge(
       new StatSheet([
         { key: "cr", value: 0.1 },
         { key: "cd", value: 1 },
+        ...entry.parts[0]
+          .bespokeBuffs!.filter((buff) => buff.source.origin === "Q")
+          .flatMap((buff) => buff.staticBuffs),
       ])
     );
     const refunded = crit.merge(
-      new StatSheet([{ key: "baseDmg", value: 3000 }])
+      new StatSheet([{ key: "baseDmg", value: 7000 }])
     );
     const expected =
-      entry.parts[0].formula.calc(crit, 90, context) * 3 +
-      entry.parts[0].formula.calc(refunded, 90, context);
+      entry.parts[0].formula.calc(refunded, 90, context) * 5 +
+      entry.parts[0].formula.calc(crit, 90, context);
     const combo = singleFormulaCombo("danica", "danica-e2-battle");
-    combo.lines[0].count = 4;
+    combo.lines[0].count = 6;
+    const activations = build.computeComboPartialBuffSpecs(
+      combo.lines,
+      sheets,
+      context
+    )!;
     const numeric = build.getComboDamageResult(
       combo,
       sheets,
-      context
+      context,
+      activations
     ).totalDamage;
     const compiled = compileComboTeamDamage(
       build,
       combo,
       "danica",
       sheets,
-      context
+      context,
+      Object.fromEntries(
+        Object.entries(activations).map(([i, value]) => [`line:${i}`, value])
+      )
     );
     const vars = new Float64Array(compiled.numVars);
     fillVarsFromSheet(
@@ -369,9 +507,79 @@ describe("Danica 7.2 beta", () => {
     expect(numeric).toBeCloseTo(expected, 6);
     expect(compiled.evaluate(vars)).toBeCloseTo(expected, 6);
     expect(numeric).toBeGreaterThan(0);
+    // The real starter has five Purges plus two Stellar Burst hits sharing
+    // this same ten-stack pool. Check its total against five marginal bonuses.
+    const starter = singleFormulaCombo("danica", "danica-e2-first");
+    starter.lines.push(
+      { charId: "danica", formulaId: "danica-burst", count: 1 },
+      { charId: "danica", formulaId: "danica-e2-battle", count: 4 }
+    );
+    let unbuffed = 0;
+    const gains: number[] = [];
+    for (const line of starter.lines) {
+      for (const part of build.catalog.formulaIndex.get(line.formulaId)!
+        .parts) {
+        const overlay = (part.bespokeBuffs ?? []).flatMap((buff) => [
+          ...buff.staticBuffs,
+          ...buff.dynamicBuffs(base, Object.values(sheets)),
+        ]);
+        const stats = base.merge(new StatSheet(overlay));
+        const hits = line.count * (part.hits ?? 1);
+        const without = part.formula.calc(stats, 90, context);
+        unbuffed += hits * without;
+        if (part.formula.tag.reaction === "stellarConduct") {
+          const withToast = part.formula.calc(
+            stats.merge(new StatSheet([{ key: "baseDmg", value: 7000 }])),
+            90,
+            context
+          );
+          gains.push(...Array(hits).fill(withToast - without));
+        }
+      }
+    }
+    expect(gains).toHaveLength(7);
+    const starterExpected =
+      unbuffed +
+      gains
+        .sort((a, b) => b - a)
+        .slice(0, 5)
+        .reduce((sum, gain) => sum + gain, 0);
+    const starterActivation = build.computeComboPartialBuffSpecs(
+      starter.lines,
+      sheets,
+      context
+    )!;
+    const starterCompiled = compileComboTeamDamage(
+      build,
+      starter,
+      "danica",
+      sheets,
+      context,
+      Object.fromEntries(
+        Object.entries(starterActivation).map(([i, value]) => [
+          `line:${i}`,
+          value,
+        ])
+      )
+    );
+    const starterVars = new Float64Array(starterCompiled.numVars);
+    fillVarsFromSheet(
+      sheets.danica,
+      starterCompiled.varMapping,
+      starterCompiled.charIdxMap!.get("danica")!,
+      starterVars
+    );
+    expect(
+      build.getComboDamageResult(starter, sheets, context, starterActivation)
+        .totalDamage
+    ).toBeCloseTo(starterExpected, 6);
+    expect(starterCompiled.evaluate(starterVars)).toBeCloseTo(
+      starterExpected,
+      6
+    );
     const resolved = build.teamStats.getPostStats("danica", "danica");
-    expect(resolved.get("reactionCr", tag)).toBeCloseTo(0.1);
-    expect(resolved.get("reactionCd", tag)).toBeCloseTo(1);
+    expect(resolved.get("reactionCr", tag)).toBe(0);
+    expect(resolved.get("reactionCd", tag)).toBe(0);
     // The same inherent reaction on Q must still fail the Skill-only scope.
     expect(resolved.get("reactionCr", { ...tag, ability: "burst" })).toBe(0);
     expect(resolved.get("reactionCd", { ...tag, ability: "burst" })).toBe(0);
@@ -450,7 +658,7 @@ describe("Anastasya 7.2 beta", () => {
     expect(
       character.getFormulaEntry("anastasya-honor-n1")!.parts[0].formula
         .talentMultiplier
-    ).toBeCloseTo(0.7058, 4);
+    ).toBeCloseTo(0.9286, 4);
     expect(
       character.getFormulaEntry("anastasya-q-honor")!.parts[0].formula
         .talentMultiplier
@@ -458,7 +666,7 @@ describe("Anastasya 7.2 beta", () => {
     const doom = character.getFormulaEntry("anastasya-doom-1")!.parts;
     expect(doom[0].hits).toBe(5);
     expect(doom[0].formula.talentMultiplier).toBeCloseTo(0.481, 3);
-    expect(doom[1].formula.talentMultiplier).toBeCloseTo(1.202, 3);
+    expect(doom[1].formula.talentMultiplier).toBeCloseTo(2.004, 3);
     expect(doom.every((part) => part.formula.tag.ability === "skill")).toBe(
       true
     );
@@ -473,9 +681,9 @@ describe("Anastasya 7.2 beta", () => {
     expect(accolade(honor0, "kaeya", "cd")).toBe(0);
     const love1 = anastasya(1);
     expect(accolade(love1, "anastasya", "cd")).toBeCloseTo(0.12);
-    expect(accolade(love1, "kaeya", "atk%")).toBeCloseTo(0.3);
-    expect(accolade(love1, "fischl", "em")).toBe(120);
-    expect(accolade(anastasya(4), "fischl", "em")).toBe(156);
+    expect(accolade(love1, "kaeya", "atk%")).toBeCloseTo(0.6);
+    expect(accolade(love1, "fischl", "em")).toBe(240);
+    expect(accolade(anastasya(4), "fischl", "em")).toBe(312);
     const unsealed = anastasya(0, "love-unsealed");
     expect(accolade(unsealed, "anastasya", "cd")).toBeCloseTo(0.12);
     expect(accolade(unsealed, "fischl", "cd")).toBeCloseTo(0.12);
@@ -501,7 +709,7 @@ describe("Anastasya 7.2 beta", () => {
       doom.every((part) =>
         part
           .bespokeBuffs!.flatMap((buff) => buff.staticBuffs)
-          .every((entry) => entry.key !== "elevated%")
+          .some((entry) => entry.key === "elevated%" && entry.value === 0.2)
       )
     ).toBe(true);
     const low = anastasya(0, "honor-sealed");
@@ -538,7 +746,7 @@ describe("Anastasya 7.2 beta", () => {
     const character = anastasya();
     expect(
       character.buffs.find((buff) => buff.source.origin === "P2")!.staticBuffs
-    ).toEqual([{ key: "reactionCoeff%", value: 0.15 }]);
+    ).toEqual([{ key: "reactionCoeff%", value: 0.1 }]);
     expect(
       character.buffs
         .find(

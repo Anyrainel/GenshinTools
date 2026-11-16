@@ -229,69 +229,16 @@
     implementation. The current marker supplies the ordinary field effect but
     cannot represent this additional enhancement.
   detail: >
-    Both locales in 7.2.50 live char/10000149.json P2 say the field is further
-    enhanced each time it grants a buff and creating a Starlight Prism immediately
-    grants a field buff. ZH says 极星辉域每次给予增益效果时，使其进一步提升. The raw P2
-    parameter list contains only 1.0 (the Vortex level-up cooldown) and 0.15 (the
-    Stellar Swirl base reaction coefficient bonus), so it supplies no amount or
-    replacement field table for the further enhancement. Do not invent a numeric
-    value. Obtain a later source or ability/buff configuration defining that change;
-    the faster field ramp alone is already subsumed by the existing peak field model.
-
-    The 7.2.51 triage leaves this open. Both live locales retain the same P2
-    text and parameters, and the updated glossary supplies no field values.
-    The 15% coefficient still applies specifically to Stellar Swirl. Resolving
-    the Stellar-Conduct clause requires an ability configuration or controlled
-    measurements of the affected field stat, its progression by application
-    count, and its cap. Those values would establish whether the enhancement
-    changes peak field magnitude or only how quickly it is reached.
-    https://api.lunaris.moe/data/version.json
-    https://api.lunaris.moe/data/7.2.50/chs/char/10000149.json
-    https://api.lunaris.moe/data/7.2.50/en/char/10000149.json
-    https://api.lunaris.moe/data/7.2.51/chs/char/10000149.json
-    https://api.lunaris.moe/data/7.2.51/en/char/10000149.json
-
-- id: danica-battle-coordinated-gate
-  entity: danica
-  rule: U12
-  status: completed
-  category: bug
-  summary: >
-    Anchor coordinated attacks are unavailable in Battle Maid mode, although the
-    skill grants them whenever Danica is off-field and the active teammate hits
-    with Cryo or Electro. Choosing Battle Maid does not remove this Anchor effect.
-  detail: >
-    character5Snezhnaya.ts L394 gates danica-coordinated on this.defense as well
-    as hasCoordinatedTrigger. Current bundled E and live 7.2.50 ZH elementalskill
-    specify only Anchor presence, Danica being off-field, an active teammate's
-    Cryo/Electro hit and the 1.5-second cooldown. Battle Maid forbids Entry E2,
-    not coordinated attacks, and its hyperlinks do not end the Anchor on swap;
-    the fifth On-Field E2 destroys it. C4 explicitly destroys only the Battle
-    shield when leaving the field. Thus a Battle Danica who swaps out before
-    that fifth E2 should retain this enabled offField formula. Keep the teammate
-    element gate and offField flag. The default on-field Battle rotation can
-    retain zero coordinated hits; no fixed count is inferred for optional swaps.
-    beta73Characters.test.ts L93 currently asserts the formula is absent in
-    Battle mode, so its expectation should be revised when implementing the fix.
-    Verify both Battle options with a Cryo/Electro teammate, the existing Defense
-    positive, and a Battle team without a qualifying teammate as a negative.
-    https://api.lunaris.moe/data/7.2.50/chs/char/10000147.json
-
-    The 7.2.51 ZH skill and Maid Form glossary N11470004 confirm this behavior.
-    The fifth Battle E2 destroys the Anchor. Before then, a swap can leave the
-    Anchor active while an active teammate lands a Cryo or Electro hit. Expose
-    the off-field coordinated formula in both Battle options with a qualifying
-    teammate, respecting the existing 1.5-second trigger cooldown. The default
-    Battle rotation stays on field and counts zero coordinated attacks. The
-    separate Defense Entry E2 gate continues to govern form entry.
-    https://api.lunaris.moe/data/7.2.51/chs/char/10000147.json
-
-    Implemented 2026-11-09. The coordinated hit is available in both forms
-    when another Cryo or Electro character can trigger it. Its off-field
-    classification, talent parameter, and per-hit formula ID are preserved.
-    The default Battle combo has zero coordinated hits, since it assumes Danica
-    stays on field. Both Battle options and the teammate gate are covered by
-    regressions. Type-check and focused tests pass.
+    Rechecked 7.2.52 CHS on 2026-11-16. P2 still says 极星辉域每次给予增益效果时，
+    使其进一步提升, but provides no amount, progression or cap. Its raw params
+    are 1.0 (Vortex level-up cooldown), 0.10 (the now-reduced Stellar Swirl base
+    coefficient bonus), then zeros. The changed 10% value belongs specifically
+    to Stellar Swirl and cannot supply the missing Stellar-Conduct field value.
+    Keep this open for an ability/buff configuration or controlled measurements
+    defining which field stat increases, its amount per application and cap.
+    Faster ramp alone remains subsumed by the existing peak-field model; do not
+    invent a numeric magnitude for the additional enhancement.
+    https://api.lunaris.moe/data/7.2.52/chs/char/10000149.json
 
 - id: vesna-c6-final-transpose-c1-bonus
   entity: vesna
@@ -374,40 +321,3 @@
     changed default lines, counts or formula action units require the full
     persisted combo/investment migration and cache invalidation described in
     S3, including existing saved teams, imports and cloud snapshots.
-
-- id: danica-c2-toast-stack-scaling
-  entity: danica
-  rule: U0b
-  status: open
-  category: needs-data
-  summary: >
-    The 7.2.51 Chinese C2 description no longer specifies whether each Toast
-    stack consumed by Battle Maid contributes a separate 150% ATK damage bonus.
-    The calculator still uses the earlier per-stack interpretation.
-  detail: >
-    In 7.2.50 Chinese, Battle Maid consumed all Toast and explicitly granted
-    the 150% ATK increase per stack (每层都会). The 7.2.51 Chinese still consumes
-    all Toast but drops 每层 and uses 提升至 instead of 提升值 for both the regular
-    100% and Battle 150% clauses. The 7.2.51 English still explicitly grants a
-    separate increase per stack. Both versions and locales have identical raw
-    constellations.const2.params of [7, 6, 1, 1.5, 0, 0, 0, 0, 0, 0].
-
-    The updated Chinese establishes the seven-stack grant, refund threshold,
-    and full-pool consumption but leaves the calculation for multiple stacks
-    ambiguous. Danica's first Battle E2 currently adds 7 × 150% ATK as flat
-    base damage, and its one-stack refund adds 150%. Obtain ability configuration
-    or compare otherwise identical Battle hits with one and seven Toast stacks
-    at the same ATK to establish whether the damage increase scales with the
-    number consumed. The raw numeric array does not resolve that distinction.
-
-    The 7.2.51 triage leaves this open. Chinese remains authoritative for the
-    current beta, but the omission of the per-stack phrase supplies no explicit
-    replacement calculation for a multi-stack hit. English still describes
-    per-stack scaling, and both raw parameter arrays retain the same 150% value
-    without binding it to stack count. The required evidence is the damage
-    modifier's stack binding in the ability configuration or the flat damage
-    difference between controlled one-stack and seven-stack hits. Retain the
-    earlier interpretation provisionally pending that evidence.
-    https://api.lunaris.moe/data/7.2.50/chs/char/10000147.json
-    https://api.lunaris.moe/data/7.2.51/chs/char/10000147.json
-    https://api.lunaris.moe/data/7.2.51/en/char/10000147.json

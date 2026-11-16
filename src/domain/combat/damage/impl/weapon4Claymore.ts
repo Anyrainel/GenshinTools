@@ -6,12 +6,11 @@ import { ALL_ELEMENTAL_FILTER, r, royalSeriesOption, wbs } from "./helpers";
 
 @RegisterWeapon("blazing_lionfang")
 class BlazingLionfang extends WeaponBase {
-  // Broken Sword Reforged is gained after 5 cumulative off-field seconds and
-  // lasts until 10 cumulative on-field seconds. Peak combat keeps the effect;
+  // Rekindled Spark is gained after at least 5 off-field seconds and
+  // lasts until more than 10 on-field seconds. Peak combat keeps the effect;
   // the ATK bonus persists on entry, so its receiver is self, not selfOffField.
   // Entry also deals 280/350/420/490/560% ATK Physical AoE (14s cooldown).
-  // WeaponBase currently cannot provide damage formulas; that proc remains
-  // an explicit weapon-proc engine gap rather than a bonus to an unrelated hit.
+  // Standalone weapon Physical damage is outside the calculator's scope.
   readonly buffs = [
     new StatBuff(wbs(this, ["off-field"]), { receiver: "self" }, [
       {

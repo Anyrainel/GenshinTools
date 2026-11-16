@@ -51,6 +51,7 @@ import {
   type StackLimitedBuffInfo,
 } from "./stackRank";
 import {
+  buildBespokeOverlay,
   CrossScalingBuff,
   createExtraStatBuffs,
   deduplicateBuffs,
@@ -329,12 +330,36 @@ export class TeamBuild {
       return s;
     };
 
-    return entry.parts.map((part, i) => ({
-      formula: part.formula,
-      stats: getStatsFor(onFieldCharIds[i])[charId]!,
-      charLevel,
-      hits: part.hits ?? 1,
-    }));
+    return entry.parts.map((part, i) => {
+      const statsCharId = part.statsCharId ?? charId;
+      const teamStats = getStatsFor(onFieldCharIds[i]);
+      const base = teamStats[statsCharId]!;
+      const eligible = new Set(
+        this.buffLedger
+          .getApplicable(statsCharId, onFieldCharIds[i])
+          .filter(
+            ({ buff }) =>
+              !buff.target.filter ||
+              filterMatchesTag(buff.target.filter, part.formula.tag)
+          )
+          .map(({ buffKey }) => buffKey)
+      );
+      return {
+        formula: part.formula,
+        stats: part.bespokeBuffs?.length
+          ? base.merge(
+              buildBespokeOverlay(
+                part.bespokeBuffs,
+                base,
+                Object.values(teamStats)
+              )
+            )
+          : base,
+        charLevel,
+        hits: part.hits ?? 1,
+        canReceiveBuff: (buffKey) => eligible.has(buffKey),
+      };
+    });
   }
 
   /**

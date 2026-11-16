@@ -5,7 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
 
@@ -155,7 +155,7 @@ class LunarisWeaponLocaleTests(unittest.TestCase):
                 if url.endswith("version.json"):
                     return {"version": "7.2.50"}
                 if url.endswith(("charlist.json", "artifactlist.json")):
-                    return {}
+                    return {"ignored": {}}
                 if url.endswith("weaponlist.json"):
                     return {
                         numeric_id: {
@@ -194,6 +194,115 @@ class LunarisWeaponLocaleTests(unittest.TestCase):
             self.assertEqual(download.call_count, 2)
 
 
+class LunarisRefreshFailureTests(unittest.TestCase):
+    def test_existing_artwork_refreshes_and_failed_download_preserves_old_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            icon = root / "existing.webp"
+            icon.write_bytes(b"old artwork")
+            response = Mock(content=b"updated artwork")
+            with (
+                patch.object(lunaris, "PROJECT_ROOT", root),
+                patch.object(lunaris.requests, "get", return_value=response),
+            ):
+                lunaris.download_icon("https://example.com/art.webp", icon)
+                self.assertEqual(icon.read_bytes(), b"updated artwork")
+                response.raise_for_status.side_effect = lunaris.requests.HTTPError(
+                    "404"
+                )
+                with self.assertRaises(lunaris.requests.HTTPError):
+                    lunaris.download_icon("https://example.com/art.webp", icon)
+                self.assertEqual(icon.read_bytes(), b"updated artwork")
+
+    def test_empty_or_invalid_catalog_does_not_publish_an_empty_refresh(self):
+        for invalid in ({}, [], "unavailable"):
+            with (
+                self.subTest(invalid=invalid),
+                patch.object(sys, "argv", ["lunaris.py", "--version", "test"]),
+                patch.object(lunaris, "cleanup_beta_files"),
+                patch.object(lunaris, "fetch_json", return_value=invalid),
+                patch.object(lunaris, "save_json_minified") as save,
+                patch.object(lunaris, "find_unreleased_characters") as find,
+            ):
+                with self.assertRaisesRegex(
+                    ValueError, "Empty or invalid characters catalog"
+                ):
+                    lunaris.main()
+                save.assert_not_called()
+                find.assert_not_called()
+
+    def test_failed_detail_keeps_existing_bilingual_data_and_visibility(self):
+        for kind in ("character", "weapon", "artifact"):
+            with (
+                self.subTest(kind=kind),
+                tempfile.TemporaryDirectory() as directory,
+                contextlib.ExitStack() as stack,
+            ):
+                root = Path(directory)
+                project_root = beta_files.PROJECT_ROOT
+                for module in (beta_files, lunaris):
+                    for name, value in list(vars(module).items()):
+                        if isinstance(value, Path) and value.is_relative_to(
+                            project_root
+                        ):
+                            stack.enter_context(
+                                patch.object(
+                                    module, name, root / value.relative_to(project_root)
+                                )
+                            )
+                beta_files.RESOURCES_PATH.parent.mkdir(parents=True)
+                beta_files.RESOURCES_PATH.write_text(
+                    "export const characters = [];\n"
+                    "export const weapons = [];\n"
+                    "export const artifacts = [];\n",
+                    encoding="utf-8",
+                )
+                snapshots = {}
+                for name, path in vars(beta_files).items():
+                    if name.startswith("BETA_") and isinstance(path, Path):
+                        beta_files.save_json_minified(
+                            path, {"existing": {"name": "Valid data"}}
+                        )
+                        snapshots[path] = path.read_bytes()
+                for path in (beta_files.RESOURCES_BETA_PATH, beta_files.I18N_BETA_PATH):
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(
+                        "// existing visibility and localized names\n", encoding="utf-8"
+                    )
+                    snapshots[path] = path.read_bytes()
+
+                stack.enter_context(
+                    patch.object(sys, "argv", ["lunaris.py", "--version", "test"])
+                )
+                stack.enter_context(
+                    patch.object(lunaris, "fetch_json", return_value={"ignored": {}})
+                )
+                for entity_kind, plural in (
+                    ("character", "characters"),
+                    ("weapon", "weapons"),
+                    ("artifact", "artifacts"),
+                ):
+                    entries = [("123", "existing", {})] if entity_kind == kind else []
+                    stack.enter_context(
+                        patch.object(
+                            lunaris, f"find_unreleased_{plural}", return_value=entries
+                        )
+                    )
+                stack.enter_context(
+                    patch.object(
+                        lunaris,
+                        f"scrape_{kind}",
+                        side_effect=ValueError("invalid detail"),
+                    )
+                )
+                with self.assertRaisesRegex(
+                    RuntimeError, f"{kind} 123: invalid detail"
+                ):
+                    lunaris.main()
+                for path, before in snapshots.items():
+                    self.assertEqual(path.read_bytes(), before, str(path))
+
+
 class LunarisArtifactIdentityTests(unittest.TestCase):
     def test_refresh_keeps_numeric_identity_when_english_name_arrives(self):
         with (
@@ -225,7 +334,7 @@ class LunarisArtifactIdentityTests(unittest.TestCase):
                     if url.endswith("version.json"):
                         return {"version": "7.2.50"}
                     if url.endswith(("charlist.json", "weaponlist.json")):
-                        return {}
+                        return {"ignored": {}}
                     if url.endswith("artifactlist.json"):
                         return {
                             "15049": {
