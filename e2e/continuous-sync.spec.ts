@@ -81,18 +81,30 @@ test("one account-management toggle controls continuous sync with deterministic 
     name: "Manage Profiles",
     exact: true,
   });
-  const syncToggle = manager.getByRole("switch", {
+  const settingsButton = manager.getByRole("button", {
+    name: "Continuous Import",
+  });
+  await expect(
+    manager.getByRole("button", { name: "Import Data", exact: true })
+  ).toBeVisible();
+  await expect(page.getByRole("switch")).toHaveCount(0);
+  await settingsButton.click();
+  const settings = page.getByRole("dialog", {
+    name: "Continuous Import",
+    exact: true,
+  });
+  const syncToggle = settings.getByRole("switch", {
     name: "Continuous Sync (Capture)",
   });
   await expect(syncToggle).not.toBeChecked();
   await expect(
-    manager.getByRole("textbox", { name: "Port", exact: true })
+    settings.getByRole("textbox", { name: "Port", exact: true })
   ).toHaveValue("8765");
   await expect(
-    manager.getByRole("textbox", { name: "Port", exact: true })
+    settings.getByRole("textbox", { name: "Port", exact: true })
   ).toBeVisible();
   await expect(
-    manager.getByText(/Automatically sync GGScanner inventory/)
+    settings.getByText(/Automatically sync GGScanner inventory/)
   ).toBeVisible();
   await expect(
     manager.getByRole("button", { name: "Start sync", exact: true })
@@ -113,6 +125,8 @@ test("one account-management toggle controls continuous sync with deterministic 
     path: testInfo.outputPath("sync-settings.png"),
     animations: "disabled",
   });
+  await page.keyboard.press("Escape");
+  await expect(settings).toHaveCount(0);
   await manager.getByRole("button", { name: "Close", exact: true }).click();
   await expect(
     status.getByRole("status").getByText(/Last sync: \d+[sm] ago/)
@@ -189,9 +203,8 @@ test("one account-management toggle controls continuous sync with deterministic 
   } else {
     await page.getByRole("button", { name: "Accounts", exact: true }).click();
   }
-  await manager
-    .getByRole("switch", { name: "Continuous Sync (Capture)" })
-    .click();
+  await settingsButton.click();
+  await syncToggle.click();
   await expect(status).toHaveCount(0);
   const stoppedAt = polls;
   await page.waitForTimeout(3300);
@@ -214,14 +227,23 @@ test("one account-management toggle controls continuous sync with deterministic 
     name: "管理账号配置",
     exact: true,
   });
+  await page.screenshot({
+    path: testInfo.outputPath("import-buttons-zh.png"),
+    animations: "disabled",
+  });
+  await chineseManager.getByRole("button", { name: "持续导入" }).click();
+  const chineseSettings = page.getByRole("dialog", {
+    name: "持续导入",
+    exact: true,
+  });
   await expect(
-    chineseManager.getByRole("switch", { name: "持续同步（抓包）" })
+    chineseSettings.getByRole("switch", { name: "持续同步（抓包）" })
   ).not.toBeChecked();
   await expect(
-    chineseManager.getByRole("textbox", { name: "端口", exact: true })
+    chineseSettings.getByRole("textbox", { name: "端口", exact: true })
   ).toBeVisible();
   await expect(
-    chineseManager.getByText(/自动同步 GGScanner 库存/)
+    chineseSettings.getByText(/自动同步 GGScanner 库存/)
   ).toBeVisible();
   expect(
     await chineseManager.evaluate(

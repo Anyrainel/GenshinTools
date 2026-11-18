@@ -393,19 +393,22 @@ export function AccountManagerDialog({
             </div>
           )}
 
-          {!isImportMode && onOpenImportControl && (
-            <Button
-              className="mt-2 h-12 w-full gap-2"
-              onClick={() => {
-                onClose();
-                onOpenImportControl();
-              }}
-            >
-              <ImportIcon className="w-4 h-4" />
-              {t.ui("accountData.addProfile")}
-            </Button>
+          {!isImportMode && (
+            <div className="flex flex-wrap items-center justify-end gap-2 pt-2">
+              {onOpenImportControl && (
+                <Button
+                  onClick={() => {
+                    onClose();
+                    onOpenImportControl();
+                  }}
+                >
+                  <ImportIcon className="w-4 h-4" />
+                  {t.ui("accountData.addProfile")}
+                </Button>
+              )}
+              <ContinuousInventorySync />
+            </div>
           )}
-          {!isImportMode && <ContinuousInventorySync />}
         </div>
 
         {isImportMode && (

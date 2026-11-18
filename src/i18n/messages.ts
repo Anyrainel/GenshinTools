@@ -1,5 +1,6 @@
 export const i18nUiData = {
   continuous: {
+    import: { en: "Continuous Import", zh: "持续导入" },
     port: { en: "Port {0}", zh: "端口 {0}" },
     lastSyncSeconds: { en: "Last sync: {0}s ago", zh: "上次同步：{0}秒前" },
     lastSyncMinutes: { en: "Last sync: {0}m ago", zh: "上次同步：{0}分钟前" },
