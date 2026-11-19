@@ -73,21 +73,21 @@ function decodeAppendPropId(
 /**
  * Compute precise substat display values by summing decoded tier values
  * from the appendPropIdList.
- * Returns a Map<statKey, displayValue> or null if decoding fails.
  */
 function computePreciseSubstats(
   appendPropIdList: number[]
-): Map<string, number> | null {
-  const sums = new Map<string, number>();
+): Map<string, { value: number; rollCount: number }> {
+  const sums = new Map<string, { value: number; rollCount: number }>();
 
   for (const id of appendPropIdList) {
     const decoded = decodeAppendPropId(id);
     if (!decoded) continue; // Skip unrecognized IDs (astral/elixir bonuses, etc.)
-    const prev = sums.get(decoded.statKey) ?? 0;
-    sums.set(
-      decoded.statKey,
-      Math.round((prev + decoded.displayValue) * 100) / 100
-    );
+    const prev = sums.get(decoded.statKey);
+    sums.set(decoded.statKey, {
+      value:
+        Math.round(((prev?.value ?? 0) + decoded.displayValue) * 100) / 100,
+      rollCount: (prev?.rollCount ?? 0) + 1,
+    });
   }
 
   return sums;
@@ -466,9 +466,11 @@ export async function convertEnkaToGOOD(
                 for (const sub of flat.reliquarySubstats) {
                   const statKey = statIdMap[String(sub.appendPropId)];
                   if (statKey) {
+                    const precise = preciseMap.get(statKey);
                     substats.push({
                       key: statKey as StatKey,
-                      value: preciseMap.get(statKey) ?? sub.statValue,
+                      value: precise?.value ?? sub.statValue,
+                      ...(precise && { rollCount: precise.rollCount }),
                     });
                   }
                 }

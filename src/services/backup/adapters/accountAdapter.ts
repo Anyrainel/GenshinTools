@@ -91,6 +91,7 @@ export type AccountArtifactsPayload = {
     lock: boolean;
     substats: ArtifactData["substats"];
     totalRolls?: number;
+    substatRollCounts?: ArtifactData["substatRollCounts"];
     astralMark?: boolean;
     elixirCrafted?: boolean;
     unactivatedSubstats?: ArtifactData["unactivatedSubstats"];
@@ -295,7 +296,12 @@ function cloudPartition<TPayload>(
   return {
     namespace,
     partitionKey: encodePathSegment(partitionKey),
-    schemaVersion: namespace === "profile.game" ? 3 : 2,
+    schemaVersion:
+      namespace === "profile.artifacts"
+        ? 4
+        : namespace === "profile.game"
+          ? 3
+          : 2,
     conflictPolicy: "profile-import-wins",
     payload,
   };
@@ -379,6 +385,9 @@ function toCloudArtifact(
     ...(entry.item.totalRolls != null
       ? { totalRolls: entry.item.totalRolls }
       : {}),
+    ...(entry.item.substatRollCounts && {
+      substatRollCounts: entry.item.substatRollCounts,
+    }),
     ...(entry.item.astralMark != null
       ? { astralMark: entry.item.astralMark }
       : {}),
@@ -567,6 +576,9 @@ function artifactFromPayload(
     lock: artifact.lock,
     substats: artifact.substats,
     ...(artifact.totalRolls != null ? { totalRolls: artifact.totalRolls } : {}),
+    ...(artifact.substatRollCounts && {
+      substatRollCounts: artifact.substatRollCounts,
+    }),
     ...(artifact.astralMark != null ? { astralMark: artifact.astralMark } : {}),
     ...(artifact.elixirCrafted != null
       ? { elixirCrafted: artifact.elixirCrafted }

@@ -511,6 +511,7 @@ describe("enka", () => {
         // Precise CD: tier0 (5.44) + tier1 (6.22) + tier2 (6.99) = 18.65
         expect(artifact.substats[1].key).toBe("critDMG_");
         expect(artifact.substats[1].value).toBeCloseTo(18.65, 2);
+        expect(artifact.substats.map((sub) => sub.rollCount)).toEqual([2, 3]);
       });
 
       it("falls back to flat.reliquarySubstats when appendPropIdList is missing", async () => {

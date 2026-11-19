@@ -411,7 +411,11 @@ export function convertHoyolabToGOOD(
       for (const sub of relic.sub_property_list) {
         const statKey = PROPERTY_TYPE_TO_GOOD_KEY[sub.property_type];
         if (!statKey) continue;
-        substats.push({ key: statKey, value: parseStatValue(sub.value) });
+        substats.push({
+          key: statKey,
+          value: parseStatValue(sub.value),
+          rollCount: sub.times + 1,
+        });
         extraRolls += sub.times;
       }
 

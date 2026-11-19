@@ -716,6 +716,35 @@ describe("migrateAccountStore", () => {
     extraWeapons: [],
   };
 
+  it("hydrates v8 equipment and inventory without inventing exact substat counts", async () => {
+    const flower = createArtifactData({
+      rarity: 4,
+      setKey: "instructor",
+      level: 16,
+      totalRolls: 7,
+      substats: { em: 35, def: 15, "hp%": 10.72, cd: 4.35 },
+    });
+    const data: AccountData = {
+      ...sampleAccountData,
+      characters: [
+        { ...sampleAccountData.characters[0], artifacts: { flower } },
+      ],
+      extraArtifacts: [{ ...flower, id: "spare-flower" }],
+    };
+    window.localStorage.setItem(
+      "genshin-account-storage",
+      JSON.stringify({
+        version: 8,
+        state: {
+          accounts: { 0: { id: 0, name: "Default", lastUpdate: 100, data } },
+          activeAccountId: 0,
+        },
+      })
+    );
+    await useAccountStore.persist.rehydrate();
+    expect(useAccountStore.getState().accounts[0].data).toEqual(data);
+  });
+
   describe("v0 / v1 → current (old single-account format)", () => {
     it("migrates v1 data with a UID to a UID-keyed account", () => {
       const persisted = {

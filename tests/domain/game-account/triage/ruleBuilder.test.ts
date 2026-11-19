@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
 import { extractRules } from "@/domain/game-account/triage/ruleBuilder";
+import { runTriage } from "@/domain/game-account/triage/triageEngine";
 import type { TriageSettings } from "@/domain/game-account/triage/types";
 import type {
   AccountData,
+  ArtifactData,
   Build,
   WeightedMainStat,
   WeightedSubStat,
@@ -192,5 +195,128 @@ describe("extractRules", () => {
     // flower has fixed flat hp, so hp filler from hp% is excluded
     // atk is NOT fixed flat on flower, so atk filler from atk% should be present
     expect(flowerRule!.fillers).toContain("atk");
+  });
+});
+
+describe("pure scaling-stat builds", () => {
+  it.each([
+    ["hp%", "hp"],
+    ["atk%", "atk"],
+    ["def%", "def"],
+  ] as const)(
+    "pursues %s through %s when the main consumes it",
+    (pct, flat) => {
+      const build = makeBuild({
+        substats: [{ stat: pct, weight: 100 }],
+        sandsWeights: [{ stat: pct, weight: 100 }],
+      });
+      const rules = extractRules(
+        [{ characterId: "test_char", builds: [build] }],
+        ACCOUNT_WITH_CHAR,
+        SETTINGS
+      );
+      expect(rules.find((rule) => rule.slot === "sands")).toMatchObject({
+        desired: [flat],
+        fillers: [],
+        tierEntry: { desiredSubstatCount: 1 },
+      });
+      expect(rules.find((rule) => rule.slot === "flower")?.desired).toEqual([
+        pct,
+      ]);
+    }
+  );
+
+  it("preserves other positive build weights below the desired-stat threshold", () => {
+    const build = makeBuild({
+      substats: [
+        { stat: "hp%", weight: 100 },
+        { stat: "er", weight: 25 },
+      ],
+      sandsWeights: [{ stat: "hp%", weight: 100 }],
+    });
+    const rules = extractRules(
+      [{ characterId: "test_char", builds: [build] }],
+      ACCOUNT_WITH_CHAR,
+      SETTINGS
+    );
+    expect(rules.find((rule) => rule.slot === "sands")).toMatchObject({
+      desired: ["hp%"],
+      optional: ["er"],
+      fillers: ["hp"],
+      soleFlatTarget: undefined,
+    });
+  });
+
+  it("fills limited Instructor HP sands demand in flat HP order, respecting a zero flat HP weight", () => {
+    const build = makeBuild({
+      artifactSet: "instructor",
+      substats: [{ stat: "hp%", weight: 100 }],
+      sandsWeights: [{ stat: "hp%", weight: 100 }],
+    });
+    const groups = [{ characterId: "nilou", builds: [build] }];
+    const settings: TriageSettings = {
+      ...SETTINGS,
+      triageMode: "strict",
+      ownedOnly: false,
+      highLevelProtection: false,
+      setSlotKeep: 0,
+      fillerKeep: 2,
+      qualityMargin: 5,
+    };
+    const base: ArtifactData = {
+      id: "no-flat-hp",
+      setKey: "instructor",
+      slotKey: "sands",
+      mainStatKey: "hp%",
+      substats: { er: 4.14, cr: 2.49 },
+      rarity: 4,
+      level: 0,
+      lock: true,
+    };
+    const account: AccountData = {
+      characters: [],
+      extraWeapons: [],
+      extraArtifacts: [
+        base,
+        { ...base, id: "one-roll", substats: { hp: 192, er: 4.14 }, level: 0 },
+        {
+          ...base,
+          id: "two-rolls",
+          substats: { hp: 382, er: 4.14, def: 13, atk: 11 },
+          level: 8,
+        },
+        {
+          ...base,
+          id: "three-rolls",
+          substats: { hp: 573, def: 13, atk: 11, cr: 2.49 },
+          level: 12,
+        },
+        {
+          ...base,
+          id: "upgrades-in-flat-atk",
+          substats: { hp: 191, def: 13, atk: 61, cr: 2.49 },
+          level: 16,
+        },
+      ],
+    };
+    const { decisions } = runTriage(account, groups, settings);
+    expect(
+      decisions.map((d) => [d.artifact.id, d.label, d.decidingResult?.tier])
+    ).toEqual([
+      ["no-flat-hp", "unlock", "fodder"],
+      ["one-roll", "unlock", "filler"],
+      ["two-rolls", "lock", "filler"],
+      ["three-rolls", "lock", "filler"],
+      ["upgrades-in-flat-atk", "unlock", "filler"],
+    ]);
+    const unweighted = runTriage(account, groups, settings, groups, {
+      ...DEFAULT_GLOBAL_STAT_WEIGHTS,
+      flatHp: 0,
+    });
+    expect(
+      unweighted.decisions.every(
+        (d) => d.label === "unlock" && d.decidingResult?.tier === "fodder"
+      )
+    ).toBe(true);
   });
 });

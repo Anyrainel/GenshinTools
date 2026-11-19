@@ -16,7 +16,7 @@ export const CLOUD_BACKUP_DESCRIPTORS: CloudBackupDescriptor[] = [
     class: "account",
     includeInBackup: true,
     namespaces: ["profile.app", "profile.game", "profile.artifacts"],
-    currentVersion: 3,
+    currentVersion: 4,
     conflictPolicy: "profile-import-wins",
   },
   {

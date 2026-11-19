@@ -1,7 +1,8 @@
 import { buildToWeightMap } from "@/domain/build/artifact/scoring/artifactScore";
+import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
 import type { MainStat, Slot, SubStat } from "@/domain/enums";
 import { allSlots } from "@/domain/enums";
-import type { AccountData, Build } from "@/domain/models";
+import type { AccountData, Build, GlobalStatWeights } from "@/domain/models";
 import { getAcceptedMainStats } from "./demandExtractor";
 import { lookupTierEntry } from "./tierTableBuilder";
 import type { TriageRule, TriageSettings } from "./types";
@@ -87,7 +88,8 @@ function deriveFillers(
 function buildToRules(
   build: Build,
   characterId: string,
-  settings: TriageSettings
+  settings: TriageSettings,
+  globalConfig: GlobalStatWeights
 ): TriageRule[] {
   const rules: TriageRule[] = [];
 
@@ -99,7 +101,9 @@ function buildToRules(
   }
   desired.sort();
   optional.sort();
-  const statWeights = buildToWeightMap(build);
+  const statWeights = buildToWeightMap(build, globalConfig);
+  const soleTarget =
+    desired.length === 1 && optional.length === 0 ? desired[0] : undefined;
 
   // Determine demand source
   const demandSources: Array<{
@@ -137,8 +141,15 @@ function buildToRules(
         ),
       ];
       for (const mainStat of acceptedMain) {
-        const fillers = deriveFillers(desired, slot, mainStat);
-        const tierEntry = lookupTierEntry(slot, mainStat, desired, fillers);
+        // A pure HP/ATK/DEF build can only improve its percentage main through
+        // the matching flat substat on this piece. Honor its scoring weight.
+        const flat =
+          soleTarget === mainStat ? FILLER_MAP[soleTarget] : undefined;
+        const soleFlatTarget =
+          flat && (statWeights[flat] ?? 0) > 0 ? flat : undefined;
+        const slotDesired = soleFlatTarget ? [soleFlatTarget] : desired;
+        const fillers = deriveFillers(slotDesired, slot, mainStat);
+        const tierEntry = lookupTierEntry(slot, mainStat, slotDesired, fillers);
 
         rules.push({
           characterId,
@@ -147,7 +158,8 @@ function buildToRules(
           demandSource: source,
           slot,
           mainStat,
-          desired,
+          desired: slotDesired,
+          soleFlatTarget,
           optional,
           fillers,
           statWeights,
@@ -165,11 +177,14 @@ function buildToRules(
 export function extractRules(
   buildGroups: { characterId: string; builds: Build[] }[],
   accountData: AccountData,
-  settings: TriageSettings
+  settings: TriageSettings,
+  globalConfig: GlobalStatWeights = DEFAULT_GLOBAL_STAT_WEIGHTS
 ): TriageRule[] {
   return selectActiveBuildGroups(buildGroups, accountData, settings).flatMap(
     ({ characterId, builds }) =>
-      builds.flatMap((build) => buildToRules(build, characterId, settings))
+      builds.flatMap((build) =>
+        buildToRules(build, characterId, settings, globalConfig)
+      )
   );
 }
 

@@ -181,14 +181,26 @@ export function isAlreadyPrecise(
 export function solveArtifact(
   input: SolveInput
 ): Partial<Record<string, number>> | null {
-  const { rarity, level, substats } = input;
-
   // If already precise, return as-is
-  if (isAlreadyPrecise(substats)) {
-    return { ...substats };
+  if (isAlreadyPrecise(input.substats)) {
+    return { ...input.substats };
   }
 
-  const table = buildRollTable();
+  const counts = solveArtifactRollCounts(input);
+  if (!counts) return null;
+  const entries = Object.keys(counts).map((stat): [string, number] => [
+    stat,
+    input.substats[stat]!,
+  ]);
+  return reconstruct(entries, Object.values(counts), input.rarity);
+}
+
+/** Infer an integer roll count per active substat, including its initial roll. */
+export function solveArtifactRollCounts(
+  input: SolveInput,
+  knownCounts?: Partial<Record<string, number>>
+): Record<string, number> | null {
+  const { rarity, level, substats } = input;
   const entries = Object.entries(substats).filter(
     ([, v]) => v !== undefined
   ) as [string, number][];
@@ -196,6 +208,7 @@ export function solveArtifact(
   if (entries.length === 0) return null;
 
   const numSubstats = entries.length;
+  const table = buildRollTable();
 
   // Calculate upgrades from level
   const maxLevel = rarity === 5 ? 20 : 16;
@@ -211,7 +224,11 @@ export function solveArtifact(
     const displayMap = table.get(key);
     if (!displayMap) return new Set<number>();
     const rounded = gameRound(stat, value);
-    return displayMap.get(rounded) ?? new Set<number>();
+    const candidates = displayMap.get(rounded);
+    const known = knownCounts?.[stat];
+    if (known !== undefined)
+      return new Set(candidates?.has(known) ? [known] : []);
+    return candidates ?? new Set<number>();
   });
 
   // Check if any substat has no valid roll counts
@@ -259,8 +276,9 @@ export function solveArtifact(
   for (const totalRolls of totalRollsList) {
     const assignment = new Array<number>(numSubstats);
     if (backtrack(0, totalRolls, rollArrays, assignment, numSubstats)) {
-      // Found valid assignment, reconstruct precise values
-      return reconstruct(entries, assignment, rarity);
+      return Object.fromEntries(
+        entries.map(([stat], i) => [stat, assignment[i]])
+      );
     }
   }
 

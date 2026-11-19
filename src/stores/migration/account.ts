@@ -155,6 +155,8 @@ export function migrateAccountStore(
   version: number
 ): PersistedAccountStore {
   const state = migrateAccountShape(persistedState, version);
+  // v8 and earlier did not store per-substat roll counts. Their absence is
+  // valid in v9; consumers infer counts from the values until a source provides them.
   if (version < 8) {
     for (const account of Object.values(state.accounts)) {
       if (account.data)

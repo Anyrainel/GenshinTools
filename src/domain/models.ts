@@ -255,6 +255,8 @@ export type ArtifactData = {
   substats: Partial<Record<SubStat, number>>;
   // GOOD v3 fields
   totalRolls?: number;
+  /** Known active rolls per substat, including its initial roll. */
+  substatRollCounts?: Partial<Record<SubStat, number>>;
   astralMark?: boolean;
   elixirCrafted?: boolean;
   unactivatedSubstats?: Partial<Record<SubStat, number>>;

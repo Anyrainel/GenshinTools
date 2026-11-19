@@ -1,7 +1,6 @@
 import { TRIAGE_SUPPORT_ARTIFACT_SETS } from "@/config/gameConstants";
 import {
   type StatWeightMap,
-  scaleFlatWeights,
   scoreSlot,
 } from "@/domain/build/artifact/scoring/artifactScore";
 import { DEFAULT_GLOBAL_STAT_WEIGHTS } from "@/domain/build/artifact/scoring/constants";
@@ -76,7 +75,7 @@ export function runTriage(
   statistics: TriageStatistics;
 } {
   // 1. Extract rules
-  const rules = extractRules(buildGroups, accountData, settings);
+  const rules = extractRules(buildGroups, accountData, settings, globalConfig);
 
   // 2. Build flex patterns (official + custom)
   const officialFlex = buildFlexPatterns(rules);
@@ -239,10 +238,7 @@ export function runTriage(
       );
       const scopedScore = scoreTriageSlot(
         artifact,
-        scaleFlatWeights(
-          statWeightsByEmbryoKey.get(embryoKey) ?? {},
-          globalConfig
-        )
+        statWeightsByEmbryoKey.get(embryoKey) ?? {}
       );
 
       const embryoMatch: EmbryoMatch = {
@@ -529,7 +525,6 @@ export function runTriage(
   if (settings.setSlotKeep > 0) {
     const setSlotGroups = new Map<string, PrelimResult[]>();
     for (const p of prelims) {
-      if (p.artifact.rarity === 4 && p.evaluations.length === 0) continue;
       const key = `${p.artifact.setKey}:${p.artifact.slotKey}`;
       if (!setSlotGroups.has(key)) setSlotGroups.set(key, []);
       setSlotGroups.get(key)!.push(p);

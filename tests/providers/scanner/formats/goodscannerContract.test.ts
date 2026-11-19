@@ -75,6 +75,7 @@ describe("GGScanner GOOD v3 wire contract", () => {
       elixirCrafted: false,
       totalRolls: 9,
       initialValues: { "atk%": 5.8 },
+      substatRollCounts: { "atk%": 1 },
     });
     expect(result.data.extraArtifacts[0]).toMatchObject({
       astralMark: false,

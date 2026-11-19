@@ -85,6 +85,11 @@ export function prepareContinuousImport(
         artifact.elixirCrafted = previous.elixirCrafted;
       if (raw.totalRolls === undefined)
         artifact.totalRolls = previous.totalRolls;
+      if (previous.substatRollCounts)
+        artifact.substatRollCounts = {
+          ...previous.substatRollCounts,
+          ...artifact.substatRollCounts,
+        };
       if (raw.unactivatedSubstats === undefined)
         artifact.unactivatedSubstats = previous.unactivatedSubstats;
       const initialValues = { ...artifact.initialValues };

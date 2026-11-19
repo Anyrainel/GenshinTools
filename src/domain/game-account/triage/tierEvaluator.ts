@@ -39,8 +39,11 @@ export function evaluateTier(
     if (cond.requiresFourInitialSubstats && !startedWithFourSubstats) continue;
     if (cond.requiresFillerHit && !hasFill) continue;
     const tier = getTier(cond.rarity, rule.slot, mode);
+    // Even a common hit on the build's only useful substat competes for
+    // limited filler places; the queue ranks these by the actual stat value.
+    const hitSoleFlatTarget = rule.soleFlatTarget && hitCount > 0;
     return {
-      tier,
+      tier: tier === "fodder" && hitSoleFlatTarget ? "filler" : tier,
       hitCount,
       hitOptional,
       hitTotal,

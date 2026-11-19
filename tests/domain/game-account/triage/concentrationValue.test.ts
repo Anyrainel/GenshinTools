@@ -30,10 +30,92 @@ function artifactWithRolls(
 }
 
 describe("concentratedStatRule", () => {
+  const instructorFlower: ArtifactData = {
+    id: "four-star-flower",
+    setKey: "instructor",
+    slotKey: "flower",
+    mainStatKey: "hp",
+    rarity: 4,
+    level: 16,
+    lock: true,
+    totalRolls: 7,
+    substats: { em: 35, def: 15, "hp%": 10.72, cd: 4.35 },
+    initialValues: { em: 19, def: 15, "hp%": 3.7, cd: 4.4 },
+  };
+
+  it.each([undefined, { em: 2, def: 1, "hp%": 3, cd: 1 }])(
+    "counts two HP upgrades out of three regardless of individual roll quality",
+    (substatRollCounts) => {
+      expect(
+        concentratedStatRule({ ...instructorFlower, substatRollCounts })
+      ).toEqual({
+        kept: true,
+        reason: "concentrated-hp%",
+      });
+    }
+  );
+
+  it("uses source counts for a 50% allocation even when the accumulated rolls were low", () => {
+    const piece: ArtifactData = {
+      ...instructorFlower,
+      level: 16,
+      totalRolls: 6,
+      substats: { "hp%": 6.52, def: 37, atk: 11, em: 13 },
+      substatRollCounts: { "hp%": 2, def: 2, atk: 1, em: 1 },
+    };
+    expect(concentratedStatRule(piece)).toEqual({
+      kept: true,
+      reason: "concentrated-hp%",
+    });
+    expect(concentratedStatRule({ ...piece, totalRolls: 5 })).toEqual({
+      kept: true,
+      reason: "concentrated-hp%",
+    });
+    expect(concentratedStatRule({ ...piece, rarity: 5 }).kept).toBe(false);
+    expect(
+      concentratedStatRule({
+        ...piece,
+        totalRolls: 5,
+        substatRollCounts: { "hp%": 2, def: 1, atk: 1, em: 1 },
+      }).kept
+    ).toBe(false);
+  });
+
+  it("uses the source to distinguish two legal allocations with identical displayed values", () => {
+    const piece: ArtifactData = {
+      ...instructorFlower,
+      setKey: "gladiators_finale",
+      rarity: 5,
+      level: 20,
+      totalRolls: 9,
+      substats: { "hp%": 16.3, def: 65, atk: 14, em: 16 },
+      initialValues: undefined,
+    };
+    // Both HP% and flat DEF could each represent three or four rolls.
+    expect(
+      concentratedStatRule({ ...piece, substatRollCounts: { "hp%": 4 } })
+    ).toEqual({
+      kept: true,
+      reason: "concentrated-hp%",
+    });
+    expect(
+      concentratedStatRule({ ...piece, substatRollCounts: { "hp%": 3 } }).kept
+    ).toBe(false);
+  });
+
   it("fires for concentrated crit (CR+CD combined)", () => {
     const art = artifactWithRolls({ cr: 4, cd: 4, atk: 1, hp: 1 });
     const r = concentratedStatRule(art);
     expect(r).toEqual({ kept: true, reason: "concentrated-crit" });
+  });
+
+  it("keeps usable legacy stats when an obsolete substat prevents exact reconstruction", () => {
+    const art = artifactWithRolls({ er: 5, def: 1, atk: 1 });
+    Object.assign(art.substats, { unknownStat: 20 });
+    expect(concentratedStatRule(art)).toEqual({
+      kept: true,
+      reason: "concentrated-er",
+    });
   });
 
   it("fires when exactly half of upgrade rolls are concentrated", () => {

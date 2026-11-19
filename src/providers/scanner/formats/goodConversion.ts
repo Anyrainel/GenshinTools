@@ -23,6 +23,10 @@ export interface IGOODSubstat {
   key: string;
   value: number;
   initialValue?: number;
+  /** Raw individual rolls from a GGScanner capture. */
+  rolls?: number[];
+  /** Sources such as HoYoLAB can supply the count without individual values. */
+  rollCount?: number;
 }
 
 export interface IGOODArtifact {
@@ -168,12 +172,25 @@ export function convertSingleArtifact(
   if (!mainStatKey || !slotKey) return null;
 
   const substats: Partial<Record<SubStat, number>> = {};
+  const substatRollCounts: Partial<Record<SubStat, number>> = {};
   const initialValues: Partial<Record<SubStat, number>> = {};
   let hasInitialValues = false;
   for (const sub of art.substats ?? []) {
     const key = statKeyMap[sub.key] as SubStat;
     if (key) {
       substats[key] = sub.value;
+      const count =
+        Array.isArray(sub.rolls) && sub.rolls.length > 0
+          ? sub.rolls.length
+          : sub.rollCount;
+      if (
+        count !== undefined &&
+        Number.isInteger(count) &&
+        count > 0 &&
+        count <= 6
+      ) {
+        substatRollCounts[key] = count;
+      }
       if (sub.initialValue !== undefined && sub.initialValue > 0) {
         initialValues[key] = sub.initialValue;
         hasInitialValues = true;
@@ -212,6 +229,7 @@ export function convertSingleArtifact(
     lock: art.lock,
     substats,
     ...(art.totalRolls !== undefined && { totalRolls: art.totalRolls }),
+    ...(Object.keys(substatRollCounts).length > 0 && { substatRollCounts }),
     ...(art.astralMark !== undefined && { astralMark: art.astralMark }),
     ...(art.elixirCrafted !== undefined && {
       elixirCrafted: art.elixirCrafted,

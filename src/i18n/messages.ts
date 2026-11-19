@@ -3250,8 +3250,8 @@ export const i18nUiData = {
       },
       howTitle: { en: "How it decides", zh: "决策方式" },
       howMatch: {
-        en: "Match artifacts to builds by set, slot, and main stat. Each build has a few substats it cares about (core stats).",
-        zh: "先按套装、部位、主词条把圣遗物匹配到可能的配装；每个配装有它在意的几条副词条（核心词条）。",
+        en: "Match the set, slot, and main stat, then check the build's preferred substats. If a build only wants HP%, ATK%, or DEF% and the main stat already supplies it, the matching flat stat can earn a Filler slot.",
+        zh: "按套装、部位和主词条匹配配装，再看需要的副词条。如果配装只堆生命%、攻击%或防御%，主词条又恰好是这一项，带对应小词条的圣遗物可按过渡装保留。",
       },
       howRarity: {
         en: "Probability = chance that a random artifact in the same set and slot rolls this main stat and has no fewer core-stat hits. Lower probability → rarer.",
@@ -3294,8 +3294,8 @@ export const i18nUiData = {
       supplyRecycle: { en: "recycle", zh: "回收" },
       supplyKeep: { en: "keep limit", zh: "保留" },
       setSlotFloorDetail: {
-        en: "There is also set-slot keep: ensures a minimum piece count per set+slot.",
-        zh: "此外还有套装部位最低保留，确保每个套装都能凑齐。",
+        en: "The minimum keep applies to each set and slot, including four-star-only sets with no matching build.",
+        zh: "每套装每部位都有保底。四星专属套即使没有匹配的配装，也按设置的数量保留。",
       },
       backupAmountDetail: {
         en: "Each demand group's reserve target is the lower of 3× demand and demand + margin. Prime artifacts and custom always-lock-solid keeps consume the target but can exceed it. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 2 / 3; extra is 10 / 4 / 3.",
@@ -3315,8 +3315,8 @@ export const i18nUiData = {
         zh: "关闭高等级保护后",
       },
       spHighLevelOffDetail: {
-        en: "Leveled artifacts run through normal triage. Any that would be unlocked are re-checked and kept if ≥50% of their upgrade rolls fall into one category: CR+CD, ER, EM, ATK%, HP%, or DEF%.",
-        zh: "已升级的圣遗物将走一遍正常评级。本应被淘汰的，会再判定一次：若其升级词条中 ≥50% 集中在单一类别（双暴、充能、精通、攻击%、生命%、防御%），则予以保留。",
+        en: "At the level threshold, pieces due for unlocking get a second check after 2 substat upgrades for four-stars or 3 for five-stars. The piece is kept if at least half went into CR and CD combined, ER, EM, ATK%, HP%, or DEF%. Revealing a new substat does not count as an upgrade.",
+        zh: "达到等级阈值后，原本建议解锁的圣遗物会再看强化落点。四星累计追加至少 2 次、五星至少 3 次，其中至少一半落在同一类词条就保留。双暴合并计算，充能、精通、攻击%、生命%、防御%各自计算。新开一条副词条不计入追加次数。",
       },
     },
     flexDialogDesc: {

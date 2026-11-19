@@ -79,6 +79,10 @@ export const ArtifactDataSchema = z
     rarity: z.number().catch(5),
     lock: z.boolean().catch(false),
     substats: z.record(z.string(), z.number()).catch({}),
+    substatRollCounts: z
+      .record(z.string(), z.number().int().min(1).max(6))
+      .optional()
+      .catch(undefined),
   })
   .loose();
 

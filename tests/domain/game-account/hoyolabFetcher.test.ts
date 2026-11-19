@@ -92,6 +92,37 @@ describe("hoyolabFetcher", () => {
     ]);
   });
 
+  it("preserves individual substat upgrade counts from the character record", () => {
+    const character = makeDetail("Nilou", "Hydro", 10000070);
+    character.relics = [
+      {
+        id: 1,
+        name: "Instructor's Brooch",
+        pos: 1,
+        rarity: 4,
+        level: 16,
+        set: { id: 10007, name: "Instructor" },
+        main_property: { property_type: 2, value: "3571", times: 0 },
+        sub_property_list: [
+          { property_type: 28, value: "35", times: 1 },
+          { property_type: 8, value: "15", times: 0 },
+          { property_type: 3, value: "10.7%", times: 2 },
+          { property_type: 22, value: "4.4%", times: 0 },
+        ],
+      },
+    ];
+    const { data } = convertHoyolabToGOOD({
+      uid: "800000000",
+      region: "os",
+      server: "os_asia",
+      characters: [character],
+    });
+    expect(data.artifacts?.[0].totalRolls).toBe(7);
+    expect(data.artifacts?.[0].substats.map((s) => s.rollCount)).toEqual([
+      2, 1, 3, 1,
+    ]);
+  });
+
   it("defaults multi-element characters without element data to Cryo", () => {
     const result = convertHoyolabToGOOD({
       uid: "800000000",

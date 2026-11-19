@@ -113,7 +113,7 @@ export const useAccountStore = create<AccountStore>()(
     }),
     {
       name: "genshin-account-storage",
-      version: 8,
+      version: 9,
       migrate: migrateAccountStore,
       partialize: (state) => ({
         accounts: state.accounts,

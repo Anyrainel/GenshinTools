@@ -47,6 +47,7 @@ describe("account cloud adapter", () => {
       lock: false,
     };
     const firstArtifact = artifact("artifact-1");
+    firstArtifact.substatRollCounts = { cr: 1, cd: 1 };
     const duplicateArtifact = artifact("artifact-2");
     const snapshot: AccountCloudSnapshot = {
       activeAccountId: 0,
@@ -150,6 +151,13 @@ describe("account cloud adapter", () => {
     );
     expect(restored.accounts[0].data.extraWeapons).toEqual([]);
     expect(restored.accounts[0].data.extraArtifacts).toHaveLength(1);
+    expect(
+      restored.accounts[0].data.characters[0].artifacts.flower
+        ?.substatRollCounts
+    ).toEqual(firstArtifact.substatRollCounts);
+    expect(
+      restored.accounts[0].data.extraArtifacts[0].substatRollCounts
+    ).toBeUndefined();
     expect(restored.accounts[600000001].name).toBe("UID");
     expect(restored.freezesByProfileId[0].frozenArtifactIds).toEqual([
       artifactPayload.artifacts[0].id,

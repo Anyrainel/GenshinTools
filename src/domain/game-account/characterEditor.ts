@@ -1,3 +1,4 @@
+import { statPools } from "@/config/gameConstants";
 import type { Slot } from "@/domain/enums";
 import type { AccountData, ArtifactData, CharacterData } from "@/domain/models";
 import { nextArtifactId, nextWeaponId } from "./idUtils";
@@ -194,7 +195,60 @@ export function swapArtifactWithCharacter(
   return result;
 }
 
-/** Update artifact stats in-place (level, mainStat, substats, etc.) */
+function reconcileEditedRolls(
+  artifact: ArtifactData,
+  nextSubstats: ArtifactData["substats"],
+  nextLevel: number
+): void {
+  let activated = 0;
+  let editedActiveValue = false;
+  for (const stat of statPools.substat) {
+    const before = artifact.substats[stat];
+    const after = nextSubstats[stat];
+    if (before === after) continue;
+    if (
+      before === undefined &&
+      after !== undefined &&
+      after === artifact.unactivatedSubstats?.[stat]
+    ) {
+      // Revealing a pending line adds its first roll, with no upgrade to that stat.
+      artifact.substatRollCounts ??= {};
+      artifact.substatRollCounts[stat] = 1;
+      artifact.initialValues ??= {};
+      artifact.initialValues[stat] = after;
+      activated++;
+    } else {
+      editedActiveValue = true;
+      delete artifact.substatRollCounts?.[stat];
+      delete artifact.initialValues?.[stat];
+    }
+  }
+  const levelRolls = Math.floor(nextLevel / 4) - Math.floor(artifact.level / 4);
+  const unaccountedLevelChange = levelRolls !== 0 && levelRolls !== activated;
+  if (unaccountedLevelChange && !editedActiveValue) {
+    // Until the new values are entered, the old counts cannot describe the new level.
+    for (const stat of statPools.substat) {
+      if (artifact.substats[stat] !== undefined)
+        delete artifact.substatRollCounts?.[stat];
+    }
+  }
+  if (editedActiveValue || unaccountedLevelChange) {
+    delete artifact.totalRolls;
+  } else if (artifact.totalRolls !== undefined) {
+    artifact.totalRolls += activated;
+  }
+  if (
+    artifact.substatRollCounts &&
+    !Object.keys(artifact.substatRollCounts).length
+  ) {
+    delete artifact.substatRollCounts;
+  }
+  if (artifact.initialValues && !Object.keys(artifact.initialValues).length) {
+    delete artifact.initialValues;
+  }
+}
+
+/** Update the equipped artifact and reconcile source metadata with manual edits. */
 export function updateArtifactStats(
   data: AccountData,
   charKey: string,
@@ -218,6 +272,17 @@ export function updateArtifactStats(
   const art = char.artifacts[slot];
   if (!art) return result;
 
+  if (updates.rarity !== undefined && updates.rarity !== art.rarity) {
+    delete art.substatRollCounts;
+    delete art.initialValues;
+    delete art.totalRolls;
+  } else if (updates.substats || updates.level !== undefined) {
+    reconcileEditedRolls(
+      art,
+      updates.substats ?? art.substats,
+      updates.level ?? art.level
+    );
+  }
   if (updates.level !== undefined) art.level = updates.level;
   if (updates.rarity !== undefined) art.rarity = updates.rarity;
   if (updates.mainStatKey !== undefined) art.mainStatKey = updates.mainStatKey;
@@ -248,7 +313,9 @@ export function activateUnactivatedSubstat(
     return result;
   }
 
-  Object.assign(art.substats, unactivated);
+  const nextSubstats = { ...art.substats, ...unactivated };
+  reconcileEditedRolls(art, nextSubstats, art.level);
+  art.substats = nextSubstats;
   art.unactivatedSubstats = undefined;
   return result;
 }

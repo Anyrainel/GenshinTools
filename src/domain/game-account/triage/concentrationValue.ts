@@ -10,8 +10,8 @@
  */
 
 import { getSubstatAvgRoll } from "@/domain/build/artifact/scoring/utils";
-import type { Rarity, SubStat } from "@/domain/enums";
-import { getAllSubstats } from "@/domain/game-account/artifactProjection";
+import { solveArtifactRollCounts } from "@/domain/build/artifact/solver";
+import type { SubStat } from "@/domain/enums";
 import type { ArtifactData } from "@/domain/models";
 
 export type ConcentrationValueRuleResult =
@@ -46,81 +46,53 @@ const CATEGORIES: { reason: ConcentrationValueReason; stats: SubStat[] }[] = [
   { reason: "concentrated-def%", stats: ["def%"] },
 ];
 
-/** Minimum upgrade rolls (total rolls minus initial one-per-substat) required
- * for the rule to consider firing. We don't evaluate artifacts that have
- * barely been upgraded — the concentration signal needs to come from real
- * upgrade decisions, not from the initial substat assignment. */
-const MIN_UPGRADE_ROLLS = 3;
-
-/** Fraction of upgrade rolls that must fall into a single category. Each
- * substat contributes one "initial" roll regardless of allocation, so we
- * subtract those before computing concentration — otherwise a 4-sub artifact
- * maxes out around 66% even in the most extreme CR/CD-stacked case. */
+/** Share of actual upgrades that must land in a single category. */
 const CONCENTRATION_THRESHOLD = 0.5;
 
-/** Convert a substat's accumulated value into an estimated roll count using
- * the average roll value for its rarity. Returns 0 for missing substats. */
-function estimateRollCount(
+function estimateUpgrades(
+  artifact: ArtifactData,
   stat: SubStat,
-  value: number | undefined,
-  rarity: Rarity
+  rarity: 4 | 5
 ): number {
-  if (value == null || value <= 0) return 0;
-  const r = (rarity === 4 ? 4 : 5) as 4 | 5;
-  const avg = getSubstatAvgRoll(stat, r);
-  if (!avg || avg <= 0) return 0;
-  return value / avg;
-}
-
-/**
- * Returns total estimated rolls and rolls-per-stat for an artifact.
- * Uses combined activated + unactivated substats so pending strongbox rolls
- * and fully-upgraded rolls are counted consistently.
- */
-function rollCountsByStat(artifact: ArtifactData): {
-  total: number;
-  perStat: Partial<Record<SubStat, number>>;
-} {
-  const subs = getAllSubstats(artifact);
-  const perStat: Partial<Record<SubStat, number>> = {};
-  let total = 0;
-  for (const stat of subs) {
-    const activated = artifact.substats?.[stat] ?? 0;
-    const pending = artifact.unactivatedSubstats?.[stat] ?? 0;
-    const value = activated + pending;
-    const initialValue = artifact.initialValues?.[stat];
-    const upgradeRolls = estimateRollCount(
-      stat,
-      initialValue != null ? Math.max(0, value - initialValue) : undefined,
-      artifact.rarity
-    );
-    // `initialValue` is not a quality input. GOOD v3 supplies it only so we
-    // can subtract the exact base roll and measure upgrade allocation alone.
-    // Older sources estimate all rolls and strip one average initial roll.
-    const count =
-      initialValue != null
-        ? 1 + upgradeRolls
-        : estimateRollCount(stat, value, artifact.rarity);
-    perStat[stat] = count;
-    total += count;
-  }
-  return { total, perStat };
+  const avg = getSubstatAvgRoll(stat, rarity);
+  if (!Number.isFinite(avg) || avg <= 0) return 0;
+  const value = artifact.substats[stat]!;
+  const initial = artifact.initialValues?.[stat] ?? avg;
+  return Math.max(0, (value - initial) / avg);
 }
 
 /** Concentrated-stat rule: fires if ≥50% of upgrade rolls landed in one
  * category. Upgrade rolls = total rolls − number of distinct substats. */
 export const concentratedStatRule: ConcentrationValueRule = (artifact) => {
-  const { total, perStat } = rollCountsByStat(artifact);
-  const numSubs = Object.values(perStat).filter((n) => (n ?? 0) > 0).length;
-  const upgradeTotal = Math.max(0, total - numSubs);
-  if (upgradeTotal < MIN_UPGRADE_ROLLS) return { kept: false };
+  const rarity = artifact.rarity === 4 ? 4 : 5;
+  const stats = Object.keys(artifact.substats) as SubStat[];
+  const known = artifact.substatRollCounts;
+  const completeCounts =
+    known && stats.every((stat) => known[stat] !== undefined);
+  const counts = completeCounts
+    ? known
+    : solveArtifactRollCounts({ ...artifact, rarity }, known);
+  const upgrades: Partial<Record<SubStat, number>> = {};
+  let inferredTotal = 0;
+  for (const stat of stats) {
+    const count = counts?.[stat] ?? known?.[stat];
+    // Only legacy values that fail discrete roll reconstruction need an estimate.
+    const upgradeCount =
+      count !== undefined
+        ? count - 1
+        : estimateUpgrades(artifact, stat, rarity);
+    upgrades[stat] = upgradeCount;
+    inferredTotal += upgradeCount;
+  }
+  // totalRolls excludes the pending fourth substat in GOOD v3.
+  const upgradeTotal =
+    !completeCounts && artifact.totalRolls !== undefined
+      ? artifact.totalRolls - stats.length
+      : inferredTotal;
+  if (upgradeTotal < (rarity === 4 ? 2 : 3)) return { kept: false };
 
   for (const { reason, stats } of CATEGORIES) {
-    let sum = 0;
-    for (const s of stats) {
-      const n = perStat[s] ?? 0;
-      if (n > 0) sum += n - 1; // strip the initial roll
-    }
+    const sum = stats.reduce((n, stat) => n + (upgrades[stat] ?? 0), 0);
     if (sum / upgradeTotal >= CONCENTRATION_THRESHOLD) {
       return { kept: true, reason };
     }

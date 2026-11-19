@@ -646,10 +646,11 @@ describe("runTriage", () => {
     );
 
     expect(decisions[0]).toMatchObject({
-      label: "unlock",
-      decidingResult: { ruleId: "noDemand" },
+      label: "lock",
+      decidingResult: { ruleId: "setSlotFloorKeep" },
       allResults: [],
-      specialRules: [],
+      specialRules: ["setSlotFloor"],
+      supplyDemand: { demand: 0 },
     });
     const fiveStarDecision = decisions.find(
       (decision) => decision.artifact.id === fiveStarHalfSet.id
@@ -685,7 +686,7 @@ describe("runTriage", () => {
     expect(decisions[0].specialRules).not.toContain("offPiecePattern");
   });
 
-  it("does not rescue a native four-star artifact with the wrong four-piece main stat", () => {
+  it("does not apply concentration or off-piece rules to an unmatched four-star main stat", () => {
     const art = makeArt({
       rarity: 4,
       setKey: "instructor",
@@ -708,7 +709,7 @@ describe("runTriage", () => {
         ownedOnly: false,
         highLevelProtection: false,
         levelProtection: 12,
-        setSlotKeep: 3,
+        setSlotKeep: 0,
         erHoardingAllEnabled: true,
         customFlexInputs: [
           { slot: "sands", mainStat: "er", requiredSubs: ["em", "hp%"] },
@@ -721,6 +722,41 @@ describe("runTriage", () => {
       allResults: [],
       specialRules: [],
     });
+  });
+
+  it("keeps the configured four-star set-slot minimum across unmatched main stats", () => {
+    const sands = ["em", "er", "def%"].map((mainStatKey) =>
+      makeArt({
+        setKey: "instructor",
+        rarity: 4,
+        slotKey: "sands",
+        mainStatKey,
+        lock: true,
+        substats: { hp: 191.2, atk: 12.45 },
+      })
+    );
+    const { decisions } = runTriage(
+      makeAccount([], sands),
+      [
+        {
+          characterId: "char_a",
+          builds: [makeBuild({ artifactSet: "instructor" })],
+        },
+      ],
+      { ...SETTINGS, ownedOnly: false, setSlotKeep: 2 }
+    );
+
+    expect(
+      decisions.every((decision) => decision.allResults.length === 0)
+    ).toBe(true);
+    expect(
+      decisions.map((decision) => decision.decidingResult?.ruleId)
+    ).toEqual(["setSlotFloorKeep", "setSlotFloorKeep", "noDemand"]);
+    expect(decisions.map((decision) => decision.label)).toEqual([
+      "lock",
+      "lock",
+      "unlock",
+    ]);
   });
 
   it("does not apply off-piece flex keeps even when a native four-star four-piece main stat matches", () => {

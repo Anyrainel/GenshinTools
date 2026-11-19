@@ -36,7 +36,7 @@
       "substats": [
         { "key": "critDMG_", "value": 28.8 },
         { "key": "critRate_", "value": 6.6 },
-        { "key": "atk_", "value": 5.8, "initialValue": 5.8 },
+        { "key": "atk_", "value": 5.8, "initialValue": 5.8, "rolls": [5.83] },
         { "key": "eleMas", "value": 40 }
       ]
     },

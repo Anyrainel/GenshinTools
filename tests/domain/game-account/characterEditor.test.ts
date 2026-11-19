@@ -12,6 +12,7 @@ import {
   swapArtifactWithCharacter,
   updateArtifactStats,
 } from "@/domain/game-account/characterEditor";
+import { concentratedStatRule } from "@/domain/game-account/triage/concentrationValue";
 import type { AccountData, ArtifactData } from "@/domain/models";
 
 // ─── Fixtures ────────────────────────────────────────────────────────────────
@@ -307,6 +308,85 @@ describe("artifact swap and equip (save persistence)", () => {
 // ─── Substat editing on existing artifacts ───────────────────────────────────
 
 describe("updateArtifactStats (substat editing)", () => {
+  function importedFlower(): AccountData {
+    const data = makeAccountData();
+    data.characters[0].artifacts.flower = makeArtifact({
+      setKey: "instructor",
+      rarity: 4,
+      level: 16,
+      substats: { em: 35.44, def: 14.82, "hp%": 10.72, cd: 4.35 },
+      initialValues: { em: 18.65, def: 14.82, "hp%": 3.73, cd: 4.35 },
+      substatRollCounts: { em: 2, def: 1, "hp%": 3, cd: 1 },
+      totalRolls: 7,
+    });
+    return data;
+  }
+
+  it("re-evaluates edited stats while keeping exact metadata for unchanged stats", () => {
+    const data = importedFlower();
+    const before = data.characters[0].artifacts.flower!;
+    expect(concentratedStatRule(before)).toEqual({
+      kept: true,
+      reason: "concentrated-hp%",
+    });
+    const updated = updateArtifactStats(data, "hu_tao", "flower", {
+      substats: { em: 18.65, def: 59.28, "hp%": 3.73, cd: 4.35 },
+    }).characters[0].artifacts.flower!;
+    expect(updated.substatRollCounts).toEqual({ cd: 1 });
+    expect(updated.initialValues).toEqual({ cd: 4.35 });
+    expect(updated.totalRolls).toBeUndefined();
+    expect(concentratedStatRule(updated)).toEqual({ kept: false });
+  });
+
+  it("preserves known rolls for identical values, and invalidates them after a rarity or upgrade-level change", () => {
+    const data = importedFlower();
+    const before = data.characters[0].artifacts.flower!;
+    const same = updateArtifactStats(data, "hu_tao", "flower", {
+      rarity: before.rarity,
+      level: before.level,
+      substats: { ...before.substats },
+      lock: true,
+    }).characters[0].artifacts.flower!;
+    expect(same).toEqual({ ...before, lock: true });
+    const changedLevel = updateArtifactStats(data, "hu_tao", "flower", {
+      level: 12,
+    }).characters[0].artifacts.flower!;
+    expect(changedLevel.substatRollCounts).toBeUndefined();
+    expect(changedLevel.totalRolls).toBeUndefined();
+    expect(changedLevel.initialValues).toEqual(before.initialValues);
+    const changedRarity = updateArtifactStats(data, "hu_tao", "flower", {
+      rarity: 5,
+    }).characters[0].artifacts.flower!;
+    expect(changedRarity.substatRollCounts).toBeUndefined();
+    expect(changedRarity.totalRolls).toBeUndefined();
+    expect(changedRarity.initialValues).toBeUndefined();
+  });
+
+  it("counts a pending fourth line as one new roll through both activation paths", () => {
+    const data = makeAccountData();
+    const before = makeArtifact({
+      level: 0,
+      substats: { cr: 3.89, cd: 7.77, em: 23.31 },
+      substatRollCounts: { cr: 1, cd: 1, em: 1 },
+      totalRolls: 3,
+      unactivatedSubstats: { "atk%": 5.83 },
+    });
+    data.characters[0].artifacts.flower = before;
+    const direct = activateUnactivatedSubstat(data, "hu_tao", "flower");
+    const levelEdit = updateArtifactStats(data, "hu_tao", "flower", {
+      level: 4,
+      substats: { ...before.substats, "atk%": 5.83 },
+      unactivatedSubstats: {},
+    });
+    for (const account of [direct, levelEdit]) {
+      expect(account.characters[0].artifacts.flower).toMatchObject({
+        substatRollCounts: { cr: 1, cd: 1, em: 1, "atk%": 1 },
+        initialValues: { "atk%": 5.83 },
+        totalRolls: 4,
+      });
+    }
+  });
+
   it("can add a 4th substat to an existing +0 artifact with 3 substats", () => {
     const data = makeAccountData({
       characters: [

@@ -81,6 +81,7 @@ describe("continuous snapshot import", () => {
     art.elixirCrafted = true;
     art.totalRolls = 8;
     art.initialValues = { cr: 3.9 };
+    art.substatRollCounts = { cr: 1, cd: 1 };
     const result = prepareContinuousImport(good, existing);
     expect(result.artifactIdMap.get("artifact-42")).toBe("artifact-0");
     expect(result.data.characters[0].artifacts.flower).toMatchObject({
@@ -88,6 +89,7 @@ describe("continuous snapshot import", () => {
       elixirCrafted: true,
       totalRolls: 8,
       initialValues: { cr: 3.9 },
+      substatRollCounts: { cr: 1, cd: 1 },
     });
     expect(prepareContinuousImport(good, result.data).data).toEqual(
       result.data

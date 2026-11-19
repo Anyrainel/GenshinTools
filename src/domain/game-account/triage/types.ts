@@ -165,6 +165,8 @@ export type TriageRule = {
   slot: Slot;
   mainStat: MainStat;
   desired: SubStat[];
+  /** The only useful substat when a pure HP/ATK/DEF build takes its percentage main. */
+  soleFlatTarget?: SubStat;
   optional: SubStat[]; // for ranking only
   fillers: SubStat[];
   statWeights: StatWeightMap;
