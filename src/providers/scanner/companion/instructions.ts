@@ -77,20 +77,22 @@ export function toGOODArtifact(
 
 export function buildTriageInstructions(
   toLock: ArtifactData[],
-  toUnlock: ArtifactData[]
+  toUnlock: ArtifactData[],
+  rarities: readonly (4 | 5)[] = [4, 5]
 ): ManagePayload {
+  const selected = new Set<number>(rarities);
   const lock: IGOODArtifact[] = [];
   const lockIds: string[] = [];
   const unlock: IGOODArtifact[] = [];
   const unlockIds: string[] = [];
 
   for (const art of toLock) {
-    if (art.lock) continue;
+    if (art.lock || !selected.has(art.rarity)) continue;
     lock.push(toGOODArtifact(art));
     lockIds.push(art.id);
   }
   for (const art of toUnlock) {
-    if (!art.lock) continue;
+    if (!art.lock || !selected.has(art.rarity)) continue;
     unlock.push(toGOODArtifact(art));
     unlockIds.push(art.id);
   }

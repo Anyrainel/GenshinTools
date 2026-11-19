@@ -1,27 +1,12 @@
-import { fireEvent, screen, within } from "@testing-library/react";
-import type { ArtifactManagerJobConfig } from "@/components/shared/ArtifactManagerDialog";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
 import type { ArtifactData, Build } from "@/domain/models";
 import { TriageView } from "@/pages/game-account/TriageView";
+import type { ManageRequest } from "@/providers/scanner/companion/types";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useBuildsStore } from "@/stores/useBuildsStore";
 import { useTriageStore } from "@/stores/useTriageStore";
 import { render } from "../../utils/render";
-
-vi.mock("@/components/shared/ArtifactManagerDialog", () => ({
-  ArtifactManagerDialog: ({
-    open,
-    job,
-  }: {
-    open: boolean;
-    job: ArtifactManagerJobConfig;
-  }) =>
-    open ? (
-      <output data-testid="manager-payload">
-        {JSON.stringify(job.build())}
-      </output>
-    ) : null,
-}));
 
 function artifact(
   id: string,
@@ -147,23 +132,163 @@ describe("four-star artifacts in triage", () => {
     }
   );
 
-  it("sends native four-star decisions to the manager while leaving excluded variants untouched", () => {
-    render(<TriageView />);
+  describe("Apply to Game", () => {
+    afterEach(() => vi.restoreAllMocks());
 
-    fireEvent.click(screen.getByRole("button", { name: /Apply to Game/i }));
-    const payload = JSON.parse(
-      screen.getByTestId("manager-payload").textContent!
+    it.each([
+      { name: "both by default", rarities: [4, 5], lock: true, unlock: true },
+      { name: "four stars", rarities: [4], lock: true, unlock: true },
+      { name: "five stars", rarities: [5], lock: true, unlock: true },
+      { name: "neither rarity", rarities: [], lock: true, unlock: true },
+      {
+        name: "only four-star unlocks",
+        rarities: [4],
+        lock: false,
+        unlock: true,
+      },
+      {
+        name: "only five-star locks",
+        rarities: [5],
+        lock: true,
+        unlock: false,
+      },
+    ])(
+      "previews, submits and syncs $name",
+      async ({ rarities, lock, unlock }) => {
+        const account = useAccountStore.getState().accounts[0].data;
+        const inventory = [
+          ...account.extraArtifacts,
+          artifact("five-to-lock", 5, false, {
+            totalRolls: 4,
+            substats: { cr: 3.89, cd: 7.77, er: 5.18, atk: 19 },
+          }),
+        ];
+        useAccountStore.getState().addOrUpdateAccount(0, {
+          data: { ...account, extraArtifacts: inventory },
+        });
+
+        const requests: ManageRequest[] = [];
+        const jobId = "test-triage";
+        vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
+          const { pathname } = new URL(String(url));
+          if (pathname === "/health")
+            return Response.json({
+              status: "ok",
+              enabled: true,
+              busy: false,
+              gameAlive: true,
+            });
+          if (pathname === "/manage" && init?.method === "POST") {
+            const request: ManageRequest = JSON.parse(String(init.body));
+            requests.push(request);
+            return Response.json({
+              jobId,
+              total: request.lock.length + request.unlock.length,
+            });
+          }
+          if (pathname === "/artifacts")
+            return new Response(null, { status: 404 });
+          const request = requests[0];
+          const results = request
+            ? [
+                ...request.lock.map((_, i) => ({
+                  id: `lock:${i}`,
+                  status: "success",
+                })),
+                ...request.unlock.map((_, i) => ({
+                  id: `unlock:${i}`,
+                  status: "success",
+                })),
+              ]
+            : [];
+          const summary = {
+            total: results.length,
+            success: results.length,
+            already_correct: 0,
+            not_found: 0,
+            errors: 0,
+            aborted: 0,
+          };
+          if (pathname === "/status")
+            return Response.json({ state: "completed", jobId, summary });
+          if (pathname === "/result")
+            return Response.json({ results, summary });
+          throw new Error(`Unexpected fetch in triage test: ${pathname}`);
+        });
+        render(<TriageView />);
+        fireEvent.click(screen.getByRole("button", { name: "Apply to Game" }));
+        const dialog = within(screen.getByRole("dialog"));
+        const apply = dialog.getByRole("button", { name: "Apply to Game" });
+        await waitFor(() => expect(apply).toBeEnabled());
+        for (const rarity of [4, 5]) {
+          const checkbox = dialog.getByRole("checkbox", {
+            name: `${rarity}-star`,
+          });
+          expect(checkbox).toBeChecked();
+          if (!rarities.includes(rarity)) fireEvent.click(checkbox);
+        }
+        if (!lock)
+          fireEvent.click(
+            dialog.getByRole("checkbox", { name: "Include lock instructions" })
+          );
+        if (!unlock)
+          fireEvent.click(
+            dialog.getByRole("checkbox", {
+              name: "Include unlock instructions",
+            })
+          );
+        const lockCount = lock ? rarities.length : 0;
+        const unlockCount = unlock ? rarities.length : 0;
+        expect(
+          dialog.getByText(`Lock ${lockCount} · Unlock ${unlockCount}`)
+        ).toBeInTheDocument();
+        if (rarities.length === 0) {
+          expect(apply).toBeDisabled();
+          fireEvent.click(apply);
+          expect(requests).toEqual([]);
+          return;
+        }
+
+        fireEvent.click(apply);
+        await dialog.findByText(
+          `${lockCount + unlockCount} artifacts processed`,
+          {},
+          { timeout: 3000 }
+        );
+        expect(requests).toHaveLength(1);
+        for (const [action, include] of [
+          ["lock", lock],
+          ["unlock", unlock],
+        ] as const) {
+          const sent = requests[0][action];
+          expect(sent.map((a) => a.rarity).sort()).toEqual(
+            include ? rarities : []
+          );
+          expect(sent.map((a) => a.setKey).sort()).toEqual(
+            (include ? rarities : [])
+              .map((r) => (r === 4 ? "Instructor" : "EmblemOfSeveredFate"))
+              .sort()
+          );
+        }
+        const expected = inventory.map((a) => {
+          if (rarities.includes(a.rarity)) {
+            if (lock && ["native-four-to-lock", "five-to-lock"].includes(a.id))
+              return [a.id, true];
+            if (
+              unlock &&
+              ["native-four-to-unlock", "five-locked"].includes(a.id)
+            )
+              return [a.id, false];
+          }
+          return [a.id, a.lock];
+        });
+        expect(
+          useAccountStore
+            .getState()
+            .accounts[0].data.extraArtifacts.map((a) => [a.id, a.lock])
+        ).toEqual(expected);
+      }
     );
-    expect(payload.lockIds).toEqual(["native-four-to-lock"]);
-    expect(new Set(payload.unlockIds)).toEqual(
-      new Set(["native-four-to-unlock", "five-locked"])
-    );
-    expect(payload.request.lock).toHaveLength(1);
-    expect(payload.request.lock[0]).toMatchObject({
-      setKey: "Instructor",
-      rarity: 4,
-    });
-    expect(payload.request.unlock).toHaveLength(2);
   });
 
   it("keeps excluded variants visible through quality and result filters", () => {

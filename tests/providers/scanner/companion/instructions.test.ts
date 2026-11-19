@@ -106,6 +106,29 @@ describe("buildTriageInstructions", () => {
     expect(result.unlockIds).toEqual(["u1"]);
   });
 
+  it.each([
+    { selected: [4] },
+    { selected: [5] },
+    { selected: [4, 5] },
+    { selected: [] },
+  ] as const)(
+    "keeps selected rarities and IDs aligned in both actions ($selected)",
+    ({ selected }) => {
+      const rarities = [4, 5] as const;
+      const toLock = rarities.map((rarity) =>
+        makeArtifact({ rarity, id: `lock-${rarity}` })
+      );
+      const toUnlock = rarities.map((rarity) =>
+        makeArtifact({ rarity, id: `unlock-${rarity}`, lock: true })
+      );
+      const result = buildTriageInstructions(toLock, toUnlock, selected);
+      expect(result.request.lock.map((art) => art.rarity)).toEqual(selected);
+      expect(result.request.unlock.map((art) => art.rarity)).toEqual(selected);
+      expect(result.lockIds).toEqual(selected.map((r) => `lock-${r}`));
+      expect(result.unlockIds).toEqual(selected.map((r) => `unlock-${r}`));
+    }
+  );
+
   it("returns empty when both lists are empty", () => {
     const result = buildTriageInstructions([], []);
     expect(result.request.lock).toHaveLength(0);

@@ -3394,6 +3394,13 @@ export const i18nUiData = {
     },
     includeLock: { en: "Include lock instructions", zh: "包括锁定指令" },
     includeUnlock: { en: "Include unlock instructions", zh: "包括解锁指令" },
+    artifactRarity: { en: "Artifact rarity", zh: "圣遗物星级" },
+    fourStar: { en: "4-star", zh: "四星" },
+    fiveStar: { en: "5-star", zh: "五星" },
+    manageCounts: {
+      en: "Lock {0} · Unlock {1}",
+      zh: "锁定 {0} 件 · 解锁 {1} 件",
+    },
     skipUnchangedEquip: {
       en: "Only apply changed slots",
       zh: "仅应用变化项",

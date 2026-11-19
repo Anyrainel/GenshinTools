@@ -1,5 +1,11 @@
 import { CheckCircle2, Info, Loader2, XCircle } from "lucide-react";
-import { type ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ScrollableDialogContent as DialogContent } from "@/components/shared/ScrollableDialogContent";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -18,6 +24,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useArtifactManagerConnection } from "@/hooks/useArtifactManagerConnection";
 import type { JobInput } from "@/hooks/useArtifactManagerJob";
 import { useArtifactManagerJob } from "@/hooks/useArtifactManagerJob";
+import { useToggleSet } from "@/hooks/useToggleSet";
 import { fetchArtifacts } from "@/providers/scanner/companion/client";
 import { filterUnchangedEquipInstructions } from "@/providers/scanner/companion/instructions";
 import type {
@@ -39,7 +46,7 @@ import { getActiveAccount, useAccountStore } from "@/stores/useAccountStore";
 import { ConnectionStatus, SetupInstructions } from "./managerSharedUI";
 
 export type ArtifactManagerJobConfig =
-  | { type: "manage"; build: () => ManagePayload }
+  | { type: "manage"; build: (rarities?: readonly (4 | 5)[]) => ManagePayload }
   | { type: "equip"; build: () => EquipPayload };
 
 interface ArtifactManagerDialogProps {
@@ -77,6 +84,7 @@ export function ArtifactManagerDialog({
   const [portInput, setPortInput] = useState(String(DEFAULT_PORT));
   const [includeLock, setIncludeLock] = useState(true);
   const [includeUnlock, setIncludeUnlock] = useState(true);
+  const [selectedRarities, toggleRarity] = useToggleSet<4 | 5>([4, 5]);
   const [skipUnchangedEquip, setSkipUnchangedEquip] = useState(false);
 
   const { connection } = useArtifactManagerConnection(open, port);
@@ -113,21 +121,33 @@ export function ArtifactManagerDialog({
     phase.type === "submitted" ||
     phase.type === "running";
 
+  const buildManagePayload = job.type === "manage" ? job.build : undefined;
+  const managePayload = useMemo(() => {
+    if (!open || phase.type !== "idle" || !buildManagePayload) return null;
+    const full = buildManagePayload([...selectedRarities]);
+    return {
+      request: {
+        lock: includeLock ? full.request.lock : [],
+        unlock: includeUnlock ? full.request.unlock : [],
+      },
+      lockIds: includeLock ? full.lockIds : [],
+      unlockIds: includeUnlock ? full.unlockIds : [],
+    };
+  }, [
+    open,
+    phase.type,
+    buildManagePayload,
+    selectedRarities,
+    includeLock,
+    includeUnlock,
+  ]);
+  const lockCount = managePayload?.request.lock.length ?? 0;
+  const unlockCount = managePayload?.request.unlock.length ?? 0;
+
   const handleAction = useCallback(() => {
     if (job.type === "manage") {
-      const full = job.build();
-      const payload: ManagePayload = {
-        request: {
-          lock: includeLock ? full.request.lock : [],
-          unlock: includeUnlock ? full.request.unlock : [],
-        },
-        lockIds: includeLock ? full.lockIds : [],
-        unlockIds: includeUnlock ? full.unlockIds : [],
-      };
-      const total = payload.request.lock.length + payload.request.unlock.length;
-      if (total > 0) {
-        submit({ type: "manage", payload });
-      }
+      if (managePayload && lockCount + unlockCount > 0)
+        submit({ type: "manage", payload: managePayload });
     } else {
       const full = job.build();
       const payload = skipUnchangedEquip
@@ -137,7 +157,7 @@ export function ArtifactManagerDialog({
         submit({ type: "equip", payload });
       }
     }
-  }, [job, submit, includeLock, includeUnlock, skipUnchangedEquip]);
+  }, [job, submit, managePayload, lockCount, unlockCount, skipUnchangedEquip]);
 
   const applySnapshot = useCallback((snapshot: IGOODArtifact[]) => {
     const account = getActiveAccount(useAccountStore.getState());
@@ -222,28 +242,55 @@ export function ArtifactManagerDialog({
                 </Alert>
               )}
               {job.type === "manage" && (
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2 text-sm">
-                    <Checkbox
-                      id="include-lock"
-                      checked={includeLock}
-                      onCheckedChange={(v) => setIncludeLock(!!v)}
-                    />
-                    <label htmlFor="include-lock">
-                      {t.ui("manager.includeLock")}
-                    </label>
+                <>
+                  <fieldset className="space-y-2">
+                    <legend className="text-sm font-medium">
+                      {t.ui("manager.artifactRarity")}
+                    </legend>
+                    <div className="flex flex-wrap gap-4">
+                      {([4, 5] as const).map((rarity) => (
+                        <Label key={rarity} className="cursor-pointer">
+                          <Checkbox
+                            checked={selectedRarities.has(rarity)}
+                            onCheckedChange={() => toggleRarity(rarity)}
+                          />
+                          {rarity === 4
+                            ? t.ui("manager.fourStar")
+                            : t.ui("manager.fiveStar")}
+                        </Label>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        id="include-lock"
+                        checked={includeLock}
+                        onCheckedChange={(v) => setIncludeLock(!!v)}
+                      />
+                      <label htmlFor="include-lock">
+                        {t.ui("manager.includeLock")}
+                      </label>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Checkbox
+                        id="include-unlock"
+                        checked={includeUnlock}
+                        onCheckedChange={(v) => setIncludeUnlock(!!v)}
+                      />
+                      <label htmlFor="include-unlock">
+                        {t.ui("manager.includeUnlock")}
+                      </label>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm">
-                    <Checkbox
-                      id="include-unlock"
-                      checked={includeUnlock}
-                      onCheckedChange={(v) => setIncludeUnlock(!!v)}
-                    />
-                    <label htmlFor="include-unlock">
-                      {t.ui("manager.includeUnlock")}
-                    </label>
-                  </div>
-                </div>
+                  <p aria-live="polite" className="text-sm tabular-nums">
+                    {t.format(
+                      "manager.manageCounts",
+                      String(lockCount),
+                      String(unlockCount)
+                    )}
+                  </p>
+                </>
               )}
               {job.type === "equip" && (
                 <div className="space-y-1.5 rounded-lg border border-border p-3">
@@ -322,7 +369,7 @@ export function ArtifactManagerDialog({
                 disabled={
                   actionDisabled ||
                   !isReady ||
-                  (job.type === "manage" && !includeLock && !includeUnlock)
+                  (job.type === "manage" && lockCount + unlockCount === 0)
                 }
                 onClick={handleAction}
               >

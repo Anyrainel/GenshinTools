@@ -257,7 +257,8 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     [recommendUnlock]
   );
   const buildManagerInstructions = useCallback(
-    () => buildTriageInstructions(lockArtifacts, unlockArtifacts),
+    (rarities?: readonly (4 | 5)[]) =>
+      buildTriageInstructions(lockArtifacts, unlockArtifacts, rarities),
     [lockArtifacts, unlockArtifacts]
   );
 

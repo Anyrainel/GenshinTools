@@ -16,7 +16,10 @@ import { FlexPatternDialog } from "@/components/game-account/FlexPatternDialog";
 import { TriageHelpDialog } from "@/components/game-account/TriageHelpDialog";
 import { TriageSettingsPanel } from "@/components/game-account/TriageSettingsPanel";
 import type { TriageTabContentHandle } from "@/components/game-account/TriageTabContent";
-import { ArtifactManagerDialog } from "@/components/shared/ArtifactManagerDialog";
+import {
+  ArtifactManagerDialog,
+  type ArtifactManagerJobConfig,
+} from "@/components/shared/ArtifactManagerDialog";
 import { ArtifactScannerDialog } from "@/components/shared/ArtifactScannerDialog";
 import { FilterChip } from "@/components/shared/FilterChip";
 import { FilterChipGroup } from "@/components/shared/FilterChipGroup";
@@ -40,7 +43,6 @@ import type {
 import { artifactsById, sortedArtifacts } from "@/domain/reference/catalog";
 import { getAssetUrl } from "@/lib/assets/urls.ts";
 import { cn } from "@/lib/utils";
-import type { ManagePayload } from "@/providers/scanner/companion/types";
 import { TRIAGE_TIER_COLORS } from "../shared/colors";
 
 type Translator = ReturnType<typeof useLanguage>["t"];
@@ -127,7 +129,10 @@ export function TriageHeader({
   activeSortDim: SortDimension;
   activeSortDir: "asc" | "desc";
   onToggleSort: (dim: SortDimension) => void;
-  buildManagerInstructions: () => ManagePayload;
+  buildManagerInstructions: Extract<
+    ArtifactManagerJobConfig,
+    { type: "manage" }
+  >["build"];
   tabContentRef?: React.RefObject<TriageTabContentHandle | null>;
   sourceAgeBadge?: React.ReactNode;
 }) {
