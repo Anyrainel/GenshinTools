@@ -115,6 +115,7 @@ const SETTINGS: TriageSettings = {
   triageMode: "strict", // pin to strict for deterministic threshold tests
   levelProtection: 0, // disable for cleaner tests
   equippedProtection: false,
+  fourStarProtection: false, // exercise the opt-in analysis of native four-star sets
 };
 
 // Tests
@@ -474,6 +475,53 @@ describe("runTriage", () => {
     );
     expect(Array.isArray(flexPatterns)).toBe(true);
     expect(flexPatterns.length).toBeGreaterThan(0);
+  });
+
+  it("excludes every four-star by default while preserving its lock state and five-star allocations", () => {
+    const fourStars = [
+      makeArt({ setKey: "instructor", rarity: 4, lock: true }),
+      makeArt({ setKey: "instructor", rarity: 4, lock: false }),
+      makeArt({ setKey: "the_exile", rarity: 4, lock: true }),
+      makeArt({ setKey: "wanderers_troupe", rarity: 4, lock: false }),
+    ];
+    const fiveStar = makeArt({ setKey: "wanderers_troupe" });
+    const groups = [
+      {
+        characterId: "char_a",
+        builds: [
+          makeBuild({ artifactSet: "instructor" }),
+          makeBuild({ artifactSet: "wanderers_troupe", id: "five-star" }),
+        ],
+      },
+    ];
+    const baseline = runTriage(
+      makeAccount([{ key: "char_a" }], [fiveStar]),
+      groups,
+      DEFAULT_TRIAGE_SETTINGS
+    );
+    const mixed = runTriage(
+      makeAccount(
+        [{ key: "char_a", artifacts: { flower: fourStars[0] } }],
+        [...fourStars.slice(1), fiveStar]
+      ),
+      groups,
+      DEFAULT_TRIAGE_SETTINGS
+    );
+
+    expect(mixed.decisions.filter((d) => d.artifact.rarity === 5)).toEqual(
+      baseline.decisions
+    );
+    expect(mixed.statistics).toEqual(baseline.statistics);
+    expect(mixed.decisions.filter((d) => d.artifact.rarity === 4)).toEqual(
+      fourStars.map((artifact) => ({
+        artifact,
+        label: artifact.lock ? "lock" : "unlock",
+        decidingResult: null,
+        allResults: [],
+        specialRules: ["fourStarProtection"],
+        supplyDemand: null,
+      }))
+    );
   });
 
   it("protects four-star variants of five-star sets without changing either lock state", () => {

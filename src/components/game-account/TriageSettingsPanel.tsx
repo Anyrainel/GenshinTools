@@ -156,6 +156,12 @@ export function TriageSettingsPanel({
       <div className="space-y-3">
         <SectionHeading>{t.ui("triage.settingsProtection")}</SectionHeading>
         <SwitchRow
+          id="fourStarProtection"
+          label={t.ui("triage.fourStarProtection")}
+          checked={settings.fourStarProtection}
+          onChange={(v) => update("fourStarProtection", v)}
+        />
+        <SwitchRow
           id="equippedProtection"
           label={t.ui("triage.equippedProtect")}
           checked={settings.equippedProtection}

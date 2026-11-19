@@ -55,11 +55,19 @@ const SP_KEY = {
   allSetErHoard: "triage.sp.allSetErHoard",
   levelProtected: "triage.sp.levelProtected",
   equippedProtected: "triage.sp.equippedProtected",
+  fourStarProtection: "triage.sp.fourStarProtection",
   rarityProtected: "triage.sp.rarityProtected",
   doubleCrit: "triage.sp.doubleCrit",
   setSlotFloor: "triage.sp.setSlotFloor",
   offPiecePattern: "triage.sp.offPiecePattern",
 } as const;
+
+const PROTECTION_PRIORITY: TriageSpecialRule[] = [
+  "fourStarProtection",
+  "rarityProtected",
+  "levelProtected",
+  "equippedProtected",
+];
 
 function formatRule(
   ruleId: TriageRuleId,
@@ -282,14 +290,11 @@ export function TriageCard({
 
             {/* Row 3: single reason line — sp rules take priority */}
             {(() => {
-              let spRules = decision.specialRules;
-              if (isProtected) {
-                spRules = spRules.includes("rarityProtected")
-                  ? ["rarityProtected"]
-                  : spRules.includes("levelProtected")
-                    ? ["levelProtected"]
-                    : spRules.filter((sp) => sp === "equippedProtected");
-              }
+              const spRules = isProtected
+                ? PROTECTION_PRIORITY.filter((rule) =>
+                    decision.specialRules.includes(rule)
+                  ).slice(0, 1)
+                : decision.specialRules;
               if (spRules.length > 0) {
                 return (
                   <div className="text-xs mt-0.5 flex items-start gap-1 text-amber-400">

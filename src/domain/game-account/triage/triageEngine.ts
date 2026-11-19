@@ -46,11 +46,7 @@ import type {
 function matchesSet(rule: TriageRule, artifact: ArtifactData): boolean {
   const src = rule.demandSource;
   if (artifact.rarity === 4) {
-    return (
-      isTriageArtifactEligible(artifact) &&
-      src.type === "4pc" &&
-      src.setKey === artifact.setKey
-    );
+    return src.type === "4pc" && src.setKey === artifact.setKey;
   }
   if (src.type === "4pc")
     return (
@@ -121,10 +117,30 @@ export function runTriage(
     allArtifacts.push({ artifact: art, equippedOn: null });
   }
 
-  // Native four-star sets have their own exact four-piece demand queues.
-  const eligibleArtifacts = allArtifacts.filter(({ artifact }) =>
-    isTriageArtifactEligible(artifact)
-  );
+  const eligibleArtifacts: typeof allArtifacts = [];
+  const excludedFourStarDecisions: TriageDecision[] = [];
+  for (const item of allArtifacts) {
+    const { artifact } = item;
+    if (
+      !(artifact.rarity === 4 && settings.fourStarProtection) &&
+      isTriageArtifactEligible(artifact)
+    ) {
+      eligibleArtifacts.push(item);
+    } else if (artifact.rarity === 4) {
+      excludedFourStarDecisions.push({
+        artifact,
+        label: artifact.lock ? "lock" : "unlock",
+        decidingResult: null,
+        allResults: [],
+        specialRules: [
+          settings.fourStarProtection
+            ? "fourStarProtection"
+            : "rarityProtected",
+        ],
+        supplyDemand: null,
+      });
+    }
+  }
 
   // Phase 1: Evaluate each artifact
   type PrelimResult = {
@@ -606,19 +622,6 @@ export function runTriage(
     specialRules: p.specialRules,
     supplyDemand: p.supplyDemand,
   }));
-  const excludedFourStarDecisions = allArtifacts
-    .filter(
-      ({ artifact }) =>
-        artifact.rarity === 4 && !isTriageArtifactEligible(artifact)
-    )
-    .map<TriageDecision>(({ artifact }) => ({
-      artifact,
-      label: artifact.lock ? "lock" : "unlock",
-      decidingResult: null,
-      allResults: [],
-      specialRules: ["rarityProtected"],
-      supplyDemand: null,
-    }));
   return {
     decisions: [...decisions, ...excludedFourStarDecisions],
     flexPatterns: allFlex,

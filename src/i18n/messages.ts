@@ -2988,8 +2988,8 @@ export const i18nUiData = {
       zh: "保护区不参与",
     },
     noActionDesc: {
-      en: "Excluded 4-star variants and artifacts protected by level or equipment rules; lock status stays unchanged",
-      zh: "不参与判断的四星版本及受等级、装备保护规则保护的圣遗物，保持当前锁定状态",
+      en: "Items protected by rarity, level or equipped status keep their current lock state.",
+      zh: "受星级、等级或装备保护的圣遗物保留当前锁定状态。",
     },
     noChange: {
       en: "No Change",
@@ -3058,6 +3058,10 @@ export const i18nUiData = {
       allSetErHoard: { en: "4-liner ER (all sets)", zh: "4初始充能（全套装）" },
       levelProtected: { en: "Level protected", zh: "高等级保护" },
       equippedProtected: { en: "Equipped protected", zh: "已装备保护" },
+      fourStarProtection: {
+        en: "4-star protection is on",
+        zh: "已开启四星保护",
+      },
       rarityProtected: {
         en: "4-star variants of 5-star sets are excluded",
         zh: "五星套装的四星版本不参与锁定判断",
@@ -3170,6 +3174,10 @@ export const i18nUiData = {
     equippedProtect: {
       en: "Protect equipped",
       zh: "保护已装备",
+    },
+    fourStarProtection: {
+      en: "Protect all 4-star artifacts",
+      zh: "保护所有四星",
     },
     filterByHalfSet: { en: "Filter by 2pc set", zh: "按2件套过滤" },
     filterBySlot: { en: "Filter by slot", zh: "按部位过滤" },
@@ -3294,8 +3302,8 @@ export const i18nUiData = {
       supplyRecycle: { en: "recycle", zh: "回收" },
       supplyKeep: { en: "keep limit", zh: "保留" },
       setSlotFloorDetail: {
-        en: "The minimum keep applies to each set and slot, including four-star-only sets with no matching build.",
-        zh: "每套装每部位都有保底。四星专属套即使没有匹配的配装，也按设置的数量保留。",
+        en: "Each analyzed set has a minimum keep per slot, even when no build uses it.",
+        zh: "参与分析的套装每个部位都有保底，即使没有匹配配装，也会按设置的数量保留。",
       },
       backupAmountDetail: {
         en: "Each demand group's reserve target is the lower of 3× demand and demand + margin. Prime artifacts and custom always-lock-solid keeps consume the target but can exceed it. Filler can fill that target only up to its separate cap. Allocation ignores special tags: any artifact selected by build quality consumes the target. Afterward, ER, double-crit, and off-piece rules lock any remaining matches. Set-slot keep raises the final total only when it is still below its floor. Normal is 5 / 2 / 3; extra is 10 / 4 / 3.",
@@ -3313,6 +3321,10 @@ export const i18nUiData = {
       spHighLevelOff: {
         en: "When high-level protection is off",
         zh: "关闭高等级保护后",
+      },
+      spFourStarDetail: {
+        en: "All 4-star artifacts are protected by default. Turn off 4-star protection to analyze sets like Instructor and The Exile. The 4-star versions of 5-star sets always stay protected.",
+        zh: "默认保护所有四星圣遗物。关闭四星保护后，教官、流放者等四星专属套参与分析。五星套装的四星版本始终受保护。",
       },
       spHighLevelOffDetail: {
         en: "Once a piece reaches the level threshold, it can be kept for a single category worth at least 2 average rolls at +16 (four-star) or 2.5 at +20 (five-star). Initial rolls count. CR and CD add together. ER, EM, ATK%, HP%, and DEF% each count separately. Before max level, the estimate includes new substats and the expected gain from remaining upgrades.",

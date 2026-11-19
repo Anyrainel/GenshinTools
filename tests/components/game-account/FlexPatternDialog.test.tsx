@@ -25,6 +25,7 @@ function makeSettings(
     levelProtection: 16,
     highLevelProtection: true,
     equippedProtection: true,
+    fourStarProtection: true,
     disabledFlexPatterns: [],
     enabledFlexPatterns: [],
     customFlexInputs,

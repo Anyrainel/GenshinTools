@@ -23,6 +23,7 @@ import {
   QUALITY_TIER_RANK,
   QUALITY_TIERS,
 } from "@/domain/game-account/triage/constants";
+import { isTriageRarityProtected } from "@/domain/game-account/triage/eligibility";
 import { runTriage } from "@/domain/game-account/triage/triageEngine";
 import type {
   FlexPattern,
@@ -156,12 +157,12 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
     (d: TriageDecision) =>
       d.specialRules.includes("levelProtected") ||
       d.specialRules.includes("equippedProtected") ||
-      d.specialRules.includes("rarityProtected"),
+      isTriageRarityProtected(d),
     []
   );
   const passesTier = useCallback(
     (d: TriageDecision) =>
-      d.specialRules.includes("rarityProtected") ||
+      isTriageRarityProtected(d) ||
       tierFilter.has(d.decidingResult?.tier ?? "fodder"),
     [tierFilter]
   );
@@ -172,7 +173,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
         artifactSetFilter.has(d.artifact.setKey)) &&
       (slotFilter.size === 0 || slotFilter.has(d.artifact.slotKey)) &&
       (statusFilter.size === 0 ||
-        d.specialRules.includes("rarityProtected") ||
+        isTriageRarityProtected(d) ||
         statusFilter.has(getDecisionStatus(d))),
     [passesTier, artifactSetFilter, slotFilter, statusFilter]
   );
@@ -300,6 +301,7 @@ export function TriageView({ onOpenImport, onShowTour }: TriageViewProps) {
       header={
         <TriageHeader
           t={t}
+          isStale={isStale}
           settings={settings}
           onSettingsChange={setSettings}
           flexPatterns={flexPatterns}

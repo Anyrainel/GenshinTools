@@ -64,6 +64,7 @@ export type TriageSpecialRule =
   | "levelProtected"
   | "equippedProtected"
   | "rarityProtected"
+  | "fourStarProtection"
   | "doubleCrit"
   | "setSlotFloor"
   | "offPiecePattern"
@@ -129,6 +130,8 @@ export type TriageSettings = {
    */
   highLevelProtection: boolean;
   equippedProtection: boolean; // default true
+  /** Keep the existing lock state of every four-star artifact and exclude it from triage. */
+  fourStarProtection: boolean;
   disabledFlexPatterns: string[];
   enabledFlexPatterns: string[];
   customFlexInputs: CustomFlexInput[];

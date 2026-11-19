@@ -23,6 +23,59 @@ beforeEach(() => {
 });
 
 describe("useTriageStore", () => {
+  it("hydrates v7 profile settings with four-star protection and persists an account-specific opt-out", async () => {
+    const v7Settings = {
+      triageMode: "strict",
+      mainStatThreshold: 80,
+      optionalSubThreshold: 50,
+      backupAmountMode: "custom",
+      qualityMargin: 5,
+      fillerKeep: 2,
+      setSlotKeep: 2,
+      ownedOnly: false,
+      highLevelProtection: false,
+      equippedProtection: false,
+    };
+    const key = "triage-settings";
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        version: 7,
+        state: {
+          settingsByProfileId: {
+            0: v7Settings,
+            123456789: { ...v7Settings, mainStatThreshold: 90 },
+          },
+        },
+      })
+    );
+    await useTriageStore.persist.rehydrate();
+    expect(getActiveTriageSettings()).toMatchObject({
+      ...v7Settings,
+      fourStarProtection: true,
+    });
+    expect(JSON.parse(localStorage.getItem(key)!)).toMatchObject({
+      version: 8,
+      state: {
+        settingsByProfileId: { 123456789: { fourStarProtection: true } },
+      },
+    });
+
+    useTriageStore.getState().updateSettings({ fourStarProtection: false });
+    await useTriageStore.persist.rehydrate();
+    expect(getActiveTriageSettings()).toMatchObject({
+      ...v7Settings,
+      fourStarProtection: false,
+    });
+    useAccountStore.setState({ activeAccountId: 123456789 });
+    expect(getActiveTriageSettings()).toMatchObject({
+      fourStarProtection: true,
+      mainStatThreshold: 90,
+    });
+    useAccountStore.setState({ activeAccountId: 234567890 });
+    expect(getActiveTriageSettings().fourStarProtection).toBe(true);
+  });
+
   it("migrates v3 strategic evaluation into high level protection", () => {
     const result = migrateTriageStore(
       {

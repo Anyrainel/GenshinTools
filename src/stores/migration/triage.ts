@@ -2,6 +2,7 @@ import { DEFAULT_ACCOUNT_PROFILE_ID } from "@/domain/game-account/accountProfile
 import { DEFAULT_TRIAGE_SETTINGS } from "@/domain/game-account/triage/constants";
 import { inferTriageBackupAmountMode } from "@/domain/game-account/triage/settings";
 import type { TriageSettings } from "@/domain/game-account/triage/types";
+import { PersistedTriageStoreSchema } from "@/stores/schemas";
 
 interface LegacyTriageState {
   settings?: Partial<TriageSettings> & {
@@ -44,6 +45,12 @@ export function migrateTriageStore(
           profileSettings.setSlotKeep ?? DEFAULT_TRIAGE_SETTINGS.setSlotKeep,
       });
     }
+  }
+  // v7 profiles had no fourStarProtection field. Use the same per-profile
+  // defaults as cloud restoration, preserving existing values and explicit false.
+  if (version < 8) {
+    state.settingsByProfileId = PersistedTriageStoreSchema.parse(state)
+      .settingsByProfileId as Record<string, TriageSettings>;
   }
   delete state.settings;
   return state;

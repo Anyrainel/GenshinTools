@@ -94,6 +94,50 @@ describe("four-star artifacts in triage", () => {
 
   afterEach(() => localStorage.removeItem("app_language"));
 
+  it("protects all four-stars by default and restores native-set recommendations when switched off", () => {
+    render(<TriageView />);
+    const protectedTab = screen.getByRole("tab", { name: /^Protected/ });
+    const settings = screen.getByRole("button", { name: /^Settings/ });
+    expect(protectedTab).toHaveTextContent("4");
+    expect(
+      screen.getByRole("button", { name: /1\s*Fodder/ })
+    ).toBeInTheDocument();
+    openProtectedTab();
+    expect(
+      within(screen.getByRole("tabpanel")).getAllByText(
+        "4-star protection is on"
+      )
+    ).toHaveLength(4);
+
+    fireEvent.click(settings);
+    const toggle = screen.getByRole("switch", {
+      name: "Protect all 4-star artifacts",
+    });
+    expect(toggle).toBeChecked();
+    fireEvent.click(toggle);
+    expect(toggle).not.toBeChecked();
+    expect(protectedTab).toHaveTextContent("2");
+    expect(
+      screen.getByRole("tab", { name: /^Recommend Lock/ })
+    ).toHaveTextContent("1");
+    expect(
+      screen.getByRole("tab", { name: /^Recommend Unlock/ })
+    ).toHaveTextContent("2");
+    expect(
+      screen.getAllByText("4-star variants of 5-star sets are excluded")
+    ).toHaveLength(2);
+
+    fireEvent.click(toggle);
+    expect(toggle).toBeChecked();
+    expect(protectedTab).toHaveTextContent("4");
+    expect(
+      screen.getByRole("tab", { name: /^Recommend Lock/ })
+    ).toHaveTextContent("0");
+    expect(
+      screen.getByRole("tab", { name: /^Recommend Unlock/ })
+    ).toHaveTextContent("1");
+  });
+
   it.each([
     {
       language: "en",
@@ -113,6 +157,7 @@ describe("four-star artifacts in triage", () => {
     "shows excluded four-star variants in the protected zone in $language",
     ({ language, protectedTab, reason, fodder, inventory }) => {
       localStorage.setItem("app_language", language);
+      useTriageStore.getState().updateSettings({ fourStarProtection: false });
       render(<TriageView />);
 
       expect(screen.getByText(inventory)).toBeInTheDocument();
@@ -141,6 +186,20 @@ describe("four-star artifacts in triage", () => {
       { name: "five stars", rarities: [5], lock: true, unlock: true },
       { name: "neither rarity", rarities: [], lock: true, unlock: true },
       {
+        name: "both with four-star protection on",
+        rarities: [4, 5],
+        lock: true,
+        unlock: true,
+        protectedFour: true,
+      },
+      {
+        name: "only protected four-stars",
+        rarities: [4],
+        lock: true,
+        unlock: true,
+        protectedFour: true,
+      },
+      {
         name: "only four-star unlocks",
         rarities: [4],
         lock: false,
@@ -154,7 +213,10 @@ describe("four-star artifacts in triage", () => {
       },
     ])(
       "previews, submits and syncs $name",
-      async ({ rarities, lock, unlock }) => {
+      async ({ rarities, lock, unlock, protectedFour = false }) => {
+        useTriageStore
+          .getState()
+          .updateSettings({ fourStarProtection: protectedFour });
         const account = useAccountStore.getState().accounts[0].data;
         const inventory = [
           ...account.extraArtifacts,
@@ -237,12 +299,15 @@ describe("four-star artifacts in triage", () => {
               name: "Include unlock instructions",
             })
           );
-        const lockCount = lock ? rarities.length : 0;
-        const unlockCount = unlock ? rarities.length : 0;
+        const actionableRarities = rarities.filter(
+          (r) => r !== 4 || !protectedFour
+        );
+        const lockCount = lock ? actionableRarities.length : 0;
+        const unlockCount = unlock ? actionableRarities.length : 0;
         expect(
           dialog.getByText(`Lock ${lockCount} · Unlock ${unlockCount}`)
         ).toBeInTheDocument();
-        if (rarities.length === 0) {
+        if (lockCount + unlockCount === 0) {
           expect(apply).toBeDisabled();
           fireEvent.click(apply);
           expect(requests).toEqual([]);
@@ -262,16 +327,16 @@ describe("four-star artifacts in triage", () => {
         ] as const) {
           const sent = requests[0][action];
           expect(sent.map((a) => a.rarity).sort()).toEqual(
-            include ? rarities : []
+            include ? actionableRarities : []
           );
           expect(sent.map((a) => a.setKey).sort()).toEqual(
-            (include ? rarities : [])
+            (include ? actionableRarities : [])
               .map((r) => (r === 4 ? "Instructor" : "EmblemOfSeveredFate"))
               .sort()
           );
         }
         const expected = inventory.map((a) => {
-          if (rarities.includes(a.rarity)) {
+          if (actionableRarities.includes(a.rarity)) {
             if (lock && ["native-four-to-lock", "five-to-lock"].includes(a.id))
               return [a.id, true];
             if (
@@ -291,27 +356,36 @@ describe("four-star artifacts in triage", () => {
     );
   });
 
-  it("keeps excluded variants visible through quality and result filters", () => {
-    render(<TriageView />);
+  it.each([true, false])(
+    "keeps protected four-stars visible through quality and result filters (protect all: %s)",
+    (fourStarProtection) => {
+      useTriageStore.getState().updateSettings({ fourStarProtection });
+      render(<TriageView />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Fodder/ }));
-    fireEvent.click(
-      screen.getByRole("button", { name: /filter by lock result/i })
-    );
-    fireEvent.click(
-      screen.getByRole("button", { name: "Locked by flex rules" })
-    );
+      fireEvent.click(screen.getByRole("button", { name: /Fodder/ }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /filter by lock result/i })
+      );
+      fireEvent.click(
+        screen.getByRole("button", { name: "Locked by flex rules" })
+      );
 
-    expect(screen.getByRole("tab", { name: /^Protected/ })).toHaveTextContent(
-      "2"
-    );
-    openProtectedTab();
-    expect(
-      screen.getAllByText("4-star variants of 5-star sets are excluded")
-    ).toHaveLength(2);
-  });
+      expect(screen.getByRole("tab", { name: /^Protected/ })).toHaveTextContent(
+        fourStarProtection ? "4" : "2"
+      );
+      openProtectedTab();
+      expect(
+        screen.getAllByText(
+          fourStarProtection
+            ? "4-star protection is on"
+            : "4-star variants of 5-star sets are excluded"
+        )
+      ).toHaveLength(fourStarProtection ? 4 : 2);
+    }
+  );
 
   it("still applies inventory set and slot filters to protected four-star artifacts", () => {
+    useTriageStore.getState().updateSettings({ fourStarProtection: false });
     render(<TriageView />);
     openProtectedTab();
 

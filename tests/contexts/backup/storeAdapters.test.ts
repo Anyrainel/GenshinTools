@@ -89,6 +89,47 @@ describe("cloud store adapters", () => {
     expect(serialized).not.toContain("82001");
   });
 
+  it("restores four-star protection for legacy triage settings and round-trips an explicit opt-out", () => {
+    const legacyApp = {
+      ...partition("profile.app", "0", {
+        accountProfileId: 0,
+        name: "Default",
+        isActive: true,
+        triageSettings: {
+          triageMode: "strict",
+          setSlotKeep: 2,
+          equippedProtection: false,
+        },
+      }),
+      schemaVersion: 2,
+    };
+    applyCloudRestorePlan(buildCloudRestorePlan([legacyApp]));
+    expect(useTriageStore.getState().settingsByProfileId[0]).toMatchObject({
+      triageMode: "strict",
+      setSlotKeep: 2,
+      equippedProtection: false,
+      fourStarProtection: true,
+    });
+    useTriageStore.getState().updateSettings({ fourStarProtection: false });
+    const exported = buildLocalBackupPartitions().filter(
+      (part) => part.namespace === "profile.app"
+    );
+    expect(exported).toMatchObject([
+      {
+        schemaVersion: 4,
+        payload: { triageSettings: { fourStarProtection: false } },
+      },
+    ]);
+    useTriageStore.setState({ settingsByProfileId: {} });
+    applyCloudRestorePlan(buildCloudRestorePlan(exported));
+    expect(useTriageStore.getState().settingsByProfileId[0]).toMatchObject({
+      triageMode: "strict",
+      setSlotKeep: 2,
+      equippedProtection: false,
+      fourStarProtection: false,
+    });
+  });
+
   it("does not replace local achievement completion during cloud restore", () => {
     useAchievementStore.getState().replaceEarnedIds(0, [81001, 82001]);
 

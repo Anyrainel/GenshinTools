@@ -33,6 +33,7 @@ import {
 import type { useLanguage } from "@/contexts/LanguageContext";
 import { allSlots, type Slot } from "@/domain/enums";
 import { QUALITY_TIERS } from "@/domain/game-account/triage/constants";
+import { isTriageRarityProtected } from "@/domain/game-account/triage/eligibility";
 import type {
   FlexPattern,
   QualityTier,
@@ -92,6 +93,7 @@ function backupAmountModeLabel(
 
 export function TriageHeader({
   t,
+  isStale,
   settings,
   onSettingsChange,
   flexPatterns,
@@ -113,6 +115,7 @@ export function TriageHeader({
   sourceAgeBadge,
 }: {
   t: Translator;
+  isStale: boolean;
   settings: TriageSettings;
   onSettingsChange: (s: TriageSettings) => void;
   flexPatterns: FlexPattern[];
@@ -150,7 +153,7 @@ export function TriageHeader({
     fodder: 0,
   };
   for (const d of decisions) {
-    if (d.specialRules.includes("rarityProtected")) continue;
+    if (isTriageRarityProtected(d)) continue;
     const tier = d.decidingResult?.tier ?? "fodder";
     tierCounts[tier]++;
   }
@@ -172,7 +175,10 @@ export function TriageHeader({
               {backupAmountModeLabel(settings.backupAmountMode, t)})
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-auto">
+          <PopoverContent
+            align="end"
+            className="w-auto max-h-[var(--radix-popover-content-available-height)] overflow-y-auto"
+          >
             <TriageSettingsPanel
               settings={settings}
               onChange={onSettingsChange}
@@ -362,6 +368,7 @@ export function TriageHeader({
         open={managerOpen}
         onOpenChange={setManagerOpen}
         job={{ type: "manage", build: buildManagerInstructions }}
+        actionDisabled={isStale}
         actionLabel={t.ui("manager.applyToGame")}
       />
       <ArtifactScannerDialog

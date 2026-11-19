@@ -565,6 +565,9 @@ const TriageSettingsSchema = z
     equippedProtection: z
       .boolean()
       .catch(DEFAULT_TRIAGE_SETTINGS.equippedProtection),
+    fourStarProtection: z
+      .boolean()
+      .catch(DEFAULT_TRIAGE_SETTINGS.fourStarProtection),
     disabledFlexPatterns: z.array(z.string()).catch([]),
     enabledFlexPatterns: z.array(z.string()).catch([]),
     customFlexInputs: z.array(CustomFlexInputSchema).catch([]),

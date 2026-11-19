@@ -33,6 +33,7 @@ import {
   tiersToCloud,
 } from "@/services/backup/adapters/tierAdapter";
 import type { ArtifactScoreGlobalConfig } from "@/stores/migration/artifactScore";
+import { PersistedTriageStoreSchema } from "@/stores/schemas";
 import { useAccountScoreCacheStore } from "@/stores/useAccountScoreCacheStore";
 import { useAccountStore } from "@/stores/useAccountStore";
 import { useArtifactScoreStore } from "@/stores/useArtifactScoreStore";
@@ -196,8 +197,9 @@ export function applyCloudRestorePlan(
   }
 
   if (plan.triageByProfileId !== undefined) {
-    const restoredSettings =
-      plan.triageByProfileId as TriageState["settingsByProfileId"];
+    const restoredSettings = PersistedTriageStoreSchema.parse({
+      settingsByProfileId: plan.triageByProfileId,
+    }).settingsByProfileId as TriageState["settingsByProfileId"];
     useTriageStore.setState((state) => ({
       settingsByProfileId: {
         ...state.settingsByProfileId,

@@ -296,12 +296,7 @@ function cloudPartition<TPayload>(
   return {
     namespace,
     partitionKey: encodePathSegment(partitionKey),
-    schemaVersion:
-      namespace === "profile.artifacts"
-        ? 4
-        : namespace === "profile.game"
-          ? 3
-          : 2,
+    schemaVersion: namespace === "profile.game" ? 3 : 4,
     conflictPolicy: "profile-import-wins",
     payload,
   };

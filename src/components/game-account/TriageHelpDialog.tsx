@@ -312,6 +312,7 @@ export function TriageHelpDialog({
                       [
                         { key: "triage.sp.levelProtected" },
                         { key: "triage.sp.equippedProtected" },
+                        { key: "triage.fourStarProtection" },
                       ] as const
                     ).map(({ key }) => (
                       <span key={key} className="text-xs text-muted-foreground">
@@ -319,6 +320,9 @@ export function TriageHelpDialog({
                       </span>
                     ))}
                   </div>
+                  <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+                    {t.ui("triage.help.spFourStarDetail")}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
                     <span className="font-medium text-foreground/80">
                       {t.ui("triage.help.spHighLevelOff")}:

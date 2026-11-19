@@ -108,7 +108,7 @@ export const useTriageStore = create<TriageState>()(
     }),
     {
       name: "triage-settings",
-      version: 7,
+      version: 8,
       migrate: migrateTriageStore,
       partialize: (state) => ({
         settingsByProfileId: state.settingsByProfileId,

@@ -256,6 +256,7 @@ describe("pure scaling-stat builds", () => {
     const groups = [{ characterId: "nilou", builds: [build] }];
     const settings: TriageSettings = {
       ...SETTINGS,
+      fourStarProtection: false,
       triageMode: "strict",
       ownedOnly: false,
       highLevelProtection: false,
