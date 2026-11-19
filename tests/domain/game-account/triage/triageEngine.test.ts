@@ -385,13 +385,19 @@ describe("runTriage", () => {
     );
   });
 
-  it("highLevelProtection off: promotes artifacts with half of upgrade rolls concentrated", () => {
+  it("retains a +16 piece on its remaining upgrade expectation and rechecks the actual result at +20", () => {
     const art = makeArt({
       setKey: "unrelated_set",
       level: 16,
-      substats: rolls({ "hp%": 3, def: 2, atk: 2, hp: 1 }),
+      substats: rolls({ "hp%": 2.25, def: 2, atk: 2, em: 1 }),
     });
-    const account = makeAccount([], [art]);
+    const maxLevel = {
+      ...art,
+      id: "max-level",
+      level: 20,
+      substats: { ...art.substats, def: getSubstatAvgRoll("def", 5) * 3 },
+    };
+    const account = makeAccount([], [art, maxLevel]);
     const { decisions } = runTriage(
       account,
       [{ characterId: "char_a", builds: [makeBuild()] }],
@@ -407,6 +413,10 @@ describe("runTriage", () => {
     expect(decisions[0].label).toBe("lock");
     expect(decisions[0].decidingResult?.ruleId).toBe("concentrationValue");
     expect(decisions[0].specialRules).toContain(
+      "concentrationValue:concentrated-hp%"
+    );
+    expect(decisions[1].label).toBe("unlock");
+    expect(decisions[1].specialRules).not.toContain(
       "concentrationValue:concentrated-hp%"
     );
   });

@@ -10,9 +10,10 @@
  */
 
 import { getSubstatAvgRoll } from "@/domain/build/artifact/scoring/utils";
-import { solveArtifactRollCounts } from "@/domain/build/artifact/solver";
 import type { SubStat } from "@/domain/enums";
+import { MAX_LEVEL_BY_RARITY } from "@/domain/game-account/artifactProjection";
 import type { ArtifactData } from "@/domain/models";
+import { combinations, pDrawSet, SUB_WEIGHTS } from "./tierMath";
 
 export type ConcentrationValueRuleResult =
   | { kept: true; reason: ConcentrationValueReason }
@@ -33,9 +34,7 @@ export type ConcentrationValueRule = (
 // Concentrated-stat rule
 
 /**
- * A category is a group of substats whose rolls we want to sum together when
- * judging concentration. Crit combines CR + CD; everything else is a single
- * substat.
+ * CR and CD contribute to the same category, each in its own average-roll units.
  */
 const CATEGORIES: { reason: ConcentrationValueReason; stats: SubStat[] }[] = [
   { reason: "concentrated-crit", stats: ["cr", "cd"] },
@@ -46,58 +45,73 @@ const CATEGORIES: { reason: ConcentrationValueReason; stats: SubStat[] }[] = [
   { reason: "concentrated-def%", stats: ["def%"] },
 ];
 
-/** Share of actual upgrades that must land in a single category. */
-const CONCENTRATION_THRESHOLD = 0.5;
+const SUBSTATS = Object.keys(SUB_WEIGHTS) as SubStat[];
 
-function estimateUpgrades(
-  artifact: ArtifactData,
-  stat: SubStat,
-  rarity: 4 | 5
-): number {
-  const avg = getSubstatAvgRoll(stat, rarity);
-  if (!Number.isFinite(avg) || avg <= 0) return 0;
-  const value = artifact.substats[stat]!;
-  const initial = artifact.initialValues?.[stat] ?? avg;
-  return Math.max(0, (value - initial) / avg);
-}
-
-/** Concentrated-stat rule: fires if ≥50% of upgrade rolls landed in one
- * category. Upgrade rolls = total rolls − number of distinct substats. */
-export const concentratedStatRule: ConcentrationValueRule = (artifact) => {
-  const rarity = artifact.rarity === 4 ? 4 : 5;
-  const stats = Object.keys(artifact.substats) as SubStat[];
-  const known = artifact.substatRollCounts;
-  const completeCounts =
-    known && stats.every((stat) => known[stat] !== undefined);
-  const counts = completeCounts
-    ? known
-    : solveArtifactRollCounts({ ...artifact, rarity }, known);
-  const upgrades: Partial<Record<SubStat, number>> = {};
-  let inferredTotal = 0;
-  for (const stat of stats) {
-    const count = counts?.[stat] ?? known?.[stat];
-    // Only legacy values that fail discrete roll reconstruction need an estimate.
-    const upgradeCount =
-      count !== undefined
-        ? count - 1
-        : estimateUpgrades(artifact, stat, rarity);
-    upgrades[stat] = upgradeCount;
-    inferredTotal += upgradeCount;
-  }
-  // totalRolls excludes the pending fourth substat in GOOD v3.
-  const upgradeTotal =
-    !completeCounts && artifact.totalRolls !== undefined
-      ? artifact.totalRolls - stats.length
-      : inferredTotal;
-  if (upgradeTotal < (rarity === 4 ? 2 : 3)) return { kept: false };
-
-  for (const { reason, stats } of CATEGORIES) {
-    const sum = stats.reduce((n, stat) => n + (upgrades[stat] ?? 0), 0);
-    if (sum / upgradeTotal >= CONCENTRATION_THRESHOLD) {
-      return { kept: true, reason };
+/** Expected final substat values in units of one average roll of the same rarity. */
+function projectedRolls(artifact: ArtifactData, rarity: 4 | 5) {
+  const rolls = new Map<SubStat, number>();
+  for (const stat of SUBSTATS) {
+    const value = artifact.substats[stat];
+    if (value != null && value > 0) {
+      rolls.set(stat, value / getSubstatAvgRoll(stat, rarity));
     }
   }
-  return { kept: false };
+
+  let remaining =
+    MAX_LEVEL_BY_RARITY[rarity] / 4 - Math.floor(artifact.level / 4);
+  if (remaining <= 0) return rolls;
+  for (const [stat, value] of Object.entries(
+    artifact.unactivatedSubstats ?? {}
+  ) as [SubStat, number][]) {
+    if (remaining === 0 || rolls.size >= 4) break;
+    if (
+      rolls.has(stat) ||
+      stat === artifact.mainStatKey ||
+      !Object.hasOwn(SUB_WEIGHTS, stat)
+    )
+      continue;
+    rolls.set(stat, value > 0 ? value / getSubstatAvgRoll(stat, rarity) : 1);
+    remaining--;
+  }
+
+  const draws = Math.min(remaining, Math.max(0, 4 - rolls.size));
+  const expectedUpgradesPerLine = (remaining - draws) / 4;
+  for (const [stat, value] of rolls)
+    rolls.set(stat, value + expectedUpgradesPerLine);
+  if (draws > 0) {
+    const candidates = SUBSTATS.filter(
+      (stat) => stat !== artifact.mainStatKey && !rolls.has(stat)
+    );
+    const pool = Object.fromEntries(
+      candidates.map((stat) => [stat, SUB_WEIGHTS[stat]])
+    );
+    for (const drawn of combinations(candidates, draws)) {
+      // Each new line gets an initial roll and can receive later upgrades.
+      const contribution =
+        pDrawSet(pool, drawn) * (1 + expectedUpgradesPerLine);
+      for (const stat of drawn)
+        rolls.set(stat, (rolls.get(stat) ?? 0) + contribution);
+    }
+  }
+  return rolls;
+}
+
+export const concentratedStatRule: ConcentrationValueRule = (artifact) => {
+  const rarity = artifact.rarity === 4 ? 4 : 5;
+  const rolls = projectedRolls(artifact, rarity);
+  const target = rarity === 4 ? 2 : 2.5;
+  let bestReason: ConcentrationValueReason | undefined;
+  let bestValue = 0;
+  for (const { reason, stats } of CATEGORIES) {
+    const value = stats.reduce((sum, stat) => sum + (rolls.get(stat) ?? 0), 0);
+    if (value > bestValue) {
+      bestValue = value;
+      bestReason = reason;
+    }
+  }
+  return bestReason && bestValue + 1e-9 >= target
+    ? { kept: true, reason: bestReason }
+    : { kept: false };
 };
 
 // Rule registry + public runner

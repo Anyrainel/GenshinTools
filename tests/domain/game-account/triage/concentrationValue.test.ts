@@ -1,195 +1,191 @@
 import { describe, expect, it } from "vitest";
 import { getSubstatAvgRoll } from "@/domain/build/artifact/scoring/utils";
 import type { SubStat } from "@/domain/enums";
-import {
-  concentratedStatRule,
-  runConcentrationValueRules,
-} from "@/domain/game-account/triage/concentrationValue";
+import { runConcentrationValueRules } from "@/domain/game-account/triage/concentrationValue";
 import type { ArtifactData } from "@/domain/models";
 
-/** Build a minimal 5★ ArtifactData with given substat *roll counts*. */
-function artifactWithRolls(
-  rolls: Partial<Record<SubStat, number>>,
-  level = 16
+function flower(
+  rarity: 4 | 5,
+  level: number,
+  substats: ArtifactData["substats"]
 ): ArtifactData {
-  const substats: Partial<Record<SubStat, number>> = {};
-  for (const [stat, count] of Object.entries(rolls)) {
-    const avg = getSubstatAvgRoll(stat as SubStat, 5);
-    substats[stat as SubStat] = (count ?? 0) * avg;
-  }
   return {
-    id: "test",
-    setKey: "gladiators_finale",
+    id: "flower",
+    setKey: rarity === 4 ? "instructor" : "gladiators_finale",
     slotKey: "flower",
-    level,
-    rarity: 5,
     mainStatKey: "hp",
-    lock: false,
+    rarity,
+    level,
+    lock: true,
     substats,
   };
 }
 
-describe("concentratedStatRule", () => {
-  const instructorFlower: ArtifactData = {
-    id: "four-star-flower",
-    setKey: "instructor",
-    slotKey: "flower",
-    mainStatKey: "hp",
-    rarity: 4,
-    level: 16,
-    lock: true,
-    totalRolls: 7,
-    substats: { em: 35, def: 15, "hp%": 10.72, cd: 4.35 },
-    initialValues: { em: 19, def: 15, "hp%": 3.7, cd: 4.4 },
-  };
+function rollValue(stat: SubStat, rolls: number, rarity: 4 | 5): number {
+  return getSubstatAvgRoll(stat, rarity) * rolls;
+}
 
-  it.each([undefined, { em: 2, def: 1, "hp%": 3, cd: 1 }])(
-    "counts two HP upgrades out of three regardless of individual roll quality",
-    (substatRollCounts) => {
-      expect(
-        concentratedStatRule({ ...instructorFlower, substatRollCounts })
-      ).toEqual({
-        kept: true,
-        reason: "concentrated-hp%",
+describe("concentration by expected category value at maximum level", () => {
+  it.each([
+    { rarity: 4, level: 16, target: 2 },
+    { rarity: 5, level: 20, target: 2.5 },
+  ] as const)(
+    "treats $target average rolls as an inclusive full-level threshold for $rarity stars",
+    ({ rarity, level, target }) => {
+      const result = (amount: number) =>
+        runConcentrationValueRules(
+          flower(rarity, level, {
+            er: rollValue("er", amount, rarity),
+            atk: 14,
+            def: 15,
+            em: 16,
+          })
+        );
+      expect(result(target)).toEqual({ kept: true, reason: "concentrated-er" });
+      expect(result(target - 0.001)).toEqual({ kept: false });
+    }
+  );
+
+  it("keeps the +16 Instructor flower for HP%, with and without scanner roll metadata", () => {
+    const piece = flower(4, 16, { em: 35, def: 15, "hp%": 10.72, cd: 4.35 });
+    const expected = { kept: true, reason: "concentrated-hp%" };
+    expect(runConcentrationValueRules(piece)).toEqual(expected);
+    expect(
+      runConcentrationValueRules({
+        ...piece,
+        totalRolls: 7,
+        initialValues: { em: 19, def: 15, "hp%": 3.7, cd: 4.4 },
+        substatRollCounts: { em: 2, def: 1, "hp%": 3, cd: 1 },
+      })
+    ).toEqual(expected);
+    // Two low HP% rolls give only 1.65 average rolls at four stars.
+    expect(
+      runConcentrationValueRules({
+        ...flower(4, 16, { "hp%": 6.52, def: 37, atk: 11, em: 13 }),
+        substatRollCounts: { "hp%": 2, def: 2, atk: 1, em: 1 },
+      })
+    ).toEqual({ kept: false });
+  });
+
+  it("adds CR and CD in their own units and reports the strongest qualifying category", () => {
+    const piece = flower(5, 20, {
+      cr: rollValue("cr", 1.9, 5),
+      cd: rollValue("cd", 0.8, 5),
+      "hp%": rollValue("hp%", 3, 5),
+      atk: 16,
+    });
+    expect(runConcentrationValueRules(piece)).toEqual({
+      kept: true,
+      reason: "concentrated-hp%",
+    });
+    expect(
+      runConcentrationValueRules({
+        ...piece,
+        substats: { ...piece.substats, "hp%": rollValue("hp%", 2.6, 5) },
+      })
+    ).toEqual({ kept: true, reason: "concentrated-crit" });
+  });
+
+  it.each([
+    { rarity: 4, amount: 1.75 },
+    { rarity: 5, amount: 2 },
+  ] as const)(
+    "credits the remaining +4 checkpoints once for $rarity stars",
+    ({ rarity, amount }) => {
+      const piece = flower(rarity, 12, {
+        er: rollValue("er", amount, rarity),
+        atk: 14,
+        def: 13,
+        em: 16,
+      });
+      for (const level of [12, 13]) {
+        expect(runConcentrationValueRules({ ...piece, level })).toEqual({
+          kept: true,
+          reason: "concentrated-er",
+        });
+      }
+      expect(runConcentrationValueRules({ ...piece, level: 16 })).toEqual({
+        kept: false,
       });
     }
   );
 
-  it("uses source counts for a 50% allocation even when the accumulated rolls were low", () => {
-    const piece: ArtifactData = {
-      ...instructorFlower,
-      level: 16,
-      totalRolls: 6,
-      substats: { "hp%": 6.52, def: 37, atk: 11, em: 13 },
-      substatRollCounts: { "hp%": 2, def: 2, atk: 1, em: 1 },
-    };
-    expect(concentratedStatRule(piece)).toEqual({
-      kept: true,
-      reason: "concentrated-hp%",
+  it.each(["em", "atk%", "def%"] as const)(
+    "evaluates %s independently of other categories",
+    (stat) => {
+      const piece = flower(5, 20, {
+        [stat]: rollValue(stat, 2.6, 5),
+        atk: 16,
+        def: 19,
+        er: 5.5,
+      });
+      expect(runConcentrationValueRules(piece)).toEqual({
+        kept: true,
+        reason: `concentrated-${stat}`,
+      });
+    }
+  );
+
+  it("credits two of four possible upgrade lines to double crit", () => {
+    const piece = flower(5, 16, {
+      cr: rollValue("cr", 1, 5),
+      cd: rollValue("cd", 1, 5),
+      atk: 20,
+      def: 25,
     });
-    expect(concentratedStatRule({ ...piece, totalRolls: 5 })).toEqual({
-      kept: true,
-      reason: "concentrated-hp%",
-    });
-    expect(concentratedStatRule({ ...piece, rarity: 5 }).kept).toBe(false);
-    expect(
-      concentratedStatRule({
-        ...piece,
-        totalRolls: 5,
-        substatRollCounts: { "hp%": 2, def: 1, atk: 1, em: 1 },
-      }).kept
-    ).toBe(false);
-  });
-
-  it("uses the source to distinguish two legal allocations with identical displayed values", () => {
-    const piece: ArtifactData = {
-      ...instructorFlower,
-      setKey: "gladiators_finale",
-      rarity: 5,
-      level: 20,
-      totalRolls: 9,
-      substats: { "hp%": 16.3, def: 65, atk: 14, em: 16 },
-      initialValues: undefined,
-    };
-    // Both HP% and flat DEF could each represent three or four rolls.
-    expect(
-      concentratedStatRule({ ...piece, substatRollCounts: { "hp%": 4 } })
-    ).toEqual({
-      kept: true,
-      reason: "concentrated-hp%",
-    });
-    expect(
-      concentratedStatRule({ ...piece, substatRollCounts: { "hp%": 3 } }).kept
-    ).toBe(false);
-  });
-
-  it("fires for concentrated crit (CR+CD combined)", () => {
-    const art = artifactWithRolls({ cr: 4, cd: 4, atk: 1, hp: 1 });
-    const r = concentratedStatRule(art);
-    expect(r).toEqual({ kept: true, reason: "concentrated-crit" });
-  });
-
-  it("keeps usable legacy stats when an obsolete substat prevents exact reconstruction", () => {
-    const art = artifactWithRolls({ er: 5, def: 1, atk: 1 });
-    Object.assign(art.substats, { unknownStat: 20 });
-    expect(concentratedStatRule(art)).toEqual({
-      kept: true,
-      reason: "concentrated-er",
-    });
-  });
-
-  it("fires when exactly half of upgrade rolls are concentrated", () => {
-    const art = artifactWithRolls({ "hp%": 3, def: 2, atk: 2, hp: 1 });
-    expect(concentratedStatRule(art)).toEqual({
-      kept: true,
-      reason: "concentrated-hp%",
-    });
-  });
-
-  it("uses known initial values instead of attributing initial-roll quality to upgrades", () => {
-    const art = artifactWithRolls({ "hp%": 3, def: 2, atk: 2, hp: 1 });
-    art.initialValues = {
-      "hp%": getSubstatAvgRoll("hp%", 5) * 1.2,
-      def: getSubstatAvgRoll("def", 5) * 0.8,
-      atk: getSubstatAvgRoll("atk", 5) * 0.8,
-      hp: getSubstatAvgRoll("hp", 5) * 0.8,
-    };
-
-    expect(concentratedStatRule(art).kept).toBe(false);
-  });
-
-  it("fires for concentrated ER", () => {
-    const art = artifactWithRolls({ er: 6, atk: 1, hp: 1 });
-    const r = concentratedStatRule(art);
-    expect(r).toEqual({ kept: true, reason: "concentrated-er" });
-  });
-
-  it("fires for concentrated EM", () => {
-    const art = artifactWithRolls({ em: 7, atk: 1, hp: 1, def: 1 });
-    expect(concentratedStatRule(art)).toEqual({
-      kept: true,
-      reason: "concentrated-em",
-    });
-  });
-
-  it("fires for concentrated ATK%", () => {
-    const art = artifactWithRolls({ "atk%": 6, cr: 1, em: 1 });
-    expect(concentratedStatRule(art)).toEqual({
-      kept: true,
-      reason: "concentrated-atk%",
-    });
-  });
-
-  it("does NOT fire when no category dominates", () => {
-    const art = artifactWithRolls({ cr: 2, "atk%": 2, em: 2, er: 2 });
-    expect(concentratedStatRule(art).kept).toBe(false);
-  });
-
-  it("does NOT fire below minimum upgrade rolls", () => {
-    // 3 total rolls on one stat = 2 upgrade rolls, below MIN_UPGRADE_ROLLS=3.
-    const art = artifactWithRolls({ cr: 3 });
-    expect(concentratedStatRule(art).kept).toBe(false);
-  });
-
-  it("CR alone dominating fires concentrated-crit", () => {
-    const art = artifactWithRolls({ cr: 7, atk: 1, hp: 1, def: 1 });
-    expect(concentratedStatRule(art)).toEqual({
+    expect(runConcentrationValueRules(piece)).toEqual({
       kept: true,
       reason: "concentrated-crit",
     });
-  });
-});
-
-describe("runConcentrationValueRules", () => {
-  it("returns not-kept when no rule fires", () => {
-    const art = artifactWithRolls({ atk: 3, hp: 3, def: 3 });
-    expect(runConcentrationValueRules(art).kept).toBe(false);
+    expect(runConcentrationValueRules({ ...piece, level: 20 })).toEqual({
+      kept: false,
+    });
   });
 
-  it("returns first matching rule", () => {
-    const art = artifactWithRolls({ cr: 5, cd: 4, atk: 1 });
-    const r = runConcentrationValueRules(art);
-    expect(r.kept).toBe(true);
-    if (r.kept) expect(r.reason).toBe("concentrated-crit");
+  it("spends a checkpoint to open the known fourth line and counts its actual value only once", () => {
+    const piece = flower(4, 0, { atk: 12, def: 13, em: 13 });
+    // Three ordinary upgrades remain after opening ER. Its 1.18 initial rolls plus 0.75 are below 2.
+    const pending = { er: 5.18 };
+    expect(
+      runConcentrationValueRules({ ...piece, unactivatedSubstats: pending })
+    ).toEqual({ kept: false });
+    expect(
+      runConcentrationValueRules({
+        ...piece,
+        level: 4,
+        substats: { ...piece.substats, ...pending },
+      })
+    ).toEqual({ kept: false });
+    // With CR already present, revealing CD also makes both lines eligible for the remaining upgrades.
+    const critPiece = flower(4, 0, { cr: 2.18, atk: 12, def: 13 });
+    expect(
+      runConcentrationValueRules({
+        ...critPiece,
+        unactivatedSubstats: { cd: 4.35 },
+      })
+    ).toEqual({ kept: true, reason: "concentrated-crit" });
+  });
+
+  it("weights an unknown fourth line after excluding the main stat and all active lines", () => {
+    // Flower with CR, flat DEF and flat ATK: the unused pool has weight 23, with 3 for CD.
+    // Projected crit = current CR + 3/23 + (1 + 3/23) * 3/4.
+    const result = (cr: number) =>
+      runConcentrationValueRules(flower(4, 0, { cr, def: 13, atk: 12 }));
+    expect(result(2.8)).toEqual({ kept: true, reason: "concentrated-crit" });
+    expect(result(2.49)).toEqual({ kept: false });
+  });
+
+  it("spends two checkpoints opening lines on a two-line four-star and draws without replacement", () => {
+    // From CR and flat ATK, P(CD in two openings) = 3/29 + 6/29*3/23 + 20/29*3/25.
+    // At maximum CR this still finishes just below 2; equal-weight draws or two free upgrades would pass.
+    const piece = flower(4, 0, { cr: 3.11, atk: 12 });
+    expect(runConcentrationValueRules(piece)).toEqual({ kept: false });
+    // A known CD opening raises the category before the two remaining ordinary upgrades.
+    expect(
+      runConcentrationValueRules({
+        ...piece,
+        unactivatedSubstats: { cd: 4.35 },
+      })
+    ).toEqual({ kept: true, reason: "concentrated-crit" });
   });
 });

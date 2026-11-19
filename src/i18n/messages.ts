@@ -3315,8 +3315,8 @@ export const i18nUiData = {
         zh: "关闭高等级保护后",
       },
       spHighLevelOffDetail: {
-        en: "At the level threshold, pieces due for unlocking get a second check after 2 substat upgrades for four-stars or 3 for five-stars. The piece is kept if at least half went into CR and CD combined, ER, EM, ATK%, HP%, or DEF%. Revealing a new substat does not count as an upgrade.",
-        zh: "达到等级阈值后，原本建议解锁的圣遗物会再看强化落点。四星累计追加至少 2 次、五星至少 3 次，其中至少一半落在同一类词条就保留。双暴合并计算，充能、精通、攻击%、生命%、防御%各自计算。新开一条副词条不计入追加次数。",
+        en: "Once a piece reaches the level threshold, it can be kept for a single category worth at least 2 average rolls at +16 (four-star) or 2.5 at +20 (five-star). Initial rolls count. CR and CD add together. ER, EM, ATK%, HP%, and DEF% each count separately. Before max level, the estimate includes new substats and the expected gain from remaining upgrades.",
+        zh: "达到等级阈值后，若单类副词条的满级期望达到四星 2 条、五星 2.5 条，就额外保留。同星级该属性的单次平均值算 1 条，初始词条也计入。双暴合计，充能、精通、攻击%、生命%、防御%各自计算。未满级时先算还要开的新词条，再算剩余强化的平均收益。",
       },
     },
     flexDialogDesc: {
